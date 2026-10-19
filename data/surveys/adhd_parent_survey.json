@@ -1,0 +1,220 @@
+{
+  "survey_id": "adhd_vadprs_snapiv_9q",
+  "title": "Bảng Khảo Sát Thói Quen Tập Trung & Nhận Thức Học Tập (Dành Cho Phụ Huynh Tiểu Học)",
+  "version": "1.0.0",
+  "clinical_basis": "Trích xuất và chuẩn hóa từ Vanderbilt ADHD Diagnostic Parent Rating Scale (VADPRS), SNAP-IV và Khung điều hòa cảm xúc Barkley",
+  "target_audience": "Phụ huynh học sinh Lớp 1 đến Lớp 5 (6 - 11 tuổi)",
+  "lexical_boundary_mode": "EdTech & Cognitive Wellness (Không dán nhãn bệnh lý, không sử dụng thuật ngữ chẩn đoán y khoa)",
+  "scoring_scale": [
+    {
+      "value": 0,
+      "label": "Không bao giờ",
+      "description": "Hầu như không bao giờ hoặc rất hiếm khi xuất hiện (dưới 1 lần/tháng)"
+    },
+    {
+      "value": 1,
+      "label": "Thỉnh thoảng",
+      "description": "Xuất hiện thỉnh thoảng nhưng không ảnh hưởng lớn đến việc học (1-2 lần/tuần)"
+    },
+    {
+      "value": 2,
+      "label": "Thường xuyên",
+      "description": "Xuất hiện thường xuyên trong hầu hết các buổi học ở nhà (3-4 lần/tuần)"
+    },
+    {
+      "value": 3,
+      "label": "Rất thường xuyên",
+      "description": "Gần như ngày nào cũng xảy ra, gây trở ngại nghiêm trọng cho việc hoàn thành bài tập"
+    }
+  ],
+  "dimensions": [
+    {
+      "id": "executive_function",
+      "name": "Chức năng Điều hành",
+      "sub_dimensions": [
+        "working_memory",
+        "task_initiation",
+        "inhibition_and_planning"
+      ],
+      "question_ids": ["q1", "q2", "q3"],
+      "max_raw_score": 9,
+      "weight_in_composite": 0.40
+    },
+    {
+      "id": "attention_span",
+      "name": "Khoảng Chú ý & Kháng Nhiễu",
+      "sub_dimensions": [
+        "sustained_attention",
+        "distractibility",
+        "completion_persistence"
+      ],
+      "question_ids": ["q4", "q5", "q6"],
+      "max_raw_score": 9,
+      "weight_in_composite": 0.35
+    },
+    {
+      "id": "rsd_sensitivity",
+      "name": "Độ Nhạy Cảm Thất Bại & Phản Ứng Cảm Xúc (RSD)",
+      "sub_dimensions": [
+        "fear_of_failure",
+        "feedback_reactivity",
+        "frustration_avoidance"
+      ],
+      "question_ids": ["q7", "q8", "q9"],
+      "max_raw_score": 9,
+      "weight_in_composite": 0.25
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "dimension": "executive_function",
+      "sub_trait": "working_memory",
+      "clinical_source": "VADPRS Item 4 & SNAP-IV Item 7 (Quá tải trí nhớ làm việc khi tiếp nhận đa chỉ dẫn)",
+      "prompt_text": "Khi con được giao bài tập có từ 2 đến 3 yêu cầu liên tiếp (ví dụ: 'Đọc đoạn văn, gạch chân từ chỉ hoạt động rồi trả lời câu hỏi 1'), con có hay bị quên các bước tiếp theo hoặc chỉ làm được bước đầu tiên rồi dừng lại không?",
+      "behavioral_anchor": "Trẻ không ghi nhớ được chuỗi hành động trong đầu, cần phụ huynh phải nhắc đi nhắc lại từng bước một.",
+      "cognitive_impact": "Quyết định sức chứa trí nhớ làm việc (working_memory_capacity: 1-5 chunks) và độ dài chỉ dẫn của micro-task."
+    },
+    {
+      "id": "q2",
+      "dimension": "executive_function",
+      "sub_trait": "task_initiation",
+      "clinical_source": "VADPRS Item 5 & Barkley BDEFS (Trì hoãn dopamine & Tê liệt hành động - Task Paralysis)",
+      "prompt_text": "Khi bắt đầu ngồi vào bàn học, con có loay hoay rất lâu (như liên tục đi uống nước, tìm bút, gọt bút chì, ngó nghiêng đồ vật) hoặc bị 'đóng băng', không biết bắt đầu từ đâu dù bài tập không quá khó không?",
+      "behavioral_anchor": "Trẻ trì hoãn khởi động, cần 15-30 phút chỉ để đặt bút viết chữ đầu tiên.",
+      "cognitive_impact": "Quyết định mức độ đơn giản của bước khởi động đầu tiên (Atomic Starter Task) để phá vỡ hiện tượng tê liệt."
+    },
+    {
+      "id": "q3",
+      "dimension": "executive_function",
+      "sub_trait": "inhibition_and_planning",
+      "clinical_source": "VADPRS Item 11/16 & SNAP-IV Item 12 (Suy giảm kiểm soát ức chế & Thiếu lập kế hoạch)",
+      "prompt_text": "Con có xu hướng vội vàng viết đáp án ngay khi chưa đọc hết câu hỏi, bỏ qua bước tính toán ngoài nháp hoặc đột ngột chuyển sang làm việc khác giữa chừng mà không kiểm soát được không?",
+      "behavioral_anchor": "Trẻ hấp tấp, thiếu bước kiểm tra lại bài, hành động trước khi suy nghĩ.",
+      "cognitive_impact": "Bắt buộc thiết kế bước kiểm tra ức chế (Checkpoint Step) và khóa giao diện chuyển tiếp."
+    },
+    {
+      "id": "q4",
+      "dimension": "attention_span",
+      "sub_trait": "sustained_attention",
+      "clinical_source": "VADPRS Item 2 & SNAP-IV Item 2 (Khoảng chú ý duy trì liên tục)",
+      "prompt_text": "Khoảng thời gian con có thể ngồi tập trung liên tục vào một bài tập học thuật (không đổi tư thế, không ngắt quãng) thường ngắn đến mức nào (ví dụ: chỉ duy trì được dưới 5 đến 10 phút là bắt đầu bồn chồn, ngáp hoặc nhìn đi nơi khác)?",
+      "behavioral_anchor": "Sự suy giảm chú ý diễn ra nhanh chóng sau vài phút đối diện bài tập có cấu trúc.",
+      "cognitive_impact": "Xác định trực tiếp tham số attention_span_minutes [5-25] và chu kỳ Visual Timer."
+    },
+    {
+      "id": "q5",
+      "dimension": "attention_span",
+      "sub_trait": "distractibility",
+      "clinical_source": "VADPRS Item 8 & SNAP-IV Item 8 (Dễ phân tâm bởi kích thích ngoại lai)",
+      "prompt_text": "Khi đang làm bài tập, chỉ cần một tiếng động nhỏ (tiếng nói chuyện nhẹ, tiếng xe ngoài ngõ, tivi ở phòng bên) hoặc một đồ vật chuyển động trong tầm mắt, con có lập tức bị phân tán và mất luôn dòng suy nghĩ không?",
+      "behavioral_anchor": "Bộ lọc cảm giác yếu, trẻ phản ứng với mọi biến đổi của môi trường xung quanh.",
+      "cognitive_impact": "Xác định mức độ tối giản thị giác của giao diện (Minimal UI, triệt tiêu nhiễu đồ họa)."
+    },
+    {
+      "id": "q6",
+      "dimension": "attention_span",
+      "sub_trait": "completion_persistence",
+      "clinical_source": "VADPRS Item 3 & SNAP-IV Item 4 (Mù thời gian & Khó duy trì quán tính hoàn thành bài)",
+      "prompt_text": "Con có thường xuyên để bài tập ở trạng thái dở dang (ví dụ: làm được nửa bài toán hoặc viết được vài dòng chính tả thì dừng lại, bỏ đi chơi hoặc vẽ linh tinh vào lề vở) dù chưa hết giờ không?",
+      "behavioral_anchor": "Đứt gãy động lực giữa chừng do chiết khấu trì hoãn (Delay Discounting) và thiếu hụt dopamine.",
+      "cognitive_impact": "Quyết định lịch trả thưởng FR1 (dưới 300ms) và số lượng vi nhiệm vụ tối đa mỗi phiên (max_steps_per_session: 3-6)."
+    },
+    {
+      "id": "q7",
+      "dimension": "rsd_sensitivity",
+      "sub_trait": "fear_of_failure",
+      "clinical_source": "Barkley Emotional Dysregulation Framework & Dodson RSD Criteria (Nỗi sợ làm sai & Cầu toàn tiêu cực)",
+      "prompt_text": "Con có biểu hiện quá lo lắng về việc bị sai (ví dụ: liên tục tẩy xóa đến rách vở, hỏi đi hỏi lại 'con làm thế này có bị sai không mẹ', hoặc ngập ngừng không dám tự điền đáp án vì sợ sai) không?",
+      "behavioral_anchor": "Nỗi sợ thất bại gây ức chế hành động, tạo ra cảm giác bất an khi đối diện bài tập đánh giá.",
+      "cognitive_impact": "Xác định cơ chế Error Masking (không dùng dấu X đỏ hay âm thanh báo sai gây kích động hạch hạnh nhân)."
+    },
+    {
+      "id": "q8",
+      "dimension": "rsd_sensitivity",
+      "sub_trait": "feedback_reactivity",
+      "clinical_source": "SNAP-IV Item 19 & Barkley RSD (Bộc phát cảm xúc khi bị góp ý / sửa bài)",
+      "prompt_text": "Khi ba mẹ hoặc thầy cô chỉ ra chỗ con làm sai hoặc nhắc con sửa lại, con có dễ nảy sinh phản ứng gay gắt (như cáu kỉnh, khóc òa, tự ái, xé nháp hoặc giận dỗi nói 'con dốt lắm / con không làm nữa') không?",
+      "behavioral_anchor": "Hạch hạnh nhân kích hoạt quá mức trước phản hồi tiêu cực, coi việc sửa sai như một sự từ chối/công kích cá nhân.",
+      "cognitive_impact": "Kích hoạt giao thức 'Soft Pause' và kịch bản khen ngợi nỗ lực quy trình (Effort-Based Praise) cho phụ huynh."
+    },
+    {
+      "id": "q9",
+      "dimension": "rsd_sensitivity",
+      "sub_trait": "frustration_avoidance",
+      "clinical_source": "VADPRS Impairment & SNAP-IV Item 21 (Ngưỡng chịu đựng thất vọng thấp & Xu hướng trốn chạy)",
+      "prompt_text": "Khi gặp một câu hỏi hóc búa hoặc chưa hiểu ngay cách giải, con có nhanh chóng nản lòng, bực tức và lập tức buông xuôi, từ chối thử sức tiếp không?",
+      "behavioral_anchor": "Trẻ né tránh sự thất vọng bằng cách từ bỏ ngay lập tức để bảo vệ lòng tự trọng bị đe dọa.",
+      "cognitive_impact": "Quy định mức độ trợ giúp nhận thức (Cognitive Scaffolding) tự động mở khóa gợi ý mà không bắt trẻ phải trải qua cảm giác bế tắc."
+    }
+  ],
+  "scoring_formulas_and_mapping": {
+    "raw_subscale_scores": {
+      "executive_function": "S_EF = q1 + q2 + q3, domain=[0, 9]",
+      "attention_span": "S_AS = q4 + q5 + q6, domain=[0, 9]",
+      "rsd_sensitivity": "S_RSD = q7 + q8 + q9, domain=[0, 9]",
+      "total_score": "S_total = S_EF + S_AS + S_RSD, domain=[0, 27]"
+    },
+    "normalized_indices": {
+      "executive_function_deficit_index": "I_EF = S_EF / 9.0, range=[0.0, 1.0]",
+      "attention_decay_index": "I_AS = S_AS / 9.0, range=[0.0, 1.0]",
+      "rejection_sensitivity_index": "I_RSD = S_RSD / 9.0, range=[0.0, 1.0]",
+      "composite_deficit_index": "CDI = 0.40 * I_EF + 0.35 * I_AS + 0.25 * I_RSD, range=[0.0, 1.0]"
+    },
+    "cognitive_profile_vector_mapping": {
+      "attention_span_minutes": {
+        "formula": "round(25.0 - (S_AS / 9.0) * (25.0 - 5.0))",
+        "range": [5, 25],
+        "unit": "minutes",
+        "description": "Ước tính khoảng chú ý tập trung liên tục vào bài tập có cấu trúc"
+      },
+      "recommended_micro_task_duration_sec": {
+        "formula": "clamp(60, 300, round((300.0 - (S_AS / 9.0) * 210.0) / 30.0) * 30)",
+        "range": [60, 300],
+        "step": 30,
+        "unit": "seconds",
+        "description": "Thời lượng khuyến nghị cho mỗi bước vi nhiệm vụ nguyên tử (làm tròn bội số 30s)"
+      },
+      "working_memory_capacity": {
+        "formula": "clamp(1, 5, round(5.0 - (S_EF / 9.0) * 4.0))",
+        "range": [1, 5],
+        "unit": "chunks",
+        "description": "Sức chứa tối đa thông tin/thao tác xử lý đồng thời trong trí nhớ làm việc"
+      },
+      "rsd_sensitivity_level": {
+        "type": "categorical",
+        "thresholds": [
+          {"level": "LOW", "condition": "0 <= S_RSD <= 2"},
+          {"level": "MEDIUM", "condition": "3 <= S_RSD <= 4"},
+          {"level": "HIGH", "condition": "5 <= S_RSD <= 7"},
+          {"level": "SEVERE", "condition": "8 <= S_RSD <= 9"}
+        ],
+        "description": "Mức độ nhạy cảm thất bại kích hoạt quy trình bảo vệ cảm xúc và ngoại hóa lỗi"
+      },
+      "scaffolding_level": {
+        "type": "categorical",
+        "thresholds": [
+          {"level": "MINIMAL", "condition": "CDI < 0.35", "max_steps_per_session": 6},
+          {"level": "MODERATE", "condition": "0.35 <= CDI < 0.70", "max_steps_per_session": 4},
+          {"level": "INTENSIVE", "condition": "CDI >= 0.70", "max_steps_per_session": 3}
+        ],
+        "description": "Cấp độ giàn giáo sư phạm và số bước vi nhiệm vụ tối đa mỗi phiên"
+      }
+    },
+    "prompt_injection_directives": {
+      "scaffolding_level": "Trực tiếp lấy từ scaffolding_level (MINIMAL | MODERATE | INTENSIVE)",
+      "max_atomic_steps": "Trực tiếp lấy từ max_steps_per_session (3, 4, hoặc 6)",
+      "step_duration_target_sec": "Trực tiếp lấy từ recommended_micro_task_duration_sec",
+      "cognitive_chunk_limit": "Trực tiếp lấy từ working_memory_capacity (1-5)",
+      "verb_constraint": {
+        "condition_wm_lte_2": "CHỈ được dùng ĐÚNG 1 động từ hành động duy nhất trong mỗi micro-task (ví dụ: 'Đọc', 'Gạch chân', 'Tính').",
+        "condition_wm_gt_2": "Mỗi micro-task tối đa 1-2 động từ hành động liên kết trực tiếp."
+      },
+      "rsd_tone_guideline": {
+        "condition_high_or_severe": "Áp dụng giao thức hạ nhiệt RSD tối đa: Không phê phán, không dùng từ 'sai', dùng giọng điệu ấm áp của robot Milo, tự động kích hoạt lời khen nỗ lực sau mỗi bước.",
+        "condition_low_or_medium": "Giọng điệu khích lệ tích cực, khen ngợi quy trình làm bài."
+      },
+      "visual_timer_interval_sec": "Bằng recommended_micro_task_duration_sec"
+    }
+  }
+}

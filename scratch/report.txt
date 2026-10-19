@@ -1,0 +1,36 @@
+=== G3_MCQ_14 in Benchmark JSON ===
+original_text: Một mảnh đất hình chữ nhật có chiều dài 15 m và chiều rộng 8 m. Chu vi của mảnh đất đó là:
+A. 23 m
+B. 46 m
+C. 120 m
+D. 46 mét vuông
+Has geometry_spec in JSON: False
+Has reading_passage in JSON: False
+In JS: has geometry_spec = True, has reading_passage = False
+=== G4_MCQ_19 in Benchmark JSON ===
+original_text: Một mảnh đất hình bình hành có độ dài đáy là 24 m, chiều cao tương ứng là 15 m và độ dài cạnh bên là 18 m. Diện tích mảnh đất đó là:
+A. 360 m2
+B. 432 m2
+C. 78 m
+D. 180 m2
+Has geometry_spec in JSON: False
+Has reading_passage in JSON: False
+In JS: has geometry_spec = True, has reading_passage = False
+=== G4_ENG_20 in Benchmark JSON ===
+original_text: Read the passage:
+'It is Sunday morning. Peter's family is at home. His father is washing the car in the garage. His mother is making pancakes in the kitchen. Peter and his sister, Linda, are playing board games in the living room.'
+Question: Where is Peter's mother and what is she doing?
+A. In the garage, washing the car.
+B. In the kitchen, making pancakes.
+C. In the living room, playing board games.
+D. In the bedroom, reading a book.
+Has geometry_spec in JSON: False
+Has reading_passage in JSON: False
+In JS: has geometry_spec = False, has reading_passage = True
+=== G4_VIET_18 in Benchmark JSON ===
+original_text: Đọc đoạn văn sau:
+'Chị Gió bay qua những cánh đồng, khẽ thì thầm với các bông lúa non. Những bông lúa bẽn lẽn nghiêng đầu chào đón chị, rộn rã rì rào ca hát dưới nắng sớm.'
+Câu hỏi: Trong đoạn văn trên, chị Gió được gán cho những hành động giống như con người qua các từ ngữ nào?
+Has geometry_spec in JSON: False
+Has reading_passage in JSON: False
+In JS: has geometry_spec = False, has reading_passage = True

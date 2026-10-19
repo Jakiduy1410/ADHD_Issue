@@ -1,0 +1,44 @@
+{
+  "profile_id": "prof_example_grade3_moderate",
+  "survey_metadata": {
+    "survey_id": "adhd_vadprs_snapiv_9q",
+    "version": "1.0.0",
+    "completed_at": "2026-10-17T13:25:00Z",
+    "child_name": "Bé Minh",
+    "grade": 3,
+    "age": 8,
+    "source": "parent_home_survey"
+  },
+  "raw_scores": {
+    "executive_function": 6,
+    "attention_span": 6,
+    "rsd_sensitivity": 6,
+    "total_score": 18
+  },
+  "normalized_indices": {
+    "executive_function_deficit_index": 0.6667,
+    "attention_decay_index": 0.6667,
+    "rejection_sensitivity_index": 0.6667,
+    "composite_deficit_index": 0.6667
+  },
+  "cognitive_profile_vector": {
+    "attention_span_minutes": 12,
+    "recommended_micro_task_duration_sec": 150,
+    "working_memory_capacity": 2,
+    "rsd_sensitivity_level": "HIGH",
+    "scaffolding_level": "MODERATE",
+    "max_steps_per_session": 4
+  },
+  "prompt_injection_directives": {
+    "scaffolding_level": "MODERATE",
+    "max_atomic_steps": 4,
+    "step_duration_target_sec": 150,
+    "cognitive_chunk_limit": 2,
+    "verb_constraint": "Mỗi micro-task tối đa 1-2 động từ hành động liên kết trực tiếp.",
+    "rsd_tone_guideline": "Áp dụng giao thức hạ nhiệt RSD tối đa: Không phê phán, không dùng từ 'sai', dùng giọng điệu ấm áp của robot Milo, tự động kích hoạt lời khen nỗ lực sau mỗi bước.",
+    "visual_timer_interval_sec": 150
+  },
+  "stage_2_prompt_injection_payload": {
+    "system_instruction_context": "HỌC SINH CÓ HỒ SƠ NHẬN THỨC: Sức chứa trí nhớ làm việc: 2 chunks. Khoảng chú ý hữu dụng: 12 phút (Micro-task tối đa 150s). Độ nhạy cảm thất bại (RSD): HIGH. Mức giàn giáo sư phạm: MODERATE. Yêu cầu phân rã: Tối đa 4 bước vi nhiệm vụ, mỗi bước chứa 1-2 động từ cụ thể. Tuyệt đối không phán xét lỗi, ưu tiên gợi ý từng phần khi gặp vướng mắc."
+  }
+}

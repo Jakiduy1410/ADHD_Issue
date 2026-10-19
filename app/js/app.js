@@ -22,7 +22,12 @@ window.addEventListener('DOMContentLoaded', () => {
           const validTasks = saved.childRoadmap.filter(t => (
             t &&
             typeof t === 'object' &&
-            t.id &&
+            t.id
+          )).map(t => {
+            // Luôn đồng bộ dữ liệu chuẩn mực mới nhất từ taskDatabase nếu có
+            return (taskDatabase && taskDatabase[t.id]) ? taskDatabase[t.id] : t;
+          }).filter(t => (
+            t &&
             Array.isArray(t.steps) &&
             t.steps.length > 0
           ));
@@ -39,6 +44,9 @@ window.addEventListener('DOMContentLoaded', () => {
         appState.activeTask = (appState.childRoadmap && appState.childRoadmap.length > 0)
           ? (appState.childRoadmap[appState.currentRoadmapIndex] || appState.childRoadmap[0])
           : null;
+        if (appState.activeTask && taskDatabase && taskDatabase[appState.activeTask.id]) {
+          appState.activeTask = taskDatabase[appState.activeTask.id];
+        }
 
         // Đảm bảo currentStepIndex không vượt quá số bước của activeTask
         if (saved.currentStepIndex !== undefined && appState.activeTask && Array.isArray(appState.activeTask.steps) && saved.currentStepIndex >= 0 && saved.currentStepIndex < appState.activeTask.steps.length) {

@@ -20,7 +20,9 @@
           const exercises = data.exercises || data.tasks || (Array.isArray(data) ? data : []);
           if (Array.isArray(exercises) && exercises.length > 0) {
             exercises.forEach(t => {
-              if (t && t.id) taskDatabase[t.id] = t;
+              if (t && t.id && Array.isArray(t.steps) && t.steps.length > 0 && t.title) {
+                taskDatabase[t.id] = t;
+              }
             });
             if (typeof renderParentCatalogList === 'function') {
               renderParentCatalogList();

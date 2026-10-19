@@ -1,5 +1,5 @@
 /* ============================================================
-   CURRICULUM TASKS DATA MODULE (GDPT 2018 + LIFE ROUTINES)
+   MODULE: PRE-CONFIGURED 29 GDPT 2018 & ROUTINE TASKS DATABASE
    ============================================================ */
 var taskDatabase = {
   "G1_MATH_01": {
@@ -453,39 +453,37 @@ var taskDatabase = {
     "island": "study",
     "reward": 110,
     "stepSeconds": 60,
-    "original_text": "Hình vẽ một ngôi nhà gồm: một mái nhà hình tam giác, thân nhà hình chữ nhật, một cửa chính hình chữ nhật và hai cửa sổ hình tròn. Hỏi ngôi nhà đó có bao nhiêu hình tròn?\nA. 1 hình tròn\nB. 2 hình tròn\nC. 3 hình tròn\nD. 4 hình tròn",
+    "original_text": "Có bao nhiêu cửa sổ hình tròn trong ngôi nhà này?",
     "final_answer": {
-      "value": "B",
-      "unit": null,
-      "normalized_display": "B. 2 hình tròn",
+      "value": "2",
+      "unit": "cửa sổ",
+      "normalized_display": "2 cửa sổ hình tròn",
       "acceptable_variants": [
-        "B",
-        "B.",
-        "2 hình tròn",
         "2",
-        "B. 2 hình tròn"
+        "2 cửa sổ",
+        "2 hình tròn",
+        "hai",
+        "hai cửa sổ"
       ]
     },
     "adhd_scaffolding_notes": {
-      "working_memory_pitfall": "Xu hướng hấp tấp chọn số 1 vì nhìn thấy số 'một' xuất hiện đầu tiên trong đề bài.",
-      "executive_function_scaffolding": "Giàn giáo hình học trực quan SVG ngôi nhà giúp neo sự chú ý vào đúng 2 cửa sổ tròn.",
-      "visual_or_concrete_aid": "Mô hình SVG ngôi nhà với 2 cửa sổ hình tròn màu xanh dương nổi bật."
+      "working_memory_pitfall": "Dễ bị quá tải thị giác nếu đưa hình ngôi nhà ngay từ bước 1.",
+      "executive_function_scaffolding": "Bước 1 đọc đề sạch sẽ, Bước 2 tương tác chạm cửa sổ tròn trên SVG, Bước 3 đếm tổng kết.",
+      "visual_or_concrete_aid": "Mô hình SVG ngôi nhà với 2 cửa sổ hình tròn màu xanh dương tương tác chạm trực tiếp."
     },
     "steps": [
       {
         "step_id": 1,
-        "badge": "Nhìn Hình Xác Định",
-        "action_verb": "Xác_định",
-        "atomic_instruction": "Quan sát mô hình ngôi nhà ở trên, đề bài yêu cầu đếm hình gì?",
-        "text": "Quan sát mô hình ngôi nhà ở trên, đề bài yêu cầu đếm hình gì?",
-        "type": "single_choice",
-        "ui_type": "single_choice",
+        "badge": "Đọc Đề & Tìm Dữ Kiện",
+        "action_verb": "Gạch_chân",
+        "atomic_instruction": "Gạch chân từ khóa 'hình tròn' trong đề bài.",
+        "text": "Gạch chân từ khóa 'hình tròn' trong đề bài.",
+        "type": "highlight",
+        "ui_type": "highlight",
         "ui_data": {
-          "prompt_text": "Đề bài yêu cầu con đếm loại hình học nào trên ngôi nhà?",
-          "options": [
-            "Hình tròn",
-            "Hình tam giác",
-            "Hình chữ nhật"
+          "prompt_text": "Có bao nhiêu cửa sổ hình tròn trong ngôi nhà này?",
+          "highlight_target_segments": [
+            "hình tròn"
           ]
         },
         "duration_sec": 60,
@@ -495,66 +493,78 @@ var taskDatabase = {
           "dopamine_points": 25
         },
         "hints": [
-          "Đề bài hỏi: có mấy hình tròn nhé con."
+          "Tìm từ 'hình tròn' trong câu hỏi nhé con!"
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "Hình tròn",
-          "feedback_on_error": "Chúng mình cần đếm hình tròn con nha!"
+          "expected_answer": [
+            "hình tròn"
+          ],
+          "feedback_on_error": "Milo cùng con tìm từ 'hình tròn' nhé!"
         },
-        "mathematical_or_logical_goal": "Xác định hình tiêu điểm",
-        "intermediate_output": "Hình tiêu điểm: hình tròn",
+        "mathematical_or_logical_goal": "Đọc đề bài và định vị từ khóa hình học tiêu điểm",
+        "intermediate_output": "hình tròn",
         "is_final_step": false
       },
       {
         "step_id": 2,
-        "badge": "Đếm Cửa Sổ Tròn",
-        "action_verb": "Đếm",
-        "atomic_instruction": "Con hãy nhìn vào ngôi nhà và đếm xem có mấy cửa sổ hình tròn màu xanh?",
-        "text": "Con hãy nhìn vào ngôi nhà và đếm xem có mấy cửa sổ hình tròn màu xanh?",
+        "badge": "Xác Định Cửa Sổ Tròn",
+        "action_verb": "Chạm_hình",
+        "atomic_instruction": "Bé hãy chạm vào cửa sổ hình tròn trên ngôi nhà bên dưới.",
+        "text": "Bé hãy chạm vào cửa sổ hình tròn trên ngôi nhà bên dưới.",
         "type": "single_choice",
         "ui_type": "single_choice",
         "ui_data": {
-          "prompt_text": "Trên ngôi nhà có bao nhiêu ô cửa sổ tròn?",
+          "prompt_text": "Xác định cửa sổ hình tròn: Bé hãy chạm vào cửa sổ hình tròn 🔵 trên ngôi nhà bên dưới nhé!",
+          "geometry_spec": {
+            "shape_type": "house_counting",
+            "dimensions": {
+              "roof": "tam giác đỏ",
+              "wall": "hình vuông vàng",
+              "door": "hình chữ nhật nâu",
+              "windows": "2 hình tròn xanh dương"
+            },
+            "target": "hình tròn"
+          },
           "options": [
-            "2 hình tròn",
-            "1 hình tròn",
-            "3 hình tròn"
+            "Hai ô cửa sổ (Hình tròn 🔵)",
+            "Mái nhà (Hình tam giác 🔺)",
+            "Cửa chính (Hình chữ nhật 🚪)"
           ]
         },
         "duration_sec": 60,
         "immediate_reinforcer": {
           "visual_asset": "particle_burst_gold",
           "audio_cue": "sparkle_ting_short",
-          "dopamine_points": 25
+          "dopamine_points": 30
         },
         "hints": [
-          "Nhìn vào 2 ô cửa sổ tròn màu xanh ở thân nhà nhé!"
+          "Bé hãy chạm vào 1 trong 2 ô cửa sổ tròn màu xanh trên thân nhà nhé!"
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "2 hình tròn",
-          "feedback_on_error": "Có 2 cửa sổ hình tròn trong ngôi nhà!"
+          "expected_answer": "Hai ô cửa sổ (Hình tròn 🔵)",
+          "feedback_on_error": "Đó chính là hai ô cửa sổ hình tròn màu xanh đấy con!"
         },
-        "mathematical_or_logical_goal": "Đếm số lượng thực tế trên mô hình trực quan",
-        "intermediate_output": "'hai cửa sổ hình tròn' -> 2",
+        "mathematical_or_logical_goal": "Xác định vật thể hình tròn qua tương tác xúc giác SVG",
+        "intermediate_output": "Cửa sổ -> hình tròn",
         "is_final_step": false
       },
       {
         "step_id": 3,
-        "badge": "Chọn Đáp Án Đúng",
+        "badge": "Đếm Tổng Số Lượng",
         "action_verb": "Chọn",
-        "atomic_instruction": "Chọn phương án đúng nhất cho câu hỏi của bài.",
-        "text": "Chọn phương án đúng nhất cho câu hỏi của bài.",
+        "atomic_instruction": "Vậy tổng cộng có bao nhiêu cửa sổ hình tròn?",
+        "text": "Vậy tổng cộng có bao nhiêu cửa sổ hình tròn?",
         "type": "single_choice",
         "ui_type": "single_choice",
         "ui_data": {
-          "prompt_text": "Vậy ngôi nhà đó có bao nhiêu hình tròn?",
+          "prompt_text": "Vậy tổng cộng có bao nhiêu cửa sổ hình tròn?",
           "options": [
-            "A. 1 hình tròn",
-            "B. 2 hình tròn",
-            "C. 3 hình tròn",
-            "D. 4 hình tròn"
+            "2 cửa sổ",
+            "1 cửa sổ",
+            "3 cửa sổ",
+            "4 cửa sổ"
           ]
         },
         "duration_sec": 60,
@@ -564,15 +574,15 @@ var taskDatabase = {
           "dopamine_points": 40
         },
         "hints": [
-          "Có 2 hình tròn tương ứng với phương án B."
+          "Có 2 ô cửa sổ tròn trên ngôi nhà con nhé!"
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "B. 2 hình tròn",
-          "feedback_on_error": "Phương án B (2 hình tròn) là đáp án chính xác!"
+          "expected_answer": "2 cửa sổ",
+          "feedback_on_error": "Có 2 cửa sổ hình tròn con nha!"
         },
-        "mathematical_or_logical_goal": "Khẳng định phương án đúng",
-        "intermediate_output": "Phương án B",
+        "mathematical_or_logical_goal": "Tổng kết số lượng đếm được",
+        "intermediate_output": "2 cửa sổ hình tròn",
         "is_final_step": true
       }
     ]
@@ -4005,7 +4015,8 @@ var taskDatabase = {
     ]
   }
 };
-    taskDatabase['math_garden'] = taskDatabase['G1_MATH_01']; // backwards compatibility alias
+
+taskDatabase['math_garden'] = taskDatabase['G1_MATH_01']; // backwards compatibility alias
 
 if (typeof window !== 'undefined') { window.taskDatabase = taskDatabase; }
 if (typeof global !== 'undefined') { global.taskDatabase = taskDatabase; }

@@ -93,20 +93,20 @@
             <div class="min-w-0 flex-1">
               <div class="flex items-center gap-1 mb-0.5 flex-wrap">
                 <span class="text-[9px] font-black uppercase px-2 py-0.2 rounded-full ${t.cat === 'math' ? 'bg-amber-100 text-amber-800' : t.cat === 'viet' ? 'bg-rose-100 text-rose-800' : t.cat === 'eng' ? 'bg-indigo-100 text-indigo-800' : 'bg-emerald-100 text-emerald-800'}">
-                  ${t.catName}
+                  ${t.catName || 'Nhiệm vụ'}
                 </span>
                 <span class="text-[9px] font-bold bg-slate-100 text-slate-800 px-1.5 py-0.2 rounded-md">
                   Lớp ${t.grade || 1}
                 </span>
                 <span class="text-[10px] text-teal-600 font-bold ml-auto">Xem bước →</span>
               </div>
-              <h4 class="font-bold text-slate-800 text-xs truncate">${t.title}</h4>
+              <h4 class="font-bold text-slate-800 text-xs truncate">${t.title || 'Nhiệm vụ'}</h4>
               <div class="flex items-center gap-1 text-[10px] text-slate-500 mt-0.5 flex-wrap">
-                <span class="font-bold text-teal-700">${t.steps.length} Micro-tasks</span>
+                <span class="font-bold text-teal-700">${(t.steps && t.steps.length) || 0} Micro-tasks</span>
                 <span>•</span>
-                <span class="font-bold text-amber-600">+${t.reward} ⭐</span>
+                <span class="font-bold text-amber-600">+${t.reward || 50} ⭐</span>
                 <span>•</span>
-                <span>~${Math.round(((t.stepSeconds || 60) * t.steps.length) / 60)} phút</span>
+                <span>~${Math.round(((t.stepSeconds || 60) * ((t.steps && t.steps.length) || 1)) / 60)} phút</span>
               </div>
             </div>
           </div>

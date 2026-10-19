@@ -1667,6 +1667,8 @@ class TestTier2BoundaryAndCornerCases(unittest.TestCase):
         """B21.2: No temporary or backup files (.tmp, .bak, .orig) in prompts/."""
         prompts_dir = REPO_ROOT / "prompts"
         for p in prompts_dir.iterdir():
+            if p.is_dir():
+                continue
             self.assertTrue(p.name.endswith(".md"))
             self.assertFalse(p.name.endswith(".bak"))
             self.assertFalse(p.name.endswith(".tmp"))

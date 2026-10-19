@@ -36,9 +36,11 @@ def map_subject_code(subject: str) -> str:
         return "tieng_viet"
     if "anh" in s or "eng" in s:
         return "tieng_anh"
-    if "khoa" in s or "khoa_hoc" in s:
+    if "khoa" in s or "khoa_hoc" in s or "tự nhiên" in s or "tu_nhien" in s:
         return "khoa_hoc_tu_nhien"
-    return "toan"
+    if "hoạt động" in s or "hoat_dong" in s or "sinh hoạt" in s or "chore" in s:
+        return "hoat_dong_trai_nghiem"
+    return s
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("api_server")
@@ -350,11 +352,19 @@ def initialize_pre_decomposed_routines() -> List[Dict[str, Any]]:
 @app.on_event("startup")
 async def startup_event():
     global CURRICULUM_DATA, PRE_DECOMPOSED_ROUTINES
-    curriculum_path = REPO_ROOT / "data" / "curriculum" / "grade_1_to_5_benchmark.json"
+    curriculum_path = REPO_ROOT / "data" / "curriculum" / "tasks_db.json"
     if curriculum_path.is_file():
         with open(curriculum_path, "r", encoding="utf-8") as f:
-            CURRICULUM_DATA = json.load(f)
-        logger.info(f"Loaded {len(CURRICULUM_DATA.get('exercises', []))} curriculum benchmark exercises.")
+            raw_tasks = json.load(f)
+        if isinstance(raw_tasks, dict):
+            task_list = list(raw_tasks.values())
+            CURRICULUM_DATA = {"exercises": task_list}
+            logger.info(f"Loaded {len(task_list)} curriculum tasks from tasks_db.json.")
+        elif isinstance(raw_tasks, list):
+            CURRICULUM_DATA = {"exercises": raw_tasks}
+            logger.info(f"Loaded {len(raw_tasks)} curriculum tasks from tasks_db.json.")
+        else:
+            CURRICULUM_DATA = {"exercises": []}
     else:
         logger.warning(f"Curriculum file not found at {curriculum_path}")
 
@@ -702,7 +712,7 @@ async def dispatch_tasks_to_kid(req: DispatchRequest):
 
     for idx, tid in enumerate(req.task_ids, start=1):
         item = all_exercises_map.get(tid)
-        title = item.get("topic", item.get("category", f"Nhiệm vụ {idx}")) if item else f"Nhiệm vụ {idx}"
+        title = item.get("title", item.get("topic", item.get("category", f"Nhiệm vụ {idx}"))) if item else f"Nhiệm vụ {idx}"
         pts = 50 + (idx * 10)
         total_dopamine += pts
 

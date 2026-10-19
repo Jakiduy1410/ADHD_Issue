@@ -716,8 +716,9 @@
           }
         }).join(' ');
 
-        // Geometry SVG scaffold if geometry_spec exists
-        const geomSvg = (ui.geometry_spec || (task && task.geometry_spec)) ? renderGeometrySvg(ui.geometry_spec || task.geometry_spec) : '';
+        // BƯỚC 1 GẠCH CHÂN ĐỀ BÀI: TUYỆT ĐỐI KHÔNG HIỂN THỊ HÌNH VẼ ĐỂ TRẺ TẬP TRUNG ĐỌC ĐỀ!
+        // Chỉ vẽ hình nếu chính bước này yêu cầu rõ trong ui.geometry_spec
+        const geomSvg = ui.geometry_spec ? renderGeometrySvg(ui.geometry_spec) : '';
 
         // Collapsible reading passage reference drawer if reading passage exists
         let passageDrawerHtml = '';
@@ -800,6 +801,47 @@
         }
       } else {
         toggleSoftPause(true);
+      }
+    }
+
+    function handleHouseWindowClick(el, winIdx) {
+      if (typeof playSfx === 'function') playSfx('sparkle');
+      if (el) {
+        const circle = el.querySelector('circle') || el;
+        if (circle) {
+          circle.setAttribute('fill', '#86EFAC');
+          circle.setAttribute('stroke', '#16A34A');
+          circle.setAttribute('stroke-width', '4');
+        }
+      }
+      const fb = document.getElementById('house-click-feedback') || document.getElementById('choice-feedback');
+      if (fb) {
+        fb.innerHTML = `✨ <span class="text-emerald-700 font-black">Chính xác! Bé đã tìm thấy cửa sổ hình tròn 🔵!</span>`;
+      }
+      // Tự động chọn phương án tương ứng nếu có danh sách lựa chọn
+      const allChoiceBtns = document.querySelectorAll('#child-interactive-stage button');
+      let foundMatchingChoice = false;
+      allChoiceBtns.forEach(b => {
+        const txt = (b.innerText || '').toLowerCase();
+        if (txt.includes('cửa sổ') || txt.includes('hình tròn')) {
+          b.click();
+          foundMatchingChoice = true;
+        }
+      });
+      if (!foundMatchingChoice) {
+        const btnNext = document.getElementById('child-btn-next-step');
+        if (btnNext) {
+          btnNext.disabled = false;
+          btnNext.classList.remove('btn-disabled');
+        }
+      }
+    }
+
+    function handleHouseWindowWrongClick(el, partName) {
+      if (typeof playSfx === 'function') playSfx('soft');
+      const fb = document.getElementById('house-click-feedback') || document.getElementById('choice-feedback');
+      if (fb) {
+        fb.innerHTML = `💡 <span class="text-amber-700 font-bold">Đây là ${partName}! Bé hãy chạm vào cửa sổ hình tròn 🔵 nhé!</span>`;
       }
     }
 

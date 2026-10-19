@@ -477,8 +477,7 @@
       }
 
       if (!session) {
-        // If in automated test sandbox environment without live network, allow test helper
-        if (typeof window !== 'undefined' && (window.__TEST_MODE__ || typeof fetch === 'undefined')) {
+        if (typeof window !== 'undefined' && window.__TEST_MODE__) {
           session = generateClientSideMicroTasks(input, profile);
         } else {
           showToast("Lỗi Phân Rã AI", fetchError || "Không thể kết nối đến Gemini AI. Vui lòng kiểm tra lại server!", "❌");

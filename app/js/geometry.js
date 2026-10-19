@@ -74,30 +74,40 @@
         `;
       } else if (shape === 'house' || shape === 'house_counting') {
         return `
-          <div class="my-1.5 p-2 bg-white rounded-2xl border-2 border-teal-200 flex flex-col items-center justify-center shadow-xs">
-            <svg viewBox="0 0 280 155" class="w-full max-w-[260px] h-[135px] overflow-visible select-none">
-              <!-- Mái nhà hình tam giác màu đỏ nhạt -->
-              <polygon points="140,15 50,65 230,65" fill="#FCA5A5" stroke="#DC2626" stroke-width="2.5" stroke-linejoin="round" />
-              <text x="140" y="48" text-anchor="middle" font-size="10" font-weight="extrabold" fill="#991B1B">Mái tam giác</text>
+          <div class="my-1.5 p-2 bg-white rounded-2xl border-2 border-teal-200 flex flex-col items-center justify-center shadow-xs select-none">
+            <svg viewBox="0 0 280 155" class="w-full max-w-[260px] h-[135px] overflow-visible">
+              <!-- Mái nhà hình tam giác (chạm vào sẽ hướng dẫn tìm hình tròn) -->
+              <polygon points="140,15 50,65 230,65" fill="#FCA5A5" stroke="#DC2626" stroke-width="2.5" stroke-linejoin="round"
+                class="cursor-pointer hover:opacity-85 transition" onclick="handleHouseWindowWrongClick(this, 'mái tam giác 🔺')" />
+              <text x="140" y="48" text-anchor="middle" font-size="10" font-weight="extrabold" fill="#991B1B" pointer-events="none">Mái tam giác</text>
               
-              <!-- Thân nhà hình chữ nhật màu vàng nhạt -->
-              <rect x="65" y="65" width="150" height="80" rx="4" fill="#FEF08A" stroke="#CA8A04" stroke-width="2.5" />
+              <!-- Thân nhà hình chữ nhật -->
+              <rect x="65" y="65" width="150" height="80" rx="4" fill="#FEF08A" stroke="#CA8A04" stroke-width="2.5" pointer-events="none" />
               
               <!-- Cửa chính hình chữ nhật -->
-              <rect x="122" y="95" width="36" height="50" rx="3" fill="#FED7AA" stroke="#EA580C" stroke-width="2" />
+              <rect x="122" y="95" width="36" height="50" rx="3" fill="#FED7AA" stroke="#EA580C" stroke-width="2"
+                class="cursor-pointer hover:opacity-85 transition" onclick="handleHouseWindowWrongClick(this, 'cửa chính hình chữ nhật 🚪')" />
+              <text x="140" y="122" text-anchor="middle" font-size="8" font-weight="bold" fill="#C2410C" pointer-events="none">Cửa chính</text>
               
-              <!-- Cửa sổ tròn 1 bên trái -->
-              <circle cx="95" cy="95" r="15" fill="#BAE6FD" stroke="#0284C7" stroke-width="3" />
-              <line x1="95" y1="80" x2="95" y2="110" stroke="#0284C7" stroke-width="1.5" />
-              <line x1="80" y1="95" x2="110" y2="95" stroke="#0284C7" stroke-width="1.5" />
-              <text x="95" y="125" text-anchor="middle" font-size="9" font-weight="900" fill="#0369A1">Cửa sổ 1 🔵</text>
+              <!-- Cửa sổ tròn 1 bên trái (ẤN VÀO LÀ ĐÚNG) -->
+              <g class="cursor-pointer group" onclick="handleHouseWindowClick(this, 1)">
+                <circle cx="95" cy="95" r="16" fill="#BAE6FD" stroke="#0284C7" stroke-width="3" id="house-circle-win-1" class="transition-all duration-300 group-hover:scale-110" />
+                <line x1="95" y1="79" x2="95" y2="111" stroke="#0284C7" stroke-width="1.5" pointer-events="none" />
+                <line x1="79" y1="95" x2="111" y2="95" stroke="#0284C7" stroke-width="1.5" pointer-events="none" />
+                <text x="95" y="125" text-anchor="middle" font-size="9" font-weight="900" fill="#0369A1" pointer-events="none">Cửa sổ 1 🔵</text>
+              </g>
               
-              <!-- Cửa sổ tròn 2 bên phải -->
-              <circle cx="185" cy="95" r="15" fill="#BAE6FD" stroke="#0284C7" stroke-width="3" />
-              <line x1="185" y1="80" x2="185" y2="110" stroke="#0284C7" stroke-width="1.5" />
-              <line x1="170" y1="95" x2="200" y2="95" stroke="#0284C7" stroke-width="1.5" />
-              <text x="185" y="125" text-anchor="middle" font-size="9" font-weight="900" fill="#0369A1">Cửa sổ 2 🔵</text>
+              <!-- Cửa sổ tròn 2 bên phải (ẤN VÀO LÀ ĐÚNG) -->
+              <g class="cursor-pointer group" onclick="handleHouseWindowClick(this, 2)">
+                <circle cx="185" cy="95" r="16" fill="#BAE6FD" stroke="#0284C7" stroke-width="3" id="house-circle-win-2" class="transition-all duration-300 group-hover:scale-110" />
+                <line x1="185" y1="79" x2="185" y2="111" stroke="#0284C7" stroke-width="1.5" pointer-events="none" />
+                <line x1="169" y1="95" x2="201" y2="95" stroke="#0284C7" stroke-width="1.5" pointer-events="none" />
+                <text x="185" y="125" text-anchor="middle" font-size="9" font-weight="900" fill="#0369A1" pointer-events="none">Cửa sổ 2 🔵</text>
+              </g>
             </svg>
+            <div id="house-click-feedback" class="text-[11px] font-bold text-center text-slate-500 mt-1 min-h-[16px]">
+              👆 Bé hãy chạm vào cửa sổ hình tròn trên ngôi nhà nhé!
+            </div>
           </div>
         `;
       }

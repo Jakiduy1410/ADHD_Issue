@@ -192,11 +192,17 @@
       }
 
       _handleIncomingWsMessage(data) {
-        if (!data || !data.event_type) return;
-
-        if (data.event_type === "CONNECTION_ESTABLISHED" || data.event_type === "PONG") {
+        if (data.event_type === "CONNECTION_ESTABLISHED" || data.event_type === "ROOM_STATE_HYDRATE") {
+          if (data.state && typeof applyServerRoomState === 'function') {
+            applyServerRoomState(data.state);
+          }
           return;
         }
+
+        if (data.event_type === "PONG") {
+          return;
+        }
+
 
         if (data.sender && data.sender === this.clientId) return;
 
@@ -345,8 +351,68 @@
     }
 
     /* ============================================================
+       0.15 SERVER-AUTHORITATIVE STATE HYDRATION (WEBSOCKET DRIVEN)
+       ============================================================ */
+    function applyServerRoomState(state) {
+      if (!state || typeof state !== 'object') return;
+      if (typeof appState === 'undefined') return;
+
+      if (state.stars !== undefined && typeof updateStarsEverywhere === 'function') {
+        appState.stars = state.stars;
+        updateStarsEverywhere(state.stars);
+      }
+
+      if (Array.isArray(state.child_roadmap) && state.child_roadmap.length > 0) {
+        const validTasks = state.child_roadmap.filter(t => (
+          t && typeof t === 'object' && t.id && Array.isArray(t.steps) && t.steps.length > 0
+        ));
+        if (validTasks.length > 0) {
+          appState.childRoadmap = validTasks;
+        }
+      }
+
+      if (state.current_roadmap_index !== undefined && state.current_roadmap_index >= 0) {
+        const maxIdx = Math.max(0, (appState.childRoadmap || []).length - 1);
+        appState.currentRoadmapIndex = Math.min(state.current_roadmap_index, maxIdx);
+      }
+
+      if (appState.childRoadmap && appState.childRoadmap.length > 0) {
+        appState.activeTask = appState.childRoadmap[appState.currentRoadmapIndex] || appState.childRoadmap[0];
+      }
+
+      if (state.current_step_index !== undefined && state.current_step_index >= 0) {
+        appState.currentStepIndex = state.current_step_index;
+      }
+
+      if (state.pending_ticket) {
+        appState.pendingTicket = state.pending_ticket;
+        const banner = document.getElementById('parent-golden-ticket-banner');
+        const redDot = document.getElementById('p-reward-dot');
+        const desc = document.getElementById('parent-ticket-desc');
+        if (banner) banner.classList.remove('hidden');
+        if (redDot) redDot.classList.remove('hidden');
+        if (desc) desc.innerText = `🎉 Leo vừa dùng ${state.pending_ticket.cost || 500} ⭐ để đổi [Vé Vàng: ${state.pending_ticket.title}]!`;
+      } else {
+        appState.pendingTicket = null;
+        const banner = document.getElementById('parent-golden-ticket-banner');
+        const redDot = document.getElementById('p-reward-dot');
+        if (banner) banner.classList.add('hidden');
+        if (redDot) redDot.classList.add('hidden');
+      }
+
+      if (typeof renderChildIslandRoadmap === 'function') {
+        renderChildIslandRoadmap();
+      }
+      if (typeof renderParentActiveRoadmapList === 'function') {
+        renderParentActiveRoadmapList();
+      }
+    }
+    if (typeof window !== 'undefined') { window.applyServerRoomState = applyServerRoomState; }
+
+    /* ============================================================
        0.2 MODAL CONTROLLER & SUBSCRIBERS REGISTRATION
        ============================================================ */
+
     function showChildTicketApprovedModal(ticketTitle, praiseMessage) {
       const modal = document.getElementById('child-modal-ticket-approved');
       if (!modal) return;

@@ -93,16 +93,14 @@
       ring.style.setProperty('--progress', `${progressPct}%`);
 
       const formatted = formatTime(stepRemainingSeconds);
+      pill.className = "hidden";
       if (isTimerPaused) {
         pill.innerHTML = `⏸️ ${formatted} • Đang sạc pin năng lượng`;
-        pill.className = "text-[10px] font-bold text-sky-600 flex items-center gap-1 font-mono bg-sky-50 px-2 py-0.5 rounded-lg border border-sky-200";
       } else if (progressPct > 30) {
         pill.innerHTML = `⏱️ ${formatted} • Năng lượng dồi dào`;
-        pill.className = "text-[10px] font-bold text-emerald-600 flex items-center gap-1 font-mono bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200";
         ring.classList.remove('ring-timer-warning');
       } else {
         pill.innerHTML = `⏱️ ${formatted} • Nhẹ nhàng về đích`;
-        pill.className = "text-[10px] font-bold text-amber-600 flex items-center gap-1 font-mono bg-amber-50 px-2 py-0.5 rounded-lg border border-amber-200";
         ring.classList.add('ring-timer-warning');
       }
     }
@@ -210,10 +208,10 @@
       // 2. Chạy đồng hồ thị giác
       startStepTimer(task.stepSeconds || 60);
 
-      // 3. Header Text
-      const badgeTitle = stepData.badge || stepData.title || (stepData.action_verb ? `Bước ${stepIdx + 1}: ${stepData.action_verb}` : `Bước ${stepIdx + 1}`);
-      document.getElementById('child-step-badge').innerText = `Bước ${stepIdx + 1} / ${totalSteps} • ${badgeTitle}`;
+      // 3. Header Text (Duy nhất 1 tiêu đề to rõ, badge bước gọn gàng)
+      document.getElementById('child-step-badge').innerText = `Bước ${stepIdx + 1} / ${totalSteps}`;
       document.getElementById('child-instruction-text').innerHTML = stepData.text || stepData.atomic_instruction || (stepData.title || "");
+
 
       // 4. Interactive Stage Render theo Loại
       const stage = document.getElementById('child-interactive-stage');
@@ -382,27 +380,23 @@
           `;
         }
         let optHtml = opts.map(opt => `
-          <button onclick='handleChildChoice(this, ${JSON.stringify(opt)}, ${JSON.stringify(expected)})' class="w-full btn-3d-white py-2.5 px-3 rounded-2xl font-black text-xs text-slate-800 text-left hover:border-teal-400 transition flex items-center justify-between">
+          <button onclick='handleChildChoice(this, ${JSON.stringify(opt)}, ${JSON.stringify(expected)})' class="w-full btn-3d-white py-3 px-4 rounded-2xl font-black text-xs text-slate-800 text-left hover:border-emerald-400 transition flex items-center justify-between">
             <span>${opt}</span>
-            <span class="text-[10px] text-slate-400 font-normal">Chạm để chọn 👆</span>
           </button>
         `).join('');
         stage.innerHTML = `
-          <div class="bg-teal-50/70 border-2 border-dashed border-teal-300 rounded-2xl p-3 min-h-[200px] flex flex-col justify-between gap-2.5">
-            <div class="flex items-center gap-2">
-              <span class="text-xl">🎯</span>
-              <p class="text-xs font-bold text-slate-800 leading-relaxed">${prompt}</p>
-            </div>
+          <div class="flex flex-col gap-2.5 my-auto w-full">
+            <p class="hidden">${prompt}</p>
             ${geomSvg}
             ${passageDrawerHtml}
-            <div class="space-y-1.5 my-auto">
+            <div class="space-y-2 my-auto">
               ${optHtml}
             </div>
-            <div id="choice-feedback" class="text-[10px] font-bold text-center text-slate-500">
-              Chọn đáp án phù hợp nhất để mở khóa bước kế tiếp!
-            </div>
+            <div id="choice-feedback" class="text-xs font-bold text-center min-h-[18px]"></div>
           </div>
         `;
+
+
 
       } else if (stepData.ui_type === 'text_input' || stepData.type === 'text_input') {
         const prompt = ui.prompt_text || stepData.text || stepData.atomic_instruction || "Nhập câu trả lời của bé:";
@@ -631,22 +625,21 @@
         }
 
         stage.innerHTML = `
-          <div class="bg-teal-50/70 border-2 border-dashed border-teal-300 rounded-2xl p-3 flex flex-col justify-between gap-2.5">
-            <div class="flex items-center gap-2">
-              <span class="text-xl">✍️</span>
-              <p class="text-xs font-bold text-slate-800 leading-relaxed">${prompt}</p>
-            </div>
+          <div class="flex flex-col gap-2.5 my-auto w-full">
+            <p class="hidden">${prompt}</p>
             ${geomSvg}
             ${passageDrawerHtml}
             <div class="my-auto space-y-2">
               ${mathDisplayHtml}
-              <button onclick='handleChildTextInputSubmit(${JSON.stringify(expected)})' class="w-full btn-3d-green py-2 rounded-xl font-black text-xs text-white shadow-md active:scale-95 transition">
+              <button onclick='handleChildTextInputSubmit(${JSON.stringify(expected)})' class="w-full btn-3d-green py-2.5 rounded-xl font-black text-xs text-white shadow-md active:scale-95 transition">
                 ✨ XÁC NHẬN ĐÁP SỐ
               </button>
             </div>
-            <div id="text-input-feedback" class="text-[10px] font-bold text-center min-h-[16px]"></div>
+            <div id="text-input-feedback" class="text-xs font-bold text-center min-h-[16px]"></div>
           </div>
         `;
+
+
 
       } else if (stepData.ui_type === 'highlight' || stepData.type === 'highlight') {
         const targetSegments = ui.highlight_target_segments || 
@@ -737,30 +730,22 @@
         }
 
         stage.innerHTML = `
-          <div class="bg-teal-50/70 border-2 border-dashed border-teal-300 rounded-2xl p-3 flex flex-col gap-2.5">
-            <div class="flex items-center gap-2 pb-1 border-b border-teal-200/60">
-              <span class="text-lg">🔍</span>
-              <p class="text-xs font-black text-teal-900 leading-snug">Chạm vào các ô từ khóa màu vàng để nạp dữ kiện!</p>
-            </div>
-            
+          <div class="flex flex-col gap-3 my-auto w-full">
             ${geomSvg}
             ${passageDrawerHtml}
 
-            <!-- Natural Reading Flow (Khít sát tự nhiên, hiệu ứng dạ quang) -->
-            <div id="highlight-tokens-container" class="bg-white/95 p-3 rounded-xl border border-teal-200 leading-loose text-left shadow-xs">
+            <!-- Natural Reading Flow (Thoáng, sạch sẽ, không hộp lồng hộp) -->
+            <div id="highlight-tokens-container" class="bg-white p-4 rounded-2xl border border-slate-200 leading-loose text-left shadow-xs text-sm">
               ${paragraphHtml}
             </div>
 
-            <!-- Milo Feedback & Counter -->
-            <div id="highlight-feedback" class="text-[11px] font-bold text-center text-teal-800 bg-teal-100/60 py-1.5 px-2 rounded-xl">
-              🎯 Milo: Đang chờ bé chạm vào đủ ${totalTargets} dữ kiện mấu chốt nhé!
-            </div>
+            <!-- Feedback & Counter: Gọn gàng -->
+            <div id="highlight-feedback" class="text-xs font-bold text-center text-teal-800 min-h-[16px]"></div>
 
-            <button id="btn-complete-highlight" onclick="completeHighlightStep(this)" disabled class="btn-3d-green px-3 py-2.5 rounded-xl font-black text-xs text-white shadow-md active:scale-95 transition opacity-50 cursor-not-allowed">
-              ✅ BÉ ĐÃ NẠP XONG DỮ KIỆN
-            </button>
+            <button id="btn-complete-highlight" onclick="completeHighlightStep(this)" disabled class="hidden"></button>
           </div>
         `;
+
 
       } else {
         // Generic Micro-Task Stage (Cho các bài GDPT Tiếng Việt, Tiếng Anh, AI hoặc Soạn bằng tay)
@@ -790,8 +775,7 @@
         btn.className = "w-full bg-emerald-100 border-2 border-emerald-400 py-2.5 px-3 rounded-2xl font-black text-xs text-emerald-950 flex items-center justify-between";
         const fb = document.getElementById('choice-feedback');
         if (fb) {
-          fb.innerText = "Chính xác tuyệt vời! ⭐ Bấm 'Tiếp tục' bên dưới nhé!";
-          fb.className = "text-[10px] font-bold text-center text-emerald-700";
+          fb.innerText = "";
         }
         const btnNext = document.getElementById('child-btn-next-step');
         if (btnNext) {
@@ -937,7 +921,12 @@
             completeBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             completeBtn.classList.add('animate-pulse');
           }
+          if (btnNext) {
+            btnNext.disabled = false;
+            btnNext.classList.remove('btn-disabled');
+          }
         } else {
+
           if (fb) {
             fb.innerHTML = `🎯 <strong>Milo:</strong> Đã thu thập <strong>${highlightedCount} / ${total}</strong> dữ kiện mấu chốt!`;
             fb.className = "text-[11px] font-bold text-center text-teal-800 bg-teal-100/60 py-1.5 px-2 rounded-xl";
@@ -1083,8 +1072,8 @@
           btnNext.classList.remove('btn-disabled');
         }
         if (fb) {
-          fb.innerText = "Chính xác tuyệt vời! Bé giỏi quá! ⭐";
-          fb.className = "text-[10px] font-bold text-center text-emerald-700";
+          fb.innerText = "Chính xác!";
+          fb.className = "hidden";
         }
       } else {
         if (btnNext) {

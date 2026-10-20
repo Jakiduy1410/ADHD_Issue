@@ -387,35 +387,29 @@
               <!-- VÙNG BÀI TẬP VỚI ĐỒNG HỒ THỊ GIÁC VISUAL TIMER CONIC CHẠY THẬT (SCROLLABLE NẾU BÀI DÀI) -->
               <div class="flex-1 overflow-y-auto no-scrollbar py-1 my-1">
                 <div id="child-ring-timer" class="ring-timer-wrapper" style="--progress: 100%;">
-                  <div id="child-focus-card" class="bg-[#FFFDF5] border-2 border-amber-300 ring-4 ring-amber-100/50 rounded-[24px] p-3 shadow-inner flex flex-col justify-between">
+                  <div id="child-focus-card" class="bg-[#FFFDF7] rounded-[24px] p-4 shadow-sm flex flex-col justify-between min-h-[300px]">
                     
-                    <!-- Top instruction -->
-                    <div>
+                    <!-- Top instruction: Duy nhất 1 tiêu đề to rõ -->
+                    <div class="mb-2">
                       <div class="flex items-center justify-between mb-1.5">
-                        <span id="child-step-badge" class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase">
-                          Bước 1 / 4 • Bắt đầu
+                        <span id="child-step-badge" class="bg-emerald-100 text-emerald-800 text-xs font-black px-2.5 py-0.5 rounded-full uppercase">
+                          Bước 1 / 4
                         </span>
-                        <!-- ĐỒNG HỒ ĐẾM LÙI THỊ GIÁC VISUAL TIMER -->
-                        <span id="child-timer-pill" class="text-[10px] font-bold text-emerald-600 flex items-center gap-1 font-mono bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">
-                          ⏱️ 02:00 • Năng lượng dồi dào
-                        </span>
+                        <!-- Ẩn số giây đếm lùi: Viền to bên ngoài là đồng hồ thị giác -->
+                        <span id="child-timer-pill" class="hidden"></span>
                       </div>
-                      <h3 id="child-instruction-text" class="text-sm font-black text-slate-800 leading-snug">
+                      <h3 id="child-instruction-text" class="text-base font-black text-slate-900 leading-snug">
                         <!-- Nội dung bước -->
                       </h3>
                     </div>
 
                     <!-- NỘI DUNG TƯƠNG TÁC THAY ĐỔI THEO NHIỆM VỤ -->
-                    <div id="child-interactive-stage" class="py-1">
+                    <div id="child-interactive-stage" class="py-1 flex-1 flex flex-col justify-center">
                       <!-- Render động qua JS -->
                     </div>
 
-                    <!-- Footer card reminder -->
-                    <div class="text-center text-[10px] font-bold text-slate-400 pt-1.5 border-t border-slate-100 flex items-center justify-center gap-1">
-                      <span>🛡️</span> <span>Không vội vàng • Làm sai ta sửa lại bất cứ lúc nào!</span>
-                    </div>
-
                   </div>
+
                 </div>
               </div>
 

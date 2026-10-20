@@ -433,17 +433,25 @@
       playSfx('bell');
       const inputEl = document.getElementById('ai-task-input');
       const input = (inputEl && inputEl.value ? inputEl.value.trim() : "") || "Nhiệm vụ AI";
-      showToast("AI Đang Băm Nhỏ", "Phân rã thành chuỗi vi nhiệm vụ scaffolding < 15 từ...", "✨");
+      showToast("Milo AI Đang Phân Rã", "Đang phân tích cấu trúc bài & thiết kế giàn giáo ADHD...", "✨");
+
+      const runBtn = document.querySelector("button[onclick*='parentRunAiBreakdown']");
+      const originalBtnText = runBtn ? runBtn.innerHTML : "";
+      if (runBtn) {
+        runBtn.disabled = true;
+        runBtn.classList.add('opacity-60', 'cursor-not-allowed');
+        runBtn.innerHTML = `<span>⏳</span> <span>AI đang phân rã bài tập...</span>`;
+      }
 
       const profile = (appState && appState.cognitiveProfile) || DEFAULT_COGNITIVE_PROFILE;
       let session = null;
 
-      // Live backend call to Gemini 3.5 Flash Lite (NO FAKE FALLBACKS)
+      // Live backend call to Gemini with 90s timeout
       let fetchError = null;
       if (typeof fetch === 'function') {
         try {
           const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-          const timeoutId = controller ? setTimeout(() => controller.abort(), 25000) : null;
+          const timeoutId = controller ? setTimeout(() => controller.abort(), 90000) : null;
           const detectedSub = detectDomainSubject(input);
           const apiBase = (typeof window !== 'undefined' && window.location && window.location.protocol.startsWith('http')) ? '' : 'http://localhost:8000';
           const res = await fetch(`${apiBase}/api/tasks/decompose`, {
@@ -470,10 +478,23 @@
             fetchError = errData.detail || `Server trả về mã lỗi: ${res.status}`;
           }
         } catch (e) {
-          fetchError = e.name === 'AbortError' ? "Quá thời gian kết nối AI (25s)" : (e.message || "Không thể kết nối đến Backend Server port 8000.");
+          fetchError = e.name === 'AbortError' 
+            ? "Quá thời gian chờ phản hồi AI (90s). Vui lòng thử lại với đề bài ngắn gọn hơn!" 
+            : (e.message || "Không thể kết nối đến Backend Server port 8000.");
+        } finally {
+          if (runBtn) {
+            runBtn.disabled = false;
+            runBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+            runBtn.innerHTML = originalBtnText;
+          }
         }
       } else {
         fetchError = "Trình duyệt không hỗ trợ API fetch.";
+        if (runBtn) {
+          runBtn.disabled = false;
+          runBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+          runBtn.innerHTML = originalBtnText;
+        }
       }
 
       if (!session) {

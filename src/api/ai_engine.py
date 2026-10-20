@@ -207,10 +207,47 @@ def load_specialist_prompt(category: str) -> str:
     return load_prompt_file("prompts/micro_task_decomposer.md") or "Bạn là Chuyên gia Sư phạm ADHD."
 
 
+def fast_heuristic_classify(raw_text: str) -> Optional[Dict[str, Any]]:
+    """
+    Nhận diện siêu tốc ngách sư phạm (<1ms) cho các dạng bài tiểu học chuẩn mực,
+    tiết kiệm 20-30s độ trễ mạng so với việc gọi remote LLM 2 lần liên tiếp.
+    """
+    lower = raw_text.lower().strip()
+    # 1. Sinh hoạt đời thường
+    if any(k in lower for k in ["dọn dẹp", "bàn học", "rác", "quét nhà", "lau bàn", "gấp quần áo", "cặp sách", "đánh răng", "đi ngủ", "rửa bát"]):
+        return {"subject": "routine", "category": "life_routine", "reasoning": "Khớp từ khóa thói quen sinh hoạt"}
+    # 2. Tiếng Anh
+    if any(k in lower for k in ["choose the", "fill in", "read the passage", "translate to english"]):
+        return {"subject": "english", "category": "eng_vocab_sentence", "reasoning": "Khớp dạng bài Tiếng Anh"}
+    # 3. Tiếng Việt
+    if any(k in lower for k in ["đoạn văn", "bài thơ", "chính tả", "tập đọc", "từ láy", "câu chuyện", "nghĩa của từ"]) and not any(op in lower for op in ["+", "-", "×", "*", "/", ":", "="]):
+        return {"subject": "vietnamese", "category": "viet_reading", "reasoning": "Khớp bài đọc hiểu Tiếng Việt"}
+    # 4. Toán hình học
+    if any(k in lower for k in ["chu vi", "diện tích", "hình chữ nhật", "hình vuông", "hình bình hành", "tam giác", "hình tròn", "hình thoi", "cửa sổ", "mái nhà", "cạnh", "chiều dài", "chiều rộng"]):
+        return {"subject": "math", "category": "math_geometry", "reasoning": "Khớp dạng toán Hình học & Đo lường"}
+    # 5. Toán mô hình Tổng-Hiệu / Tỉ số / Chuyển động
+    if any(k in lower for k in ["tổng và hiệu", "tổng - hiệu", "nhiều hơn", "ít hơn", "vận tốc", "quãng đường", "thời gian", "tỉ số", "gấp"]) and any(w in lower for w in ["hỏi", "bao nhiêu", "tìm hai số"]):
+        if any(m in lower for m in ["tổng", "hiệu", "hai lớp", "hai kho", "hai thùng", "hai xe", "vận tốc", "km/h"]):
+            return {"subject": "math", "category": "math_word_problem_model", "reasoning": "Khớp toán mô hình Tổng-Hiệu / Tỉ số"}
+    # 6. Toán tính toán thuần / Tìm X / Đặt tính
+    if any(k in lower for k in ["đặt tính", "tìm x", "giá trị biểu thức", "tính nhẩm"]) or (not any(w in lower for w in ["hỏi", "bao nhiêu"]) and any(op in lower for op in ["+", "-", "*", "×", "/", ":"])):
+        return {"subject": "math", "category": "math_arithmetic_algebra", "reasoning": "Khớp dạng bài Đặt tính & Số học"}
+    # 7. Toán lời văn cơ bản
+    if any(w in lower for w in ["hỏi", "bao nhiêu", "có tất cả", "còn lại", "mỗi bạn", "bông hoa", "quả cam", "con chim"]):
+        return {"subject": "math", "category": "math_word_problem_basic", "reasoning": "Khớp toán lời văn thực tế cơ bản"}
+    return None
+
+
 async def classify_task(raw_text: str, client: genai.Client) -> Dict[str, Any]:
     """
-    STAGE 1: Phân loại môn học và ngách nhỏ chuyên biệt qua Gemini Flash (siêu nhanh < 400ms).
+    STAGE 1: Phân loại môn học và ngách nhỏ chuyên biệt.
+    Ưu tiên nhận diện siêu tốc (<1ms) để tránh bị timeout mạng, chỉ gọi LLM khi đề bài đặc biệt.
     """
+    fast_match = fast_heuristic_classify(raw_text)
+    if fast_match:
+        logger.info(f"Stage 1 Fast Heuristic kết quả: category={fast_match['category']}, reasoning={fast_match['reasoning']}")
+        return fast_match
+
     classifier_instruction = load_classifier_prompt()
     user_input = f"""Hãy phân loại đề bài sau vào đúng Môn học và Ngách chuyên biệt:
 Đề bài: "{raw_text}"
@@ -231,14 +268,6 @@ async def classify_task(raw_text: str, client: genai.Client) -> Dict[str, Any]:
     except Exception as e:
         logger.warning(f"Lỗi Stage 1 Classifier: {e}, mặc định sang math_word_problem_basic")
     
-    # Heuristic fallback nếu classifier timeout
-    lower = raw_text.lower()
-    if any(k in lower for k in ["chu vi", "diện tích", "hình chữ nhật", "hình vuông", "hình bình hành", "tam giác", "hình tròn"]):
-        return {"subject": "math", "category": "math_geometry", "reasoning": "Heuristic keywords match geometry"}
-    if any(k in lower for k in ["tổng và hiệu", "tổng - hiệu", "vận tốc", "quãng đường", "giảm giá", "%"]):
-        return {"subject": "math", "category": "math_word_problem_model", "reasoning": "Heuristic keywords match model word problem"}
-    if any(k in lower for k in ["đặt tính", "tìm x", "giá trị biểu thức"]) or (not any(w in lower for w in ["hỏi", "bao nhiêu"]) and any(op in lower for op in ["+", "-", "*", "×", "/", ":"])):
-        return {"subject": "math", "category": "math_arithmetic_algebra", "reasoning": "Heuristic match arithmetic"}
     return {"subject": "math", "category": "math_word_problem_basic", "reasoning": "Default word problem"}
 
 

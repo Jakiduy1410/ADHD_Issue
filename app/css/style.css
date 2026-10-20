@@ -145,20 +145,28 @@ body {
       opacity: 1;
     }
 
-    /* Ring Timer Conic Gradient phát sáng chuyển động */
+    /* Ring Timer Conic Gradient phát sáng chuyển động (Visual Time Timer to bản cho trẻ ADHD) */
     .ring-timer-wrapper {
-      padding: 6px;
-      border-radius: 28px;
+      padding: 12px;
+      border-radius: 36px;
       background: conic-gradient(#58CC02 var(--progress, 100%), #E2E8F0 0%);
       transition: background 0.4s ease;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
     }
     .ring-timer-warning {
       background: conic-gradient(#FFC800 var(--progress, 100%), #E2E8F0 0%) !important;
+      box-shadow: 0 8px 28px rgba(255, 200, 0, 0.18) !important;
     }
     .ring-timer-paused {
       background: conic-gradient(#38BDF8 100%, #E0F2FE 0%) !important;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.45);
     }
+
+    /* Ẩn hoàn toàn đồng hồ đếm ngược số giây để chống Time Anxiety cho trẻ ADHD */
+    #child-timer-pill {
+      display: none !important;
+    }
+
 
     /* Hiệu ứng nhấp nhô cho Robot Milo */
     @keyframes floatMilo {

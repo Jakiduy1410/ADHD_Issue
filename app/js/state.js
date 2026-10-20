@@ -14,16 +14,24 @@
     async function syncTasksFromApi() {
       if (typeof fetch === 'undefined') return;
       try {
-        const res = await fetch('/api/curriculum/recommended');
+        let res = await fetch('/api/curriculum/tasks');
+        if (!res.ok) {
+          res = await fetch('/data/curriculum/tasks_db.json');
+        }
         if (res.ok) {
           const data = await res.json();
-          const exercises = data.exercises || data.tasks || (Array.isArray(data) ? data : []);
-          if (Array.isArray(exercises) && exercises.length > 0) {
-            exercises.forEach(t => {
+          const items = Array.isArray(data) 
+            ? data 
+            : (data.exercises || (data && typeof data === 'object' ? Object.values(data) : []));
+          if (items.length > 0) {
+            items.forEach(t => {
               if (t && t.id && Array.isArray(t.steps) && t.steps.length > 0 && t.title) {
                 taskDatabase[t.id] = t;
               }
             });
+            if (taskDatabase['G1_MATH_01']) {
+              taskDatabase['math_garden'] = taskDatabase['G1_MATH_01'];
+            }
             if (typeof renderParentCatalogList === 'function') {
               renderParentCatalogList();
             }
@@ -34,6 +42,7 @@
       }
     }
     syncTasksFromApi();
+
 
 
 

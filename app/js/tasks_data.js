@@ -1,5 +1,6 @@
 /* ============================================================
    MODULE: PRE-CONFIGURED 29 GDPT 2018 & ROUTINE TASKS DATABASE
+   (Mirror of data/curriculum/tasks_db.json)
    ============================================================ */
 var taskDatabase = {
   "G1_MATH_01": {
@@ -4015,8 +4016,6 @@ var taskDatabase = {
     ]
   }
 };
-
 taskDatabase['math_garden'] = taskDatabase['G1_MATH_01']; // backwards compatibility alias
-
 if (typeof window !== 'undefined') { window.taskDatabase = taskDatabase; }
 if (typeof global !== 'undefined') { global.taskDatabase = taskDatabase; }

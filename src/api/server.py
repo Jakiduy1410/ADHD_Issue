@@ -15,6 +15,15 @@ import time
 from typing import Any, Dict, List, Optional, Set
 from uuid import uuid4
 
+if sys.platform == "win32":
+    try:
+        if hasattr(sys.stdout, "reconfigure"):
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        if hasattr(sys.stderr, "reconfigure"):
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -64,8 +73,11 @@ app.add_middleware(
 
 # Global clients & cache
 CURRICULUM_DATA: Dict[str, Any] = {}
+TASKS_DB_MAP: Dict[str, Any] = {}
 PRE_DECOMPOSED_ROUTINES: List[Dict[str, Any]] = []
+ROOM_STATES: Dict[str, Dict[str, Any]] = {}
 APP_START_TIME = time.time()
+
 
 
 # ==========================================
@@ -349,27 +361,49 @@ def initialize_pre_decomposed_routines() -> List[Dict[str, Any]]:
     ]
 
 
+def get_or_create_room_state(room_id: str) -> Dict[str, Any]:
+    global ROOM_STATES, TASKS_DB_MAP
+    if room_id not in ROOM_STATES:
+        default_roadmap = [
+            TASKS_DB_MAP.get("G1_MATH_01"),
+            TASKS_DB_MAP.get("G1_VIET_03"),
+            TASKS_DB_MAP.get("G1_MCQ_04"),
+        ]
+        default_roadmap = [t for t in default_roadmap if t]
+        ROOM_STATES[room_id] = {
+            "room_id": room_id,
+            "stars": 450,
+            "child_roadmap": default_roadmap,
+            "current_roadmap_index": 0,
+            "current_step_index": 0,
+            "pending_ticket": None,
+            "selected_catalog_ids": [],
+            "pause_count": 0,
+            "total_session_seconds": 0,
+        }
+    return ROOM_STATES[room_id]
+
+
 @app.on_event("startup")
 async def startup_event():
-    global CURRICULUM_DATA, PRE_DECOMPOSED_ROUTINES
-    curriculum_path = REPO_ROOT / "data" / "curriculum" / "tasks_db.json"
-    if curriculum_path.is_file():
-        with open(curriculum_path, "r", encoding="utf-8") as f:
-            raw_tasks = json.load(f)
-        if isinstance(raw_tasks, dict):
-            task_list = list(raw_tasks.values())
-            CURRICULUM_DATA = {"exercises": task_list}
-            logger.info(f"Loaded {len(task_list)} curriculum tasks from tasks_db.json.")
-        elif isinstance(raw_tasks, list):
-            CURRICULUM_DATA = {"exercises": raw_tasks}
-            logger.info(f"Loaded {len(raw_tasks)} curriculum tasks from tasks_db.json.")
+    global CURRICULUM_DATA, PRE_DECOMPOSED_ROUTINES, TASKS_DB_MAP
+    tasks_db_path = REPO_ROOT / "data" / "curriculum" / "tasks_db.json"
+    if tasks_db_path.is_file():
+        with open(tasks_db_path, "r", encoding="utf-8") as f:
+            TASKS_DB_MAP = json.load(f)
+        if isinstance(TASKS_DB_MAP, dict):
+            CURRICULUM_DATA = {"exercises": list(TASKS_DB_MAP.values())}
+        elif isinstance(TASKS_DB_MAP, list):
+            CURRICULUM_DATA = {"exercises": TASKS_DB_MAP}
         else:
             CURRICULUM_DATA = {"exercises": []}
+        logger.info(f"Loaded {len(TASKS_DB_MAP)} formatted tasks from tasks_db.json (Single Source of Truth).")
     else:
-        logger.warning(f"Curriculum file not found at {curriculum_path}")
+        logger.warning(f"tasks_db.json not found at {tasks_db_path}")
 
     PRE_DECOMPOSED_ROUTINES = initialize_pre_decomposed_routines()
     logger.info(f"Loaded {len(PRE_DECOMPOSED_ROUTINES)} pre-decomposed routine tasks.")
+
 
 
 # ==========================================
@@ -612,7 +646,23 @@ async def get_recommended_curriculum(
     )
 
 
+@app.get("/api/curriculum/tasks")
+async def get_curriculum_tasks():
+    """
+    Returns the full dictionary of formatted tasks (25 GDPT 2018 + 4 Routines)
+    directly loaded from data/curriculum/tasks_db.json. Single Source of Truth.
+    """
+    global TASKS_DB_MAP
+    if not TASKS_DB_MAP:
+        tasks_db_path = REPO_ROOT / "data" / "curriculum" / "tasks_db.json"
+        if tasks_db_path.is_file():
+            with open(tasks_db_path, "r", encoding="utf-8") as f:
+                TASKS_DB_MAP = json.load(f)
+    return TASKS_DB_MAP
+
+
 @app.post("/api/tasks/decompose")
+
 async def decompose_task(req: DecomposeRequest):
     """
     Receives raw exercise or curriculum ID and decomposes it into micro-tasks
@@ -771,8 +821,9 @@ async def websocket_sync_endpoint(
     """
     cid = client_id or f"{role}_{uuid4().hex[:6]}"
     await manager.connect(websocket, room_id=room_id, role=role, client_id=cid)
+    room_state = get_or_create_room_state(room_id)
 
-    # Send initial welcome handshake
+    # 1. Send initial welcome handshake with server-authoritative room state
     await websocket.send_text(json.dumps({
         "event_type": "CONNECTION_ESTABLISHED",
         "client_id": cid,
@@ -780,6 +831,7 @@ async def websocket_sync_endpoint(
         "room_id": room_id,
         "timestamp": time.time(),
         "message": f"Chào mừng {role} đã kết nối vào phòng gia đình {room_id}!",
+        "state": room_state,
     }, ensure_ascii=False))
 
     try:
@@ -799,7 +851,48 @@ async def websocket_sync_endpoint(
                 await websocket.send_text(json.dumps({"event_type": "PONG", "timestamp": time.time()}))
                 continue
 
-            # 2. Kid completes a micro-task step -> Notify Parent
+            # 2. Explicit request for room state hydration
+            if event_type in ("GET_ROOM_STATE", "SYNC_REQUEST", "REQUEST_HYDRATE"):
+                await websocket.send_text(json.dumps({
+                    "event_type": "ROOM_STATE_HYDRATE",
+                    "room_id": room_id,
+                    "role": role,
+                    "timestamp": time.time(),
+                    "state": room_state,
+                }, ensure_ascii=False))
+                continue
+
+
+            # 2. State-mutating events: update server room state
+            if event_type == "TASK_ASSIGN_BATCH":
+                payload = data.get("payload", {})
+                new_tasks = payload.get("tasks", []) if isinstance(payload, dict) else []
+                if not new_tasks and isinstance(data.get("tasks"), list):
+                    new_tasks = data.get("tasks")
+                if new_tasks:
+                    room_state["child_roadmap"] = new_tasks
+                    room_state["current_roadmap_index"] = 0
+                    room_state["current_step_index"] = 0
+            elif event_type == "KID_STEP_COMPLETED":
+                step_id = data.get("step_id")
+                points = data.get("dopamine_points", 25)
+                room_state["stars"] = room_state.get("stars", 450) + points
+                room_state["current_step_index"] = room_state.get("current_step_index", 0) + 1
+            elif event_type == "KID_TASK_COMPLETED":
+                room_state["current_roadmap_index"] = room_state.get("current_roadmap_index", 0) + 1
+                room_state["current_step_index"] = 0
+            elif event_type == "STARS_SYNC":
+                payload = data.get("payload", {})
+                new_stars = payload.get("totalStars") if isinstance(payload, dict) else None
+                if new_stars is not None:
+                    room_state["stars"] = int(new_stars)
+            elif event_type == "TICKET_REDEEM":
+                payload = data.get("payload", {})
+                room_state["pending_ticket"] = payload.get("ticket") if isinstance(payload, dict) else data.get("ticket")
+            elif event_type == "TICKET_APPROVE":
+                room_state["pending_ticket"] = None
+
+            # Kid completes a micro-task step -> Notify Parent
             if event_type == "KID_STEP_COMPLETED":
                 step_id = data.get("step_id")
                 points = data.get("dopamine_points", 25)
@@ -813,7 +906,7 @@ async def websocket_sync_endpoint(
                 }
                 await manager.send_to_role(room_id, target_role="parent", message=forward_event)
 
-            # 3. Parent sends encouragement sticker/cheer -> Notify Kid
+            # Parent sends encouragement sticker/cheer -> Notify Kid
             elif event_type == "PARENT_CHEER":
                 cheer_text = data.get("cheer_text", "Bố mẹ rất tự hào về sự kiên trì của con!")
                 sticker = data.get("sticker", "milo_thumbs_up")
@@ -827,7 +920,7 @@ async def websocket_sync_endpoint(
                 }
                 await manager.send_to_role(room_id, target_role="kid", message=forward_event)
 
-            # 4. Broadcast general events to all peers in the room
+            # Broadcast general events to all peers in the room
             else:
                 broadcast_data = {
                     "event_type": event_type,
@@ -837,6 +930,7 @@ async def websocket_sync_endpoint(
                     "payload": data.get("payload", data),
                 }
                 await manager.broadcast_to_room(room_id, broadcast_data, exclude=websocket)
+
 
     except WebSocketDisconnect:
         manager.disconnect(websocket)

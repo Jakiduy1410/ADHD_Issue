@@ -2053,36 +2053,506 @@ if (typeof window !== 'undefined') {
       }
     }
 
-    function renderFxCalcGrid(topStr, op, botStr, expectedStr, onDone, titleLabel = "Đặt tính:") {
-      if (op === ':') {
-        const expStr = String(expectedStr).trim();
-        const numCols = expStr.length;
-        const cellCls = "w-7 h-8 text-base font-mono font-black text-center";
+    function decomposeLongDivisionEngine(dividend, divisor) {
+      const dStr = String(dividend);
+      const N = dStr.length;
+      const rounds = [];
+      
+      let cursor = 0;
+      let partStr = dStr[cursor];
+      cursor++;
+      while (Number(partStr) < divisor && cursor < dStr.length) {
+        partStr += dStr[cursor];
+        cursor++;
+      }
 
-        let rowInputs = '';
-        for (let i = 0; i < numCols; i++) {
-          rowInputs += `
-            <input type="text" maxlength="1" inputmode="numeric" 
-                   data-div-col="${i}" 
-                   class="div-digit-cell ${cellCls} rounded-lg border-2 border-teal-500 bg-teal-50 text-slate-900 focus:bg-teal-100 focus:border-teal-600 focus:outline-none shadow-xs transition" />
-          `;
+      let currentEndCol = cursor - 1;
+      let currentPart = Number(partStr);
+
+      while (true) {
+        const qDigit = Math.floor(currentPart / divisor);
+        const prod = qDigit * divisor;
+        const rem = currentPart - prod;
+        const prodStr = String(prod);
+        const prodStartCol = currentEndCol - prodStr.length + 1;
+        const prodEndCol = currentEndCol;
+        const remStr = String(rem);
+        const remStartCol = currentEndCol - remStr.length + 1;
+        const remEndCol = currentEndCol;
+        
+        let bringDown = null;
+        let bringDownCol = null;
+        if (cursor < dStr.length) {
+          bringDown = dStr[cursor];
+          bringDownCol = cursor;
+          cursor++;
         }
 
-        setTimeout(() => {
-          setupDivisionLeftToRightListeners(expStr, onDone);
-        }, 50);
+        const clue = `${divisor} × ${qDigit} = ${prod}` + 
+          (currentPart > prod ? ` (dư ${rem}, gần ${currentPart} nhất)` : ` (vừa hết)`);
 
-        return `
-          <div class="bg-white p-3 rounded-2xl border-2 border-teal-200 shadow-xs flex flex-col items-center justify-center gap-1.5 my-1 select-none max-w-[280px] mx-auto w-full">
-            <div class="flex items-center justify-center gap-2">
-              <span class="font-mono text-base font-black text-slate-800">${topStr} : ${botStr} =</span>
-              <div class="flex items-center gap-1">
-                ${rowInputs}
+        rounds.push({
+          roundNum: rounds.length + 1,
+          currentPart: currentPart,
+          quotientDigit: qDigit,
+          product: prod,
+          prodStr: prodStr,
+          prodStartCol: prodStartCol,
+          prodEndCol: prodEndCol,
+          remainder: rem,
+          remStr: remStr,
+          remStartCol: remStartCol,
+          remEndCol: remEndCol,
+          bringDownDigit: bringDown,
+          bringDownCol: bringDownCol,
+          clue: clue
+        });
+
+        if (bringDown === null) {
+          break;
+        }
+
+        currentPart = rem * 10 + Number(bringDown);
+        currentEndCol = bringDownCol;
+      }
+
+      return {
+        dividend: dividend,
+        divisor: divisor,
+        dStr: dStr,
+        numCols: N,
+        quotient: Math.floor(dividend / divisor),
+        finalRemainder: dividend % divisor,
+        rounds: rounds
+      };
+    }
+
+    // State quản lý phép chia đặt tính trực quan toàn cục
+    window._fxDivState = {
+      activeKey: '',
+      task: null,
+      roundIdx: 0,
+      subStage: 0, // 0 = nhập thương, 1 = nhập số dư, 1.5 = tự động hạ số, 3 = xong
+      inputBuffer: '',
+      onDone: null
+    };
+
+    window.handleFxDivInput = function(val) {
+      const s = window._fxDivState;
+      if (!s || !s.task || s.subStage === 1.5 || s.subStage === 3) return;
+
+      const curRound = s.task.rounds[s.roundIdx];
+      if (!curRound) return;
+
+      if (val === 'DEL') {
+        s.inputBuffer = s.inputBuffer.slice(0, -1);
+        if (typeof playSfx === 'function') playSfx('tap');
+        updateFxDivDom();
+        return;
+      }
+
+      if (typeof playSfx === 'function') playSfx('tap');
+
+      // 1. Nhập chữ số thương
+      if (s.subStage === 0) {
+        s.inputBuffer = val;
+        updateFxDivDom();
+
+        if (parseInt(s.inputBuffer, 10) === curRound.quotientDigit) {
+          if (typeof playSfx === 'function') playSfx('pop');
+          setTimeout(() => {
+            s.subStage = 1; // Chuyển sang tính phép trừ (tìm số dư)
+            s.inputBuffer = '';
+            updateFxDivDom();
+          }, 250);
+        } else {
+          flashFxDivError();
+        }
+      }
+      // 2. Nhập số dư (tính phép trừ)
+      else if (s.subStage === 1) {
+        const expectedRemStr = String(curRound.remainder);
+        s.inputBuffer += val;
+        if (s.inputBuffer.length > expectedRemStr.length) {
+          s.inputBuffer = val;
+        }
+        updateFxDivDom();
+
+        if (s.inputBuffer === expectedRemStr) {
+          if (typeof playSfx === 'function') playSfx('pop');
+
+          if (curRound.bringDownDigit !== null) {
+            // Tự động hạ số sinh động
+            s.inputBuffer = '';
+            s.subStage = 1.5;
+            updateFxDivDom();
+
+            setTimeout(() => {
+              if (typeof playSfx === 'function') playSfx('drop');
+              s.roundIdx++;
+              s.subStage = 0; // Chuyển sang lần chia tiếp theo
+              s.inputBuffer = '';
+              updateFxDivDom();
+            }, 400);
+
+          } else {
+            // Hoàn thành toàn bộ phép chia
+            s.subStage = 3;
+            s.inputBuffer = '';
+            if (typeof playSfx === 'function') playSfx('correct');
+            updateFxDivDom();
+
+            setTimeout(() => {
+              if (typeof s.onDone === 'function') s.onDone();
+              else if (typeof s.onDone === 'string' && typeof window[s.onDone] === 'function') {
+                window[s.onDone](String(s.task.quotient));
+              }
+            }, 300);
+          }
+        } else if (s.inputBuffer.length === expectedRemStr.length) {
+          flashFxDivError();
+        }
+      }
+    };
+
+    function flashFxDivError() {
+      const activeCell = document.getElementById('fx-active-div-cell');
+      if (activeCell) {
+        activeCell.classList.add('bg-rose-100', 'border-rose-500', 'animate-shake');
+        setTimeout(() => {
+          activeCell.classList.remove('bg-rose-100', 'border-rose-500', 'animate-shake');
+          window._fxDivState.inputBuffer = '';
+          updateFxDivDom();
+        }, 500);
+      }
+    }
+
+    function updateFxDivDom() {
+      const container = document.getElementById('fx-long-division-container');
+      if (!container || !window._fxDivState.task) return;
+      container.innerHTML = buildFxLongDivisionHTML();
+    }
+
+    function buildFxLongDivisionHTML() {
+      const s = window._fxDivState;
+      const t = s.task;
+      const curRound = t.rounds[s.roundIdx] || t.rounds[t.rounds.length - 1];
+      const isCompleted = (s.subStage === 3);
+      const N = t.numCols;
+
+      const cellCls = "w-7 h-7 sm:w-8 sm:h-8 text-base sm:text-lg font-mono font-black flex items-center justify-center shrink-0";
+      const signCls = "w-4 h-7 sm:w-5 sm:h-8 text-sm sm:text-base font-mono font-bold flex items-center justify-end text-slate-400 shrink-0 select-none pr-0.5";
+
+      // 1. CỘT TRÁI: SỐ BỊ CHIA & CÁC LẦN TRỪ (THU GỌN CÁC Ý ĐÃ LÀM ĐỂ TỐI ƯU DÒNG CHO ĐIỆN THOẠI)
+      let leftRowsHtml = `
+        <div class="flex items-center">
+          <div class="${signCls}"></div>
+          <div class="flex items-center">
+            ${[...t.dStr].map(ch => `
+              <div class="${cellCls} text-slate-900 font-black text-lg sm:text-xl">${ch}</div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      for (let i = 0; i <= s.roundIdx; i++) {
+        const r = t.rounds[i];
+        const isCurrentRound = (i === s.roundIdx);
+
+        if (!isCurrentRound) {
+          // LẦN CHIA ĐÃ LÀM XONG: TIẾT KIỆM DÒNG TỐI ĐA CHO ĐIỆN THOẠI (chỉ giữ dòng Số dư + Chữ số hạ)
+          leftRowsHtml += `
+            <div class="flex items-center py-0.5">
+              <div class="${signCls}"></div>
+              <div class="flex items-center font-black">
+                ${Array.from({length: N}).map((_, col) => {
+                  if (col >= r.remStartCol && col <= r.remEndCol) {
+                    const ch = r.remStr[col - r.remStartCol];
+                    return `<div class="${cellCls} text-slate-900 font-black">${ch}</div>`;
+                  }
+                  if (col === r.bringDownCol) {
+                    return `<div class="${cellCls} text-teal-600 font-black">${r.bringDownDigit}</div>`;
+                  }
+                  return `<div class="${cellCls}"></div>`;
+                }).join('')}
               </div>
             </div>
-            <span class="text-[9px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
-              👉 ${titleLabel} (Điền từ trái sang phải)
-            </span>
+          `;
+        } else {
+          // LẦN CHIA HIỆN TẠI ĐANG LÀM
+          if (s.subStage === 0) {
+            // Đang điền thương
+          } else if (s.subStage === 1) {
+            // Đang điền số dư: Hiện phép trừ và ô input số dư
+            leftRowsHtml += `
+              <div class="flex items-center slide-in-down">
+                <div class="${signCls}">-</div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.prodStartCol && col <= r.prodEndCol) {
+                      const ch = r.prodStr[col - r.prodStartCol];
+                      return `<div class="${cellCls} text-slate-500 font-bold">${ch}</div>`;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+              <div class="flex items-center my-0.5">
+                <div class="${signCls}"></div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.prodStartCol && col <= r.prodEndCol) {
+                      return `<div class="${cellCls} flex items-center justify-center"><div class="w-full h-[2px] bg-amber-400 rounded-full"></div></div>`;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+              <div class="flex items-center">
+                <div class="${signCls}"></div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.remStartCol && col <= r.remEndCol) {
+                      return `
+                        <div id="fx-active-div-cell" class="${cellCls} bg-amber-100 border-2 border-amber-500 rounded-lg text-amber-950 font-black animate-pulse shadow-xs">
+                          ${s.inputBuffer || '?'}
+                        </div>
+                      `;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+            `;
+          } else if (s.subStage === 1.5) {
+            // Tự động hạ số rơi xuống
+            leftRowsHtml += `
+              <div class="flex items-center">
+                <div class="${signCls}">-</div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.prodStartCol && col <= r.prodEndCol) {
+                      const ch = r.prodStr[col - r.prodStartCol];
+                      return `<div class="${cellCls} text-slate-400">${ch}</div>`;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+              <div class="flex items-center my-0.5">
+                <div class="${signCls}"></div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.prodStartCol && col <= r.prodEndCol) {
+                      return `<div class="${cellCls} flex items-center justify-center"><div class="w-full h-[1.5px] bg-slate-300 rounded-full"></div></div>`;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+              <div class="flex items-center">
+                <div class="${signCls}"></div>
+                <div class="flex items-center font-black">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.remStartCol && col <= r.remEndCol) {
+                      const ch = r.remStr[col - r.remStartCol];
+                      return `<div class="${cellCls} text-slate-900">${ch}</div>`;
+                    }
+                    if (col === r.bringDownCol) {
+                      return `
+                        <div class="${cellCls} flex items-center justify-center">
+                          <span class="text-teal-600 font-black animate-drop">
+                            ${r.bringDownDigit}
+                          </span>
+                        </div>
+                      `;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+            `;
+          } else if (s.subStage === 3) {
+            // Xong cả bài
+            leftRowsHtml += `
+              <div class="flex items-center">
+                <div class="${signCls}">-</div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.prodStartCol && col <= r.prodEndCol) {
+                      const ch = r.prodStr[col - r.prodStartCol];
+                      return `<div class="${cellCls} text-slate-400">${ch}</div>`;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+              <div class="flex items-center my-0.5">
+                <div class="${signCls}"></div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.prodStartCol && col <= r.prodEndCol) {
+                      return `<div class="${cellCls} flex items-center justify-center"><div class="w-full h-[2px] bg-emerald-500 rounded-full"></div></div>`;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+              <div class="flex items-center">
+                <div class="${signCls}"></div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.remStartCol && col <= r.remEndCol) {
+                      const ch = r.remStr[col - r.remStartCol];
+                      return `<div class="${cellCls} text-emerald-700 font-black text-lg">${ch}</div>`;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+            `;
+          }
+        }
+      }
+
+      // 2. CỘT PHẢI: DÃY CÁC CHỮ SỐ THƯƠNG
+      let quotientCellsHtml = '';
+      for (let i = 0; i < t.rounds.length; i++) {
+        const r = t.rounds[i];
+        if (i < s.roundIdx) {
+          quotientCellsHtml += `<div class="${cellCls} text-emerald-700 font-black text-lg sm:text-xl">${r.quotientDigit}</div>`;
+        } else if (i === s.roundIdx) {
+          if (s.subStage === 0) {
+            quotientCellsHtml += `
+              <div id="fx-active-div-cell" class="${cellCls} bg-amber-100 border-2 border-amber-500 rounded-lg text-amber-950 font-black text-lg sm:text-xl animate-pulse shadow-xs">
+                ${s.inputBuffer || '?'}
+              </div>
+            `;
+          } else {
+            quotientCellsHtml += `<div class="${cellCls} text-emerald-700 font-black text-lg sm:text-xl">${r.quotientDigit}</div>`;
+          }
+        } else {
+          quotientCellsHtml += `<div class="${cellCls} text-slate-300 font-black text-lg sm:text-xl flex items-center justify-center">·</div>`;
+        }
+      }
+
+      let instructionText = '';
+      if (s.subStage === 0) {
+        instructionText = `👉 <strong>1. Tính chia:</strong> Lấy <strong>${curRound.currentPart}</strong> chia cho <strong>${t.divisor}</strong> được mấy? (Điền thương)`;
+      } else if (s.subStage === 1) {
+        instructionText = `👉 <strong>2. Tính trừ:</strong> Lấy ${curRound.currentPart} - ${curRound.product} = ? (Điền số dư)`;
+      } else if (s.subStage === 1.5) {
+        instructionText = `⬇️ <strong>Tự động hạ số ${curRound.bringDownDigit}</strong> xuống cạnh số dư...`;
+      } else {
+        instructionText = `🎉 <strong>Hoàn thành!</strong> Kết quả: <strong>${t.dividend} : ${t.divisor} = ${t.quotient}</strong>`;
+      }
+
+      return `
+        <div class="w-full flex flex-col gap-2 my-1">
+          
+          <!-- Hướng dẫn vi bước & gợi ý cửu chương -->
+          <div class="bg-amber-50/90 border border-amber-200 rounded-xl p-2.5 shadow-2xs">
+            <p class="text-xs font-bold text-slate-800 leading-snug">${instructionText}</p>
+            ${s.subStage === 0 ? `
+              <div class="mt-1 flex items-center gap-1.5 text-[10px] font-mono text-teal-800 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">
+                <span>💡 Gợi ý:</span> <span>${curRound.clue}</span>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- Khung bảng đặt tính thẳng hàng 100% -->
+          <div class="bg-white border-2 border-slate-300 rounded-2xl p-2.5 sm:p-3 shadow-xs relative flex items-start justify-center">
+            
+            <div class="flex items-start justify-center font-mono">
+              <!-- Cột trái: Số bị chia & các lần trừ thẳng hàng -->
+              <div class="flex flex-col items-start pr-1">
+                ${leftRowsHtml}
+              </div>
+
+              <!-- Vạch đứng chia -->
+              <div class="w-[3px] bg-teal-600 self-stretch rounded-full mx-1 shrink-0"></div>
+
+              <!-- Cột phải: Số chia & Thương -->
+              <div class="pl-2 flex flex-col items-start shrink-0">
+                <div class="flex items-center pb-0.5">
+                  <span class="font-mono text-lg sm:text-xl font-black text-teal-800 tracking-wider">
+                    ${t.divisor}
+                  </span>
+                </div>
+                <div class="w-full h-[3px] bg-teal-600 rounded-full my-0.5"></div>
+                <div class="flex items-center pt-0.5">
+                  ${quotientCellsHtml}
+                </div>
+              </div>
+            </div>
+
+            <!-- Overlay hoàn thành -->
+            ${isCompleted ? `
+              <div class="absolute inset-0 bg-emerald-500/90 backdrop-blur-xs rounded-2xl flex flex-col items-center justify-center p-3 text-center text-white">
+                <span class="text-2xl">🎉</span>
+                <span class="text-xs font-black mt-1">Xuất Sắc! Đã Chia Xong</span>
+                <span class="text-[11px] font-mono font-bold text-emerald-100">${t.dividend} : ${t.divisor} = ${t.quotient}</span>
+              </div>
+            ` : ''}
+
+          </div>
+
+          <!-- Bàn phím số Numpad cảm ứng xúc giác (luôn sẵn sàng cho điện thoại) -->
+          <div class="w-full max-w-[280px] mx-auto pt-1">
+            <div class="grid grid-cols-5 gap-1 w-full">
+              ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(n => `
+                <button type="button" onclick="handleFxDivInput('${n}')" class="btn-3d-white py-2 rounded-xl font-black font-mono text-sm text-slate-800">
+                  ${n}
+                </button>
+              `).join('')}
+            </div>
+            <div class="flex items-center justify-between gap-2 pt-1">
+              <button type="button" onclick="handleFxDivInput('DEL')" class="btn-3d-white px-3 py-1 rounded-xl font-black text-xs text-rose-600 flex items-center gap-1">
+                <span>⌫</span> Xóa
+              </button>
+              <span class="text-[9px] text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
+                ✨ Số tự động hạ xuống sau khi tính trừ
+              </span>
+            </div>
+          </div>
+
+        </div>
+      `;
+    }
+
+    // Bắt sự kiện bàn phím máy tính cho phép chia
+    if (typeof window !== 'undefined' && !window._fxDivKeyAttached) {
+      window._fxDivKeyAttached = true;
+      window.addEventListener('keydown', (e) => {
+        const s = window._fxDivState;
+        if (!s || !s.task || s.subStage === 1.5 || s.subStage === 3) return;
+        if (e.key >= '0' && e.key <= '9') {
+          window.handleFxDivInput(e.key);
+        } else if (e.key === 'Backspace') {
+          window.handleFxDivInput('DEL');
+        }
+      });
+    }
+
+    function renderFxCalcGrid(topStr, op, botStr, expectedStr, onDone, titleLabel = "Đặt tính:") {
+      if (op === ':') {
+        const key = `${topStr}:${botStr}`;
+        if (!window._fxDivState || window._fxDivState.activeKey !== key) {
+          window._fxDivState = {
+            activeKey: key,
+            task: decomposeLongDivisionEngine(Number(topStr), Number(botStr)),
+            roundIdx: 0,
+            subStage: 0,
+            inputBuffer: '',
+            onDone: onDone
+          };
+        } else {
+          window._fxDivState.onDone = onDone;
+        }
+
+        return `
+          <div id="fx-long-division-container" class="w-full">
+            ${buildFxLongDivisionHTML()}
           </div>
         `;
       }
@@ -2137,77 +2607,7 @@ if (typeof window !== 'undefined') {
       `;
     }
 
-    function setupDivisionLeftToRightListeners(expectedStr, onDone) {
-      const cells = Array.from(document.querySelectorAll('.div-digit-cell'));
-      if (!cells.length) return;
-
-      cells.sort((a, b) => parseInt(a.dataset.divCol) - parseInt(b.dataset.divCol));
-      const startCell = cells[0];
-      if (startCell) {
-        startCell.focus();
-        startCell.select();
-      }
-
-      function triggerSuccess(fullVal) {
-        if (typeof playSfx === 'function') playSfx('pop');
-        cells.forEach(c => {
-          c.classList.remove('bg-teal-50', 'border-teal-500');
-          c.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-950');
-        });
-        setTimeout(() => {
-          if (typeof onDone === 'function') onDone();
-          else if (typeof onDone === 'string' && typeof window[onDone] === 'function') window[onDone](fullVal);
-        }, 200);
-      }
-
-      cells.forEach((cell, idx) => {
-        cell.onkeydown = function(e) {
-          if (e.key >= '0' && e.key <= '9') {
-            e.preventDefault();
-            this.value = e.key;
-            if (typeof playSfx === 'function') playSfx('tap');
-
-            if (idx < cells.length - 1) {
-              const nextCell = cells[idx + 1];
-              nextCell.focus();
-              nextCell.select();
-            }
-
-            const currentFullVal = cells.map(c => c.value || '').join('');
-            if (currentFullVal === String(expectedStr).trim()) {
-              triggerSuccess(currentFullVal);
-            }
-          } else if (e.key === 'Backspace') {
-            e.preventDefault();
-            this.value = '';
-            if (idx > 0) {
-              const prevCell = cells[idx - 1];
-              prevCell.focus();
-              prevCell.select();
-            }
-          } else if (e.key === 'Enter') {
-            const currentFullVal = cells.map(c => c.value || '').join('');
-            if (currentFullVal === String(expectedStr).trim()) {
-              triggerSuccess(currentFullVal);
-            }
-          }
-        };
-
-        cell.oninput = function() {
-          const val = this.value.replace(/[^0-9]/g, '');
-          this.value = val ? val[val.length - 1] : '';
-          const currentFullVal = cells.map(c => c.value || '').join('');
-          if (currentFullVal === String(expectedStr).trim()) {
-            triggerSuccess(currentFullVal);
-          } else if (this.value && idx < cells.length - 1) {
-            cells[idx + 1].focus();
-            cells[idx + 1].select();
-          }
-        };
-      });
-    }
-
-    function setupMultiRightToLeftListeners(expectedStr, onDone) {
+function setupMultiRightToLeftListeners(expectedStr, onDone) {
       const cells = Array.from(document.querySelectorAll('.multi-digit-cell'));
       if (!cells.length) return;
 

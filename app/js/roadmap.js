@@ -302,58 +302,144 @@
     function renderParentActiveRoadmapList() {
       const container = document.getElementById('parent-active-roadmap-list');
       const badge = document.getElementById('parent-roadmap-count-badge');
+      const titleEl = document.getElementById('parent-roadmap-title');
+      const subEl = document.getElementById('parent-roadmap-sub');
+      const iconEl = document.getElementById('parent-roadmap-icon');
       if (!container) return;
 
-      const rawRoadmap = Array.isArray(appState.childRoadmap) ? appState.childRoadmap : [];
-      const roadmap = rawRoadmap.filter(t => t && typeof t === 'object' && t.id);
-      if (badge) {
-        badge.innerText = `${roadmap.length} đảo`;
-      }
+      const mode = appState.assignMode || 'catalog';
 
-      if (roadmap.length === 0) {
-        container.innerHTML = `
-          <div class="bg-white/80 border border-dashed border-slate-300 rounded-xl p-3 text-center">
-            <p class="text-[11px] font-bold text-slate-600 mb-0.5">Hải trình hiện tại đang trống 🏝️</p>
-            <p class="text-[9px] text-slate-600 leading-snug">
-              Hãy tick chọn bài từ kho bên dưới hoặc tự băm bằng AI, rồi bấm <strong>"Giao sang máy con"</strong> nhé!
-            </p>
-          </div>
-        `;
-        return;
-      }
+      if (mode === 'routines') {
+        // --- CHẾ ĐỘ SINH HOẠT (ROUTINES) ---
+        if (titleEl) titleEl.innerText = "Lộ Trình Thói Quen Đang Chinh Phục";
+        if (subEl) subEl.innerText = "Các nề nếp sinh hoạt đang hiển thị trên Đảo Thói Quen của Leo";
+        if (iconEl) iconEl.innerText = "🌟";
 
-      const isAllDone = (appState.currentRoadmapIndex >= roadmap.length);
-      let html = '';
-      roadmap.forEach((t, idx) => {
-        const isDone = isAllDone || idx < appState.currentRoadmapIndex;
-        const isActive = !isAllDone && idx === appState.currentRoadmapIndex;
-        const isChore = (t.cat === 'chore');
-        html += `
-          <div class="bg-white rounded-xl p-2 border ${isActive ? 'border-amber-400 bg-amber-50/40 ring-1 ring-amber-200' : isDone ? 'border-emerald-300 bg-emerald-50/20' : 'border-slate-200'} flex items-center justify-between gap-2 shadow-2xs">
-            <div class="flex items-center gap-2 min-w-0 flex-1">
-              <span class="w-5 h-5 rounded-lg ${isDone ? 'bg-emerald-500 text-white' : isActive ? 'bg-amber-500 text-white animate-pulse' : 'bg-slate-200 text-slate-700'} font-black text-[10px] flex items-center justify-center shrink-0">
-                ${isDone ? '✓' : (idx + 1)}
-              </span>
-              <span class="text-base shrink-0">${t.icon || '🏝️'}</span>
-              <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-1">
-                  <span class="text-[8px] font-black uppercase px-1.5 py-0.2 rounded-full ${isChore ? 'bg-amber-100 text-amber-800' : 'bg-teal-100 text-teal-800'}">
-                    ${isChore ? 'Sinh hoạt' : (t.catName || 'Bài tập')}
-                  </span>
-                  ${isActive ? '<span class="text-[8px] font-black bg-amber-200 text-amber-900 px-1 rounded">Đang làm</span>' : ''}
-                </div>
-                <p class="text-[11px] font-bold text-slate-800 truncate">${t.title || 'Đảo Nhiệm Vụ'}</p>
-                <p class="text-[9px] text-slate-500">${t.steps ? t.steps.length : 1} bước • +${t.reward || 100} ⭐</p>
-              </div>
+        const routinesDb = window.routineDatabase || {};
+        let routineList = appState.childRoutineRoadmap;
+        if (!Array.isArray(routineList) || routineList.length === 0) {
+          routineList = [
+            routinesDb['routine_morning_bed'],
+            routinesDb['routine_afterschool_drop'],
+            routinesDb['routine_clean_desk'],
+            routinesDb['routine_night_teeth']
+          ].filter(Boolean);
+          appState.childRoutineRoadmap = routineList;
+        }
+
+        const validRoutines = routineList.map(r => (typeof r === 'string' ? routinesDb[r] : r)).filter(Boolean);
+
+        if (badge) {
+          badge.innerText = `${validRoutines.length} thói quen`;
+          badge.className = "text-[10px] font-black bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-full";
+        }
+
+        if (validRoutines.length === 0) {
+          container.innerHTML = `
+            <div class="bg-white/80 border border-dashed border-amber-300 rounded-xl p-3 text-center">
+              <p class="text-[11px] font-bold text-amber-900 mb-0.5">Đảo thói quen hiện tại đang trống 🌟</p>
+              <p class="text-[9px] text-slate-600 leading-snug">
+                Hãy tick chọn thói quen bên dưới, rồi bấm <strong>"Giao thói quen sang máy con"</strong> nhé!
+              </p>
             </div>
-            <button onclick="parentRemoveRoadmapTask(${idx})" title="Xóa hòn đảo này khỏi máy con" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition shrink-0 active:scale-95 cursor-pointer">
-              <span class="text-sm">🗑️</span>
-            </button>
-          </div>
-        `;
-      });
+          `;
+          return;
+        }
 
-      container.innerHTML = html;
+        let html = '';
+        validRoutines.forEach((rt, idx) => {
+          let slotText = "";
+          if (rt.timeline_slot === 'morning') slotText = `🌅 Sáng ${rt.slot_time || '06:30'}`;
+          else if (rt.timeline_slot === 'afternoon') slotText = `🌇 Chiều ${rt.slot_time || '16:30'}`;
+          else if (rt.timeline_slot === 'evening') slotText = `🌙 Tối ${rt.slot_time || '19:00'}`;
+          else slotText = `✨ Ngủ ${rt.slot_time || '21:00'}`;
+
+          html += `
+            <div class="bg-white rounded-xl p-2 border border-amber-200 hover:border-amber-300 flex items-center justify-between gap-2 shadow-2xs">
+              <div class="flex items-center gap-2 min-w-0 flex-1">
+                <span class="w-5 h-5 rounded-lg bg-amber-500 text-amber-950 font-black text-[10px] flex items-center justify-center shrink-0">
+                  ${idx + 1}
+                </span>
+                <span class="text-base shrink-0">${rt.icon || '🌟'}</span>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1">
+                    <span class="text-[8px] font-black uppercase px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-900">
+                      ${slotText}
+                    </span>
+                    <span class="text-[8px] font-extrabold text-amber-700 bg-amber-50 px-1 rounded border border-amber-200">
+                      +${rt.reward || 20} ⭐
+                    </span>
+                  </div>
+                  <p class="text-[11px] font-bold text-slate-800 truncate">${rt.title}</p>
+                  <p class="text-[9px] text-slate-500">${rt.steps ? rt.steps.length : 3} vi bước • 📸 Chụp ảnh</p>
+                </div>
+              </div>
+              <button onclick="parentRemoveRoutineTask(${idx})" title="Xóa thói quen này khỏi đảo của con" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition shrink-0 active:scale-95 cursor-pointer">
+                <span class="text-sm">🗑️</span>
+              </button>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+
+      } else {
+        // --- CHẾ ĐỘ BÀI TẬP GDPT (CATALOG / CUSTOM) ---
+        if (titleEl) titleEl.innerText = "Hải Trình Đang Chinh Phục";
+        if (subEl) subEl.innerText = "Các hòn đảo bài tập đang hiển thị trên Đảo Học Tập của Leo";
+        if (iconEl) iconEl.innerText = "🏝️";
+
+        const rawRoadmap = Array.isArray(appState.childRoadmap) ? appState.childRoadmap : [];
+        const roadmap = rawRoadmap.filter(t => t && typeof t === 'object' && t.id);
+        if (badge) {
+          badge.innerText = `${roadmap.length} đảo`;
+          badge.className = "text-[10px] font-black bg-teal-100 text-teal-800 border border-teal-300 px-2 py-0.5 rounded-full";
+        }
+
+        if (roadmap.length === 0) {
+          container.innerHTML = `
+            <div class="bg-white/80 border border-dashed border-slate-300 rounded-xl p-3 text-center">
+              <p class="text-[11px] font-bold text-slate-600 mb-0.5">Hải trình hiện tại đang trống 🏝️</p>
+              <p class="text-[9px] text-slate-600 leading-snug">
+                Hãy tick chọn bài từ kho bên dưới hoặc tự băm bằng AI, rồi bấm <strong>"Giao sang máy con"</strong> nhé!
+              </p>
+            </div>
+          `;
+          return;
+        }
+
+        const isAllDone = (appState.currentRoadmapIndex >= roadmap.length);
+        let html = '';
+        roadmap.forEach((t, idx) => {
+          const isDone = isAllDone || idx < appState.currentRoadmapIndex;
+          const isActive = !isAllDone && idx === appState.currentRoadmapIndex;
+          const isChore = (t.cat === 'chore');
+          html += `
+            <div class="bg-white rounded-xl p-2 border ${isActive ? 'border-amber-400 bg-amber-50/40 ring-1 ring-amber-200' : isDone ? 'border-emerald-300 bg-emerald-50/20' : 'border-slate-200'} flex items-center justify-between gap-2 shadow-2xs">
+              <div class="flex items-center gap-2 min-w-0 flex-1">
+                <span class="w-5 h-5 rounded-lg ${isDone ? 'bg-emerald-500 text-white' : isActive ? 'bg-amber-500 text-white animate-pulse' : 'bg-slate-200 text-slate-700'} font-black text-[10px] flex items-center justify-center shrink-0">
+                  ${isDone ? '✓' : (idx + 1)}
+                </span>
+                <span class="text-base shrink-0">${t.icon || '🏝️'}</span>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-1">
+                    <span class="text-[8px] font-black uppercase px-1.5 py-0.2 rounded-full ${isChore ? 'bg-amber-100 text-amber-800' : 'bg-teal-100 text-teal-800'}">
+                      ${isChore ? 'Sinh hoạt' : (t.catName || 'Bài tập')}
+                    </span>
+                    ${isActive ? '<span class="text-[8px] font-black bg-amber-200 text-amber-900 px-1 rounded">Đang làm</span>' : ''}
+                  </div>
+                  <p class="text-[11px] font-bold text-slate-800 truncate">${t.title || 'Đảo Nhiệm Vụ'}</p>
+                  <p class="text-[9px] text-slate-500">${t.steps ? t.steps.length : 1} bước • +${t.reward || 100} ⭐</p>
+                </div>
+              </div>
+              <button onclick="parentRemoveRoadmapTask(${idx})" title="Xóa hòn đảo này khỏi máy con" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition shrink-0 active:scale-95 cursor-pointer">
+                <span class="text-sm">🗑️</span>
+              </button>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
     }
 
     function parentRemoveRoadmapTask(index) {
@@ -384,33 +470,85 @@
       showToast("Đã Xóa Đảo", `Đã gỡ [${removed ? removed.title : 'Đảo'}] khỏi hải trình của Leo!`, "🗑️");
     }
 
-    function parentClearChildRoadmap() {
+    function parentRemoveRoutineTask(index) {
       playSfx('tap');
-      if (!Array.isArray(appState.childRoadmap) || appState.childRoadmap.length === 0) {
-        showToast("Hải Trình Trống", "Hải trình của con hiện đang trống!", "ℹ️");
-        return;
-      }
+      if (!Array.isArray(appState.childRoutineRoadmap) || index < 0 || index >= appState.childRoutineRoadmap.length) return;
+      const removed = appState.childRoutineRoadmap.splice(index, 1)[0];
 
-      if (!confirm("Ba mẹ có chắc muốn xóa sạch toàn bộ các hòn đảo trên máy con để giao lại từ đầu không?")) {
-        return;
-      }
-
-      appState.childRoadmap = [];
-      appState.currentRoadmapIndex = 0;
-      appState.activeTask = null;
-      appState.currentStepIndex = 0;
-
-      if (window.miloBus) {
-        window.miloBus.savePersistedState(appState);
-        window.miloBus.broadcast('ROADMAP_UPDATED', {
-          roadmap: [],
-          currentIdx: 0
+      const bus = window.miloBus || window.syncBus;
+      if (bus && typeof bus.broadcast === 'function') {
+        bus.broadcast('ROUTINE_ASSIGN_BATCH', {
+          routines: appState.childRoutineRoadmap,
+          timestamp: Date.now()
         });
       }
 
+      if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
+        window.renderChildRoutineRoadmapFromTasks(appState.childRoutineRoadmap);
+      }
+
       renderParentActiveRoadmapList();
-      renderChildIslandRoadmap();
-      showToast("Đã Làm Mới Hải Trình", "Toàn bộ đảo đã được xóa sạch! Hãy giao bài mới cho bé nhé.", "✨");
+      showToast("Đã Xóa Thói Quen", `Đã gỡ [${removed ? removed.title : 'Thói quen'}] khỏi Đảo Thói Quen của Leo!`, "🗑️");
+    }
+
+    function parentClearChildRoadmap() {
+      playSfx('tap');
+      const mode = appState.assignMode || 'catalog';
+
+      if (mode === 'routines') {
+        if (!Array.isArray(appState.childRoutineRoadmap) || appState.childRoutineRoadmap.length === 0) {
+          showToast("Đảo Thói Quen Trống", "Lộ trình thói quen của con hiện đang trống!", "ℹ️");
+          return;
+        }
+
+        if (!confirm("Ba mẹ có chắc muốn xóa sạch toàn bộ các thói quen trên Đảo Thói Quen của con để giao lại từ đầu không?")) {
+          return;
+        }
+
+        appState.childRoutineRoadmap = [];
+
+        const bus = window.miloBus || window.syncBus;
+        if (bus && typeof bus.broadcast === 'function') {
+          bus.broadcast('ROUTINE_ASSIGN_BATCH', {
+            routines: [],
+            timestamp: Date.now()
+          });
+        }
+
+        if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
+          window.renderChildRoutineRoadmapFromTasks([]);
+        }
+
+        renderParentActiveRoadmapList();
+        showToast("Đã Xóa Sạch Thói Quen", "Toàn bộ thói quen đã được xóa! Hãy giao thói quen mới cho bé nhé.", "✨");
+
+      } else {
+        if (!Array.isArray(appState.childRoadmap) || appState.childRoadmap.length === 0) {
+          showToast("Hải Trình Trống", "Hải trình của con hiện đang trống!", "ℹ️");
+          return;
+        }
+
+        if (!confirm("Ba mẹ có chắc muốn xóa sạch toàn bộ các hòn đảo trên máy con để giao lại từ đầu không?")) {
+          return;
+        }
+
+        appState.childRoadmap = [];
+        appState.currentRoadmapIndex = 0;
+        appState.activeTask = null;
+        appState.currentStepIndex = 0;
+
+        if (window.miloBus) {
+          window.miloBus.savePersistedState(appState);
+          window.miloBus.broadcast('ROADMAP_UPDATED', {
+            roadmap: [],
+            currentIdx: 0
+          });
+        }
+
+        renderParentActiveRoadmapList();
+        renderChildIslandRoadmap();
+        showToast("Đã Làm Mới Hải Trình", "Toàn bộ đảo đã được xóa sạch! Hãy giao bài mới cho bé nhé.", "✨");
+      }
     }
 
     function initRoadmapDragScroll(container) {
@@ -500,6 +638,8 @@
       window.selectQueuedIsland = selectQueuedIsland;
       window.alertTreasureStatus = alertTreasureStatus;
       window.parentRemoveRoadmapTask = parentRemoveRoadmapTask;
+      window.parentRemoveRoutineTask = parentRemoveRoutineTask;
       window.parentClearChildRoadmap = parentClearChildRoadmap;
+      window.renderParentActiveRoadmapList = renderParentActiveRoadmapList;
       window.initRoadmapDragScroll = initRoadmapDragScroll;
     }

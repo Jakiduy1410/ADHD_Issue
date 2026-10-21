@@ -73,6 +73,11 @@
         if (btnCus) btnCus.className = "py-2 rounded-xl bg-white text-indigo-800 shadow-xs transition flex items-center justify-center gap-1 cursor-pointer font-black";
         if (viewCus) viewCus.classList.remove('hidden');
       }
+
+      appState.assignMode = mode;
+      if (typeof renderParentActiveRoadmapList === 'function') {
+        renderParentActiveRoadmapList();
+      }
     }
 
     // ============================================================
@@ -122,9 +127,6 @@
                 ${rt.steps ? rt.steps.length : 3} vi bước atomic • 📸 Chụp ảnh minh chứng
               </p>
             </div>
-            <button onclick="parentOpenPhotoModal('${rt.id}')" title="Xem trước minh chứng" class="text-[10px] font-bold text-amber-700 bg-amber-100 hover:bg-amber-200 px-2 py-1 rounded-lg shrink-0 transition flex items-center gap-0.5 cursor-pointer">
-              <span>📷</span> <span>Xem</span>
-            </button>
           </div>
         `;
         container.appendChild(card);
@@ -224,6 +226,9 @@
       }
 
       renderParentAuditTimeline();
+      if (typeof renderParentActiveRoadmapList === 'function') {
+        renderParentActiveRoadmapList();
+      }
 
       showToast("Đã Giao Nề Nếp", `Mẹ vừa giao ${selected.length} thói quen nề nếp sang Đảo Thói Quen của Leo!`, "🌟");
     }

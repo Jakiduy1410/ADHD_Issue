@@ -234,6 +234,17 @@
       const stage = document.getElementById('child-interactive-stage');
       const ui = stepData.ui_payload || stepData.ui_data || {};
 
+      // Điều phối chuyên biệt cho 2 Dạng bài nhiều ý GDPT 2018 (Đặt tính & Tìm X lũy tiến)
+      if (task.exercise_type === 'multi_item_arithmetic') {
+        stage.innerHTML = renderMultiItemArithmeticStage(task, stepIdx);
+        return;
+      }
+      if (task.exercise_type === 'multi_item_find_x') {
+        resetMultiTaskState();
+        stage.innerHTML = renderMultiItemFindXStage(task, stepIdx);
+        return;
+      }
+
       if (stepData.type === 'chore_pens') {
         stage.innerHTML = `
           <div class="relative bg-amber-50/70 border-2 border-dashed border-amber-300 rounded-2xl p-4 min-h-[200px] flex flex-col justify-between">
@@ -1590,3 +1601,541 @@ if (typeof window !== 'undefined') {
   window.pickTrash = typeof pickTrash !== 'undefined' ? pickTrash : null;
   window.pickChoreItem = typeof pickChoreItem !== 'undefined' ? pickChoreItem : null;
 }
+
+
+    /* ============================================================
+       MODULE: MULTI-ITEM ARITHMETIC & PROGRESSIVE FIND X RENDERERS
+       ============================================================ */
+    var multiTaskState = {
+      curStage: 1,
+      tempOp: '',
+      tempNum: ''
+    };
+
+    function resetMultiTaskState() {
+      multiTaskState.curStage = 1;
+      multiTaskState.tempOp = '';
+      multiTaskState.tempNum = '';
+    }
+
+    // --- 1. RENDERER CHO DẠNG ĐẶT TÍNH RỒI TÍNH NHIỀU Ý (multi_item_arithmetic) ---
+    function renderMultiItemArithmeticStage(task, stepIdx) {
+      const items = task.items || [];
+      const item = items[stepIdx] || items[0] || {};
+      const topStr = String(item.top || '0');
+      const op = item.op || '+';
+      const botStr = String(item.bot || '0');
+      const expectedStr = String(item.expected_answer || '');
+
+      const badgeEl = document.getElementById('child-step-badge');
+      if (badgeEl) {
+        badgeEl.innerText = `${item.label || ('Ý ' + (stepIdx + 1))} • ${task.header_title || 'Đặt tính rồi tính'}`;
+        badgeEl.className = "bg-teal-100 text-teal-800 text-[11px] font-black px-2.5 py-0.5 rounded-full uppercase";
+      }
+      const titleEl = document.getElementById('child-instruction-text');
+      if (titleEl) {
+        titleEl.innerHTML = `Đặt tính và tính: <span class="text-teal-700 font-mono">${topStr} ${op} ${botStr}</span>`;
+      }
+
+      const numCols = Math.max(topStr.length, botStr.length, expectedStr.length) + 1;
+      const cellCls = "w-7 h-8 text-base font-mono font-black text-center";
+
+      let rowTop = '';
+      for (let i = numCols - 1; i >= 0; i--) {
+        const ch = topStr[topStr.length - 1 - i] || '';
+        rowTop += `<div class="${cellCls} flex items-center justify-center text-slate-800">${ch}</div>`;
+      }
+
+      let rowBot = '';
+      for (let i = numCols - 1; i >= 0; i--) {
+        const ch = botStr[botStr.length - 1 - i] || '';
+        rowBot += `<div class="${cellCls} flex items-center justify-center text-slate-800">${ch}</div>`;
+      }
+
+      let rowInputs = '';
+      for (let i = numCols - 1; i >= 0; i--) {
+        if (i < expectedStr.length) {
+          rowInputs += `
+            <input type="text" maxlength="1" inputmode="numeric" 
+                   data-col="${i}" 
+                   class="multi-digit-cell ${cellCls} rounded-lg border-2 border-teal-500 bg-teal-50 text-slate-900 focus:bg-teal-100 focus:border-teal-600 focus:outline-none shadow-xs transition" />
+          `;
+        } else {
+          rowInputs += `<div class="${cellCls}"></div>`;
+        }
+      }
+
+      setTimeout(() => {
+        setupMultiRightToLeftListeners(expectedStr, () => {
+          const btnNext = document.getElementById('child-btn-next-step');
+          if (btnNext) {
+            btnNext.disabled = false;
+            btnNext.classList.remove('btn-disabled');
+            btnNext.classList.add('animate-bounce');
+          }
+        });
+      }, 50);
+
+      return `
+        <div class="bg-white p-3.5 rounded-2xl border-2 border-teal-200 shadow-sm flex flex-col items-center justify-center my-1 select-none w-full max-w-[300px] mx-auto">
+          <div class="inline-flex flex-col items-end">
+            <div class="flex items-center justify-end gap-1.5">${rowTop}</div>
+            <div class="flex items-center justify-end relative w-full gap-1.5 my-0.5">
+              <span class="absolute left-0 text-teal-600 font-mono font-black text-lg select-none pl-1">${op}</span>
+              <div class="flex items-center justify-end gap-1.5">${rowBot}</div>
+            </div>
+            <div class="w-full h-[2.5px] bg-slate-800 my-1 rounded-full"></div>
+            <div class="flex items-center justify-end gap-1.5 pt-0.5">
+              ${rowInputs}
+            </div>
+          </div>
+          <span class="text-[10px] font-bold text-teal-700 mt-2 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200">
+            👉 Điền từ phải sang trái (đơn vị ➔ chục ➔ trăm)
+          </span>
+        </div>
+      `;
+    }
+
+    // --- 2. RENDERER CHO DẠNG TÌM X LŨY TIẾN (multi_item_find_x) ---
+    function renderMultiItemFindXStage(task, stepIdx) {
+      const items = task.items || [];
+      const item = items[stepIdx] || items[0] || {};
+      const subType = item.sub_type || 'single_op';
+
+      const badgeEl = document.getElementById('child-step-badge');
+      if (badgeEl) {
+        badgeEl.innerText = `${item.label || ('Câu ' + (stepIdx + 1))} • ${task.header_title || 'Tìm x'}`;
+        badgeEl.className = "bg-amber-100 text-amber-800 text-[11px] font-black px-2.5 py-0.5 rounded-full uppercase";
+      }
+      const titleEl = document.getElementById('child-instruction-text');
+      if (titleEl) {
+        titleEl.innerHTML = `Giải tìm x: <span class="text-amber-800 font-mono font-black">${item.equation || ''}</span>`;
+      }
+
+      let notebookHtml = '';
+      let calcWindowHtml = '';
+      let isCompleted = false;
+
+      // TYPE A: SINGLE OP (x + 354 = 820)
+      if (subType === 'single_op') {
+        notebookHtml = `
+          <div class="flex items-center text-slate-800 text-lg pl-1">${item.equation}</div>
+          <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1">
+            ${multiTaskState.curStage === 1 ? `
+              <span class="text-teal-700">${item.left_lead || 'x = '}</span>
+              <select onchange="onFxSingleOpChange(this.value)" class="w-8 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none appearance-none cursor-pointer shadow-2xs shrink-0">
+                <option value="">?</option>
+                <option value="+" ${multiTaskState.tempOp === '+' ? 'selected' : ''}>+</option>
+                <option value="-" ${multiTaskState.tempOp === '-' ? 'selected' : ''}>-</option>
+                <option value="×" ${multiTaskState.tempOp === '×' ? 'selected' : ''}>×</option>
+                <option value=":" ${multiTaskState.tempOp === ':' ? 'selected' : ''}>:</option>
+              </select>
+              <input type="text" value="${multiTaskState.tempNum}" oninput="onFxSingleNumChange(this.value)" placeholder="số?" class="w-16 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none placeholder:text-slate-400 placeholder:text-xs shadow-2xs shrink-0" />
+            ` : `
+              <span class="text-emerald-700 slide-in-down flex items-center gap-1.5">
+                ${item.formatted_line2}
+                <span class="text-xs text-emerald-600 font-sans">✓</span>
+              </span>
+            `}
+          </div>
+          ${multiTaskState.curStage === 3 ? `
+            <div class="flex items-center gap-2 text-lg text-emerald-800 slide-in-down pl-1">
+              <span class="text-emerald-900 font-black">${item.formatted_final}</span>
+              <span class="text-sm">🎉</span>
+            </div>
+          ` : ''}
+        `;
+
+        if (multiTaskState.curStage === 2) {
+          calcWindowHtml = `
+            <div class="mt-3 pt-2 border-t-2 border-dashed border-teal-200 slide-in-down">
+              ${renderFxCalcGrid(item.calc_top, item.calc_op, item.calc_bot, item.expected_x, () => {
+                multiTaskState.curStage = 3;
+                triggerFxReRender();
+              }, "Đặt tính tìm x:")}
+            </div>
+          `;
+        }
+        isCompleted = (multiTaskState.curStage === 3);
+
+      // TYPE B: RHS EXPR (x + 125 = 450 - 150)
+      } else if (subType === 'rhs_expr') {
+        notebookHtml = `
+          <div class="flex items-center text-slate-800 text-lg pl-1">${item.equation}</div>
+          ${multiTaskState.curStage >= 2 ? `
+            <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1 slide-in-down">
+              <span class="text-emerald-700 flex items-center gap-1.5">
+                ${item.step1_formatted}
+                <span class="text-xs text-emerald-600 font-sans">✓</span>
+              </span>
+            </div>
+          ` : ''}
+          ${multiTaskState.curStage >= 2 ? `
+            <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1">
+              ${multiTaskState.curStage === 2 ? `
+                <span class="text-teal-700">${item.step2_lead || 'x = '}</span>
+                <select onchange="onFxRhsOpChange(this.value)" class="w-8 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none appearance-none cursor-pointer shadow-2xs shrink-0">
+                  <option value="">?</option>
+                  <option value="+" ${multiTaskState.tempOp === '+' ? 'selected' : ''}>+</option>
+                  <option value="-" ${multiTaskState.tempOp === '-' ? 'selected' : ''}>-</option>
+                  <option value="×" ${multiTaskState.tempOp === '×' ? 'selected' : ''}>×</option>
+                  <option value=":" ${multiTaskState.tempOp === ':' ? 'selected' : ''}>:</option>
+                </select>
+                <input type="text" value="${multiTaskState.tempNum}" oninput="onFxRhsNumChange(this.value)" placeholder="số?" class="w-16 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none placeholder:text-slate-400 placeholder:text-xs shadow-2xs shrink-0" />
+              ` : `
+                <span class="text-emerald-700 slide-in-down flex items-center gap-1.5">
+                  ${item.step2_formatted}
+                  <span class="text-xs text-emerald-600 font-sans">✓</span>
+                </span>
+              `}
+            </div>
+          ` : ''}
+          ${multiTaskState.curStage === 4 ? `
+            <div class="flex items-center gap-2 text-lg text-emerald-800 slide-in-down pl-1">
+              <span class="text-emerald-900 font-black">${item.formatted_final}</span>
+              <span class="text-sm">🎉</span>
+            </div>
+          ` : ''}
+        `;
+
+        if (multiTaskState.curStage === 1) {
+          calcWindowHtml = `
+            <div class="mt-3 pt-2 border-t-2 border-dashed border-amber-300 slide-in-down">
+              <div class="text-xs font-black text-amber-800 mb-1">⚡ Bước 1: Đặt tính thu gọn vế phải</div>
+              ${renderFxCalcGrid(item.rhs_calc.top, item.rhs_calc.op, item.rhs_calc.bot, item.rhs_calc.expected, () => {
+                multiTaskState.curStage = 2;
+                multiTaskState.tempOp = '';
+                multiTaskState.tempNum = '';
+                triggerFxReRender();
+              }, "Tính vế phải:")}
+            </div>
+          `;
+        } else if (multiTaskState.curStage === 3) {
+          calcWindowHtml = `
+            <div class="mt-3 pt-2 border-t-2 border-dashed border-teal-200 slide-in-down">
+              <div class="text-xs font-black text-teal-800 mb-1">⚡ Bước 2: Đặt tính tìm x</div>
+              ${renderFxCalcGrid(item.final_calc.top, item.final_calc.op, item.final_calc.bot, item.final_calc.expected, () => {
+                multiTaskState.curStage = 4;
+                triggerFxReRender();
+              }, "Tính kết quả x:")}
+            </div>
+          `;
+        }
+        isCompleted = (multiTaskState.curStage === 4);
+
+      // TYPE C & D: TWO TIER & PAREN EXPR
+      } else {
+        notebookHtml = `
+          <div class="flex items-center text-slate-800 text-lg pl-1">${item.equation}</div>
+          <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1">
+            ${multiTaskState.curStage === 1 ? `
+              <span class="text-teal-700">${item.tier1_lead || item.step1_lead || ''}</span>
+              <select onchange="onFxGenericOpChange(this.value)" class="w-8 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none appearance-none cursor-pointer shadow-2xs shrink-0">
+                <option value="">?</option>
+                <option value="+" ${multiTaskState.tempOp === '+' ? 'selected' : ''}>+</option>
+                <option value="-" ${multiTaskState.tempOp === '-' ? 'selected' : ''}>-</option>
+                <option value="×" ${multiTaskState.tempOp === '×' ? 'selected' : ''}>×</option>
+                <option value=":" ${multiTaskState.tempOp === ':' ? 'selected' : ''}>:</option>
+              </select>
+              <input type="text" value="${multiTaskState.tempNum}" oninput="onFxGenericNumChange(this.value)" placeholder="số?" class="w-16 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none placeholder:text-slate-400 placeholder:text-xs shadow-2xs shrink-0" />
+            ` : `
+              <span class="text-emerald-700 slide-in-down flex items-center gap-1.5">
+                ${item.tier1_formatted || item.step1_formatted || ''}
+                <span class="text-xs text-emerald-600 font-sans">✓</span>
+              </span>
+            `}
+          </div>
+          ${multiTaskState.curStage >= 3 ? `
+            <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1 slide-in-down">
+              <span class="text-emerald-700 flex items-center gap-1.5">
+                ${item.tier1_res_formatted || item.step1_res_formatted || ''}
+                <span class="text-xs text-emerald-600 font-sans">✓</span>
+              </span>
+            </div>
+          ` : ''}
+          ${multiTaskState.curStage >= 3 ? `
+            <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1">
+              ${multiTaskState.curStage === 3 ? `
+                <span class="text-teal-700">${item.tier2_lead || item.step2_lead || 'x = '}</span>
+                <select onchange="onFxGenericTier2OpChange(this.value)" class="w-8 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none appearance-none cursor-pointer shadow-2xs shrink-0">
+                  <option value="">?</option>
+                  <option value="+" ${multiTaskState.tempOp === '+' ? 'selected' : ''}>+</option>
+                  <option value="-" ${multiTaskState.tempOp === '-' ? 'selected' : ''}>-</option>
+                  <option value="×" ${multiTaskState.tempOp === '×' ? 'selected' : ''}>×</option>
+                  <option value=":" ${multiTaskState.tempOp === ':' ? 'selected' : ''}>:</option>
+                </select>
+                <input type="text" value="${multiTaskState.tempNum}" oninput="onFxGenericTier2NumChange(this.value)" placeholder="số?" class="w-16 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none placeholder:text-slate-400 placeholder:text-xs shadow-2xs shrink-0" />
+              ` : `
+                <span class="text-emerald-700 slide-in-down flex items-center gap-1.5">
+                  ${item.tier2_formatted || item.step2_formatted || ''}
+                  <span class="text-xs text-emerald-600 font-sans">✓</span>
+                </span>
+              `}
+            </div>
+          ` : ''}
+          ${multiTaskState.curStage === 5 ? `
+            <div class="flex items-center gap-2 text-lg text-emerald-800 slide-in-down pl-1">
+              <span class="text-emerald-900 font-black">${item.formatted_final}</span>
+              <span class="text-sm">🎉</span>
+            </div>
+          ` : ''}
+        `;
+
+        const calc1 = item.tier1_calc || item.step1_calc;
+        const calc2 = item.final_calc;
+        if (multiTaskState.curStage === 2 && calc1) {
+          calcWindowHtml = `
+            <div class="mt-3 pt-2 border-t-2 border-dashed border-amber-300 slide-in-down">
+              ${renderFxCalcGrid(calc1.top, calc1.op, calc1.bot, calc1.expected, () => {
+                multiTaskState.curStage = 3;
+                multiTaskState.tempOp = '';
+                multiTaskState.tempNum = '';
+                triggerFxReRender();
+              }, "Đặt tính cụm:")}
+            </div>
+          `;
+        } else if (multiTaskState.curStage === 4 && calc2) {
+          calcWindowHtml = `
+            <div class="mt-3 pt-2 border-t-2 border-dashed border-teal-200 slide-in-down">
+              ${renderFxCalcGrid(calc2.top, calc2.op, calc2.bot, calc2.expected, () => {
+                multiTaskState.curStage = 5;
+                triggerFxReRender();
+              }, "Đặt tính tìm x:")}
+            </div>
+          `;
+        }
+        isCompleted = (multiTaskState.curStage === 5);
+      }
+
+      const btnNext = document.getElementById('child-btn-next-step');
+      if (btnNext) {
+        if (isCompleted) {
+          btnNext.disabled = false;
+          btnNext.classList.remove('btn-disabled');
+          btnNext.classList.add('animate-bounce');
+        } else {
+          btnNext.disabled = true;
+          btnNext.classList.add('btn-disabled');
+          btnNext.classList.remove('animate-bounce');
+        }
+      }
+
+      return `
+        <div class="bg-white border-2 border-amber-300 rounded-[24px] p-3 shadow-xs flex flex-col justify-between min-h-[360px] relative w-full">
+          <div>
+            <div class="notebook-paper p-3 rounded-2xl border border-slate-200 font-mono text-base font-black text-slate-900 space-y-1.5 shadow-inner">
+              ${notebookHtml}
+            </div>
+            ${calcWindowHtml}
+            ${isCompleted ? `
+              <div class="mt-2.5 p-2 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-300 rounded-xl flex items-center gap-2 slide-in-down">
+                <span class="text-xl">👑</span>
+                <span class="text-[11px] font-black text-emerald-950">Bài giải trình bày 3-5 dòng chuẩn SGK!</span>
+              </div>
+            ` : ''}
+          </div>
+          <div class="bg-amber-50 border border-amber-200 p-2 rounded-xl flex items-center gap-2 mt-2">
+            <span class="text-base">🤖</span>
+            <p class="text-[10px] font-bold text-amber-900 leading-tight">
+              ${isCompleted ? 'Milo: Tuyệt vời! Bấm XONG BƯỚC NÀY để nhận sao nhé!' : 'Milo: Đặt tính xong là dòng tiếp theo sẽ tự động in ra ngay!'}
+            </p>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- CÁC HÀM TIỆN ÍCH CHO TÌM X RENDERER ---
+    function triggerFxReRender() {
+      const task = appState.activeTask;
+      const stepIdx = appState.currentStepIndex || 0;
+      const stage = document.getElementById('child-interactive-stage');
+      if (stage && task) {
+        stage.innerHTML = renderMultiItemFindXStage(task, stepIdx);
+      }
+    }
+
+    function renderFxCalcGrid(topStr, op, botStr, expectedStr, onDone, titleLabel = "Đặt tính:") {
+      if (op === ':') {
+        return `
+          <div class="bg-white p-2.5 rounded-2xl border-2 border-teal-200 shadow-xs flex items-center justify-center gap-2 my-1 select-none max-w-[260px] mx-auto w-full">
+            <span class="font-mono text-base font-black text-slate-800">${topStr} : ${botStr} =</span>
+            <input type="text" oninput="if(this.value.trim() === '${expectedStr}') { playSfx('correct'); (${onDone.toString()})(); }" placeholder="?" class="w-16 text-center font-mono font-black text-base text-teal-700 bg-teal-50 border-2 border-teal-400 rounded-xl px-2 py-1 focus:outline-none" autofocus />
+          </div>
+        `;
+      }
+
+      const numCols = Math.max(String(topStr).length, String(botStr).length, String(expectedStr).length) + 1;
+      const cellCls = "w-6 h-7 text-sm font-mono font-black text-center";
+
+      let rowTop = '';
+      for (let i = numCols - 1; i >= 0; i--) {
+        const ch = String(topStr)[String(topStr).length - 1 - i] || '';
+        rowTop += `<div class="${cellCls} flex items-center justify-center text-slate-800">${ch}</div>`;
+      }
+
+      let rowBot = '';
+      for (let i = numCols - 1; i >= 0; i--) {
+        const ch = String(botStr)[String(botStr).length - 1 - i] || '';
+        rowBot += `<div class="${cellCls} flex items-center justify-center text-slate-800">${ch}</div>`;
+      }
+
+      let rowInputs = '';
+      for (let i = numCols - 1; i >= 0; i--) {
+        if (i < String(expectedStr).length) {
+          rowInputs += `
+            <input type="text" maxlength="1" inputmode="numeric" 
+                   data-col="${i}" 
+                   class="multi-digit-cell ${cellCls} rounded-lg border-2 border-teal-500 bg-teal-50 text-slate-900 focus:bg-teal-100 focus:border-teal-600 focus:outline-none shadow-xs transition" />
+          `;
+        } else {
+          rowInputs += `<div class="${cellCls}"></div>`;
+        }
+      }
+
+      setTimeout(() => {
+        setupMultiRightToLeftListeners(expectedStr, onDone);
+      }, 50);
+
+      return `
+        <div class="bg-white p-2.5 rounded-2xl border-2 border-teal-200 shadow-xs flex flex-col items-center justify-center my-1 select-none w-full max-w-[260px] mx-auto">
+          <div class="inline-flex flex-col items-end">
+            <div class="flex items-center justify-end gap-1">${rowTop}</div>
+            <div class="flex items-center justify-end relative w-full gap-1 my-0.5">
+              <span class="absolute left-0 text-teal-600 font-mono font-black text-base select-none pl-1">${op}</span>
+              <div class="flex items-center justify-end gap-1">${rowBot}</div>
+            </div>
+            <div class="w-full h-[2px] bg-slate-800 my-1 rounded-full"></div>
+            <div class="flex items-center justify-end gap-1 pt-0.5">${rowInputs}</div>
+          </div>
+          <span class="text-[9px] font-bold text-teal-700 mt-1 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
+            👉 ${titleLabel}
+          </span>
+        </div>
+      `;
+    }
+
+    function setupMultiRightToLeftListeners(expectedStr, onDone) {
+      const cells = Array.from(document.querySelectorAll('.multi-digit-cell'));
+      if (!cells.length) return;
+
+      cells.sort((a, b) => parseInt(a.dataset.col) - parseInt(b.dataset.col));
+      const startCell = cells[0];
+      if (startCell) {
+        startCell.focus();
+        startCell.select();
+      }
+
+      cells.forEach((cell, idx) => {
+        cell.onkeydown = function(e) {
+          if (e.key >= '0' && e.key <= '9') {
+            e.preventDefault();
+            this.value = e.key;
+            playSfx('tap');
+
+            let currentValRev = '';
+            for (let c of cells) currentValRev += (c.value || '');
+            const currentFullVal = currentValRev.split('').reverse().join('');
+
+            if (idx < cells.length - 1) {
+              const nextLeftCell = cells[idx + 1];
+              nextLeftCell.focus();
+              nextLeftCell.select();
+            }
+
+            if (currentFullVal === String(expectedStr)) {
+              playSfx('pop');
+              cells.forEach(c => {
+                c.classList.remove('bg-teal-50', 'border-teal-500');
+                c.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-950');
+              });
+              if (onDone) onDone();
+            }
+          } else if (e.key === 'Backspace') {
+            e.preventDefault();
+            this.value = '';
+            if (idx > 0) {
+              const prevRightCell = cells[idx - 1];
+              prevRightCell.focus();
+              prevRightCell.select();
+            }
+          }
+        };
+      });
+    }
+
+    // Handlers chọn dấu và gõ số cho Tìm X
+    function onFxSingleOpChange(val) {
+      multiTaskState.tempOp = val;
+      playSfx('tap');
+      checkFxSingle();
+    }
+    function onFxSingleNumChange(val) {
+      multiTaskState.tempNum = val.trim();
+      checkFxSingle();
+    }
+    function checkFxSingle() {
+      const item = (appState.activeTask.items || [])[appState.currentStepIndex || 0] || {};
+      if (multiTaskState.tempOp === item.correct_op && multiTaskState.tempNum === item.target_num) {
+        playSfx('pop');
+        multiTaskState.curStage = 2;
+        triggerFxReRender();
+      }
+    }
+
+    function onFxRhsOpChange(val) {
+      multiTaskState.tempOp = val;
+      playSfx('tap');
+      checkFxRhs();
+    }
+    function onFxRhsNumChange(val) {
+      multiTaskState.tempNum = val.trim();
+      checkFxRhs();
+    }
+    function checkFxRhs() {
+      const item = (appState.activeTask.items || [])[appState.currentStepIndex || 0] || {};
+      if (multiTaskState.tempOp === item.step2_op && multiTaskState.tempNum === item.step2_num) {
+        playSfx('pop');
+        multiTaskState.curStage = 3;
+        triggerFxReRender();
+      }
+    }
+
+    function onFxGenericOpChange(val) {
+      multiTaskState.tempOp = val;
+      playSfx('tap');
+      checkFxGeneric1();
+    }
+    function onFxGenericNumChange(val) {
+      multiTaskState.tempNum = val.trim();
+      checkFxGeneric1();
+    }
+    function checkFxGeneric1() {
+      const item = (appState.activeTask.items || [])[appState.currentStepIndex || 0] || {};
+      const expectedOp = item.tier1_op || item.step1_op;
+      const expectedNum = item.tier1_num || item.step1_num;
+      if (multiTaskState.tempOp === expectedOp && multiTaskState.tempNum === expectedNum) {
+        playSfx('pop');
+        multiTaskState.curStage = 2;
+        triggerFxReRender();
+      }
+    }
+
+    function onFxGenericTier2OpChange(val) {
+      multiTaskState.tempOp = val;
+      playSfx('tap');
+      checkFxGeneric2();
+    }
+    function onFxGenericTier2NumChange(val) {
+      multiTaskState.tempNum = val.trim();
+      checkFxGeneric2();
+    }
+    function checkFxGeneric2() {
+      const item = (appState.activeTask.items || [])[appState.currentStepIndex || 0] || {};
+      const expectedOp = item.tier2_op || item.step2_op;
+      const expectedNum = item.tier2_num || item.step2_num;
+      if (multiTaskState.tempOp === expectedOp && multiTaskState.tempNum === expectedNum) {
+        playSfx('pop');
+        multiTaskState.curStage = 4;
+        triggerFxReRender();
+      }
+    }

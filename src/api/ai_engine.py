@@ -131,10 +131,27 @@ STANDARD_MATH_DECOMPOSER_SCHEMA = {
         "original_title": {"type": "STRING"},
         "exercise_type": {
             "type": "STRING",
-            "enum": ["word_problem", "pure_arithmetic", "find_x"]
+            "enum": ["word_problem", "pure_arithmetic", "find_x", "multi_item_arithmetic", "multi_item_find_x"]
         },
         "subject": {"type": "STRING", "enum": ["toan"]},
         "original_text": {"type": "STRING", "description": "Đề bài gốc hoàn chỉnh"},
+        "header_title": {"type": "STRING", "description": "Tiêu đề chung hiển thị ở header (ví dụ: Bài 1: Đặt tính rồi tính hoặc Bài 2: Tìm x)"},
+        "items": {
+            "type": "ARRAY",
+            "description": "Danh sách các ý con (a, b, c, d) nếu đề bài gồm nhiều ý độc lập",
+            "items": {
+                "type": "OBJECT",
+                "properties": {
+                    "item_id": {"type": "STRING"},
+                    "label": {"type": "STRING"},
+                    "equation": {"type": "STRING"},
+                    "top": {"type": "STRING"},
+                    "op": {"type": "STRING"},
+                    "bot": {"type": "STRING"},
+                    "expected_answer": {"type": "STRING"}
+                }
+            }
+        },
         "target_keywords": {
             "type": "ARRAY",
             "items": {"type": "STRING"},
@@ -433,8 +450,12 @@ LƯU Ý QUAN TRỌNG:
                 "target_keywords": parsed_data.get("target_keywords", []),
                 "target_cognitive_profile": cognitive_profile or {},
                 "total_micro_tasks": len(transformed_tasks),
-                "total_estimated_duration_sec": len(transformed_tasks) * 120
+                "total_estimated_duration_sec": len(transformed_tasks) * 120,
+                "header_title": parsed_data.get("header_title", parsed_data.get("original_title", "Bài tập")),
+                "items": parsed_data.get("items", [])
             },
+            "header_title": parsed_data.get("header_title", parsed_data.get("original_title", "Bài tập")),
+            "items": parsed_data.get("items", []),
             "micro_tasks": transformed_tasks,
             "final_summary": {
                 "final_answer_step_id": len(transformed_tasks),

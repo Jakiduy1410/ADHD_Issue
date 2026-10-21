@@ -4588,5 +4588,320 @@
       }
     ],
     "exercise_type": "pure_arithmetic"
+  },
+  "G4_MATH_ARITH_MULTI_01": {
+    "id": "G4_MATH_ARITH_MULTI_01",
+    "grade": 4,
+    "subject": "Toán",
+    "cat": "math",
+    "catName": "Toán GDPT 2018",
+    "exercise_type": "multi_item_arithmetic",
+    "icon": "➕",
+    "title": "Đặt tính rồi tính: Phép cộng nhiều chữ số (4 ý)",
+    "header_title": "Bài 1: Đặt tính rồi tính",
+    "island": "study",
+    "reward": 120,
+    "stepSeconds": 180,
+    "original_text": "Bài 1: Đặt tính rồi tính: a) 95626 + 50482   b) 36011 + 17165   c) 52764 + 57532   d) 88891 + 22360",
+    "final_answer": {
+      "value": "146108; 53176; 110296; 111251",
+      "unit": null,
+      "normalized_display": "a) 146108; b) 53176; c) 110296; d) 111251"
+    },
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Trẻ dễ bị quá tải khi nhìn cả 4 phép tính cùng lúc hoặc bị bắt xác định phép tính rườm rà.",
+      "executive_function_scaffolding": "Header chung ghim tiêu đề bài. Mỗi ý là 1 thẻ tập trung duy nhất, điền số từ phải qua trái.",
+      "visual_or_concrete_aid": "Bảng đặt tính cột dọc chuẩn SGK với vạch kẻ ngang và ô nhập số căn lề chuẩn."
+    },
+    "items": [
+      {
+        "item_id": "a",
+        "label": "a)",
+        "top": "95626",
+        "op": "+",
+        "bot": "50482",
+        "expected_answer": "146108",
+        "dopamine_points": 30
+      },
+      {
+        "item_id": "b",
+        "label": "b)",
+        "top": "36011",
+        "op": "+",
+        "bot": "17165",
+        "expected_answer": "53176",
+        "dopamine_points": 30
+      },
+      {
+        "item_id": "c",
+        "label": "c)",
+        "top": "52764",
+        "op": "+",
+        "bot": "57532",
+        "expected_answer": "110296",
+        "dopamine_points": 30
+      },
+      {
+        "item_id": "d",
+        "label": "d)",
+        "top": "88891",
+        "op": "+",
+        "bot": "22360",
+        "expected_answer": "111251",
+        "dopamine_points": 30
+      }
+    ],
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Ý a)",
+        "action_verb": "Tính",
+        "atomic_instruction": "Đặt tính và tính kết quả ý a: 95626 + 50482",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "95626 + 50482 = ?"
+        },
+        "expected_answer": "146108",
+        "duration_sec": 60,
+        "success_criteria": {
+          "expected_answer": "146108"
+        }
+      },
+      {
+        "step_id": 2,
+        "badge": "Ý b)",
+        "action_verb": "Tính",
+        "atomic_instruction": "Đặt tính và tính kết quả ý b: 36011 + 17165",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "36011 + 17165 = ?"
+        },
+        "expected_answer": "53176",
+        "duration_sec": 60,
+        "success_criteria": {
+          "expected_answer": "53176"
+        }
+      },
+      {
+        "step_id": 3,
+        "badge": "Ý c)",
+        "action_verb": "Tính",
+        "atomic_instruction": "Đặt tính và tính kết quả ý c: 52764 + 57532",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "52764 + 57532 = ?"
+        },
+        "expected_answer": "110296",
+        "duration_sec": 60,
+        "success_criteria": {
+          "expected_answer": "110296"
+        }
+      },
+      {
+        "step_id": 4,
+        "badge": "Ý d)",
+        "action_verb": "Tính",
+        "atomic_instruction": "Đặt tính và tính kết quả ý d: 88891 + 22360",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "88891 + 22360 = ?"
+        },
+        "expected_answer": "111251",
+        "duration_sec": 60,
+        "success_criteria": {
+          "expected_answer": "111251"
+        },
+        "is_final_step": true
+      }
+    ]
+  },
+  "G4_MATH_FIND_X_MULTI_02": {
+    "id": "G4_MATH_FIND_X_MULTI_02",
+    "grade": 4,
+    "subject": "Toán",
+    "cat": "math",
+    "catName": "Toán GDPT 2018",
+    "exercise_type": "multi_item_find_x",
+    "icon": "🎯",
+    "title": "Tìm x: Biểu thức nâng cao & 2 tầng phép tính (4 ý)",
+    "header_title": "Bài 2: Tìm x",
+    "island": "study",
+    "reward": 160,
+    "stepSeconds": 240,
+    "original_text": "Bài 2: Tìm x biết: a) x + 354 = 820   b) x + 125 = 450 - 150   c) x × 3 + 45 = 105   d) (x + 25) : 3 = 40",
+    "final_answer": {
+      "value": "466; 175; 20; 95",
+      "unit": null,
+      "normalized_display": "a) x = 466; b) x = 175; c) x = 20; d) x = 95"
+    },
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Trẻ ADHD dễ bị ngợp khi gặp bài tìm x có nhiều phép tính hoặc ngoặc đơn.",
+      "executive_function_scaffolding": "Tương tác lũy tiến từng dòng vở toán, đồng bộ cửa sổ đặt tính cho mọi phép tính nháp, tự động format thành bài giải 3-5 dòng chuẩn SGK.",
+      "visual_or_concrete_aid": "Trang vở ô ly sạch sẽ không nhãn thừa, bảng đặt tính dọc RTL trượt xuống đúng lúc."
+    },
+    "items": [
+      {
+        "item_id": "a",
+        "label": "a)",
+        "sub_type": "single_op",
+        "equation": "x + 354 = 820",
+        "left_lead": "x = 820",
+        "correct_op": "-",
+        "target_num": "354",
+        "formatted_line2": "x = 820 - 354",
+        "calc_top": "820",
+        "calc_op": "-",
+        "calc_bot": "354",
+        "expected_x": "466",
+        "formatted_final": "x = 466",
+        "dopamine_points": 40
+      },
+      {
+        "item_id": "b",
+        "label": "b)",
+        "sub_type": "rhs_expr",
+        "equation": "x + 125 = 450 - 150",
+        "rhs_calc": {
+          "top": "450",
+          "op": "-",
+          "bot": "150",
+          "expected": "300"
+        },
+        "step1_formatted": "x + 125 = 300",
+        "step2_lead": "x = 300",
+        "step2_op": "-",
+        "step2_num": "125",
+        "step2_formatted": "x = 300 - 125",
+        "final_calc": {
+          "top": "300",
+          "op": "-",
+          "bot": "125",
+          "expected": "175"
+        },
+        "formatted_final": "x = 175",
+        "dopamine_points": 40
+      },
+      {
+        "item_id": "c",
+        "label": "c)",
+        "sub_type": "two_tier",
+        "equation": "x × 3 + 45 = 105",
+        "tier1_lead": "x × 3 = 105",
+        "tier1_op": "-",
+        "tier1_num": "45",
+        "tier1_formatted": "x × 3 = 105 - 45",
+        "tier1_calc": {
+          "top": "105",
+          "op": "-",
+          "bot": "45",
+          "expected": "60"
+        },
+        "tier1_res_formatted": "x × 3 = 60",
+        "tier2_lead": "x = 60",
+        "tier2_op": ":",
+        "tier2_num": "3",
+        "tier2_formatted": "x = 60 : 3",
+        "final_calc": {
+          "top": "60",
+          "op": ":",
+          "bot": "3",
+          "expected": "20"
+        },
+        "formatted_final": "x = 20",
+        "dopamine_points": 40
+      },
+      {
+        "item_id": "d",
+        "label": "d)",
+        "sub_type": "paren_expr",
+        "equation": "(x + 25) : 3 = 40",
+        "step1_lead": "x + 25 = 40",
+        "step1_op": "×",
+        "step1_num": "3",
+        "step1_formatted": "x + 25 = 40 × 3",
+        "step1_calc": {
+          "top": "40",
+          "op": "×",
+          "bot": "3",
+          "expected": "120"
+        },
+        "step1_res_formatted": "x + 25 = 120",
+        "step2_lead": "x = 120",
+        "step2_op": "-",
+        "step2_num": "25",
+        "step2_formatted": "x = 120 - 25",
+        "final_calc": {
+          "top": "120",
+          "op": "-",
+          "bot": "25",
+          "expected": "95"
+        },
+        "formatted_final": "x = 95",
+        "dopamine_points": 40
+      }
+    ],
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Câu a)",
+        "action_verb": "Tìm",
+        "atomic_instruction": "Giải câu a: x + 354 = 820",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "x + 354 = 820 => x = ?"
+        },
+        "expected_answer": "466",
+        "duration_sec": 60,
+        "success_criteria": {
+          "expected_answer": "466"
+        }
+      },
+      {
+        "step_id": 2,
+        "badge": "Câu b)",
+        "action_verb": "Tìm",
+        "atomic_instruction": "Giải câu b: x + 125 = 450 - 150",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "x + 125 = 450 - 150 => x = ?"
+        },
+        "expected_answer": "175",
+        "duration_sec": 60,
+        "success_criteria": {
+          "expected_answer": "175"
+        }
+      },
+      {
+        "step_id": 3,
+        "badge": "Câu c)",
+        "action_verb": "Tìm",
+        "atomic_instruction": "Giải câu c: x × 3 + 45 = 105",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "x × 3 + 45 = 105 => x = ?"
+        },
+        "expected_answer": "20",
+        "duration_sec": 60,
+        "success_criteria": {
+          "expected_answer": "20"
+        }
+      },
+      {
+        "step_id": 4,
+        "badge": "Câu d)",
+        "action_verb": "Tìm",
+        "atomic_instruction": "Giải câu d: (x + 25) : 3 = 40",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "(x + 25) : 3 = 40 => x = ?"
+        },
+        "expected_answer": "95",
+        "duration_sec": 60,
+        "success_criteria": {
+          "expected_answer": "95"
+        },
+        "is_final_step": true
+      }
+    ]
   }
 }

@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DEMO: Test Cases Tìm X Đa Dạng & Đồng Bộ Đặt Tính Dọc Mọi Phép Tính</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Nunito & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900;1000&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            nunito: ['Nunito', 'sans-serif'],
+            jakarta: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              teal: '#0D9488',
+              tealLight: '#F0FDFA',
+              yellow: '#FFC800',
+              yellowDark: '#E5A400',
+              green: '#58CC02',
+              greenDark: '#46A302',
+              sky: '#38BDF8',
+              coral: '#FB7185',
+              indigo: '#6366F1',
+              purple: '#8B5CF6'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      user-select: none;
+    }
+    .child-font {
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* iPhone 16 Pro Mockup */
+    .phone-mockup {
+      width: 420px;
+      height: 870px;
+      border-radius: 52px;
+      background: #0f172a;
+      padding: 10px;
+      position: relative;
+      box-shadow: 
+        0 0 0 2px #334155,
+        0 25px 60px -15px rgba(0, 0, 0, 0.7),
+        0 0 40px rgba(13, 148, 136, 0.2);
+      flex-shrink: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 44px;
+      overflow: hidden !important;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: #FFFDF7;
+    }
+
+    .dynamic-island {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 28px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      pointer-events: none;
+    }
+
+    /* 3D Tactile Buttons */
+    .btn-3d-green {
+      background-color: #58CC02;
+      border-bottom: 5px solid #46A302;
+      transition: all 0.1s ease;
+    }
+    .btn-3d-green:active:not(:disabled) {
+      transform: translateY(4px);
+      border-bottom-width: 1px;
+    }
+
+    .btn-3d-yellow {
+      background-color: #FFC800;
+      border-bottom: 5px solid #E5A400;
+      transition: all 0.1s ease;
+    }
+    .btn-3d-yellow:active:not(:disabled) {
+      transform: translateY(4px);
+      border-bottom-width: 1px;
+    }
+
+    .btn-3d-blue {
+      background-color: #38BDF8;
+      border-bottom: 5px solid #0284C7;
+      transition: all 0.1s ease;
+    }
+    .btn-3d-blue:active:not(:disabled) {
+      transform: translateY(4px);
+      border-bottom-width: 1px;
+    }
+
+    .btn-disabled {
+      background-color: #E2E8F0 !important;
+      border-bottom: 5px solid #CBD5E1 !important;
+      color: #94A3B8 !important;
+      cursor: not-allowed;
+    }
+
+    /* Star burst animation */
+    @keyframes flyStar {
+      0% { transform: translateY(0) scale(0.6) rotate(0deg); opacity: 1; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-340px) scale(1.6) rotate(360deg); opacity: 0; }
+    }
+    .star-burst {
+      position: absolute;
+      pointer-events: none;
+      animation: flyStar 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      z-index: 99;
+    }
+
+    /* Smooth Slide In */
+    .slide-in-down {
+      animation: slideInDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes slideInDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .notebook-paper {
+      background-color: #FFFFFF;
+      background-image: linear-gradient(#f1f5f9 1px, transparent 1px);
+      background-size: 100% 34px;
+      line-height: 34px;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-teal-500 selection:text-white">
+
+  <!-- ============================================================== -->
+  <!-- TOP CONTROL BAR -->
+  <!-- ============================================================== -->
+  <header class="w-full bg-slate-900 border-b border-slate-800 px-6 py-3 shrink-0 z-50 sticky top-0">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center text-2xl shadow-lg shadow-teal-500/20">
+          📐
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-black text-lg text-white tracking-tight">FIND X MULTI-STEP LAB</span>
+            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30">
+              Đồng Bộ Đặt Tính Dọc
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">Mọi phép tính vế phải & chuyển vế đều có cửa sổ đặt tính dọc đồng bộ (RTL), không bắt trẻ tính nhẩm</p>
+        </div>
+      </div>
+
+      <!-- Test Suites Switcher -->
+      <div class="flex flex-wrap items-center gap-2 bg-slate-800/90 p-1.5 rounded-2xl border border-slate-700/80">
+        <button id="btn-suite-1" onclick="switchSuite('suite1')" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 text-slate-400 hover:text-white">
+          <span>1️⃣ Cơ bản (+ - × :)</span>
+        </button>
+        <button id="btn-suite-2" onclick="switchSuite('suite2')" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 bg-teal-600 text-white shadow-xs">
+          <span>2️⃣ Vế phải biểu thức</span>
+        </button>
+        <button id="btn-suite-3" onclick="switchSuite('suite3')" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 text-slate-400 hover:text-white">
+          <span>3️⃣ Hai tầng (x × a + b)</span>
+        </button>
+        <button id="btn-suite-4" onclick="switchSuite('suite4')" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 text-slate-400 hover:text-white">
+          <span>4️⃣ Ngoặc đơn (x + a) : b</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================================== -->
+  <!-- MAIN WORKSPACE -->
+  <!-- ============================================================== -->
+  <main class="max-w-7xl mx-auto w-full p-4 md:p-6 flex-1 flex flex-col lg:flex-row items-center lg:items-start justify-center gap-8">
+    
+    <!-- LEFT: IPHONE 16 PRO LIVE SIMULATOR -->
+    <div class="phone-mockup">
+      <div class="dynamic-island">
+        <div class="w-3 h-3 rounded-full bg-slate-900 border border-slate-800"></div>
+        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500/80 animate-pulse"></div>
+      </div>
+
+      <div id="phone-screen-container" class="phone-screen child-font">
+        <!-- Render động -->
+      </div>
+    </div>
+
+    <!-- RIGHT: PEDAGOGICAL & SCHEMA EXPLANATION PANEL -->
+    <div class="flex-1 w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl flex flex-col gap-5">
+      
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div>
+          <span id="panel-badge" class="text-xs font-extrabold uppercase px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
+            SUITE 2: VẾ PHẢI LÀ BIỂU THỨC
+          </span>
+          <h2 id="panel-title" class="text-xl font-black text-white mt-2">
+            Đồng Bộ Đặt Tính Cả Bước Vế Phải & Bước Chuyển Vế
+          </h2>
+        </div>
+        <div class="text-3xl" id="panel-icon">⚡</div>
+      </div>
+
+      <!-- Problem Statement & Pedagogy Analysis -->
+      <div class="space-y-3">
+        <h4 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">🧠 Phân tích đồng bộ sư phạm:</h4>
+        <div id="panel-pedagogy" class="bg-slate-800/70 border border-slate-700/60 rounded-2xl p-4 text-xs text-slate-300 leading-relaxed space-y-2">
+          <!-- Render động -->
+        </div>
+      </div>
+
+      <!-- Live JSON Schema Spec -->
+      <div class="space-y-2 flex-1 flex flex-col">
+        <div class="flex items-center justify-between">
+          <h4 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">📦 Schema cấu trúc:</h4>
+          <span class="text-[11px] text-teal-400 font-mono">100% Unified Grid Engine</span>
+        </div>
+        <pre id="panel-schema" class="bg-slate-950 border border-slate-800 rounded-2xl p-4 text-xs text-emerald-400 font-mono overflow-x-auto max-h-[340px] no-scrollbar leading-relaxed">
+        </pre>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- JAVASCRIPT: LOGIC & AUDIO SFX -->
+  <!-- ============================================================== -->
+  <script>
+    // Audio Synthesizer
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function playSfx(type) {
+      try {
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const now = audioCtx.currentTime;
+
+        if (type === 'tap') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.05);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        } else if (type === 'pop') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(580, now);
+          osc.frequency.exponentialRampToValueAtTime(1160, now + 0.08);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'correct') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + i * 0.06);
+            gain.gain.setValueAtTime(0.2, now + i * 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.06 + 0.2);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now + i * 0.06);
+            osc.stop(now + i * 0.06 + 0.2);
+          });
+        }
+      } catch (e) {
+        console.warn('Audio notice:', e);
+      }
+    }
+
+    function triggerStarBurst() {
+      playSfx('correct');
+      const container = document.getElementById('phone-screen-container');
+      if (!container) return;
+      for (let i = 0; i < 6; i++) {
+        const star = document.createElement('div');
+        star.className = 'star-burst text-2xl';
+        star.innerText = ['⭐', '✨', '🌟', '🎉', '💎', '👑'][i % 6];
+        star.style.left = (120 + Math.random() * 160) + 'px';
+        star.style.bottom = '110px';
+        container.appendChild(star);
+        setTimeout(() => star.remove(), 750);
+      }
+    }
+
+    // ==============================================================
+    // 4 BỘ TEST CASES VỚI ĐẶT TÍNH DỌC ĐỒNG BỘ
+    // ==============================================================
+    const TEST_SUITES = {
+      // Suite 1: Cơ bản (1 phép tính)
+      suite1: {
+        id: "suite1",
+        title: "Bộ 1: Tìm X Cơ Bản (Đủ 4 phép +, -, ×, :)",
+        header_title: "Bài 1: Tìm x",
+        items: [
+          {
+            id: 'a',
+            label: 'a)',
+            type: 'single_op',
+            equation: "x + 354 = 820",
+            left_lead: "x = 820",
+            correct_op: "-",
+            target_num: "354",
+            formatted_line2: "x = 820 - 354",
+            calc_top: "820",
+            calc_op: "-",
+            calc_bot: "354",
+            expected_x: "466",
+            formatted_line3: "x = 466"
+          },
+          {
+            id: 'b',
+            label: 'b)',
+            type: 'single_op',
+            equation: "x - 128 = 452",
+            left_lead: "x = 452",
+            correct_op: "+",
+            target_num: "128",
+            formatted_line2: "x = 452 + 128",
+            calc_top: "452",
+            calc_op: "+",
+            calc_bot: "128",
+            expected_x: "580",
+            formatted_line3: "x = 580"
+          },
+          {
+            id: 'c',
+            label: 'c)',
+            type: 'single_op',
+            equation: "642 - x = 215",
+            left_lead: "x = 642",
+            correct_op: "-",
+            target_num: "215",
+            formatted_line2: "x = 642 - 215",
+            calc_top: "642",
+            calc_op: "-",
+            calc_bot: "215",
+            expected_x: "427",
+            formatted_line3: "x = 427"
+          },
+          {
+            id: 'd',
+            label: 'd)',
+            type: 'single_op',
+            equation: "x × 6 = 438",
+            left_lead: "x = 438",
+            correct_op: ":",
+            target_num: "6",
+            formatted_line2: "x = 438 : 6",
+            calc_top: "438",
+            calc_op: ":",
+            calc_bot: "6",
+            expected_x: "73",
+            formatted_line3: "x = 73"
+          }
+        ]
+      },
+
+      // Suite 2: Vế phải là biểu thức (Có đặt tính vế phải!)
+      suite2: {
+        id: "suite2",
+        title: "Bộ 2: Tìm X Vế Phải Biểu Thức (Đặt tính cả 2 bước)",
+        header_title: "Bài 2: Tìm x",
+        items: [
+          {
+            id: 'a',
+            label: 'a)',
+            type: 'rhs_expr',
+            equation: "x + 125 = 450 - 150",
+            // Đặt tính vế phải trước
+            rhs_calc: { top: '450', op: '-', bot: '150', expected: '300' },
+            step1_formatted: "x + 125 = 300",
+            // Chuyển vế tìm x
+            step2_lead: "x = 300",
+            step2_op: "-",
+            step2_num: "125",
+            step2_formatted: "x = 300 - 125",
+            // Đặt tính tìm x
+            final_calc: { top: '300', op: '-', bot: '125', expected: '175' },
+            step3_formatted: "x = 175"
+          },
+          {
+            id: 'b',
+            label: 'b)',
+            type: 'rhs_expr',
+            equation: "x - 45 = 25 × 4",
+            rhs_calc: { top: '25', op: '×', bot: '4', expected: '100' },
+            step1_formatted: "x - 45 = 100",
+            step2_lead: "x = 100",
+            step2_op: "+",
+            step2_num: "45",
+            step2_formatted: "x = 100 + 45",
+            final_calc: { top: '100', op: '+', bot: '45', expected: '145' },
+            step3_formatted: "x = 145"
+          },
+          {
+            id: 'c',
+            label: 'c)',
+            type: 'rhs_expr',
+            equation: "x × 4 = 150 + 90",
+            rhs_calc: { top: '150', op: '+', bot: '90', expected: '240' },
+            step1_formatted: "x × 4 = 240",
+            step2_lead: "x = 240",
+            step2_op: ":",
+            step2_num: "4",
+            step2_formatted: "x = 240 : 4",
+            final_calc: { top: '240', op: ':', bot: '4', expected: '60' },
+            step3_formatted: "x = 60"
+          }
+        ]
+      },
+
+      // Suite 3: Hai tầng phép tính (Đặt tính cả 2 tầng)
+      suite3: {
+        id: "suite3",
+        title: "Bộ 3: Hai Tầng Phép Tính (x × a + b = c)",
+        header_title: "Bài 3: Tìm x",
+        items: [
+          {
+            id: 'a',
+            label: 'a)',
+            type: 'two_tier',
+            equation: "x × 3 + 45 = 105",
+            // Tầng 1: tìm cụm x * 3
+            tier1_lead: "x × 3 = 105",
+            tier1_op: "-",
+            tier1_num: "45",
+            tier1_formatted: "x × 3 = 105 - 45",
+            tier1_calc: { top: '105', op: '-', bot: '45', expected: '60' },
+            tier1_res_formatted: "x × 3 = 60",
+            // Tầng 2: tìm x
+            tier2_lead: "x = 60",
+            tier2_op: ":",
+            tier2_num: "3",
+            tier2_formatted: "x = 60 : 3",
+            final_calc: { top: '60', op: ':', bot: '3', expected: '20' },
+            tier3_formatted: "x = 20"
+          },
+          {
+            id: 'b',
+            label: 'b)',
+            type: 'two_tier',
+            equation: "x : 4 - 15 = 25",
+            tier1_lead: "x : 4 = 25",
+            tier1_op: "+",
+            tier1_num: "15",
+            tier1_formatted: "x : 4 = 25 + 15",
+            tier1_calc: { top: '25', op: '+', bot: '15', expected: '40' },
+            tier1_res_formatted: "x : 4 = 40",
+            tier2_lead: "x = 40",
+            tier2_op: "×",
+            tier2_num: "4",
+            tier2_formatted: "x = 40 × 4",
+            final_calc: { top: '40', op: '×', bot: '4', expected: '160' },
+            tier3_formatted: "x = 160"
+          }
+        ]
+      },
+
+      // Suite 4: Ngoặc đơn (x + a) : b = c
+      suite4: {
+        id: "suite4",
+        title: "Bộ 4: Tìm X Có Ngoặc Đơn (x + a) : b = c",
+        header_title: "Bài 4: Tìm x",
+        items: [
+          {
+            id: 'a',
+            label: 'a)',
+            type: 'paren_expr',
+            equation: "(x + 25) : 3 = 40",
+            step1_lead: "x + 25 = 40",
+            step1_op: "×",
+            step1_num: "3",
+            step1_formatted: "x + 25 = 40 × 3",
+            step1_calc: { top: '40', op: '×', bot: '3', expected: '120' },
+            step1_res_formatted: "x + 25 = 120",
+            step2_lead: "x = 120",
+            step2_op: "-",
+            step2_num: "25",
+            step2_formatted: "x = 120 - 25",
+            final_calc: { top: '120', op: '-', bot: '25', expected: '95' },
+            step3_formatted: "x = 95"
+          }
+        ]
+      }
+    };
+
+    let currentSuiteKey = 'suite2'; // Mặc định mở ngay Suite 2 để trải nghiệm
+    let currentItemIdx = 0;
+    
+    // Quản lý trạng thái từng bước của câu hiện tại
+    let curStage = 1;
+    let tempOp = '';
+    let tempNum = '';
+
+    // ==============================================================
+    // CHUYỂN BỘ TEST SUITE
+    // ==============================================================
+    function switchSuite(suiteKey) {
+      currentSuiteKey = suiteKey;
+      currentItemIdx = 0;
+      resetItemState();
+
+      ['suite1', 'suite2', 'suite3', 'suite4'].forEach(k => {
+        const btn = document.getElementById(`btn-${k.replace('suite', 'suite-')}`);
+        if (!btn) return;
+        if (k === suiteKey) {
+          btn.className = "px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 bg-teal-600 text-white shadow-xs";
+        } else {
+          btn.className = "px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 text-slate-400 hover:text-white";
+        }
+      });
+
+      renderSimulator();
+      updateInfoPanel();
+    }
+
+    function resetItemState() {
+      curStage = 1;
+      tempOp = '';
+      tempNum = '';
+    }
+
+    // ==============================================================
+    // LƯỚI ĐẶT TÍNH DỌC TỪ PHẢI QUA TRÁI (RTL ENGINE)
+    // ==============================================================
+    function renderVerticalMathGridRTL(topStr, op, botStr, expectedStr, onDoneCallbackName, titleLabel = "Đặt tính:") {
+      if (op === ':') {
+        return `
+          <div class="bg-white p-3 rounded-2xl border-2 border-teal-200 shadow-xs flex items-center justify-center gap-2 my-1 select-none max-w-[280px] mx-auto w-full">
+            <span class="font-mono text-base font-black text-slate-800">${topStr} : ${botStr} =</span>
+            <input type="text" id="div-result-input" oninput="handleDivInput(this.value, '${expectedStr}', '${onDoneCallbackName}')" placeholder="?" class="w-20 text-center font-mono font-black text-base text-teal-700 bg-teal-50 border-2 border-teal-400 rounded-xl px-2 py-1 focus:outline-none focus:bg-teal-100" autofocus />
+          </div>
+        `;
+      }
+
+      const numCols = Math.max(topStr.length, botStr.length, expectedStr.length) + 1;
+      const cellCls = "w-7 h-8 text-base font-mono font-black text-center";
+
+      let rowTop = '';
+      for (let i = numCols - 1; i >= 0; i--) {
+        const ch = topStr[topStr.length - 1 - i] || '';
+        rowTop += `<div class="${cellCls} flex items-center justify-center text-slate-800">${ch}</div>`;
+      }
+
+      let rowBot = '';
+      for (let i = numCols - 1; i >= 0; i--) {
+        const ch = botStr[botStr.length - 1 - i] || '';
+        rowBot += `<div class="${cellCls} flex items-center justify-center text-slate-800">${ch}</div>`;
+      }
+
+      let rowInputs = '';
+      for (let i = numCols - 1; i >= 0; i--) {
+        if (i < expectedStr.length) {
+          rowInputs += `
+            <input type="text" maxlength="1" inputmode="numeric" 
+                   data-col="${i}" 
+                   class="digit-cell ${cellCls} rounded-lg border-2 border-teal-500 bg-teal-50 text-slate-900 focus:bg-teal-100 focus:border-teal-600 focus:outline-none shadow-xs transition" />
+          `;
+        } else {
+          rowInputs += `<div class="${cellCls}"></div>`;
+        }
+      }
+
+      setTimeout(() => {
+        setupRightToLeftListeners(expectedStr, onDoneCallbackName);
+      }, 50);
+
+      return `
+        <div class="bg-white p-3 rounded-2xl border-2 border-teal-200 shadow-xs flex flex-col items-center justify-center my-1 select-none w-full max-w-[280px] mx-auto">
+          <div class="inline-flex flex-col items-end">
+            <div class="flex items-center justify-end gap-1.5">${rowTop}</div>
+            <div class="flex items-center justify-end relative w-full gap-1.5 my-0.5">
+              <span class="absolute left-0 text-teal-600 font-mono font-black text-lg select-none pl-1">${op}</span>
+              <div class="flex items-center justify-end gap-1.5">${rowBot}</div>
+            </div>
+            <div class="w-full h-[2px] bg-slate-800 my-1 rounded-full"></div>
+            <div class="flex items-center justify-end gap-1.5 pt-0.5">
+              ${rowInputs}
+            </div>
+          </div>
+          <span class="text-[9px] font-bold text-teal-700 mt-1.5 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
+            👉 ${titleLabel} (Điền từ phải sang trái)
+          </span>
+        </div>
+      `;
+    }
+
+    function handleDivInput(val, expected, callbackName) {
+      if (val.trim() === expected) {
+        playSfx('correct');
+        if (window[callbackName]) window[callbackName](expected);
+      }
+    }
+
+    function setupRightToLeftListeners(expectedStr, onDoneCallbackName) {
+      const cells = Array.from(document.querySelectorAll('.digit-cell'));
+      if (!cells.length) return;
+
+      cells.sort((a, b) => parseInt(a.dataset.col) - parseInt(b.dataset.col));
+      const startCell = cells[0];
+      if (startCell) {
+        startCell.focus();
+        startCell.select();
+      }
+
+      cells.forEach((cell, idx) => {
+        cell.onkeydown = function(e) {
+          if (e.key >= '0' && e.key <= '9') {
+            e.preventDefault();
+            this.value = e.key;
+            playSfx('tap');
+
+            let currentValRev = '';
+            for (let c of cells) currentValRev += (c.value || '');
+            const currentFullVal = currentValRev.split('').reverse().join('');
+
+            if (idx < cells.length - 1) {
+              const nextLeftCell = cells[idx + 1];
+              nextLeftCell.focus();
+              nextLeftCell.select();
+            }
+
+            if (currentFullVal === expectedStr) {
+              playSfx('pop');
+              cells.forEach(c => {
+                c.classList.remove('bg-teal-50', 'border-teal-500');
+                c.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-950');
+              });
+              if (window[onDoneCallbackName]) {
+                window[onDoneCallbackName](currentFullVal);
+              }
+            }
+          } else if (e.key === 'Backspace') {
+            e.preventDefault();
+            this.value = '';
+            if (idx > 0) {
+              const prevRightCell = cells[idx - 1];
+              prevRightCell.focus();
+              prevRightCell.select();
+            }
+          }
+        };
+      });
+    }
+
+    // ==============================================================
+    // MAIN SIMULATOR DISPATCHER
+    // ==============================================================
+    function renderSimulator() {
+      const c = document.getElementById('phone-screen-container');
+      if (!c) return;
+
+      const suite = TEST_SUITES[currentSuiteKey];
+      const item = suite.items[currentItemIdx];
+      const total = suite.items.length;
+
+      const pills = suite.items.map((it, idx) => {
+        let st = "bg-slate-100 text-slate-400 border-slate-200";
+        if (idx < currentItemIdx) st = "bg-emerald-100 text-emerald-800 border-emerald-300 font-black";
+        else if (idx === currentItemIdx) st = "bg-teal-500 text-white border-teal-600 font-black shadow-xs scale-105";
+        return `<span class="px-2.5 py-1 text-xs rounded-xl border ${st} transition-all">${it.label}</span>`;
+      }).join('');
+
+      let notebookBodyHtml = '';
+      let calcWindowHtml = '';
+      let isFinalComplete = false;
+
+      // -----------------------------------------------------------
+      // TYPE 1: SINGLE OP (Tìm x cơ bản 1 phép tính)
+      // -----------------------------------------------------------
+      if (item.type === 'single_op') {
+        notebookBodyHtml = `
+          <!-- Dòng 1: Đề bài -->
+          <div class="flex items-center text-slate-800 text-lg pl-1">${item.equation}</div>
+
+          <!-- Dòng 2: Chuyển vế -->
+          <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1">
+            ${curStage === 1 ? `
+              <span class="text-teal-700">${item.left_lead}</span>
+              <select id="op-sel" onchange="onSingleOpChange(this.value)" class="w-8 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none appearance-none cursor-pointer shadow-2xs shrink-0">
+                <option value="">?</option>
+                <option value="+" ${tempOp === '+' ? 'selected' : ''}>+</option>
+                <option value="-" ${tempOp === '-' ? 'selected' : ''}>-</option>
+                <option value="×" ${tempOp === '×' ? 'selected' : ''}>×</option>
+                <option value=":" ${tempOp === ':' ? 'selected' : ''}>:</option>
+              </select>
+              <input type="text" value="${tempNum}" oninput="onSingleNumChange(this.value)" placeholder="số?" class="w-16 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none placeholder:text-slate-400 placeholder:text-xs shadow-2xs shrink-0" />
+            ` : `
+              <span class="text-emerald-700 slide-in-down flex items-center gap-1.5">
+                ${item.formatted_line2}
+                <span class="text-xs text-emerald-600 font-sans">✓</span>
+              </span>
+            `}
+          </div>
+
+          <!-- Dòng 3: Kết luận -->
+          ${curStage === 3 ? `
+            <div class="flex items-center gap-2 text-lg text-emerald-800 slide-in-down pl-1">
+              <span class="text-emerald-900 font-black">${item.formatted_line3}</span>
+              <span class="text-sm">🎉</span>
+            </div>
+          ` : ''}
+        `;
+
+        if (curStage === 2) {
+          calcWindowHtml = `
+            <div class="mt-3 pt-2 border-t-2 border-dashed border-teal-200 slide-in-down">
+              ${renderVerticalMathGridRTL(item.calc_top, item.calc_op, item.calc_bot, item.expected_x, 'onSingleCalcDone', "Đặt tính tìm x")}
+            </div>
+          `;
+        }
+        isFinalComplete = (curStage === 3);
+
+      // -----------------------------------------------------------
+      // TYPE 2: RHS EXPR (Vế phải là biểu thức: ĐẶT TÍNH CẢ 2 BƯỚC!)
+      // -----------------------------------------------------------
+      } else if (item.type === 'rhs_expr') {
+        notebookBodyHtml = `
+          <!-- Dòng 1: Đề bài -->
+          <div class="flex items-center text-slate-800 text-lg pl-1">${item.equation}</div>
+
+          <!-- Dòng 2: Kết quả vế phải (sau khi đặt tính ở stage 1) -->
+          ${curStage >= 2 ? `
+            <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1 slide-in-down">
+              <span class="text-emerald-700 flex items-center gap-1.5">
+                ${item.step1_formatted}
+                <span class="text-xs text-emerald-600 font-sans">✓</span>
+              </span>
+            </div>
+          ` : ''}
+
+          <!-- Dòng 3: Chuyển vế tìm x -->
+          ${curStage >= 2 ? `
+            <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1">
+              ${curStage === 2 ? `
+                <span class="text-teal-700">${item.step2_lead}</span>
+                <select id="op-sel" onchange="onRhsOpChange(this.value)" class="w-8 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none appearance-none cursor-pointer shadow-2xs shrink-0">
+                  <option value="">?</option>
+                  <option value="+" ${tempOp === '+' ? 'selected' : ''}>+</option>
+                  <option value="-" ${tempOp === '-' ? 'selected' : ''}>-</option>
+                  <option value="×" ${tempOp === '×' ? 'selected' : ''}>×</option>
+                  <option value=":" ${tempOp === ':' ? 'selected' : ''}>:</option>
+                </select>
+                <input type="text" value="${tempNum}" oninput="onRhsNumChange(this.value)" placeholder="số?" class="w-16 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none placeholder:text-slate-400 placeholder:text-xs shadow-2xs shrink-0" />
+              ` : `
+                <span class="text-emerald-700 slide-in-down flex items-center gap-1.5">
+                  ${item.step2_formatted}
+                  <span class="text-xs text-emerald-600 font-sans">✓</span>
+                </span>
+              `}
+            </div>
+          ` : ''}
+
+          <!-- Dòng 4: Kết luận x -->
+          ${curStage === 4 ? `
+            <div class="flex items-center gap-2 text-lg text-emerald-800 slide-in-down pl-1">
+              <span class="text-emerald-900 font-black">${item.step3_formatted}</span>
+              <span class="text-sm">🎉</span>
+            </div>
+          ` : ''}
+        `;
+
+        // Stage 1: Cửa sổ đặt tính vế phải
+        if (curStage === 1) {
+          calcWindowHtml = `
+            <div class="mt-3 pt-2 border-t-2 border-dashed border-amber-300 slide-in-down">
+              <div class="text-xs font-black text-amber-800 mb-1 flex items-center gap-1">
+                <span>⚡</span> Bước 1: Đặt tính thu gọn vế phải:
+              </div>
+              ${renderVerticalMathGridRTL(item.rhs_calc.top, item.rhs_calc.op, item.rhs_calc.bot, item.rhs_calc.expected, 'onRhsCalcDone', "Tính vế phải")}
+            </div>
+          `;
+        // Stage 3: Cửa sổ đặt tính tìm x
+        } else if (curStage === 3) {
+          calcWindowHtml = `
+            <div class="mt-3 pt-2 border-t-2 border-dashed border-teal-200 slide-in-down">
+              <div class="text-xs font-black text-teal-800 mb-1 flex items-center gap-1">
+                <span>⚡</span> Bước 2: Đặt tính tìm x:
+              </div>
+              ${renderVerticalMathGridRTL(item.final_calc.top, item.final_calc.op, item.final_calc.bot, item.final_calc.expected, 'onRhsFinalCalcDone', "Tính kết quả x")}
+            </div>
+          `;
+        }
+        isFinalComplete = (curStage === 4);
+
+      // -----------------------------------------------------------
+      // TYPE 3: TWO TIER (Hai tầng phép tính: đặt tính cả 2 tầng)
+      // -----------------------------------------------------------
+      } else if (item.type === 'two_tier') {
+        notebookBodyHtml = `
+          <!-- Dòng 1: Đề bài -->
+          <div class="flex items-center text-slate-800 text-lg pl-1">${item.equation}</div>
+
+          <!-- Dòng 2: Chuyển vế tìm cụm -->
+          <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1">
+            ${curStage === 1 ? `
+              <span class="text-teal-700">${item.tier1_lead}</span>
+              <select id="op-sel" onchange="onTier1OpChange(this.value)" class="w-8 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none appearance-none cursor-pointer shadow-2xs shrink-0">
+                <option value="">?</option>
+                <option value="+" ${tempOp === '+' ? 'selected' : ''}>+</option>
+                <option value="-" ${tempOp === '-' ? 'selected' : ''}>-</option>
+                <option value="×" ${tempOp === '×' ? 'selected' : ''}>×</option>
+                <option value=":" ${tempOp === ':' ? 'selected' : ''}>:</option>
+              </select>
+              <input type="text" value="${tempNum}" oninput="onTier1NumChange(this.value)" placeholder="số?" class="w-16 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none placeholder:text-slate-400 placeholder:text-xs shadow-2xs shrink-0" />
+            ` : `
+              <span class="text-emerald-700 slide-in-down flex items-center gap-1.5">
+                ${item.tier1_formatted}
+                <span class="text-xs text-emerald-600 font-sans">✓</span>
+              </span>
+            `}
+          </div>
+
+          <!-- Dòng 3: Kết quả cụm (sau khi đặt tính ở stage 2) -->
+          ${curStage >= 3 ? `
+            <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1 slide-in-down">
+              <span class="text-emerald-700 flex items-center gap-1.5">
+                ${item.tier1_res_formatted}
+                <span class="text-xs text-emerald-600 font-sans">✓</span>
+              </span>
+            </div>
+          ` : ''}
+
+          <!-- Dòng 4: Tìm x đơn lẻ -->
+          ${curStage >= 3 ? `
+            <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1">
+              ${curStage === 3 ? `
+                <span class="text-teal-700">${item.tier2_lead}</span>
+                <select id="op-sel" onchange="onTier2OpChange(this.value)" class="w-8 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none appearance-none cursor-pointer shadow-2xs shrink-0">
+                  <option value="">?</option>
+                  <option value="+" ${tempOp === '+' ? 'selected' : ''}>+</option>
+                  <option value="-" ${tempOp === '-' ? 'selected' : ''}>-</option>
+                  <option value="×" ${tempOp === '×' ? 'selected' : ''}>×</option>
+                  <option value=":" ${tempOp === ':' ? 'selected' : ''}>:</option>
+                </select>
+                <input type="text" value="${tempNum}" oninput="onTier2NumChange(this.value)" placeholder="số?" class="w-16 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none placeholder:text-slate-400 placeholder:text-xs shadow-2xs shrink-0" />
+              ` : `
+                <span class="text-emerald-700 slide-in-down flex items-center gap-1.5">
+                  ${item.tier2_formatted}
+                  <span class="text-xs text-emerald-600 font-sans">✓</span>
+                </span>
+              `}
+            </div>
+          ` : ''}
+
+          <!-- Dòng 5: Kết luận x -->
+          ${curStage === 5 ? `
+            <div class="flex items-center gap-2 text-lg text-emerald-800 slide-in-down pl-1">
+              <span class="text-emerald-900 font-black">${item.tier3_formatted}</span>
+              <span class="text-sm">🎉</span>
+            </div>
+          ` : ''}
+        `;
+
+        if (curStage === 2) {
+          calcWindowHtml = `
+            <div class="mt-3 pt-2 border-t-2 border-dashed border-amber-300 slide-in-down">
+              <div class="text-xs font-black text-amber-800 mb-1 flex items-center gap-1">
+                <span>⚡</span> Đặt tính tìm giá trị của cụm:
+              </div>
+              ${renderVerticalMathGridRTL(item.tier1_calc.top, item.tier1_calc.op, item.tier1_calc.bot, item.tier1_calc.expected, 'onTier1CalcDone', "Tính cụm")}
+            </div>
+          `;
+        } else if (curStage === 4) {
+          calcWindowHtml = `
+            <div class="mt-3 pt-2 border-t-2 border-dashed border-teal-200 slide-in-down">
+              <div class="text-xs font-black text-teal-800 mb-1 flex items-center gap-1">
+                <span>⚡</span> Đặt tính tìm x:
+              </div>
+              ${renderVerticalMathGridRTL(item.final_calc.top, item.final_calc.op, item.final_calc.bot, item.final_calc.expected, 'onTier2CalcDone', "Tính kết quả x")}
+            </div>
+          `;
+        }
+        isFinalComplete = (curStage === 5);
+
+      // -----------------------------------------------------------
+      // TYPE 4: PARENTHESES (Ngoặc đơn)
+      // -----------------------------------------------------------
+      } else if (item.type === 'paren_expr') {
+        notebookBodyHtml = `
+          <!-- Dòng 1: Đề bài -->
+          <div class="flex items-center text-slate-800 text-lg pl-1">${item.equation}</div>
+
+          <!-- Dòng 2: Phá ngoặc tìm cụm -->
+          <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1">
+            ${curStage === 1 ? `
+              <span class="text-teal-700">${item.step1_lead}</span>
+              <select id="op-sel" onchange="onParenOpChange(this.value)" class="w-8 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none appearance-none cursor-pointer shadow-2xs shrink-0">
+                <option value="">?</option>
+                <option value="+" ${tempOp === '+' ? 'selected' : ''}>+</option>
+                <option value="-" ${tempOp === '-' ? 'selected' : ''}>-</option>
+                <option value="×" ${tempOp === '×' ? 'selected' : ''}>×</option>
+                <option value=":" ${tempOp === ':' ? 'selected' : ''}>:</option>
+              </select>
+              <input type="text" value="${tempNum}" oninput="onParenNumChange(this.value)" placeholder="số?" class="w-16 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none placeholder:text-slate-400 placeholder:text-xs shadow-2xs shrink-0" />
+            ` : `
+              <span class="text-emerald-700 slide-in-down flex items-center gap-1.5">
+                ${item.step1_formatted}
+                <span class="text-xs text-emerald-600 font-sans">✓</span>
+              </span>
+            `}
+          </div>
+
+          <!-- Dòng 3: Kết quả cụm ngoặc -->
+          ${curStage >= 3 ? `
+            <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1 slide-in-down">
+              <span class="text-emerald-700 flex items-center gap-1.5">
+                ${item.step1_res_formatted}
+                <span class="text-xs text-emerald-600 font-sans">✓</span>
+              </span>
+            </div>
+          ` : ''}
+
+          <!-- Dòng 4: Chuyển vế tìm x -->
+          ${curStage >= 3 ? `
+            <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1">
+              ${curStage === 3 ? `
+                <span class="text-teal-700">${item.step2_lead}</span>
+                <select id="op-sel" onchange="onParenStep2OpChange(this.value)" class="w-8 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none appearance-none cursor-pointer shadow-2xs shrink-0">
+                  <option value="">?</option>
+                  <option value="+" ${tempOp === '+' ? 'selected' : ''}>+</option>
+                  <option value="-" ${tempOp === '-' ? 'selected' : ''}>-</option>
+                  <option value="×" ${tempOp === '×' ? 'selected' : ''}>×</option>
+                  <option value=":" ${tempOp === ':' ? 'selected' : ''}>:</option>
+                </select>
+                <input type="text" value="${tempNum}" oninput="onParenStep2NumChange(this.value)" placeholder="số?" class="w-16 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none placeholder:text-slate-400 placeholder:text-xs shadow-2xs shrink-0" />
+              ` : `
+                <span class="text-emerald-700 slide-in-down flex items-center gap-1.5">
+                  ${item.step2_formatted}
+                  <span class="text-xs text-emerald-600 font-sans">✓</span>
+                </span>
+              `}
+            </div>
+          ` : ''}
+
+          <!-- Dòng 5: Kết luận x -->
+          ${curStage === 5 ? `
+            <div class="flex items-center gap-2 text-lg text-emerald-800 slide-in-down pl-1">
+              <span class="text-emerald-900 font-black">${item.step3_formatted}</span>
+              <span class="text-sm">🎉</span>
+            </div>
+          ` : ''}
+        `;
+
+        if (curStage === 2) {
+          calcWindowHtml = `
+            <div class="mt-3 pt-2 border-t-2 border-dashed border-amber-300 slide-in-down">
+              <div class="text-xs font-black text-amber-800 mb-1 flex items-center gap-1">
+                <span>⚡</span> Đặt tính cụm trong ngoặc:
+              </div>
+              ${renderVerticalMathGridRTL(item.step1_calc.top, item.step1_calc.op, item.step1_calc.bot, item.step1_calc.expected, 'onParenCalc1Done', "Tính cụm ngoặc")}
+            </div>
+          `;
+        } else if (curStage === 4) {
+          calcWindowHtml = `
+            <div class="mt-3 pt-2 border-t-2 border-dashed border-teal-200 slide-in-down">
+              <div class="text-xs font-black text-teal-800 mb-1 flex items-center gap-1">
+                <span>⚡</span> Đặt tính tìm x:
+              </div>
+              ${renderVerticalMathGridRTL(item.final_calc.top, item.final_calc.op, item.final_calc.bot, item.final_calc.expected, 'onParenFinalCalcDone', "Tính kết quả x")}
+            </div>
+          `;
+        }
+        isFinalComplete = (curStage === 5);
+      }
+
+      // RENDER GIAO DIỆN
+      c.innerHTML = `
+        <div class="flex flex-col h-full justify-between p-4 bg-[#F4F9F9] pt-11 relative">
+          
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300">
+                ${suite.title}
+              </span>
+              <span class="text-xs font-black text-amber-600 bg-amber-50 px-2.5 py-0.5 rounded-lg border border-amber-200">
+                +40 ⭐ / câu
+              </span>
+            </div>
+
+            <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs mb-2">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-black text-slate-900 uppercase tracking-tight flex items-center gap-1.5">
+                  <span>🎯</span> ${suite.header_title}
+                </h3>
+                <span class="text-[11px] font-bold text-slate-500">Câu ${currentItemIdx + 1} / ${total}</span>
+              </div>
+              <div class="flex items-center gap-1.5 mt-2">
+                ${pills}
+              </div>
+            </div>
+          </div>
+
+          <!-- KHUNG VỞ TOÁN TƯƠNG TÁC -->
+          <div class="flex-1 flex flex-col justify-start my-1 overflow-y-auto no-scrollbar">
+            <div class="bg-white border-2 border-amber-300 rounded-[24px] p-4 shadow-sm flex flex-col justify-between min-h-[440px] relative">
+              
+              <div>
+                <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-100">
+                  <span class="bg-amber-100 text-amber-900 text-[11px] font-black px-2.5 py-0.5 rounded-full uppercase">
+                    CÂU ${item.label}
+                  </span>
+                  <span class="text-[11px] font-bold text-slate-400">
+                    ${isFinalComplete ? '✅ Trình bày hoàn chỉnh' : '✍️ Đang giải từng dòng'}
+                  </span>
+                </div>
+
+                <!-- BẢNG DÒNG VỞ TOÁN -->
+                <div class="notebook-paper p-3 rounded-2xl border border-slate-200 font-mono text-lg font-black text-slate-900 space-y-1.5 shadow-inner">
+                  ${notebookBodyHtml}
+                </div>
+
+                <!-- CỬA SỔ ĐẶT TÍNH ĐỒNG BỘ -->
+                ${calcWindowHtml}
+
+                <!-- THÔNG BÁO HOÀN THÀNH -->
+                ${isFinalComplete ? `
+                  <div class="mt-3 p-2.5 bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-300 rounded-2xl flex items-center gap-2.5 slide-in-down">
+                    <span class="text-2xl">👑</span>
+                    <div>
+                      <h4 class="text-xs font-black text-emerald-950">Bài giải trình bày chuẩn mực!</h4>
+                      <p class="text-[11px] text-emerald-700 font-bold">Các dòng đều căn thẳng hàng đẹp như SGK.</p>
+                    </div>
+                  </div>
+                ` : ''}
+
+              </div>
+
+              <!-- LỜI NHẮC CỦA MILO -->
+              <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-xl flex items-center gap-2 mt-2">
+                <span class="text-lg">🤖</span>
+                <p class="text-[11px] font-bold text-amber-900 leading-tight">
+                  ${isFinalComplete ? 'Milo: Tuyệt đỉnh! Bấm hoàn thành để nhận +40 ⭐ nhé!' : 'Milo: Đặt tính xong là dòng tiếp theo sẽ tự động in ra ngay!'}
+                </p>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- FOOTER BUTTON -->
+          <div class="pt-2 shrink-0">
+            ${isFinalComplete ? `
+              <button onclick="nextItem()" class="w-full btn-3d-green text-white font-black text-sm py-3.5 rounded-2xl shadow-md flex items-center justify-center gap-2 animate-bounce">
+                <span>XONG CÂU ${item.label.toUpperCase()}! (+40 ⭐)</span>
+              </button>
+            ` : `
+              <button disabled class="w-full btn-3d-green btn-disabled text-white font-black text-sm py-3.5 rounded-2xl shadow-md flex items-center justify-center gap-2">
+                <span>ĐANG GIẢI TỪNG DÒNG...</span>
+              </button>
+            `}
+          </div>
+
+        </div>
+      `;
+    }
+
+    // ==============================================================
+    // EVENT HANDLERS
+    // ==============================================================
+
+    // 1. Suite 1 Handlers
+    function onSingleOpChange(val) {
+      tempOp = val;
+      playSfx('tap');
+      checkSingleOp();
+    }
+    function onSingleNumChange(val) {
+      tempNum = val.trim();
+      checkSingleOp();
+    }
+    function checkSingleOp() {
+      const item = TEST_SUITES.suite1.items[currentItemIdx];
+      if (tempOp === item.correct_op && tempNum === item.target_num) {
+        playSfx('pop');
+        curStage = 2; // Mở đặt tính dọc
+        renderSimulator();
+      }
+    }
+    window.onSingleCalcDone = function(res) {
+      playSfx('correct');
+      setTimeout(() => {
+        curStage = 3; // Kết luận
+        renderSimulator();
+      }, 300);
+    };
+
+    // 2. Suite 2 Handlers (Vế phải biểu thức)
+    window.onRhsCalcDone = function(res) {
+      playSfx('correct');
+      // Đặt tính vế phải xong -> chuyển sang Stage 2 (dòng 2 format, mở ô chuyển vế)
+      setTimeout(() => {
+        curStage = 2;
+        tempOp = '';
+        tempNum = '';
+        renderSimulator();
+      }, 300);
+    };
+
+    function onRhsOpChange(val) {
+      tempOp = val;
+      playSfx('tap');
+      checkRhsStep2();
+    }
+    function onRhsNumChange(val) {
+      tempNum = val.trim();
+      checkRhsStep2();
+    }
+    function checkRhsStep2() {
+      const item = TEST_SUITES.suite2.items[currentItemIdx];
+      if (tempOp === item.step2_op && tempNum === item.step2_num) {
+        playSfx('pop');
+        curStage = 3; // Mở đặt tính tìm x
+        renderSimulator();
+      }
+    }
+    window.onRhsFinalCalcDone = function(res) {
+      playSfx('correct');
+      setTimeout(() => {
+        curStage = 4; // Kết luận x
+        renderSimulator();
+      }, 300);
+    };
+
+    // 3. Suite 3 Handlers (Hai tầng phép tính)
+    function onTier1OpChange(val) {
+      tempOp = val;
+      playSfx('tap');
+      checkTier1Step1();
+    }
+    function onTier1NumChange(val) {
+      tempNum = val.trim();
+      checkTier1Step1();
+    }
+    function checkTier1Step1() {
+      const item = TEST_SUITES.suite3.items[currentItemIdx];
+      if (tempOp === item.tier1_op && tempNum === item.tier1_num) {
+        playSfx('pop');
+        curStage = 2; // Mở đặt tính cụm
+        renderSimulator();
+      }
+    }
+    window.onTier1CalcDone = function(res) {
+      playSfx('correct');
+      setTimeout(() => {
+        curStage = 3; // Đã format cụm -> Mở ô tìm x đơn lẻ
+        tempOp = '';
+        tempNum = '';
+        renderSimulator();
+      }, 300);
+    };
+
+    function onTier2OpChange(val) {
+      tempOp = val;
+      playSfx('tap');
+      checkTier2();
+    }
+    function onTier2NumChange(val) {
+      tempNum = val.trim();
+      checkTier2();
+    }
+    function checkTier2() {
+      const item = TEST_SUITES.suite3.items[currentItemIdx];
+      if (tempOp === item.tier2_op && tempNum === item.tier2_num) {
+        playSfx('pop');
+        curStage = 4; // Mở đặt tính tìm x
+        renderSimulator();
+      }
+    }
+    window.onTier2CalcDone = function(res) {
+      playSfx('correct');
+      setTimeout(() => {
+        curStage = 5; // Kết luận x
+        renderSimulator();
+      }, 300);
+    };
+
+    // 4. Suite 4 Handlers (Ngoặc đơn)
+    function onParenOpChange(val) {
+      tempOp = val;
+      playSfx('tap');
+      checkParenStep1();
+    }
+    function onParenNumChange(val) {
+      tempNum = val.trim();
+      checkParenStep1();
+    }
+    function checkParenStep1() {
+      const item = TEST_SUITES.suite4.items[currentItemIdx];
+      if (tempOp === item.step1_op && tempNum === item.step1_num) {
+        playSfx('pop');
+        curStage = 2; // Mở đặt tính phá ngoặc
+        renderSimulator();
+      }
+    }
+    window.onParenCalc1Done = function(res) {
+      playSfx('correct');
+      setTimeout(() => {
+        curStage = 3; // Đã format cụm ngoặc -> Mở ô chuyển vế tìm x
+        tempOp = '';
+        tempNum = '';
+        renderSimulator();
+      }, 300);
+    };
+
+    function onParenStep2OpChange(val) {
+      tempOp = val;
+      playSfx('tap');
+      checkParenStep2();
+    }
+    function onParenStep2NumChange(val) {
+      tempNum = val.trim();
+      checkParenStep2();
+    }
+    function checkParenStep2() {
+      const item = TEST_SUITES.suite4.items[currentItemIdx];
+      if (tempOp === item.step2_op && tempNum === item.step2_num) {
+        playSfx('pop');
+        curStage = 4; // Mở đặt tính tìm x
+        renderSimulator();
+      }
+    }
+    window.onParenFinalCalcDone = function(res) {
+      playSfx('correct');
+      setTimeout(() => {
+        curStage = 5; // Kết luận x
+        renderSimulator();
+      }, 300);
+    };
+
+    function nextItem() {
+      triggerStarBurst();
+      resetItemState();
+      const suite = TEST_SUITES[currentSuiteKey];
+      if (currentItemIdx < suite.items.length - 1) {
+        currentItemIdx++;
+        setTimeout(renderSimulator, 400);
+      } else {
+        alert(`🎉 Chúc mừng! Con đã hoàn thành xuất sắc tất cả các câu trong ${suite.title}!`);
+        currentItemIdx = 0;
+        setTimeout(renderSimulator, 400);
+      }
+    }
+
+    // ==============================================================
+    // UPDATE PANEL GIẢI THÍCH
+    // ==============================================================
+    function updateInfoPanel() {
+      const pBadge = document.getElementById('panel-badge');
+      const pTitle = document.getElementById('panel-title');
+      const pIcon = document.getElementById('panel-icon');
+      const pPedagogy = document.getElementById('panel-pedagogy');
+      const pSchema = document.getElementById('panel-schema');
+
+      const suite = TEST_SUITES[currentSuiteKey];
+
+      if (currentSuiteKey === 'suite2') {
+        pBadge.innerText = "SUITE 2: VẾ PHẢI LÀ BIỂU THỨC (ĐẶT TÍNH ĐỒNG BỘ 100%)";
+        pTitle.innerText = "Cả Bước Thu Gọn Vế Phải & Bước Tìm X Đều Có Cửa Sổ Đặt Tính Dọc";
+        pIcon.innerText = "⚡";
+        pPedagogy.innerHTML = `
+          <p><strong>1. Đồng bộ hóa trải nghiệm:</strong> Không bắt trẻ phải tính nhẩm vế phải trong đầu. Ngay ở dòng 1 (<code>x + 125 = 450 - 150</code>), cửa sổ đặt tính dọc <code>450 - 150</code> xuất hiện để trẻ tính từ phải qua trái.</p>
+          <p><strong>2. Format tự động nối tiếp:</strong> Đặt tính vế phải xong ➔ dòng 2 tự động in ra <code>x + 125 = 300 ✓</code> ➔ mở ô chuyển vế <code>x = 300 - 125</code> ➔ lại mở cửa sổ đặt tính <code>300 - 125</code> ➔ in kết quả cuối cùng <code>x = 175 🎉</code>.</p>
+          <p><strong>3. Vừa vặn nhận thức ADHD:</strong> Mỗi lần trẻ chỉ tập trung vào 1 phép tính duy nhất!</p>
+        `;
+        pSchema.innerText = JSON.stringify({
+          "test_suite": "suite2_unified_calculation_pipeline",
+          "flow": [
+            "1. Equation: x + 125 = 450 - 150",
+            "2. Grid 1 (RHS): 450 - 150 -> 300",
+            "3. Format Line 2: x + 125 = 300",
+            "4. Fill Line 3: x = 300 - 125",
+            "5. Grid 2 (Solve X): 300 - 125 -> 175",
+            "6. Format Line 4: x = 175"
+          ]
+        }, null, 2);
+
+      } else if (currentSuiteKey === 'suite1') {
+        pBadge.innerText = "SUITE 1: TÌM X CƠ BẢN (1 PHÉP TÍNH + - × :)";
+        pTitle.innerText = "Đầy Đủ 4 Phép Tính • Điền Dấu & Số Trực Tiếp";
+        pIcon.innerText = "1️⃣";
+        pPedagogy.innerHTML = `
+          <p><strong>Đầy đủ 4 phép tính:</strong> Cộng, Trừ, Nhân, Chia.</p>
+          <p><strong>Luồng 3 dòng:</strong> Điền dấu & số ➔ Cửa sổ đặt tính dọc ➔ Format đáp số.</p>
+        `;
+        pSchema.innerText = JSON.stringify({
+          "test_suite": "suite1_basic_ops",
+          "cases": suite.items.map(it => ({
+            "equation": it.equation,
+            "step2": it.formatted_line2,
+            "step3": it.formatted_line3
+          }))
+        }, null, 2);
+
+      } else if (currentSuiteKey === 'suite3') {
+        pBadge.innerText = "SUITE 3: HAI TẦNG PHÉP TÍNH (x × a + b = c)";
+        pTitle.innerText = "Đặt Tính Cả 2 Tầng (Tìm Cụm Chứa x & Tìm x)";
+        pIcon.innerText = "3️⃣";
+        pPedagogy.innerHTML = `
+          <p><strong>Đồng bộ đặt tính cả 2 tầng:</strong></p>
+          <ul class="list-disc pl-4 space-y-1">
+            <li>Tầng 1: Chuyển vế <code>x × 3 = 105 - 45</code> ➔ Đặt tính dọc <code>105 - 45 = 60</code>.</li>
+            <li>Tầng 2: Tìm x <code>x = 60 : 3</code> ➔ Tính nhẩm chia ra <code>x = 20</code>.</li>
+          </ul>
+        `;
+        pSchema.innerText = JSON.stringify({
+          "test_suite": "suite3_two_tier_with_double_grid",
+          "pipeline": "Line 1 -> Fill Cluster -> Grid 1 -> Line 3 -> Fill X -> Grid 2 -> Line 5 Final"
+        }, null, 2);
+
+      } else if (currentSuiteKey === 'suite4') {
+        pBadge.innerText = "SUITE 4: TÌM X CÓ NGOẶC ĐƠN (x + a) : b = c";
+        pTitle.innerText = "Đặt Tính Phá Ngoặc & Đặt Tính Tìm x";
+        pIcon.innerText = "4️⃣";
+        pPedagogy.innerHTML = `
+          <p><strong>2 lần đặt tính liên hoàn:</strong></p>
+          <ul class="list-disc pl-4 space-y-1">
+            <li>Đặt tính phá ngoặc: <code>40 × 3 = 120</code> ➔ Dòng: <code>x + 25 = 120</code>.</li>
+            <li>Đặt tính tìm x: <code>120 - 25 = 95</code> ➔ Dòng: <code>x = 95</code>.</li>
+          </ul>
+        `;
+        pSchema.innerText = JSON.stringify({
+          "test_suite": "suite4_parentheses_with_double_grid",
+          "pipeline": "Line 1 -> Unwrap Paren -> Grid 1 -> Line 3 -> Isolate X -> Grid 2 -> Line 5 Final"
+        }, null, 2);
+      }
+    }
+
+    // Khởi chạy mặc định Suite 2
+    window.addEventListener('DOMContentLoaded', () => {
+      switchSuite('suite2');
+    });
+  </script>
+
+</body>
+</html>

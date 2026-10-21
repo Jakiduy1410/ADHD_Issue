@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Milo Quest • Bản Xem Trước Cải Tiến Daily Routines (Phase 1)</title>
+  <title>Milo Quest • Đảo Lộ Trình Thói Quen (Khóa Timeline &amp; Minh Chứng Đa Điểm)</title>
   
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   
@@ -12,7 +12,7 @@
   
   <!-- Google Fonts: Nunito (Child App) & Plus Jakarta Sans (Parent App) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900;1000&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <script>
@@ -65,13 +65,30 @@
       animation: heartFloat 1.2s ease-out forwards;
       pointer-events: none;
     }
+    /* Shake lock */
+    @keyframes lockShake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+    .animate-shake {
+      animation: lockShake 0.4s ease-in-out;
+    }
+    /* Glow active island */
+    @keyframes islandGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.6), 0 0 40px rgba(245, 158, 11, 0.3); }
+      50% { box-shadow: 0 0 30px rgba(251, 191, 36, 0.9), 0 0 60px rgba(245, 158, 11, 0.5); }
+    }
+    .island-active-glow {
+      animation: islandGlow 2s infinite ease-in-out;
+    }
   </style>
 </head>
 
 <body class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-teal-500 selection:text-white font-jakarta">
 
   <!-- ============================================================== -->
-  <!-- 1. TOP PRESENTATION BAR -->
+  <!-- 1. TOP PRESENTATION BAR & TIME SIMULATOR CONTROLS -->
   <!-- ============================================================== -->
   <header class="w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 md:px-8 py-2.5 shrink-0 z-50 sticky top-0">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
@@ -79,30 +96,46 @@
       <!-- Brand & Project Title -->
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center text-2xl shadow-lg shadow-orange-500/20">
-          🌟
+          🏝️
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <span class="font-black text-lg text-white tracking-tight">DAILY ROUTINES</span>
+            <span class="font-black text-lg text-white tracking-tight">ĐẢO THÓI QUEN</span>
             <span class="text-slate-500 font-semibold">×</span>
-            <span class="font-bold text-amber-400 text-sm">GIAO DIỆN MẪU PHASE 1</span>
+            <span class="font-bold text-amber-400 text-sm">KHÓA THEO TIMELINE</span>
             <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
-              Tự Giác &amp; Duyệt Tức Thì
+              Gamified ADHD Map
             </span>
           </div>
           <p class="text-xs text-slate-400 hidden sm:block">
-            Bé Chụp Ảnh 1-Chạm Duyệt Ngay (+30⭐) • Mẹ Xem Lại Trong Nhật Ký &amp; Thả Tim ❤️
+            Đúng giờ mới mở đảo • Giảm quá tải nhận thức • Bấm vào đảo để xem chi tiết &amp; ảnh minh chứng
           </p>
         </div>
       </div>
 
-      <!-- Action buttons -->
+      <!-- Time Simulator Switcher (Thanh giả lập giờ trong ngày) -->
+      <div class="flex items-center gap-1.5 bg-slate-800/95 p-1 rounded-2xl border border-slate-700">
+        <span class="text-[11px] font-extrabold text-slate-400 px-2 flex items-center gap-1">
+          <span>⏰</span> <span class="hidden md:inline">Giờ thử nghiệm:</span>
+        </span>
+        <button id="time-btn-morning" onclick="setSimulatedTime('morning')" class="px-2.5 py-1 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">
+          ☀️ 07:00 Sáng
+        </button>
+        <button id="time-btn-evening" onclick="setSimulatedTime('evening')" class="px-2.5 py-1 rounded-xl text-xs font-black bg-amber-500 text-slate-950 shadow-sm transition">
+          🌙 19:15 Tối (Hiện tại)
+        </button>
+        <button id="time-btn-night" onclick="setSimulatedTime('night')" class="px-2.5 py-1 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">
+          🦷 21:00 Giờ Ngủ!
+        </button>
+      </div>
+
+      <!-- Quick Navigation Action buttons -->
       <div class="flex items-center gap-2">
         <a href="index.html" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition">
           <span>←</span> <span>Về App Chính</span>
         </a>
-        <button onclick="resetPrototypeData()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/40 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-          <span>🔄</span> <span>Thử Lại Từ Đầu</span>
+        <button onclick="resetAllDemoData()" class="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/40 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+          <span>🔄</span> <span>Khởi Động Lại</span>
         </button>
       </div>
 
@@ -115,18 +148,18 @@
   <!-- ============================================================== -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center">
     
-    <!-- Banner giải thích trải nghiệm -->
-    <div class="mb-4 bg-gradient-to-r from-teal-950/60 via-slate-900 to-amber-950/60 border border-slate-800 rounded-2xl p-3 px-4 flex flex-wrap items-center justify-between gap-3 text-xs">
+    <!-- Top Hint Banner -->
+    <div class="mb-4 bg-gradient-to-r from-amber-950/60 via-slate-900 to-teal-950/60 border border-slate-800 rounded-2xl p-3 px-4 flex flex-wrap items-center justify-between gap-3 text-xs">
       <div class="flex items-center gap-2.5">
-        <span class="text-xl">💡</span>
+        <span class="text-xl">🗺️</span>
         <span>
-          <strong class="text-amber-400">Cách trải nghiệm:</strong> 
-          Ở màn hình bên trái <strong>(Máy Bé Leo)</strong>, bấm vào bài <em>"Dọn Bàn Học"</em> ➔ Làm 2 bước cất bút, nhặt rác ➔ Bấm <strong>Chụp Ảnh</strong> để thấy pháo hoa nổ &amp; duyệt thưởng tức thì! Sau đó nhìn sang bên phải <strong>(Máy Mẹ)</strong> để mở Nhật ký ngắm ảnh con chụp và bấm <strong>Thả Tim</strong>.
+          <strong class="text-amber-400">Trải nghiệm Bản đồ Đảo &amp; Khóa Timeline:</strong> 
+          Trên máy Bé Leo, các đảo được xếp theo đường cong S-Curve. Hiện tại đang là <strong>19:15</strong> ➔ <em>Đảo Bàn Học</em> đang mở sáng rực rỡ, còn <em>Đảo Đánh Răng (21:00)</em> đang <strong>KHÓA 🔒</strong> (thử bấm vào để thấy khóa rung lắc!). Thử bấm nút <strong>"🦷 21:00 Giờ Ngủ!"</strong> ở thanh Topbar để thấy đảo tự động mở khóa và chuông nhắc Milo reo nhé!
         </span>
       </div>
-      <div class="flex items-center gap-1.5 font-mono text-[11px] text-teal-400 bg-slate-900/80 px-2.5 py-1 rounded-lg border border-teal-500/30">
-        <span class="w-2 h-2 rounded-full bg-teal-400 animate-ping"></span>
-        <span>Đồng bộ 2 chiều: Active</span>
+      <div class="flex items-center gap-1.5 font-mono text-[11px] text-amber-300 bg-slate-900/80 px-2.5 py-1 rounded-lg border border-amber-500/30">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+        <span id="current-sim-time-text">Thời gian mô phỏng: 19:15</span>
       </div>
     </div>
 
@@ -134,7 +167,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start justify-center">
 
       <!-- ========================================================== -->
-      <!-- CỘT TRÁI: MÁY BÉ LEO (MILO QUEST - CHỦ ĐỘNG & BẮT MẮT) -->
+      <!-- CỘT TRÁI: MÁY BÉ LEO (MILO QUEST - BẢN ĐỒ ĐẢO THÓI QUEN) -->
       <!-- ========================================================== -->
       <div class="flex flex-col items-center">
         <!-- Label trên máy -->
@@ -154,7 +187,7 @@
           <!-- Dynamic Island -->
           <div class="dynamic-island">
             <span class="w-3 h-3 rounded-full bg-slate-900 border border-slate-700"></span>
-            <span class="text-[9px] font-black text-amber-400 tracking-wider font-mono">MILO LIVE</span>
+            <span class="text-[9px] font-black text-amber-400 tracking-wider font-mono">ROUTINE ISLAND</span>
             <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
           </div>
 
@@ -171,7 +204,7 @@
             <canvas id="child-confetti-canvas" class="absolute inset-0 z-30 pointer-events-none w-full h-full"></canvas>
 
             <!-- ---------------------------------------------------- -->
-            <!-- TOP BAR CỦA CON (Avatar + Ví Sao) -->
+            <!-- TOP BAR CỦA CON (Avatar + Streak + Ví Sao) -->
             <!-- ---------------------------------------------------- -->
             <div class="shrink-0 pt-11 px-4 pb-2 bg-[#FFFDF7] border-b border-slate-100 z-20">
               <div class="flex items-center justify-between">
@@ -191,125 +224,152 @@
                 </div>
               </div>
 
-              <!-- Thanh chuyển Tab: Đảo Học Tập vs Thói Quen -->
-              <div class="mt-3 flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200">
-                <button onclick="childSwitchTab('study')" id="c-tab-study" class="flex-1 py-1.5 rounded-xl font-black text-xs text-slate-400 hover:text-slate-600 transition flex items-center justify-center gap-1.5">
-                  <span>🏝️</span> <span>Học Tập</span>
+              <!-- Thanh chuyển Đảo Học Tập vs Đảo Thói Quen -->
+              <div class="mt-2.5 flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200">
+                <button onclick="alert('Đang ở chế độ thử nghiệm Đảo Thói Quen (Routine Islands). Bạn có thể bấm vào các hòn đảo để khám phá nhé!')" class="flex-1 py-1.5 rounded-xl font-black text-xs text-slate-400 hover:text-slate-600 transition flex items-center justify-center gap-1.5">
+                  <span>🏝️</span> <span>Đảo Học Tập</span>
                 </button>
-                <button onclick="childSwitchTab('routine')" id="c-tab-routine" class="flex-1 py-1.5 rounded-xl font-black text-xs bg-amber-400 text-amber-950 shadow-sm transition flex items-center justify-center gap-1.5">
-                  <span>🌟</span> <span>Thói Quen</span>
-                  <span id="c-routine-badge" class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                <button class="flex-1 py-1.5 rounded-xl font-black text-xs bg-amber-400 text-amber-950 shadow-sm transition flex items-center justify-center gap-1.5">
+                  <span>🌟</span> <span>Đảo Thói Quen</span>
+                  <span class="w-2 h-2 rounded-full bg-orange-600 animate-pulse"></span>
                 </button>
+              </div>
+
+              <!-- Banner tiến trình đảo trong ngày -->
+              <div class="mt-2 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 rounded-2xl p-2 px-3 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">🗺️</span>
+                  <div>
+                    <span id="island-progress-text" class="text-xs font-black text-amber-950 block">Đảo 3 / 4: Bàn Học Tối</span>
+                    <span id="island-sub-text" class="text-[10px] font-bold text-amber-800">Hoàn thành để tiến tới Đảo Đánh Răng</span>
+                  </div>
+                </div>
+                <span id="island-clock-badge" class="bg-amber-500 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded-full uppercase">
+                  19:15 Tối
+                </span>
               </div>
             </div>
 
             <!-- ---------------------------------------------------- -->
-            <!-- VIEW A: DANH SÁCH THÓI QUEN (ROUTINE CARDS) -->
+            <!-- VIEW A: BẢN ĐỒ QUẦN ĐẢO THÓI QUEN S-CURVE (ISLAND QUEST) -->
             <!-- ---------------------------------------------------- -->
-            <div id="c-view-routine-list" class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-3.5">
+            <div id="c-view-island-map" class="flex-1 min-h-0 w-full relative overflow-y-auto no-scrollbar px-4 py-4 space-y-6">
               
-              <!-- Greeting Bubble Milo -->
-              <div class="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-3 flex items-center gap-3 shadow-xs">
-                <div class="w-10 h-10 rounded-2xl bg-amber-400 flex items-center justify-center text-2xl shrink-0">🦁</div>
-                <div class="text-xs leading-snug">
-                  <span class="font-extrabold text-amber-950 block">Chào Leo siêu nhân!</span>
-                  <span class="text-amber-800 text-[11px]">Hôm nay con đã hoàn thành 2 việc, còn 1 việc để nhận cúp nhé!</span>
+              <!-- SVG S-Curve Path kết nối các đảo -->
+              <svg class="absolute inset-0 w-full h-[620px] pointer-events-none" viewBox="0 0 350 620" fill="none">
+                <path d="M 175 580 C 80 500, 80 430, 175 370 C 270 310, 270 230, 175 160 C 90 90, 260 40, 175 25" stroke="#FDE68A" stroke-width="12" stroke-linecap="round" stroke-dasharray="14 14"/>
+              </svg>
+
+              <!-- ============================================== -->
+              <!-- ĐẢO 5 (ĐỈNH CAO): RƯƠNG BÁU HOÀNG KIM GIẤC MƠ -->
+              <!-- ============================================== -->
+              <div onclick="openIslandDetail('treasure')" class="relative z-10 flex flex-col items-center cursor-pointer transition hover:scale-105 pt-2">
+                <div id="node-treasure-box" class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-amber-300 to-yellow-400 border-b-4 border-amber-600 flex items-center justify-center text-3xl shadow-lg animate-pulse-glow">
+                  🏆
                 </div>
-              </div>
-
-              <!-- Danh mục 3 buổi -->
-              <div class="space-y-2.5">
-                
-                <!-- 1. SÁNG: GẤP CHĂN (ĐÃ XONG) -->
-                <div class="bg-white rounded-2xl p-3 border-2 border-emerald-300 shadow-xs flex items-center justify-between opacity-85">
-                  <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-2xl bg-emerald-100 flex items-center justify-center text-2xl">🛏️</div>
-                    <div>
-                      <div class="flex items-center gap-1.5">
-                        <span class="text-[9px] font-black uppercase text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-md">Buổi Sáng • 06:45</span>
-                        <span class="text-[10px] font-bold text-emerald-600">✓ Đã Xong</span>
-                      </div>
-                      <h4 class="font-black text-xs text-slate-800 mt-0.5">Gấp chăn gối phẳng phiu</h4>
-                    </div>
-                  </div>
-                  <div class="text-emerald-600 font-black text-xs flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-xl">
-                    <span>+20</span> ⭐
-                  </div>
-                </div>
-
-                <!-- 2. CHIỀU: CẤT GIÀY VÀ BALO (ĐÃ XONG) -->
-                <div class="bg-white rounded-2xl p-3 border-2 border-emerald-300 shadow-xs flex items-center justify-between opacity-85">
-                  <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-2xl bg-emerald-100 flex items-center justify-center text-2xl">🎒</div>
-                    <div>
-                      <div class="flex items-center gap-1.5">
-                        <span class="text-[9px] font-black uppercase text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-md">Tan Trường • 16:45</span>
-                        <span class="text-[10px] font-bold text-emerald-600">✓ Đã Xong</span>
-                      </div>
-                      <h4 class="font-black text-xs text-slate-800 mt-0.5">Cất giày &amp; treo balo</h4>
-                    </div>
-                  </div>
-                  <div class="text-emerald-600 font-black text-xs flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-xl">
-                    <span>+25</span> ⭐
-                  </div>
-                </div>
-
-                <!-- 3. TỐI: DỌN BÀN HỌC (ĐANG CHỜ BÉ LÀM) -->
-                <div id="c-card-desk" onclick="openDeskTask()" class="group bg-gradient-to-b from-amber-50/60 to-white rounded-2xl p-3.5 border-2 border-amber-400 hover:border-amber-500 shadow-md shadow-amber-500/10 transition cursor-pointer active:scale-98">
-                  <div class="flex items-start justify-between">
-                    <div class="flex items-center gap-3">
-                      <div class="w-12 h-12 rounded-2xl bg-amber-400 text-amber-950 flex items-center justify-center text-2xl shadow-sm group-hover:scale-105 transition">
-                        🧹
-                      </div>
-                      <div>
-                        <div class="flex items-center gap-1.5">
-                          <span class="text-[9px] font-black uppercase text-amber-800 bg-amber-200 px-1.5 py-0.5 rounded-md">Buổi Tối • 19:00</span>
-                          <span class="text-[9px] font-black text-orange-600 bg-orange-100 px-1.5 py-0.5 rounded-md flex items-center gap-0.5">
-                            <span>📸 Có chụp ảnh</span>
-                          </span>
-                        </div>
-                        <h4 class="font-black text-sm text-slate-800 mt-1">Dọn bàn học gọn gàng</h4>
-                        <p class="text-[11px] text-slate-500 mt-0.5">3 bước siêu nhanh • 5 phút</p>
-                      </div>
-                    </div>
-                    <div class="text-amber-800 font-black text-xs flex items-center gap-1 bg-amber-100 px-2.5 py-1.5 rounded-xl border border-amber-300">
-                      <span>+30</span> ⭐
-                    </div>
-                  </div>
-
-                  <!-- CTA button inside card -->
-                  <div class="mt-3 pt-2.5 border-t border-amber-100 flex items-center justify-between">
-                    <span class="text-[11px] font-extrabold text-amber-900">Bấm để bắt đầu cùng Milo →</span>
-                    <span class="w-7 h-7 rounded-xl bg-amber-400 text-amber-950 flex items-center justify-center text-xs font-black shadow-xs">🚀</span>
-                  </div>
-                </div>
-
-                <!-- Trạng thái khi bàn học đã hoàn thành -->
-                <div id="c-card-desk-done" class="hidden bg-white rounded-2xl p-3 border-2 border-emerald-300 shadow-xs flex items-center justify-between">
-                  <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-2xl bg-emerald-100 flex items-center justify-center text-2xl">🧹</div>
-                    <div>
-                      <div class="flex items-center gap-1.5">
-                        <span class="text-[9px] font-black uppercase text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-md">Buổi Tối • 19:15</span>
-                        <span class="text-[10px] font-bold text-emerald-600">✓ Đã Hoàn Thành!</span>
-                      </div>
-                      <h4 class="font-black text-xs text-slate-800 mt-0.5">Dọn bàn học gọn gàng</h4>
-                      <p class="text-[10px] text-emerald-700 font-bold mt-0.5">📷 Đã gửi ảnh vào Nhật ký của Mẹ</p>
-                    </div>
-                  </div>
-                  <div class="text-emerald-600 font-black text-xs flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded-xl">
-                    <span>+30</span> ⭐
-                  </div>
-                </div>
-
-              </div>
-
-              <!-- Lời nhắn chân trang -->
-              <div class="text-center pt-2">
-                <span class="text-[10px] font-extrabold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
-                  Mỗi việc con làm giúp góc phòng thêm sạch đẹp 🌟
+                <span id="node-treasure-label" class="text-[10px] font-black text-amber-900 mt-1 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-full shadow-xs">
+                  RƯƠNG HOÀNG KIM 🔒
                 </span>
+                <span class="text-[9px] text-slate-400 font-bold mt-0.5">Xong 4 đảo để mở</span>
               </div>
+
+              <!-- ============================================== -->
+              <!-- ĐẢO 4 (21:00 - KHÓA THEO TIMELINE): ĐÁNH RĂNG TỐI -->
+              <!-- ============================================== -->
+              <div id="node-island-4" onclick="handleIslandClick(4)" class="relative z-10 flex flex-col items-center translate-x-12 cursor-pointer transition hover:scale-105">
+                <!-- Lock badge or Active star -->
+                <div id="island-4-icon-box" class="w-18 h-18 rounded-[28px] bg-slate-100 border-2 border-slate-300 border-b-4 border-slate-400 flex flex-col items-center justify-center shadow-md relative p-2">
+                  <span id="island-4-icon" class="text-3xl opacity-50">🦷</span>
+                  <span id="island-4-lock-badge" class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-slate-800 text-white text-[11px] flex items-center justify-center shadow-md border border-slate-600">
+                    🔒
+                  </span>
+                  <span id="island-4-reward" class="text-[9px] font-black text-slate-500 mt-0.5">+25 ⭐</span>
+                </div>
+
+                <div class="text-center mt-1">
+                  <span id="island-4-title" class="text-[10px] font-black text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-xs block">
+                    Đảo Đánh Răng Đi Ngủ
+                  </span>
+                  <span id="island-4-time-tag" class="text-[9px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.2 rounded-full inline-block mt-0.5">
+                    🔒 Khóa • Mở lúc 21:00
+                  </span>
+                </div>
+              </div>
+
+              <!-- ============================================== -->
+              <!-- ĐẢO 3 (19:00 - HIỆN TẠI ĐANG MỞ & SÁNG RỰC): BÀN HỌC -->
+              <!-- ============================================== -->
+              <div id="node-island-3" class="relative z-20 flex flex-col items-center -translate-x-10">
+                <!-- Robot Milo hoạt hình bay bên cạnh -->
+                <div class="absolute -left-16 -top-5 flex flex-col items-center animate-milo">
+                  <div id="child-island-speech" class="bg-white border-2 border-amber-400 px-2.5 py-1 rounded-2xl rounded-br-none shadow-md text-[10px] font-extrabold text-amber-900 mb-1 max-w-[120px] text-center leading-tight">
+                    Cùng dọn bàn nhận 30 sao nào! ✨
+                  </div>
+                  <div class="w-11 h-11 rounded-2xl bg-amber-400 text-amber-950 flex items-center justify-center text-2xl shadow-md">
+                    🦁
+                  </div>
+                </div>
+
+                <!-- Nút Đảo chính to đùng -->
+                <div id="island-3-btn" onclick="openDeskTask()" class="w-22 h-22 rounded-[32px] btn-3d-yellow island-active-glow flex flex-col items-center justify-center text-slate-900 shadow-xl ring-6 ring-amber-200 cursor-pointer hover:scale-105 active:scale-95 transition">
+                  <span id="island-3-icon" class="text-3xl mb-0.5">🧹</span>
+                  <span id="island-3-reward" class="text-[9px] font-black uppercase tracking-wider bg-black/15 text-amber-950 px-2 py-0.5 rounded-full">+30 ⭐</span>
+                </div>
+
+                <!-- Tên Đảo 3 -->
+                <div class="mt-1.5 text-center max-w-[200px]">
+                  <span id="island-3-status-badge" class="bg-amber-500 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow-xs">
+                    ĐANG MỞ CỬA 🚀
+                  </span>
+                  <h4 class="font-black text-xs text-slate-900 mt-0.5">Dọn Bàn Học Gọn Gàng</h4>
+                  <span class="text-[9px] font-extrabold text-orange-600 bg-orange-100 px-1.5 py-0.2 rounded-md inline-block mt-0.5">
+                    📸 Có chụp ảnh minh chứng
+                  </span>
+                </div>
+              </div>
+
+              <!-- ============================================== -->
+              <!-- ĐẢO 2 (16:30 - ĐÃ XONG): CẤT GIÀY & BALO -->
+              <!-- ============================================== -->
+              <div onclick="openIslandDetail('drop')" class="relative z-10 flex flex-col items-center translate-x-12 cursor-pointer transition hover:scale-105">
+                <div class="w-16 h-16 rounded-2xl bg-emerald-500 text-white border-b-4 border-emerald-700 flex flex-col items-center justify-center shadow-md relative">
+                  <span class="text-2xl">🎒</span>
+                  <span class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-white text-emerald-600 text-xs font-black flex items-center justify-center shadow">
+                    ✓
+                  </span>
+                  <span class="text-[8px] font-black text-emerald-100 mt-0.5">+25 ⭐</span>
+                </div>
+                <div class="text-center mt-1">
+                  <span class="text-[10px] font-black text-slate-800 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-xs block">
+                    Cất Giày &amp; Balo
+                  </span>
+                  <span class="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded-full inline-block mt-0.5">
+                    ✓ Đã xong lúc 16:45 (Bấm để xem)
+                  </span>
+                </div>
+              </div>
+
+              <!-- ============================================== -->
+              <!-- ĐẢO 1 (06:30 - ĐÃ XONG): GẤP CHĂN GỐI SÁNG -->
+              <!-- ============================================== -->
+              <div onclick="openIslandDetail('bed')" class="relative z-10 flex flex-col items-center -translate-x-10 cursor-pointer transition hover:scale-105 pb-4">
+                <div class="w-16 h-16 rounded-2xl bg-emerald-500 text-white border-b-4 border-emerald-700 flex flex-col items-center justify-center shadow-md relative">
+                  <span class="text-2xl">🛏️</span>
+                  <span class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-white text-emerald-600 text-xs font-black flex items-center justify-center shadow">
+                    ✓
+                  </span>
+                  <span class="text-[8px] font-black text-emerald-100 mt-0.5">+20 ⭐</span>
+                </div>
+                <div class="text-center mt-1">
+                  <span class="text-[10px] font-black text-slate-800 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-xs block">
+                    Gấp Chăn Gối Sáng
+                  </span>
+                  <span class="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded-full inline-block mt-0.5">
+                    ✓ Đã xong lúc 06:45 (Bấm để xem)
+                  </span>
+                </div>
+              </div>
+
             </div>
 
             <!-- ---------------------------------------------------- -->
@@ -321,7 +381,7 @@
               <div>
                 <div class="flex items-center justify-between pb-2 border-b border-slate-200">
                   <button onclick="closeCockpit()" class="text-xs font-black text-slate-500 hover:text-slate-800 flex items-center gap-1 bg-white px-2.5 py-1 rounded-xl border border-slate-200">
-                    <span>✕</span> <span>Thoát</span>
+                    <span>✕</span> <span>Bản đồ</span>
                   </button>
                   <span id="cockpit-step-counter" class="text-xs font-black text-teal-700 bg-teal-50 px-2.5 py-1 rounded-full border border-teal-200">
                     Bước 1 / 3
@@ -352,17 +412,14 @@
 
                   <!-- Interactive desk pens canvas simulation -->
                   <div class="bg-amber-50/70 border-2 border-amber-200 rounded-3xl p-5 flex items-center justify-around">
-                    <!-- Pen 1 -->
                     <button id="pen-1" onclick="collectPen(1)" class="w-12 h-16 rounded-2xl bg-white border-2 border-amber-300 shadow-sm flex flex-col items-center justify-center text-2xl hover:scale-105 active:scale-95 transition">
                       ✏️
                       <span class="text-[8px] font-black text-slate-400 mt-1">Bút chì</span>
                     </button>
-                    <!-- Pen 2 -->
                     <button id="pen-2" onclick="collectPen(2)" class="w-12 h-16 rounded-2xl bg-white border-2 border-blue-300 shadow-sm flex flex-col items-center justify-center text-2xl hover:scale-105 active:scale-95 transition">
                       🖊️
                       <span class="text-[8px] font-black text-slate-400 mt-1">Bút bi</span>
                     </button>
-                    <!-- Pen 3 -->
                     <button id="pen-3" onclick="collectPen(3)" class="w-12 h-16 rounded-2xl bg-white border-2 border-red-300 shadow-sm flex flex-col items-center justify-center text-2xl hover:scale-105 active:scale-95 transition">
                       🖍️
                       <span class="text-[8px] font-black text-slate-400 mt-1">Bút màu</span>
@@ -395,27 +452,23 @@
 
                   <!-- Khung ngắm máy ảnh (Viewfinder) -->
                   <div class="relative bg-slate-900 rounded-3xl overflow-hidden border-4 border-amber-400 shadow-lg aspect-4/3 flex items-center justify-center">
-                    <!-- Ảnh bàn học minh họa sạch sẽ sau dọn -->
                     <div id="camera-preview-box" class="w-full h-full relative flex items-center justify-center bg-gradient-to-tr from-amber-100 via-orange-50 to-teal-50">
-                      <!-- Minh họa bàn học sáng bóng -->
                       <div class="text-center p-3 space-y-1">
                         <div class="text-5xl">✨🪑📚✨</div>
                         <div class="text-[11px] font-black text-teal-900">Góc bàn của Leo đã ngăn nắp!</div>
                         <div class="text-[9px] font-bold text-slate-500">Ống bút gọn • Không rác • Sách xếp ngay ngắn</div>
                       </div>
-                      <!-- Viền ngắm camera 4 góc -->
                       <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-amber-500"></div>
                       <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-amber-500"></div>
                       <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-amber-500"></div>
                       <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-amber-500"></div>
-                      <!-- Tag Live -->
                       <span class="absolute top-2 left-1/2 -translate-x-1/2 bg-black/60 text-white font-mono text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1">
                         <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span> CAMERA READY
                       </span>
                     </div>
                   </div>
 
-                  <!-- Nút bấm chụp 1-chạm cực lớn -->
+                  <!-- Nút bấm chụp 1-chạm -->
                   <button id="btn-take-photo" onclick="takeSnapshotAndComplete()" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-sm rounded-2xl shadow-lg shadow-teal-500/20 active:scale-95 transition flex items-center justify-center gap-2">
                     <span class="text-xl">📸</span>
                     <span>BẤM CHỤP &amp; NHẬN +30⭐ NGAY!</span>
@@ -425,13 +478,54 @@
 
               </div>
 
-              <!-- Bottom next button (ẩn ở bước 3 vì nút chụp là nút hoàn thành) -->
+              <!-- Bottom next button -->
               <div id="cockpit-footer-action">
                 <button id="cockpit-next-btn" disabled class="w-full py-3 bg-slate-200 text-slate-400 font-black text-xs rounded-2xl transition cursor-not-allowed">
                   Hãy hoàn thành bước trên trước nhé 👆
                 </button>
               </div>
 
+            </div>
+
+            <!-- ---------------------------------------------------- -->
+            <!-- MODAL XEM CHI TIẾT ĐẢO BẤT KỲ (INTERACTIVE VIEWER) -->
+            <!-- ---------------------------------------------------- -->
+            <div id="c-modal-island-detail" class="absolute inset-0 bg-slate-950/70 backdrop-blur-xs z-50 hidden flex-col items-center justify-center p-4">
+              <div class="bg-white rounded-3xl p-5 max-w-xs w-full shadow-2xl text-center space-y-3.5 border-2 border-slate-200 animate-slide-up">
+                
+                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <span id="c-island-modal-badge" class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                    ĐÃ CHINH PHỤC
+                  </span>
+                  <button onclick="closeIslandDetailModal()" class="w-6 h-6 rounded-full bg-slate-100 text-slate-500 font-bold text-xs flex items-center justify-center">✕</button>
+                </div>
+
+                <div class="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center text-3xl shadow-inner" id="c-island-modal-icon-bg">
+                  <span id="c-island-modal-icon">🛏️</span>
+                </div>
+
+                <div>
+                  <h3 id="c-island-modal-title" class="text-sm font-black text-slate-900 leading-snug">
+                    Tên Đảo
+                  </h3>
+                  <p id="c-island-modal-desc" class="text-xs text-slate-500 mt-1">
+                    Mô tả đảo
+                  </p>
+                </div>
+
+                <!-- Khung ảnh minh chứng nếu có -->
+                <div id="c-island-modal-photo-box" class="rounded-2xl border-2 border-slate-200 aspect-4/3 overflow-hidden relative flex items-center justify-center bg-slate-50">
+                  <!-- Ảnh mô phỏng -->
+                  <div class="text-center p-2" id="c-island-modal-photo-content">
+                    <span class="text-3xl block">📸</span>
+                    <span class="text-[10px] font-bold text-slate-500">Minh chứng thành quả</span>
+                  </div>
+                </div>
+
+                <button onclick="closeIslandDetailModal()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs rounded-xl transition">
+                  ĐÓNG LẠI
+                </button>
+              </div>
             </div>
 
             <!-- ---------------------------------------------------- -->
@@ -462,8 +556,8 @@
                   </div>
                 </div>
 
-                <button onclick="finishAndBackToList()" class="w-full py-3 bg-amber-400 hover:bg-amber-500 text-amber-950 font-black text-xs rounded-2xl shadow-md transition active:scale-95">
-                  TUYỆT VỜI, QUAY LẠI 🚀
+                <button onclick="finishAndBackToMap()" class="w-full py-3 bg-amber-400 hover:bg-amber-500 text-amber-950 font-black text-xs rounded-2xl shadow-md transition active:scale-95">
+                  TIẾP TỤC HÀNH TRÌNH 🚀
                 </button>
               </div>
             </div>
@@ -473,7 +567,16 @@
               <span class="text-2xl">💖</span>
               <div class="text-xs leading-tight">
                 <strong class="block font-black">Mẹ Lan vừa thả ❤️!</strong>
-                <span>"Mẹ rất thích góc bàn sạch của Leo! Thưởng thêm +5⭐!"</span>
+                <span id="c-heart-toast-msg">"Mẹ rất thích góc bàn sạch của Leo! Thưởng thêm +5⭐!"</span>
+              </div>
+            </div>
+
+            <!-- Toast nhắc giờ Milo khi mở khóa đảo -->
+            <div id="c-milo-time-toast" class="absolute top-14 left-4 right-4 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 p-3 rounded-2xl shadow-xl z-50 hidden items-center gap-2.5 border-2 border-amber-200 animate-slide-up">
+              <span class="text-2xl">⏰</span>
+              <div class="text-xs leading-tight">
+                <strong class="block font-black">Đến giờ rồi Leo ơi!</strong>
+                <span id="c-milo-time-toast-text">21:00 rồi! Đảo Đánh Răng Đi Ngủ đã mở cửa!</span>
               </div>
             </div>
 
@@ -493,7 +596,7 @@
             <span class="font-bold uppercase tracking-wider text-teal-400 font-mono">CLIENT 02 • MÁY MẸ LAN</span>
           </div>
           <span class="text-[11px] font-bold text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded-lg border border-slate-700">
-            👩 Mẹ Lan (Giám sát tự giác)
+            👩 Mẹ Lan (Nhật Ký &amp; Thư Viện Ảnh)
           </span>
         </div>
 
@@ -522,7 +625,7 @@
                       Bé Leo • Lớp 3
                     </span>
                   </div>
-                  <h3 class="font-black text-sm text-slate-900 mt-1">Nhật Ký Nề Nếp &amp; Thói Quen</h3>
+                  <h3 class="font-black text-sm text-slate-900 mt-1">Nhật Ký Nề Nếp &amp; Thư Viện Ảnh</h3>
                 </div>
 
                 <!-- Streak badge -->
@@ -543,31 +646,31 @@
                 <div class="flex items-center justify-between">
                   <span class="text-xs font-bold text-teal-100 uppercase tracking-wider">Tiến Độ Hôm Nay</span>
                   <span id="p-stat-rate" class="bg-white/20 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
-                    2/3 Hoàn Thành (66%)
+                    2/4 Hoàn Thành (50%)
                   </span>
                 </div>
                 <div class="flex items-baseline gap-2">
                   <span id="p-stat-count" class="text-2xl font-black">2</span>
-                  <span class="text-xs text-teal-100">/ 3 thói quen tự giác</span>
+                  <span class="text-xs text-teal-100">/ 4 thói quen theo timeline</span>
                 </div>
                 <!-- Progress bar -->
                 <div class="w-full bg-teal-950/30 rounded-full h-2 overflow-hidden">
-                  <div id="p-progress-bar" class="bg-amber-300 h-full rounded-full transition-all duration-500" style="width: 66%;"></div>
+                  <div id="p-progress-bar" class="bg-amber-300 h-full rounded-full transition-all duration-500" style="width: 50%;"></div>
                 </div>
                 <p class="text-[10px] text-teal-100 leading-tight pt-1">
-                  💡 Con tự động nhận thưởng ngay khi làm xong. Mẹ có thể ngắm lại ảnh con chụp bên dưới bất cứ khi nào!
+                  💡 Tất cả các việc đều có ảnh minh chứng. Mẹ bấm vào từng mục để xem ảnh và thả tim khích lệ con nhé!
                 </p>
               </div>
 
-              <!-- Danh sách Audit Log Timeline -->
+              <!-- Danh sách Audit Log Timeline (TẤT CẢ ĐỀU BẤM ĐƯỢC ĐỂ XEM ẢNH) -->
               <div class="space-y-2.5">
                 <div class="flex items-center justify-between px-1">
-                  <span class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Nhật Ký Sinh Hoạt Trong Ngày</span>
-                  <span class="text-[10px] font-bold text-slate-400">Tự động cập nhật</span>
+                  <span class="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider">Nhật Ký Thói Quen (Bấm Xem Ảnh)</span>
+                  <span class="text-[10px] font-bold text-teal-600">4 mốc giờ</span>
                 </div>
 
-                <!-- Item 1: Gấp chăn -->
-                <div class="bg-white rounded-2xl p-3 border border-slate-200 shadow-2xs flex items-center justify-between">
+                <!-- 1. Gấp chăn (06:45) - BẤM XEM ĐƯỢC ẢNH -->
+                <div onclick="parentOpenPhotoModal('bed')" class="bg-white rounded-2xl p-3 border border-slate-200 hover:border-teal-400 shadow-2xs flex items-center justify-between cursor-pointer transition active:scale-98">
                   <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shrink-0">
                       🛏️
@@ -580,11 +683,13 @@
                       <span class="text-[10px] text-slate-400 font-medium">Hoàn thành lúc 06:45 • +20⭐</span>
                     </div>
                   </div>
-                  <span class="text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded-lg">Không ảnh</span>
+                  <span class="px-2.5 py-1 rounded-xl bg-teal-50 text-teal-700 text-[10px] font-black border border-teal-200 flex items-center gap-1">
+                    <span>📷</span> <span>Xem Ảnh</span>
+                  </span>
                 </div>
 
-                <!-- Item 2: Cất giày & balo -->
-                <div class="bg-white rounded-2xl p-3 border border-slate-200 shadow-2xs flex items-center justify-between">
+                <!-- 2. Cất giày & balo (16:45) - BẤM XEM ĐƯỢC ẢNH -->
+                <div onclick="parentOpenPhotoModal('drop')" class="bg-white rounded-2xl p-3 border border-slate-200 hover:border-teal-400 shadow-2xs flex items-center justify-between cursor-pointer transition active:scale-98">
                   <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shrink-0">
                       🎒
@@ -597,10 +702,12 @@
                       <span class="text-[10px] text-slate-400 font-medium">Hoàn thành lúc 16:45 • +25⭐</span>
                     </div>
                   </div>
-                  <span class="text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded-lg">Không ảnh</span>
+                  <span class="px-2.5 py-1 rounded-xl bg-teal-50 text-teal-700 text-[10px] font-black border border-teal-200 flex items-center gap-1">
+                    <span>📷</span> <span>Xem Ảnh</span>
+                  </span>
                 </div>
 
-                <!-- Item 3: Dọn bàn học (Chờ hoặc Đã Có Ảnh) -->
+                <!-- 3. Dọn bàn học (19:00) - CHỜ HOẶC ĐÃ CÓ ẢNH -->
                 <div id="p-desk-item-waiting" class="bg-amber-50/50 rounded-2xl p-3 border-2 border-dashed border-amber-300 flex items-center justify-between">
                   <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl shrink-0">
@@ -609,16 +716,15 @@
                     <div>
                       <div class="flex items-center gap-1.5">
                         <span class="font-extrabold text-xs text-amber-950">Dọn bàn học gọn gàng</span>
-                        <span class="text-[9px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.2 rounded animate-pulse">Đang chờ bé</span>
+                        <span class="text-[9px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.2 rounded animate-pulse">Đang làm 19:15</span>
                       </div>
-                      <span class="text-[10px] text-amber-800 font-medium">Bé đang làm bên máy trái...</span>
+                      <span class="text-[10px] text-amber-800 font-medium">Bé đang thao tác bên máy trái...</span>
                     </div>
                   </div>
                   <span class="text-xs">⏳</span>
                 </div>
 
-                <!-- Khi đã nhận được ảnh từ bé -->
-                <div id="p-desk-item-done" class="hidden bg-white rounded-2xl p-3 border-2 border-teal-500 shadow-sm flex items-center justify-between animate-slide-up">
+                <div id="p-desk-item-done" onclick="parentOpenPhotoModal('desk')" class="hidden bg-white rounded-2xl p-3 border-2 border-teal-500 shadow-sm flex items-center justify-between cursor-pointer transition active:scale-98 animate-slide-up">
                   <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center text-xl shrink-0">
                       🧹
@@ -631,10 +737,44 @@
                       <span class="text-[10px] text-slate-500 font-medium">Hoàn thành lúc 19:15 • +30⭐</span>
                     </div>
                   </div>
-                  <!-- Nút mở xem ảnh chụp -->
-                  <button onclick="parentOpenPhotoModal()" class="px-3 py-1.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-extrabold text-xs rounded-xl shadow-xs transition active:scale-95 flex items-center gap-1">
+                  <button class="px-3 py-1.5 bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-extrabold text-xs rounded-xl shadow-xs flex items-center gap-1">
                     <span>📷</span> <span>Xem Ảnh</span>
                   </button>
+                </div>
+
+                <!-- 4. Đánh răng tối (21:00) - KHÓA THEO TIMELINE -->
+                <div id="p-teeth-item-locked" class="bg-slate-100 rounded-2xl p-3 border border-slate-200 opacity-70 flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-slate-200 text-slate-400 flex items-center justify-center text-xl shrink-0">
+                      🦷
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="font-extrabold text-xs text-slate-600">Đánh răng thơm tho</span>
+                        <span class="text-[9px] font-bold text-slate-400 bg-slate-200 px-1.5 py-0.2 rounded">Chưa đến giờ</span>
+                      </div>
+                      <span class="text-[10px] text-slate-400 font-medium">Khóa timeline • Tự mở lúc 21:00</span>
+                    </div>
+                  </div>
+                  <span class="text-xs text-slate-400">🔒</span>
+                </div>
+
+                <div id="p-teeth-item-unlocked" onclick="parentOpenPhotoModal('teeth')" class="hidden bg-white rounded-2xl p-3 border-2 border-indigo-400 shadow-xs flex items-center justify-between cursor-pointer transition animate-slide-up">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl shrink-0">
+                      🦷
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="font-extrabold text-xs text-indigo-950">Đánh răng thơm tho</span>
+                        <span class="text-[9px] font-black text-indigo-700 bg-indigo-100 px-1.5 py-0.2 rounded animate-pulse">ĐÃ ĐẾN GIỜ (21:00)</span>
+                      </div>
+                      <span class="text-[10px] text-slate-500 font-medium">Đã kích hoạt trên máy của Leo</span>
+                    </div>
+                  </div>
+                  <span class="px-2.5 py-1 rounded-xl bg-indigo-50 text-indigo-700 text-[10px] font-black border border-indigo-200 flex items-center gap-1">
+                    <span>✨</span> <span>Đang mở</span>
+                  </span>
                 </div>
 
               </div>
@@ -664,7 +804,7 @@
             </div>
 
             <!-- ---------------------------------------------------- -->
-            <!-- MODAL XEM ẢNH MINH CHỨNG & THẢ TIM CỦA MẸ -->
+            <!-- MODAL XEM ẢNH MINH CHỨNG & THẢ TIM ĐA ĐIỂM CỦA MẸ -->
             <!-- ---------------------------------------------------- -->
             <div id="parent-photo-modal" class="absolute inset-0 bg-slate-950/70 backdrop-blur-xs z-50 hidden flex-col items-center justify-center p-4">
               <div class="bg-white rounded-3xl p-4 max-w-xs w-full shadow-2xl space-y-3 animate-slide-up border border-slate-200">
@@ -672,20 +812,19 @@
                 <div class="flex items-center justify-between pb-2 border-b border-slate-100">
                   <div class="flex items-center gap-1.5">
                     <span class="text-base">📷</span>
-                    <span class="font-black text-xs text-slate-900 uppercase">Minh Chứng Của Bé Leo</span>
+                    <span id="p-modal-title" class="font-black text-xs text-slate-900 uppercase">Minh Chứng Của Bé Leo</span>
                   </div>
                   <button onclick="parentClosePhotoModal()" class="w-6 h-6 rounded-full bg-slate-100 text-slate-500 font-bold text-xs flex items-center justify-center">✕</button>
                 </div>
 
-                <!-- Bức ảnh con chụp -->
+                <!-- Bức ảnh hiển thị linh hoạt theo mục bấm -->
                 <div class="rounded-2xl overflow-hidden border-2 border-teal-200 aspect-4/3 relative bg-gradient-to-tr from-amber-100 via-orange-50 to-teal-50 flex items-center justify-center shadow-inner">
-                  <div class="text-center p-2 space-y-1">
-                    <div class="text-4xl">✨🪑📚✨</div>
-                    <div class="text-xs font-black text-teal-900">Mặt bàn học đã sạch bóng</div>
-                    <div class="text-[9px] text-slate-500 font-bold">Chụp bởi Bé Leo • 19:15</div>
+                  <div class="text-center p-2 space-y-1" id="p-modal-photo-content">
+                    <div class="text-4xl" id="p-modal-photo-emoji">✨🪑📚✨</div>
+                    <div class="text-xs font-black text-teal-900" id="p-modal-photo-caption">Mặt bàn học đã sạch bóng</div>
+                    <div class="text-[9px] text-slate-500 font-bold" id="p-modal-photo-sub">Chụp bởi Bé Leo • 19:15</div>
                   </div>
-                  <!-- Watermark -->
-                  <span class="absolute bottom-2 right-2 bg-black/60 text-white font-mono text-[8px] px-1.5 py-0.5 rounded">
+                  <span class="absolute bottom-2 right-2 bg-black/60 text-white font-mono text-[8px] px-1.5 py-0.5 rounded" id="p-modal-photo-watermark">
                     LEO_SNAP_1915.JPG
                   </span>
                 </div>
@@ -693,8 +832,8 @@
                 <!-- Đánh giá của Milo -->
                 <div class="bg-teal-50 p-2.5 rounded-2xl border border-teal-200 flex items-center gap-2">
                   <span class="text-2xl">🦁</span>
-                  <p class="text-[10px] text-teal-950 font-extrabold leading-tight">
-                    "Leo đã tự tay cất bút, nhặt mẩu rác và chụp ảnh khoe với Mẹ!"
+                  <p class="text-[10px] text-teal-950 font-extrabold leading-tight" id="p-modal-milo-praise">
+                    "Leo đã tự tay dọn dẹp sạch sẽ trước khi chụp ảnh gửi Mẹ!"
                   </p>
                 </div>
 
@@ -702,7 +841,7 @@
                 <div id="parent-heart-action-area" class="space-y-1.5">
                   <button id="btn-parent-heart" onclick="parentSendHeart()" class="w-full py-3 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-black text-xs rounded-2xl shadow-md transition active:scale-95 flex items-center justify-center gap-1.5">
                     <span class="text-base">💖</span>
-                    <span>THẢ TIM KHEN NGỢI (+5⭐)</span>
+                    <span id="p-btn-heart-text">THẢ TIM KHEN NGỢI (+5⭐)</span>
                   </button>
                   <p class="text-[9px] text-center text-slate-400 font-medium">Bé sẽ nhận được tim bay và thông báo ấm áp ngay trên máy</p>
                 </div>
@@ -722,24 +861,25 @@
   <!-- 3. FOOTER -->
   <!-- ============================================================== -->
   <footer class="w-full bg-slate-900/80 border-t border-slate-800 px-6 py-2.5 shrink-0 text-center text-xs text-slate-500">
-    Bản Xem Trước Daily Routine Hỗ Trợ ADHD • Triết Lý Tự Giác Cam Kết Hành Động • Milo Quest × Trạm Thấu Hiểu
+    Bản Xem Trước Daily Routine Hỗ Trợ ADHD • Bản Đồ Đảo S-Curve &amp; Khóa Timeline • Milo Quest × Trạm Thấu Hiểu
   </footer>
 
 
   <!-- ============================================================== -->
-  <!-- 4. LOGIC JAVASCRIPT ĐỒNG BỘ 2 CHIỀU TỨC THÌ -->
+  <!-- 4. LOGIC JAVASCRIPT ĐỒNG BỘ 2 CHIỀU & KHÓA TIMELINE -->
   <!-- ============================================================== -->
   <script>
     // State cục bộ prototype
     const protoState = {
       stars: 450,
+      simulatedTime: 'evening', // 'morning', 'evening', 'night'
       currentStep: 1,
       totalSteps: 3,
       pensCollected: 0,
       trashCollected: false,
       photoTaken: false,
-      parentHearted: false,
-      soundEnabled: true
+      teethUnlocked: false,
+      activeViewingPhoto: 'desk'
     };
 
     // Synthesizer Web Audio API âm thanh êm dịu
@@ -763,15 +903,20 @@
     }
 
     function playSuccessChime() {
-      playBeep(523.25, 'triangle', 0.1); // C5
-      setTimeout(() => playBeep(659.25, 'triangle', 0.1), 100); // E5
-      setTimeout(() => playBeep(783.99, 'triangle', 0.1), 200); // G5
-      setTimeout(() => playBeep(1046.50, 'sine', 0.3), 300); // C6
+      playBeep(523.25, 'triangle', 0.1);
+      setTimeout(() => playBeep(659.25, 'triangle', 0.1), 100);
+      setTimeout(() => playBeep(783.99, 'triangle', 0.1), 200);
+      setTimeout(() => playBeep(1046.50, 'sine', 0.3), 300);
     }
 
     function playCameraShutter() {
       playBeep(1200, 'square', 0.05);
       setTimeout(() => playBeep(600, 'triangle', 0.08), 60);
+    }
+
+    function playLockShakeSound() {
+      playBeep(220, 'sawtooth', 0.1);
+      setTimeout(() => playBeep(180, 'sawtooth', 0.12), 100);
     }
 
     // Canvas Confetti Generator
@@ -803,7 +948,7 @@
         particles.forEach(p => {
           p.x += p.vx;
           p.y += p.vy;
-          p.vy += 0.25; // gravity
+          p.vy += 0.25;
           p.alpha -= 0.015;
           if (p.alpha > 0) {
             alive = true;
@@ -824,23 +969,186 @@
       animate();
     }
 
-    // 1. Chuyển Tab máy Bé
-    function childSwitchTab(tab) {
-      const tabStudy = document.getElementById('c-tab-study');
-      const tabRoutine = document.getElementById('c-tab-routine');
-      if (tab === 'study') {
-        tabStudy.className = "flex-1 py-1.5 rounded-xl font-black text-xs bg-teal-600 text-white shadow-sm transition flex items-center justify-center gap-1.5";
-        tabRoutine.className = "flex-1 py-1.5 rounded-xl font-black text-xs text-slate-400 hover:text-slate-600 transition flex items-center justify-center gap-1.5";
-        alert("Đang ở chế độ xem mẫu Thói Quen (Daily Routine). Bấm vào tab 'Thói Quen' để tiếp tục trải nghiệm nhé!");
-      } else {
-        tabRoutine.className = "flex-1 py-1.5 rounded-xl font-black text-xs bg-amber-400 text-amber-950 shadow-sm transition flex items-center justify-center gap-1.5";
-        tabStudy.className = "flex-1 py-1.5 rounded-xl font-black text-xs text-slate-400 hover:text-slate-600 transition flex items-center justify-center gap-1.5";
+    // ==============================================================
+    // 1. CƠ CHẾ KHÓA THEO TIMELINE (TIMELINE LOCK MECHANISM)
+    // ==============================================================
+    function setSimulatedTime(timeSlot) {
+      protoState.simulatedTime = timeSlot;
+      
+      // Update header buttons
+      const btnM = document.getElementById('time-btn-morning');
+      const btnE = document.getElementById('time-btn-evening');
+      const btnN = document.getElementById('time-btn-night');
+      
+      [btnM, btnE, btnN].forEach(b => {
+        b.className = "px-2.5 py-1 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition";
+      });
+
+      const clockText = document.getElementById('current-sim-time-text');
+      const clockBadge = document.getElementById('island-clock-badge');
+
+      if (timeSlot === 'morning') {
+        btnM.className = "px-2.5 py-1 rounded-xl text-xs font-black bg-amber-500 text-slate-950 shadow-sm transition";
+        clockText.innerText = "Thời gian mô phỏng: 07:00 (Sáng)";
+        clockBadge.innerText = "07:00 Sáng";
+        lockTeethIsland();
+        alert("☀️ Chuyển sang 07:00 Sáng: Đảo Gấp Chăn mở, các đảo Chiều & Tối sẽ theo thứ tự khóa.");
+      } else if (timeSlot === 'evening') {
+        btnE.className = "px-2.5 py-1 rounded-xl text-xs font-black bg-amber-500 text-slate-950 shadow-sm transition";
+        clockText.innerText = "Thời gian mô phỏng: 19:15 (Tối)";
+        clockBadge.innerText = "19:15 Tối";
+        lockTeethIsland();
+      } else if (timeSlot === 'night') {
+        btnN.className = "px-2.5 py-1 rounded-xl text-xs font-black bg-indigo-500 text-white shadow-sm transition";
+        clockText.innerText = "Thời gian mô phỏng: 21:00 (Giờ Đi Ngủ!)";
+        clockBadge.innerText = "21:00 Đêm";
+        unlockTeethIsland();
       }
     }
 
-    // 2. Mở Cockpit bài Dọn bàn học
+    function handleIslandClick(islandNumber) {
+      if (islandNumber === 4) {
+        // Đảo 4: Đánh răng
+        if (!protoState.teethUnlocked) {
+          // BỊ KHÓA: Rung lắc khóa + Milo nhắc nhở
+          playLockShakeSound();
+          const node = document.getElementById('node-island-4');
+          node.classList.add('animate-shake');
+          setTimeout(() => node.classList.remove('animate-shake'), 400);
+
+          showMiloTimeToast("🔒 Đảo này chưa đến giờ mở! Lúc 21:00 tối Milo sẽ gọi Leo đánh răng nhé!");
+        } else {
+          // ĐÃ MỞ: Mở xem hoặc làm
+          openIslandDetail('teeth');
+        }
+      }
+    }
+
+    function lockTeethIsland() {
+      protoState.teethUnlocked = false;
+      const box = document.getElementById('island-4-icon-box');
+      box.className = "w-18 h-18 rounded-[28px] bg-slate-100 border-2 border-slate-300 border-b-4 border-slate-400 flex flex-col items-center justify-center shadow-md relative p-2";
+      document.getElementById('island-4-icon').className = "text-3xl opacity-50";
+      document.getElementById('island-4-lock-badge').className = "absolute -top-2 -right-2 w-6 h-6 rounded-full bg-slate-800 text-white text-[11px] flex items-center justify-center shadow-md border border-slate-600";
+      document.getElementById('island-4-lock-badge').innerText = "🔒";
+      document.getElementById('island-4-time-tag').innerText = "🔒 Khóa • Mở lúc 21:00";
+      document.getElementById('island-4-time-tag').className = "text-[9px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.2 rounded-full inline-block mt-0.5";
+
+      document.getElementById('p-teeth-item-locked').classList.remove('hidden');
+      document.getElementById('p-teeth-item-unlocked').classList.add('hidden');
+    }
+
+    function unlockTeethIsland() {
+      protoState.teethUnlocked = true;
+      playSuccessChime();
+
+      // Đảo 4 bật sáng rực rỡ
+      const box = document.getElementById('island-4-icon-box');
+      box.className = "w-18 h-18 rounded-[28px] bg-indigo-500 text-white border-2 border-indigo-300 border-b-4 border-indigo-700 flex flex-col items-center justify-center shadow-lg relative p-2 island-active-glow";
+      document.getElementById('island-4-icon').className = "text-3xl opacity-100";
+      document.getElementById('island-4-lock-badge').className = "absolute -top-2 -right-2 w-6 h-6 rounded-full bg-emerald-500 text-white text-[11px] font-black flex items-center justify-center shadow-md";
+      document.getElementById('island-4-lock-badge').innerText = "🔓";
+      document.getElementById('island-4-time-tag').innerText = "✨ ĐÃ ĐẾN GIỜ! BẤM VÀO ĐÂY";
+      document.getElementById('island-4-time-tag').className = "text-[9px] font-black text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-full inline-block mt-0.5 animate-bounce";
+
+      // Toast thông báo trên máy con
+      showMiloTimeToast("⏰ 21:00 rồi! Đảo Đánh Răng Thơm Tho đã mở cửa, Leo bấm vào để chải răng nào!");
+
+      // Trên máy mẹ cập nhật mở khóa
+      document.getElementById('p-teeth-item-locked').classList.add('hidden');
+      document.getElementById('p-teeth-item-unlocked').classList.remove('hidden');
+    }
+
+    function showMiloTimeToast(msg) {
+      const toast = document.getElementById('c-milo-time-toast');
+      document.getElementById('c-milo-time-toast-text').innerText = msg;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      setTimeout(() => {
+        toast.classList.remove('flex');
+        toast.classList.add('hidden');
+      }, 3500);
+    }
+
+    // ==============================================================
+    // 2. MỞ XEM CHI TIẾT ĐẢO BẤT KỲ TRÊN MÁY BÉ (CLICKABLE ISLANDS)
+    // ==============================================================
+    function openIslandDetail(islandType) {
+      const modal = document.getElementById('c-modal-island-detail');
+      const badge = document.getElementById('c-island-modal-badge');
+      const icon = document.getElementById('c-island-modal-icon');
+      const iconBg = document.getElementById('c-island-modal-icon-bg');
+      const title = document.getElementById('c-island-modal-title');
+      const desc = document.getElementById('c-island-modal-desc');
+      const photoContent = document.getElementById('c-island-modal-photo-content');
+
+      playBeep(650, 'sine', 0.1);
+
+      if (islandType === 'bed') {
+        badge.innerText = "ĐÃ HOÀN THÀNH LÚC 06:45";
+        badge.className = "text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800";
+        icon.innerText = "🛏️";
+        iconBg.className = "w-14 h-14 rounded-2xl mx-auto flex items-center justify-center text-3xl bg-emerald-100 text-emerald-700";
+        title.innerText = "Đảo Gấp Chăn Gối Buổi Sáng";
+        desc.innerText = "Con đã vuốt phẳng ga giường và xếp gối sát thành giường. Nhận +20 ⭐.";
+        photoContent.innerHTML = `
+          <div class="text-4xl">🛏️✨</div>
+          <div class="text-[11px] font-black text-emerald-800 mt-1">Giường ngủ phẳng phiu</div>
+          <div class="text-[9px] text-slate-400">Minh chứng chụp lúc 06:45</div>
+        `;
+      } else if (islandType === 'drop') {
+        badge.innerText = "ĐÃ HOÀN THÀNH LÚC 16:45";
+        badge.className = "text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800";
+        icon.innerText = "🎒";
+        iconBg.className = "w-14 h-14 rounded-2xl mx-auto flex items-center justify-center text-3xl bg-emerald-100 text-emerald-700";
+        title.innerText = "Đảo Hạ Cánh Tan Trường";
+        desc.innerText = "Con đã xếp giày lên kệ dép và treo balo lên móc ngăn nắp. Nhận +25 ⭐.";
+        photoContent.innerHTML = `
+          <div class="text-4xl">👟🎒✨</div>
+          <div class="text-[11px] font-black text-emerald-800 mt-1">Kệ dép & Balo gọn gàng</div>
+          <div class="text-[9px] text-slate-400">Minh chứng chụp lúc 16:45</div>
+        `;
+      } else if (islandType === 'teeth') {
+        badge.innerText = "ĐANG MỞ CỬA (21:00)";
+        badge.className = "text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800";
+        icon.innerText = "🦷";
+        iconBg.className = "w-14 h-14 rounded-2xl mx-auto flex items-center justify-center text-3xl bg-indigo-100 text-indigo-700";
+        title.innerText = "Đảo Đánh Răng Đi Ngủ 2 Phút";
+        desc.innerText = "Chải sạch 4 góc hàm răng theo đồng hồ thị giác 2 phút để răng trắng sáng!";
+        photoContent.innerHTML = `
+          <div class="text-4xl">🪥🫧✨</div>
+          <div class="text-[11px] font-black text-indigo-800 mt-1">Đồng hồ đĩa tròn 2 phút</div>
+          <div class="text-[9px] text-slate-400">Sẵn sàng chải sạch vi khuẩn</div>
+        `;
+      } else if (islandType === 'treasure') {
+        badge.innerText = "RƯƠNG BÁU HOÀNG KIM";
+        badge.className = "text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-800";
+        icon.innerText = "🏆";
+        iconBg.className = "w-14 h-14 rounded-2xl mx-auto flex items-center justify-center text-3xl bg-amber-100 text-amber-700";
+        title.innerText = "Kho Báu Thói Quen 5 Ngày";
+        desc.innerText = "Hoàn thành đủ 4 đảo trong ngày để mở khóa Huy Hiệu Siêu Nhân Tự Giác!";
+        photoContent.innerHTML = `
+          <div class="text-4xl">🎁✨</div>
+          <div class="text-[11px] font-black text-amber-800 mt-1">Huy hiệu & Vé vàng rạp phim</div>
+          <div class="text-[9px] text-slate-400">Đang chờ con chinh phục</div>
+        `;
+      }
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeIslandDetailModal() {
+      const modal = document.getElementById('c-modal-island-detail');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // ==============================================================
+    // 3. BUỒNG LÁI VI NHIỆM VỤ DỌN BÀN HỌC (COCKPIT)
+    // ==============================================================
     function openDeskTask() {
-      document.getElementById('c-view-routine-list').classList.add('hidden');
+      document.getElementById('c-view-island-map').classList.add('hidden');
       const cockpit = document.getElementById('c-view-cockpit');
       cockpit.classList.remove('hidden');
       cockpit.classList.add('flex');
@@ -852,10 +1160,9 @@
     function closeCockpit() {
       document.getElementById('c-view-cockpit').classList.add('hidden');
       document.getElementById('c-view-cockpit').classList.remove('flex');
-      document.getElementById('c-view-routine-list').classList.remove('hidden');
+      document.getElementById('c-view-island-map').classList.remove('hidden');
     }
 
-    // 3. Vi bước 1: Thu thập bút
     function collectPen(id) {
       const penBtn = document.getElementById(`pen-${id}`);
       if (penBtn.disabled) return;
@@ -869,14 +1176,12 @@
       if (protoState.pensCollected >= 3) {
         setTimeout(() => {
           playSuccessChime();
-          // Chuyển sang bước 2
           protoState.currentStep = 2;
           updateCockpitUI();
         }, 300);
       }
     }
 
-    // 4. Vi bước 2: Gom rác
     function collectTrash() {
       const trash = document.getElementById('trash-item');
       trash.classList.add('scale-75', 'opacity-0');
@@ -884,13 +1189,11 @@
       protoState.trashCollected = true;
       setTimeout(() => {
         playSuccessChime();
-        // Chuyển sang bước 3 (chụp ảnh)
         protoState.currentStep = 3;
         updateCockpitUI();
       }, 350);
     }
 
-    // Cập nhật giao diện Cockpit
     function updateCockpitUI() {
       document.getElementById('cockpit-step-counter').innerText = `Bước ${protoState.currentStep} / 3`;
       const s1 = document.getElementById('step-1-content');
@@ -914,15 +1217,14 @@
       } else if (protoState.currentStep === 3) {
         s3.classList.remove('hidden');
         speech.innerText = "Chiếc bàn đã sạch rồi! Leo bấm chụp 1 tấm để lưu vào Nhật ký nhé!";
-        footer.classList.add('hidden'); // Dùng nút chụp to
+        footer.classList.add('hidden');
       }
     }
 
-    // 5. Vi bước 3: CHỤP ẢNH & DUYỆT TỨC THÌ (Instant Gratification)
+    // Vi bước 3: CHỤP ẢNH & DUYỆT TỨC THÌ
     function takeSnapshotAndComplete() {
       playCameraShutter();
       
-      // Hiệu ứng flash máy ảnh
       const flash = document.getElementById('camera-flash');
       flash.classList.remove('opacity-0');
       flash.classList.add('opacity-90');
@@ -933,59 +1235,106 @@
 
       protoState.photoTaken = true;
 
-      // Cộng sao tức thì trên máy con
+      // Cộng sao tức thì
       protoState.stars += 30;
       const starsEl = document.getElementById('child-stars-val');
       starsEl.innerText = protoState.stars;
       starsEl.classList.add('scale-125', 'text-amber-500');
       setTimeout(() => starsEl.classList.remove('scale-125', 'text-amber-500'), 400);
 
-      // Nổ pháo hoa + âm thanh ăn mừng
       playSuccessChime();
       launchConfetti();
 
-      // Hiện Modal ăn mừng tức thì cho con (không chờ mẹ!)
+      // Modal ăn mừng tức thì
       setTimeout(() => {
         const modal = document.getElementById('c-modal-celebration');
         modal.classList.remove('hidden');
         modal.classList.add('flex');
       }, 350);
 
-      // ĐỒNG BỘ SANG MÁY MẸ NGAY LẬP TỨC
-      syncToParentPhone();
+      syncDeskCompletionToParent();
     }
 
-    // 6. Hoàn thành và quay lại màn hình danh sách máy con
-    function finishAndBackToList() {
+    function finishAndBackToMap() {
       document.getElementById('c-modal-celebration').classList.add('hidden');
       document.getElementById('c-modal-celebration').classList.remove('flex');
       closeCockpit();
 
-      // Đổi trạng thái thẻ dọn bàn học thành Đã xong
-      document.getElementById('c-card-desk').classList.add('hidden');
-      document.getElementById('c-card-desk-done').classList.remove('hidden');
-      document.getElementById('c-routine-badge').classList.add('hidden');
+      // Cập nhật Đảo 3 trên Bản đồ máy con thành ĐÃ XONG
+      const btn3 = document.getElementById('island-3-btn');
+      btn3.className = "w-22 h-22 rounded-[32px] bg-emerald-500 text-white border-b-4 border-emerald-700 flex flex-col items-center justify-center shadow-xl ring-6 ring-emerald-200 cursor-pointer hover:scale-105 transition";
+      document.getElementById('island-3-status-badge').className = "bg-emerald-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow-xs";
+      document.getElementById('island-3-status-badge').innerText = "✓ ĐÃ HOÀN THÀNH!";
+      document.getElementById('child-island-speech').innerText = "Leo siêu đỉnh! Đảo 3 đã xong! 🎉";
+
+      // Cập nhật thanh tiến độ đảo
+      document.getElementById('island-progress-text').innerText = "Đảo 3 / 4: Đã Hoàn Thành ✓";
+      document.getElementById('island-sub-text').innerText = "Chờ đến 21:00 để mở Đảo Đánh Răng";
     }
 
-    // 7. Đồng bộ sang máy mẹ (Gửi ảnh vào Nhật ký)
-    function syncToParentPhone() {
-      // Ẩn trạng thái chờ trên máy mẹ, hiện thẻ đã xong có nút Xem ảnh
+    function syncDeskCompletionToParent() {
       document.getElementById('p-desk-item-waiting').classList.add('hidden');
       document.getElementById('p-desk-item-done').classList.remove('hidden');
 
-      // Cập nhật thống kê mẹ: 3/3 hoàn thành (100%)
-      document.getElementById('p-stat-rate').innerText = "3/3 Hoàn Thành (100%)";
+      document.getElementById('p-stat-rate').innerText = "3/4 Hoàn Thành (75%)";
       document.getElementById('p-stat-rate').className = "bg-amber-300 text-amber-950 text-[10px] font-black px-2 py-0.5 rounded-full";
       document.getElementById('p-stat-count').innerText = "3";
-      document.getElementById('p-progress-bar').style.width = "100%";
+      document.getElementById('p-progress-bar').style.width = "75%";
     }
 
-    // 8. Phụ huynh mở Modal xem ảnh con chụp
-    function parentOpenPhotoModal() {
+    // ==============================================================
+    // 4. MỞ MODAL XEM ẢNH TỪ PHÍA MẸ (MULTI-ITEM AUDIT GALLERY)
+    // ==============================================================
+    function parentOpenPhotoModal(itemKey) {
+      protoState.activeViewingPhoto = itemKey;
       const modal = document.getElementById('parent-photo-modal');
+      const title = document.getElementById('p-modal-title');
+      const emoji = document.getElementById('p-modal-photo-emoji');
+      const caption = document.getElementById('p-modal-photo-caption');
+      const sub = document.getElementById('p-modal-photo-sub');
+      const watermark = document.getElementById('p-modal-photo-watermark');
+      const praise = document.getElementById('p-modal-milo-praise');
+      const btn = document.getElementById('btn-parent-heart');
+
+      // Reset button state
+      btn.className = "w-full py-3 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-black text-xs rounded-2xl shadow-md transition active:scale-95 flex items-center justify-center gap-1.5";
+      btn.innerHTML = "<span class='text-base'>💖</span> <span>THẢ TIM KHEN NGỢI (+5⭐)</span>";
+      btn.disabled = false;
+
+      playBeep(700, 'sine', 0.1);
+
+      if (itemKey === 'bed') {
+        title.innerText = "ẢNH MINH CHỨNG: GẤP CHĂN GỐI";
+        emoji.innerText = "🛏️✨";
+        caption.innerText = "Giường ngủ được giũ phẳng và xếp gối";
+        sub.innerText = "Chụp bởi Bé Leo • Hoàn thành lúc 06:45";
+        watermark.innerText = "LEO_BED_0645.JPG";
+        praise.innerText = "\"Leo thức dậy là chủ động gấp chăn ngay, mẹ rất vui vì con tự lập!\"";
+      } else if (itemKey === 'drop') {
+        title.innerText = "ẢNH MINH CHỨNG: CẤT GIÀY & BALO";
+        emoji.innerText = "👟🎒✨";
+        caption.innerText = "Đôi giày đặt trên kệ • Balo treo gọn gàng";
+        sub.innerText = "Chụp bởi Bé Leo • Hoàn thành lúc 16:45";
+        watermark.innerText = "LEO_DROP_1645.JPG";
+        praise.innerText = "\"Vừa đi học về là Leo cất đồ ngay ngắn, không vứt bừa ra sàn!\"";
+      } else if (itemKey === 'desk') {
+        title.innerText = "ẢNH MINH CHỨNG: DỌN BÀN HỌC";
+        emoji.innerText = "✨🪑📚✨";
+        caption.innerText = "Mặt bàn học đã sạch bóng • Ống bút ngăn nắp";
+        sub.innerText = "Chụp bởi Bé Leo • Hoàn thành lúc 19:15";
+        watermark.innerText = "LEO_DESK_1915.JPG";
+        praise.innerText = "\"Leo đã tự tay cất bút, nhặt rác và xếp sách gọn gàng trước khi chụp!\"";
+      } else if (itemKey === 'teeth') {
+        title.innerText = "NHẬT KÝ: ĐÁNH RĂNG TỐI 21:00";
+        emoji.innerText = "🪥🫧🦷";
+        caption.innerText = "Nhiệm vụ đánh răng đang kích hoạt";
+        sub.innerText = "Khung giờ vàng 21:00 • 2 phút";
+        watermark.innerText = "ROUTINE_TEETH_2100";
+        praise.innerText = "\"Leo chuẩn bị có hàm răng trắng bóng thơm tho để ngủ ngon!\"";
+      }
+
       modal.classList.remove('hidden');
       modal.classList.add('flex');
-      playBeep(700, 'sine', 0.1);
     }
 
     function parentClosePhotoModal() {
@@ -994,9 +1343,7 @@
       modal.classList.remove('flex');
     }
 
-    // 9. Phụ huynh thả tim khích lệ con
     function parentSendHeart() {
-      protoState.parentHearted = true;
       const btn = document.getElementById('btn-parent-heart');
       btn.className = "w-full py-3 bg-emerald-600 text-white font-black text-xs rounded-2xl shadow-sm transition flex items-center justify-center gap-1.5 cursor-default";
       btn.innerHTML = "<span>✅</span> <span>ĐÃ THẢ TIM YÊU THƯƠNG!</span>";
@@ -1004,37 +1351,39 @@
 
       playBeep(880, 'sine', 0.15);
 
-      // Thưởng thêm +5 sao cho con
       protoState.stars += 5;
       document.getElementById('child-stars-val').innerText = protoState.stars;
 
-      // Kích hoạt hiệu ứng tim bay & Toast trên máy con
-      triggerHeartOnChild();
+      let msg = "Mẹ rất thích góc bàn sạch của Leo! Thưởng thêm +5⭐!";
+      if (protoState.activeViewingPhoto === 'bed') msg = "Mẹ thích chiếc giường phẳng phiu của Leo! Thưởng thêm +5⭐!";
+      if (protoState.activeViewingPhoto === 'drop') msg = "Kệ dép & balo của con quá ngăn nắp! Thưởng thêm +5⭐!";
+
+      triggerHeartOnChild(msg);
 
       setTimeout(() => {
         parentClosePhotoModal();
       }, 1000);
     }
 
-    function triggerHeartOnChild() {
+    function triggerHeartOnChild(msg) {
       const toast = document.getElementById('c-heart-toast');
+      document.getElementById('c-heart-toast-msg').innerText = `"${msg}"`;
       toast.classList.remove('hidden');
       toast.classList.add('flex');
 
       playSuccessChime();
 
-      // Hiệu ứng tim bay
       const container = document.getElementById('child-heart-container');
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 6; i++) {
         setTimeout(() => {
           const heart = document.createElement('div');
           heart.className = 'floating-heart text-3xl';
           heart.innerText = '💖';
-          heart.style.left = `${30 + Math.random() * 40}%`;
-          heart.style.bottom = '20%';
+          heart.style.left = `${25 + Math.random() * 50}%`;
+          heart.style.bottom = '25%';
           container.appendChild(heart);
           setTimeout(() => heart.remove(), 1200);
-        }, i * 150);
+        }, i * 140);
       }
 
       setTimeout(() => {
@@ -1043,8 +1392,7 @@
       }, 4000);
     }
 
-    // Reset lại prototype để thử nghiệm lại
-    function resetPrototypeData() {
+    function resetAllDemoData() {
       window.location.reload();
     }
   </script>

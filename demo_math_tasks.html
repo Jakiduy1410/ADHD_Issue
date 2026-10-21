@@ -672,35 +672,11 @@
         const isCurrentRound = (i === currentRoundIdx);
 
         if (!isCurrentRound) {
-          // Lần chia đã xong trong quá khứ
+          // LẦN CHIA ĐÃ LÀM XONG: TIẾT KIỆM DÒNG TỐI ĐA CHO ĐIỆN THOẠI
+          // Rút gọn: Bỏ dòng trừ tích và vạch ngang cũ, chỉ giữ lại đúng 1 dòng: Số dư + Chữ số hạ xuống!
           leftRowsHtml += `
-            <!-- Hàng trừ tích -->
-            <div class="flex items-center">
-              <div class="${signCls}">-</div>
-              <div class="flex items-center">
-                ${Array.from({length: N}).map((_, col) => {
-                  if (col >= r.prodStartCol && col <= r.prodEndCol) {
-                    const ch = r.prodStr[col - r.prodStartCol];
-                    return `<div class="${cellCls} text-slate-500 font-bold">${ch}</div>`;
-                  }
-                  return `<div class="${cellCls}"></div>`;
-                }).join('')}
-              </div>
-            </div>
-            <!-- Vạch ngang trừ -->
-            <div class="flex items-center my-0.5">
-              <div class="${signCls}"></div>
-              <div class="flex items-center">
-                ${Array.from({length: N}).map((_, col) => {
-                  if (col >= r.prodStartCol && col <= r.prodEndCol) {
-                    return `<div class="${cellCls} flex items-center justify-center"><div class="w-full h-[1.5px] bg-slate-400 rounded-full"></div></div>`;
-                  }
-                  return `<div class="${cellCls}"></div>`;
-                }).join('')}
-              </div>
-            </div>
-            <!-- Hàng số dư và số vừa hạ -->
-            <div class="flex items-center">
+            <!-- Ý đã làm rồi: Rút gọn thành 1 dòng Số dư + Số hạ -->
+            <div class="flex items-center py-0.5">
               <div class="${signCls}"></div>
               <div class="flex items-center font-black">
                 ${Array.from({length: N}).map((_, col) => {
@@ -709,7 +685,7 @@
                     return `<div class="${cellCls} text-slate-900 font-black">${ch}</div>`;
                   }
                   if (col === r.bringDownCol) {
-                    return `<div class="${cellCls} text-teal-600 font-black animate-drop">${r.bringDownDigit}</div>`;
+                    return `<div class="${cellCls} text-teal-600 font-black">${r.bringDownDigit}</div>`;
                   }
                   return `<div class="${cellCls}"></div>`;
                 }).join('')}

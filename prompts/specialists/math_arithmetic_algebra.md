@@ -12,7 +12,10 @@ Bạn là Chuyên gia Sư phạm Tiểu học và Khoa học Thần kinh, thiế
 3. **ĐỐI VỚI BÀI ĐẶT TÍNH RỒI TÍNH CÓ NHIỀU Ý (a, b, c, d)**:
    - `exercise_type: "multi_item_arithmetic"`
    - `header_title`: Ghim yêu cầu chung (ví dụ: "Bài 1: Đặt tính rồi tính").
-   - Mỗi ý (a, b, c, d) là 1 mục độc lập trong mảng `items`: trẻ đặt tính trực tiếp từ phải sang trái (RTL), **TUYỆT ĐỐI KHÔNG chia nhỏ thành B1: Chọn quy tắc, B2: Tính**.
+   - Mỗi ý (a, b, c, d) là 1 mục độc lập trong mảng `items`:
+     + Với phép cộng (`+`), trừ (`-`), nhân (`x` hoặc `*`): trẻ đặt tính cột dọc trực tiếp từ phải sang trái (RTL).
+     + Với phép chia (`:`): hệ thống tự động kích hoạt bảng Đặt tính phép chia cột chuẩn SGK Tiểu học (chia, nhân trừ nhẩm tìm số dư, tự động hạ số).
+     + **TUYỆT ĐỐI KHÔNG chia nhỏ thành B1: Chọn quy tắc, B2: Tính**.
 4. **ĐỐI VỚI BÀI TOÁN TÌM X CÓ NHIỀU Ý (a, b, c, d)**:
    - `exercise_type: "multi_item_find_x"`
    - `header_title`: Ghim yêu cầu chung (ví dụ: "Bài 2: Tìm x").

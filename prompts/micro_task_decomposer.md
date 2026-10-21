@@ -39,6 +39,13 @@ Mục tiêu tối thượng: Giảm tải bộ nhớ làm việc (Working Memory
 7. **BÀI TOÁN ĐẶT TÍNH DỌC (CỘNG, TRỪ, NHÂN & SỐ THẬP PHÂN)**:
    - Mọi phép tính cộng (như `50 + 40 = ? (km/giờ)` hoặc `7 + 2 = ? (giờ sáng)`), trừ, nhân số tự nhiên và số thập phân (như `1,5 × 2 = ? (m2)` hoặc `1,2 × 3 = ? (m3)`) đều được hệ thống đưa vào BẢNG ĐẶT TÍNH DỌC chuẩn SGK (thừa số trên, thừa số dưới, dấu phép tính căn trái, vạch ngang và ô nhập kết quả căn phải).
 
+8. **BÀI TOÁN ĐẶT TÍNH PHÉP CHIA CỘT TIỂU HỌC (LONG DIVISION GRID)**:
+   - Mọi bước tính chia (như `56 : 2 = ?`, `120 : 5 = ?` hoặc `200 000 : 100 = ?`):
+     + `ui_type`: `"text_input"`
+     + `prompt_text`: Bắt buộc chứa biểu thức chia 2 toán hạng rõ ràng dạng: `<Số bị chia> : <Số chia> = ?` (hoặc kèm đơn vị như `56 : 2 = ? (viên bi)`).
+     + `expected_answer`: Kết quả thương (dạng chuỗi, ví dụ `"28"`).
+     + Hệ thống frontend sẽ TỰ ĐỘNG nhận diện cú pháp `A : B = ?` và kích hoạt Giao diện Đặt tính phép chia cột chuẩn SGK Tiểu học (học sinh nhập thương, trừ nhẩm tìm số dư, tự động hạ số rơi xuống, không dùng ô input ngang).
+
 ## 3. QUY CHUẨN BĂM BÀI THEO 5 DẠNG BÀI TOÁN & TIẾNG VIỆT / TIẾNG ANH
 
 ### A. TOÁN CÓ LỜI VĂN (word_problem)

@@ -355,7 +355,7 @@ LƯU Ý QUAN TRỌNG:
 - Với bài toán rút về đơn vị: BẮT BUỘC chia làm 2 bước tính toán: Bước 1 rút về 1 đơn vị bằng phép chia, Bước 2 nhân lên số đơn vị cần tìm.
 - Với phép tính nhiều toán hạng (như tìm phân số A : B × C hoặc tìm số lớn (A + B) : 2): BẮT BUỘC dùng ui_type='progressive_calculation' và chia thành 2 nhịp lũy tiến trong `progressive_phases`: Nhịp 1 rút về 1 đơn vị hoặc tính tổng, Nhịp 2 nhân lên hoặc chia đôi. Bước tìm đại lượng còn lại (như tìm số vịt) chuyển sang bước sau bình thường (không lạm dụng).
 - Với bài toán có lời văn: BƯỚC 1 gạch chân ĐẦY ĐỦ 2 nhóm: đại lượng kèm đơn vị VÀ từ khóa toán tử ('tất cả', 'còn lại', 'nhiều hơn'); BƯỚC 2 hỏi ý nghĩa từ khóa; BƯỚC 3 chọn phép tính; BƯỚC 4 tính toán.
-- Với phép tính cộng/trừ/nhân: `prompt_text` của bước tính toán phải chứa biểu thức số học rõ ràng 2 toán hạng (ví dụ: '15 + 8 = ?' hoặc '23 × 2 = ?') để kích hoạt giao diện đặt tính cột dọc theo dòng.
+- Với phép tính cộng/trừ/nhân/chia: `prompt_text` của bước tính toán phải chứa biểu thức số học rõ ràng 2 toán hạng (ví dụ: '15 + 8 = ?', '23 × 2 = ?', '56 : 2 = ?') để kích hoạt giao diện đặt tính cột dọc theo dòng (phép chia tự động chuyển thành bảng đặt tính phép chia chuẩn tiểu học).
 """
 
     try:

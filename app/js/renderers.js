@@ -457,18 +457,70 @@
         const unitText = unitMatch ? unitMatch[1].trim() : '';
         const mathPart = unitMatch ? prompt.slice(0, unitMatch.index).trim() : prompt.trim();
 
-        // 2. Nhận diện phép tính đặt bảng dọc (+, -, ×, *)
+        // 2. Nhận diện phép tính đặt bảng dọc (+, -, ×, *) hoặc phép chia (:)
         const opCount = (mathPart.match(/[\+\-\*×x]/g) || []).length;
-        const hasDivOrPercent = /[:\/%]/.test(mathPart);
+        const hasPercent = /%/.test(mathPart);
 
         let vertMatch = null;
-        if (opCount === 1 && !hasDivOrPercent) {
-          vertMatch = mathPart.match(/^\s*([0-9\s,\.]+?)\s*([\+\-\*×x])\s*([0-9\s,\.]+?)\s*=\s*(?:\?|[\.\_]+)\s*$/);
+        let divMatch = null;
+
+        if (!hasPercent) {
+          if (opCount === 1 && !/[:\/]/.test(mathPart)) {
+            vertMatch = mathPart.match(/^\s*([0-9\s,\.]+?)\s*([\+\-\*×x])\s*([0-9\s,\.]+?)\s*=\s*(?:\?|[\.\_]+)\s*$/);
+          } else {
+            // Nhận diện phép tính chia chuẩn tiểu học: 56 : 2 = ? hoặc 56 : 2 = ... hoặc 56 : 2 hoặc 56 / 2 = ?
+            divMatch = mathPart.match(/^\s*([0-9\s,\.]+?)\s*[:\/]\s*([0-9\s,\.]+?)(?:\s*=\s*(?:\?|[\.\_]+)?)?\s*$/);
+          }
+        }
+
+        let isDivision = false;
+        let divTopClean = '';
+        let divBotClean = '';
+        let divExpVal = '';
+
+        if (divMatch) {
+          const topClean = divMatch[1].replace(/[\s,\.]/g, '');
+          const botClean = divMatch[2].replace(/[\s,\.]/g, '');
+          const topNum = parseInt(topClean, 10);
+          const botNum = parseInt(botClean, 10);
+          if (!isNaN(topNum) && !isNaN(botNum) && botNum > 0 && topNum >= botNum) {
+            isDivision = true;
+            divTopClean = topClean;
+            divBotClean = botClean;
+            divExpVal = (expected !== null && expected !== undefined) ? String(expected) : String(Math.floor(topNum / botNum));
+          } else {
+            divMatch = null;
+          }
         }
 
         let mathDisplayHtml = '';
 
-        if (vertMatch) {
+        if (isDivision) {
+          mathDisplayHtml = `
+            <div class="w-full max-w-[340px] mx-auto my-1">
+              ${renderFxCalcGrid(divTopClean, ':', divBotClean, divExpVal, () => {
+                const hiddenInput = document.getElementById('child-stage-text-input');
+                if (hiddenInput) {
+                  hiddenInput.value = divExpVal;
+                }
+                const btnNext = document.getElementById('child-btn-next-step');
+                if (btnNext) {
+                  btnNext.disabled = false;
+                  btnNext.classList.remove('btn-disabled');
+                  btnNext.classList.add('animate-bounce');
+                }
+                const fb = document.getElementById('text-input-feedback');
+                if (fb) {
+                  fb.innerText = 'Chính xác!';
+                  fb.className = 'hidden';
+                }
+                if (typeof playSfx === 'function') playSfx('star');
+              })}
+              ${unitText ? `<div class="text-[11px] font-bold text-teal-800 bg-teal-50 border border-teal-200 px-3 py-1 rounded-xl mt-2 text-center w-full select-none">Đơn vị: <strong>${unitText}</strong></div>` : ''}
+              <input id="child-stage-text-input" type="hidden" value="" />
+            </div>
+          `;
+        } else if (vertMatch) {
           let numTop = vertMatch[1].replace(/\s+/g, '').trim();
           let op = vertMatch[2].trim();
           if (op === '*' || op === 'x') op = '×';
@@ -733,9 +785,11 @@
             ${passageDrawerHtml}
             <div class="my-auto space-y-2">
               ${mathDisplayHtml}
-              <button onclick='handleChildTextInputSubmit(${JSON.stringify(expected)})' class="w-full btn-3d-green py-2.5 rounded-xl font-black text-xs text-white shadow-md active:scale-95 transition">
-                ✨ XÁC NHẬN ĐÁP SỐ
-              </button>
+              ${!isDivision ? `
+                <button onclick='handleChildTextInputSubmit(${JSON.stringify(expected)})' class="w-full btn-3d-green py-2.5 rounded-xl font-black text-xs text-white shadow-md active:scale-95 transition">
+                  ✨ XÁC NHẬN ĐÁP SỐ
+                </button>
+              ` : ''}
             </div>
             <div id="text-input-feedback" class="text-xs font-bold text-center min-h-[16px]"></div>
           </div>
@@ -1736,6 +1790,22 @@ if (typeof window !== 'undefined') {
         titleEl.innerHTML = `Đặt tính và tính: <span class="text-teal-700 font-mono">${topStr} ${op} ${botStr}</span>`;
       }
 
+      if (op === ':') {
+        return `
+          <div class="w-full max-w-[340px] mx-auto my-1">
+            ${renderFxCalcGrid(topStr, ':', botStr, expectedStr, () => {
+              const btnNext = document.getElementById('child-btn-next-step');
+              if (btnNext) {
+                btnNext.disabled = false;
+                btnNext.classList.remove('btn-disabled');
+                btnNext.classList.add('animate-bounce');
+              }
+              if (typeof playSfx === 'function') playSfx('star');
+            })}
+          </div>
+        `;
+      }
+
       const numCols = Math.max(topStr.length, botStr.length, expectedStr.length) + 1;
       const cellCls = "w-7 h-8 text-base font-mono font-black text-center";
 
@@ -2527,7 +2597,9 @@ if (typeof window !== 'undefined') {
 
     function renderFxCalcGrid(topStr, op, botStr, expectedStr, onDone, titleLabel = "Đặt tính:") {
       if (op === ':') {
-        const key = `${topStr}:${botStr}`;
+        const curTaskId = (typeof appState !== 'undefined' && appState.activeTask) ? appState.activeTask.id : '';
+        const curStepIdx = (typeof appState !== 'undefined') ? appState.currentStepIndex : 0;
+        const key = `${curTaskId}_${curStepIdx}_${topStr}:${botStr}`;
         if (!window._fxDivState || window._fxDivState.activeKey !== key) {
           window._fxDivState = {
             activeKey: key,

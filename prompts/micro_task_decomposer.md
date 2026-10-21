@@ -351,3 +351,87 @@ Mục tiêu tối thượng: Giảm tải bộ nhớ làm việc (Working Memory
 }
 ```
 
+### Mẫu 5: Toán Lời Văn Mô Hình Lũy Tiến 2 Nhịp (G4_MATH_16 - Tổng - Hiệu)
+```json
+{
+  "id": "G4_MATH_16",
+  "exercise_type": "word_problem",
+  "original_text": "Hai lớp 4A và 4B quyên góp được tất cả 280 quyển sách. Lớp 4A quyên góp nhiều hơn lớp 4B là 40 quyển sách. Hỏi mỗi lớp quyên góp được bao nhiêu quyển sách?",
+  "target_keywords": ["280 quyển sách", "40 quyển sách", "nhiều hơn", "mỗi lớp"],
+  "steps": [
+    {
+      "step_id": 1,
+      "badge": "Xác Định Dữ Kiện",
+      "action_verb": "Gạch_chân",
+      "atomic_instruction": "Gạch chân tổng số sách, số sách chênh lệch và từ khóa 'nhiều hơn'.",
+      "ui_type": "highlight",
+      "ui_data": {
+        "prompt_text": "Hai lớp 4A và 4B quyên góp được tất cả 280 quyển sách. Lớp 4A quyên góp nhiều hơn lớp 4B là 40 quyển sách. Hỏi mỗi lớp quyên góp được bao nhiêu quyển sách?",
+        "highlight_target_segments": ["280 quyển sách", "40 quyển sách", "nhiều hơn"]
+      },
+      "success_criteria": {
+        "expected_answer": ["280 quyển sách", "40 quyển sách", "nhiều hơn"]
+      }
+    },
+    {
+      "step_id": 2,
+      "badge": "Tìm Sách Lớp 4A",
+      "action_verb": "Tính",
+      "atomic_instruction": "Tìm số lớn: Lấy tổng cộng hiệu rồi chia 2.",
+      "ui_type": "progressive_calculation",
+      "ui_data": {
+        "prompt_text": "Tìm số sách lớp 4A (Số lớn = (280 + 40) : 2):",
+        "progressive_phases": [
+          {
+            "phase_id": 1,
+            "lead_text": "1) Tính hai lần số sách lớp 4A:",
+            "expression": "280 + 40 =",
+            "calc": { "top": "280", "op": "+", "bot": "40", "expected": "320" },
+            "expected_answer": "320",
+            "unit": "quyển"
+          },
+          {
+            "phase_id": 2,
+            "lead_text": "2) Chia đôi tìm số sách lớp 4A:",
+            "expression": "320 : 2 =",
+            "calc": { "top": "320", "op": ":", "bot": "2", "expected": "160" },
+            "expected_answer": "160",
+            "unit": "quyển"
+          }
+        ]
+      },
+      "success_criteria": {
+        "expected_answer": "160"
+      }
+    },
+    {
+      "step_id": 3,
+      "badge": "Tìm Sách Lớp 4B",
+      "action_verb": "Tính",
+      "atomic_instruction": "Tìm số bé: Lấy số sách lớp 4A trừ đi 40 quyển chênh lệch.",
+      "ui_type": "text_input",
+      "ui_data": {
+        "prompt_text": "160 - 40 = ? (quyển)"
+      },
+      "success_criteria": {
+        "expected_answer": "120"
+      }
+    },
+    {
+      "step_id": 4,
+      "badge": "Chọn Đáp Số",
+      "action_verb": "Chọn",
+      "atomic_instruction": "Chọn đáp số đúng cho cả hai lớp 4A và 4B.",
+      "ui_type": "single_choice",
+      "ui_data": {
+        "prompt_text": "Đáp số nào đúng cho số sách quyên góp của lớp 4A và 4B?",
+        "options": ["A. 4A: 160 quyển; 4B: 120 quyển", "B. 4A: 150 quyển; 4B: 130 quyển", "C. 4A: 170 quyển; 4B: 110 quyển", "D. 4A: 140 quyển; 4B: 140 quyển"]
+      },
+      "success_criteria": {
+        "expected_answer": "A. 4A: 160 quyển; 4B: 120 quyển"
+      }
+    }
+  ]
+}
+```
+

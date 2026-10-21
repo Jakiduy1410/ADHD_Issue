@@ -401,7 +401,20 @@
           </div>
         `;
 
-      } else if (stepData.ui_type === 'progressive_calculation' || (ui && ui.progressive_phases && ui.progressive_phases.length > 0)) {
+      } else if (
+        stepData.ui_type === 'progressive_calculation' || 
+        (ui && ui.progressive_phases && ui.progressive_phases.length > 0) ||
+        (function() {
+          if (stepData.ui_type === 'highlight' || stepData.ui_type === 'single_choice' || stepData.ui_type === 'shape_touch') return false;
+          const autoPhases = autoDetectProgressivePhases(ui.prompt_text || stepData.text || stepData.atomic_instruction);
+          if (autoPhases && autoPhases.length > 0) {
+            ui.progressive_phases = autoPhases;
+            stepData.ui_type = 'progressive_calculation';
+            return true;
+          }
+          return false;
+        })()
+      ) {
         renderProgressiveCalculationStage(stage, stepData, task);
 
       } else if ((stepData.ui_type === 'single_choice' || stepData.type === 'single_choice') && ui.options && ui.options.length > 0) {
@@ -1640,6 +1653,93 @@
 
 
     /* ============================================================
+       AUTO-DETECTOR SƯ PHẠM ADHD: TỰ ĐỘNG BÓC TÁCH PHÉP TÍNH LIÊN TIẾP
+       ============================================================ */
+    function autoDetectProgressivePhases(promptText) {
+      if (!promptText || typeof promptText !== 'string') return null;
+
+      // 1. Tách đơn vị ở cuối
+      let unit = '';
+      const unitMatch = promptText.match(/\s*\(([^\d\+\-\*×x:\/]+?)\)\s*$/);
+      let exprPart = promptText;
+      if (unitMatch) {
+        unit = unitMatch[1].trim();
+        exprPart = promptText.slice(0, unitMatch.index).trim();
+      }
+
+      // Chuẩn hoá toán tử
+      let cleanExpr = exprPart.replace(/x/g, '×').replace(/\*/g, '×').replace(/\//g, ':');
+      cleanExpr = cleanExpr.replace(/=\s*(?:\?|[\.\_]+)?$/, '').trim();
+
+      // Dạng 1: (A op1 B) op2 C (ví dụ: ((450 - 50) : 2) hoặc (280 + 40) : 2)
+      let m = cleanExpr.match(/\(\s*(\d+)\s*([\+\-×:])\s*(\d+)\s*\)\s*([\+\-×:])\s*(\d+)/);
+      if (!m) {
+        // Dạng 2: A op1 B op2 C (ví dụ: 1200 : 5 × 3 hoặc 24 : 4 × 6)
+        m = cleanExpr.match(/(?:^|[^\d])(\d+)\s*([:×\+\-])\s*(\d+)\s*([:×\+\-])\s*(\d+)(?:$|[^\d])/);
+      }
+      if (!m) return null;
+
+      const n1 = parseInt(m[1], 10);
+      const op1 = m[2];
+      const n2 = parseInt(m[3], 10);
+      const op2 = m[4];
+      const n3 = parseInt(m[5], 10);
+
+      let r1 = 0;
+      if (op1 === '+') r1 = n1 + n2;
+      else if (op1 === '-') r1 = n1 - n2;
+      else if (op1 === '×') r1 = n1 * n2;
+      else if (op1 === ':') r1 = (n2 !== 0) ? Math.floor(n1 / n2) : 0;
+      else return null;
+
+      let r2 = 0;
+      if (op2 === '+') r2 = r1 + n3;
+      else if (op2 === '-') r2 = r1 - n3;
+      else if (op2 === '×') r2 = r1 * n3;
+      else if (op2 === ':') r2 = (n3 !== 0) ? Math.floor(r1 / n3) : 0;
+      else return null;
+
+      let lead1 = `1) Nhịp 1: Tính ${n1} ${op1} ${n2}:`;
+      let lead2 = `2) Nhịp 2: Tính tiếp ${r1} ${op2} ${n3}:`;
+
+      if (op1 === '+' && op2 === ':' && n3 === 2) {
+        lead1 = '1) Tính tổng hai đại lượng:';
+        lead2 = '2) Chia đôi tìm kết quả:';
+      } else if (op1 === '-' && op2 === ':' && n3 === 2) {
+        lead1 = '1) Tính hiệu hai đại lượng:';
+        lead2 = '2) Chia đôi tìm kết quả:';
+      } else if (op1 === ':' && op2 === '×') {
+        lead1 = '1) Rút về 1 đơn vị (chia đều):';
+        lead2 = '2) Nhân lên số phần cần tìm:';
+      } else if (op1 === '×' && op2 === ':') {
+        lead1 = '1) Tính tích bước đầu:';
+        lead2 = '2) Chia đều tìm kết quả:';
+      } else if (op1 === '+' && op2 === '×' && n3 === 2) {
+        lead1 = '1) Tính nửa chu vi (dài + rộng):';
+        lead2 = '2) Nhân đôi tính chu vi:';
+      }
+
+      return [
+        {
+          phase_id: 1,
+          lead_text: lead1,
+          expression: `${n1} ${op1} ${n2} =`,
+          calc: { top: String(n1), op: op1, bot: String(n2), expected: String(r1) },
+          expected_answer: String(r1),
+          unit: ''
+        },
+        {
+          phase_id: 2,
+          lead_text: lead2,
+          expression: `${r1} ${op2} ${n3} =`,
+          calc: { top: String(r1), op: op2, bot: String(n3), expected: String(r2) },
+          expected_answer: String(r2),
+          unit: unit
+        }
+      ];
+    }
+
+    /* ============================================================
        MODULE: PROGRESSIVE 2-PHASE WORD PROBLEM CALCULATION
        ============================================================ */
     function renderProgressiveCalculationStage(stage, stepData, task) {
@@ -1737,6 +1837,7 @@ if (typeof window !== 'undefined') {
   window.exitChildWorkspace = exitChildWorkspace;
   window.renderChildWorkspaceStep = renderChildWorkspaceStep;
   window.renderProgressiveCalculationStage = renderProgressiveCalculationStage;
+  window.autoDetectProgressivePhases = autoDetectProgressivePhases;
 
   window.handleChildChoice = handleChildChoice;
   window.handleHouseWindowClick = handleHouseWindowClick;

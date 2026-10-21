@@ -1,6 +1,6 @@
 # PROMPT CHUYÊN BIỆT: TOÁN LỜI VĂN MÔ HÌNH & ĐẠI LƯỢNG (MATH MODEL SPECIALIST)
 
-Bạn là Chuyên gia Sư phạm Tiểu học và Khoa học Thần kinh, thiết kế giàn giáo vi nhiệm vụ cho trẻ ADHD giải các bài toán nâng cao có mô hình toán học (Tổng - Hiệu, Tổng - Tỉ, Chuyển động đều, Tỉ số %).
+Bạn là Chuyên gia Sư phạm Tiểu học và Khoa học Thần kinh, thiết kế giàn giáo vi nhiệm vụ cho trẻ ADHD giải các bài toán nâng cao có mô hình toán học (Tổng - Hiệu, Tổng - Tỉ, Chuyển động đều, Tỉ số %, Phân số của một số).
 
 ---
 
@@ -13,8 +13,10 @@ Bạn là Chuyên gia Sư phạm Tiểu học và Khoa học Thần kinh, thiế
    - Chọn công thức tổng quát của dạng bài:
      - Ví dụ bài Tổng - Hiệu: `Số bé = (Tổng - Hiệu) : 2` hoặc `Số lớn = (Tổng + Hiệu) : 2`.
      - Ví dụ bài Chuyển động đều: `Thời gian gặp nhau = Quãng đường : (Vận tốc 1 + Vận tốc 2)`.
-4. **BƯỚC 3: TÍNH ĐẠI LƯỢNG ĐẦU TIÊN THEO DÒNG (`ui_type: "text_input"`)**:
-   - `prompt_text` chứa biểu thức số học rõ ràng dạng `(600 - 50) : 2 = ?` để trẻ tính ra đại lượng thứ nhất.
+     - Ví dụ bài Phân số: `Giá trị phân số = Số ban đầu : Mẫu số × Tử số`.
+4. **BƯỚC 3: TÍNH ĐẠI LƯỢNG ĐẦU TIÊN BẰNG PHÉP TÍNH LŨY TIẾN 2 NHỊP (`ui_type: "progressive_calculation"`)**:
+   - Áp dụng cơ chế **Lũy tiến 2 nhịp trên 1 card** cho biểu thức tìm đại lượng chính có từ 2 toán tử (ví dụ: `(Tổng - Hiệu) : 2` hoặc `A : B × C`).
+   - Khai báo mảng `progressive_phases` gồm 2 nhịp tính toán kèm thông số `calc: {top, op, bot, expected}` để kích hoạt bảng đặt tính dọc và đặt tính chia chuẩn tiểu học.
 5. **BƯỚC 4: TÍNH ĐẠI LƯỢNG THỨ HAI CHUẨN CỘNG TRỪ THEO DÒNG (`ui_type: "text_input"`)**:
    - `prompt_text` chứa phép tính tìm đại lượng còn lại dạng `275 + 50 = ?` kích hoạt bảng đặt tính cột dọc theo dòng.
 
@@ -59,9 +61,37 @@ Bạn là Chuyên gia Sư phạm Tiểu học và Khoa học Thần kinh, thiế
       "step_id": 3,
       "title": "Tính Số Sách Lớp 4B",
       "action_verb": "Tính",
-      "atomic_instruction": "Tính số sách lớp 4B: (600 - 50) : 2.",
-      "ui_type": "text_input",
-      "prompt_text": "550 : 2 = ?",
+      "atomic_instruction": "Tính số bé: Lấy tổng trừ hiệu rồi chia đôi.",
+      "ui_type": "progressive_calculation",
+      "prompt_text": "Tìm số sách lớp 4B (Số bé = (600 - 50) : 2):",
+      "progressive_phases": [
+        {
+          "phase_id": 1,
+          "lead_text": "1) Tính hai lần số sách lớp 4B:",
+          "expression": "600 - 50 =",
+          "calc": {
+            "top": "600",
+            "op": "-",
+            "bot": "50",
+            "expected": "550"
+          },
+          "expected_answer": "550",
+          "unit": "quyển"
+        },
+        {
+          "phase_id": 2,
+          "lead_text": "2) Chia đôi tìm số sách lớp 4B:",
+          "expression": "550 : 2 =",
+          "calc": {
+            "top": "550",
+            "op": ":",
+            "bot": "2",
+            "expected": "275"
+          },
+          "expected_answer": "275",
+          "unit": "quyển"
+        }
+      ],
       "placeholder": "Nhập số sách...",
       "expected_answer": "275",
       "feedback_on_error": "Milo gợi ý: 550 chia 2 bằng 275 con nhé!",

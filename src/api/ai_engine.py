@@ -281,6 +281,109 @@ def fast_heuristic_classify(raw_text: str) -> Optional[Dict[str, Any]]:
     return None
 
 
+def auto_detect_progressive_phases(prompt_text: Optional[str]) -> Optional[List[Dict[str, Any]]]:
+    """
+    Auto-Detector Sư Phạm ADHD:
+    Tự động nhận diện biểu thức có phép tính liên tiếp (nhiều toán hạng / ngoặc đơn)
+    và phân rã thành 2 nhịp lũy tiến trên 1 thẻ bài để tránh quá tải nhận thức.
+    """
+    if not prompt_text or not isinstance(prompt_text, str):
+        return None
+
+    # 1. Bóc tách đơn vị trong ngoặc ở cuối (ví dụ: "(quyển)", "(con gà)", "(m2)")
+    unit = ""
+    unit_m = re.search(r'\s*\(([^\d\+\-\*×x:\/]+?)\)\s*$', prompt_text)
+    if unit_m:
+        unit = unit_m.group(1).strip()
+        expr_part = prompt_text[:unit_m.start()].strip()
+    else:
+        expr_part = prompt_text.strip()
+
+    # Chuẩn hoá ký hiệu toán tử và gọt bỏ dấu hỏi
+    clean_expr = expr_part.replace('x', '×').replace('*', '×').replace('/', ':')
+    clean_expr = re.sub(r'=\s*(?:\?|[\.\_]+)?$', '', clean_expr).strip()
+
+    # Dạng 1: (A op1 B) op2 C (ví dụ: ((450 - 50) : 2) hoặc (280 + 40) : 2)
+    m = re.search(r'\(\s*(\d+)\s*([\+\-×:])\s*(\d+)\s*\)\s*([\+\-×:])\s*(\d+)', clean_expr)
+    if not m:
+        # Dạng 2: A op1 B op2 C (ví dụ: 1200 : 5 × 3 hoặc 24 : 4 × 6)
+        m = re.search(r'(?<!\d)(\d+)\s*([:×\+\-])\s*(\d+)\s*([:×\+\-])\s*(\d+)(?!\d)', clean_expr)
+
+    if not m:
+        return None
+
+    try:
+        n1 = int(m.group(1))
+        op1 = m.group(2)
+        n2 = int(m.group(3))
+        op2 = m.group(4)
+        n3 = int(m.group(5))
+
+        # Tính toán nhịp 1
+        if op1 == '+': r1 = n1 + n2
+        elif op1 == '-': r1 = n1 - n2
+        elif op1 == '×': r1 = n1 * n2
+        elif op1 == ':': r1 = n1 // n2 if n2 != 0 else 0
+        else: return None
+
+        # Tính toán nhịp 2
+        if op2 == '+': r2 = r1 + n3
+        elif op2 == '-': r2 = r1 - n3
+        elif op2 == '×': r2 = r1 * n3
+        elif op2 == ':': r2 = r1 // n3 if n3 != 0 else 0
+        else: return None
+
+        lead1 = f"1) Nhịp 1: Tính {n1} {op1} {n2}:"
+        lead2 = f"2) Nhịp 2: Tính tiếp {r1} {op2} {n3}:"
+
+        if op1 == '+' and op2 == ':' and n3 == 2:
+            lead1 = "1) Tính tổng hai đại lượng:"
+            lead2 = "2) Chia đôi tìm kết quả:"
+        elif op1 == '-' and op2 == ':' and n3 == 2:
+            lead1 = "1) Tính hiệu hai đại lượng:"
+            lead2 = "2) Chia đôi tìm kết quả:"
+        elif op1 == ':' and op2 == '×':
+            lead1 = "1) Rút về 1 đơn vị (chia đều):"
+            lead2 = "2) Nhân lên số phần cần tìm:"
+        elif op1 == '×' and op2 == ':':
+            lead1 = "1) Tính tích bước đầu:"
+            lead2 = "2) Chia đều tìm kết quả:"
+        elif op1 == '+' and op2 == '×' and n3 == 2:
+            lead1 = "1) Tính nửa chu vi (dài + rộng):"
+            lead2 = "2) Nhân đôi tính chu vi:"
+
+        return [
+            {
+                "phase_id": 1,
+                "lead_text": lead1,
+                "expression": f"{n1} {op1} {n2} =",
+                "calc": {
+                    "top": str(n1),
+                    "op": op1,
+                    "bot": str(n2),
+                    "expected": str(r1)
+                },
+                "expected_answer": str(r1),
+                "unit": ""
+            },
+            {
+                "phase_id": 2,
+                "lead_text": lead2,
+                "expression": f"{r1} {op2} {n3} =",
+                "calc": {
+                    "top": str(r1),
+                    "op": op2,
+                    "bot": str(n3),
+                    "expected": str(r2)
+                },
+                "expected_answer": str(r2),
+                "unit": unit
+            }
+        ]
+    except Exception:
+        return None
+
+
 async def classify_task(raw_text: str, client: genai.Client) -> Dict[str, Any]:
     """
     STAGE 1: Phân loại môn học và ngách nhỏ chuyên biệt.
@@ -296,7 +399,8 @@ async def classify_task(raw_text: str, client: genai.Client) -> Dict[str, Any]:
 Đề bài: "{raw_text}"
 """
     try:
-        response = client.models.generate_content(
+        response = await asyncio.to_thread(
+            client.models.generate_content,
             model=CHEAPEST_MODEL,
             contents=user_input,
             config=types.GenerateContentConfig(
@@ -322,11 +426,16 @@ async def decompose_exercise_with_gemini(
     """
     STAGE 2: Băm vi nhiệm vụ chuyên sâu theo ngách nhỏ với Few-shot đắt giá và Schema ép chặt.
     """
+    # Tải lại .env với override=True để luôn nhận API key mới nhất mà không cần restart server
+    load_dotenv(dotenv_path=REPO_ROOT / ".env", override=True)
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         raise ValueError("Chưa cấu hình GEMINI_API_KEY trong file .env! Không thể băm bài.")
 
-    client = genai.Client(api_key=api_key)
+    client = genai.Client(
+        api_key=api_key,
+        http_options=types.HttpOptions(timeout=35000)
+    )
 
     # 1. Gọi Stage 1: Phân loại môn & ngách nhỏ
     classification = await classify_task(raw_text, client)
@@ -363,7 +472,8 @@ LƯU Ý QUAN TRỌNG:
         last_err = None
         for attempt in range(3):
             try:
-                response = client.models.generate_content(
+                response = await asyncio.to_thread(
+                    client.models.generate_content,
                     model=CHEAPEST_MODEL,
                     contents=user_prompt,
                     config=types.GenerateContentConfig(
@@ -421,8 +531,16 @@ LƯU Ý QUAN TRỌNG:
             if reading_passage:
                 ui_payload["reading_passage"] = reading_passage
 
-            if ui_type == "progressive_calculation" or s.get("progressive_phases"):
-                ui_payload["progressive_phases"] = s.get("progressive_phases")
+            # Auto-Detector Sư phạm ADHD: Tự động phát hiện và bóc tách phép tính liên tiếp
+            prog_phases = s.get("progressive_phases")
+            if not prog_phases and ui_type != "highlight" and ui_type != "single_choice":
+                auto_phases = auto_detect_progressive_phases(step_prompt)
+                if auto_phases:
+                    prog_phases = auto_phases
+                    ui_type = "progressive_calculation"
+
+            if ui_type == "progressive_calculation" or prog_phases:
+                ui_payload["progressive_phases"] = prog_phases
                 ui_type = "progressive_calculation"
 
             if ui_type == "highlight":

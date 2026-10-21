@@ -39,7 +39,6 @@
               </div>
             </div>
           `;
-          mapContainer.style.minHeight = '360px';
         }
         renderParentActiveRoadmapList();
         return;
@@ -61,9 +60,13 @@
           const activeTask = roadmap[curIdx] || roadmap[0];
           const isChore = (activeTask && activeTask.cat === 'chore');
           startQuestBtn.setAttribute('onclick', "startChildQuest()");
+          startQuestBtn.onclick = function(e) {
+            if (e) { e.preventDefault(); e.stopPropagation(); }
+            startChildQuest();
+          };
           startQuestBtn.className = isChore
-            ? "w-full btn-3d-amber text-white font-black text-base py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2"
-            : "w-full btn-3d-green text-white font-black text-base py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2";
+            ? "w-full btn-3d-amber text-white font-black text-base py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition"
+            : "w-full btn-3d-green text-white font-black text-base py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition";
           startQuestBtn.innerHTML = `<span>VÀO BUỒNG LÁI TẬP TRUNG!</span> <span class="text-xl">🚀</span>`;
         }
       }
@@ -205,8 +208,27 @@
       }
 
       if (mapContainer) {
-        mapContainer.innerHTML = svgTrailHtml + islandsHtml;
-        mapContainer.style.minHeight = totalHeight + "px";
+        mapContainer.innerHTML = `
+          <div class="roadmap-canvas relative w-full flex flex-col items-center justify-between py-2" style="height: ${totalHeight}px; min-height: 100%;">
+            ${svgTrailHtml}
+            ${islandsHtml}
+          </div>
+        `;
+        initRoadmapDragScroll(mapContainer);
+        // Tự động cuộn nội bộ chỉ trong mapContainer, TUYỆT ĐỐI không dùng scrollIntoView làm trôi khung màn hình
+        setTimeout(() => {
+          const screenContainer = document.getElementById('child-screen-container');
+          if (screenContainer) screenContainer.scrollTop = 0;
+          const homeScreen = document.getElementById('child-screen-home');
+          if (homeScreen) homeScreen.scrollTop = 0;
+
+          const activeNode = document.getElementById('node-island-active');
+          if (activeNode && mapContainer) {
+            const nodeOffset = activeNode.offsetTop;
+            const containerH = mapContainer.clientHeight || 450;
+            mapContainer.scrollTop = Math.max(0, nodeOffset - containerH / 2 + 30);
+          }
+        }, 50);
       }
 
       if (!isAllCompleted) {
@@ -241,13 +263,19 @@
 
     function startChildQuest() {
       playSfx('tap');
-      childSwitchScreen('workspace');
       appState.currentStepIndex = 0;
       appState.selectedClues.clear();
       appState.cleanedItems.clear();
       appState.numpadValue = "";
 
-      const task = appState.activeTask;
+      const rawRoadmap = Array.isArray(appState.childRoadmap) ? appState.childRoadmap : [];
+      const curIdx = Math.max(0, Math.min(appState.currentRoadmapIndex || 0, Math.max(0, rawRoadmap.length - 1)));
+      const task = appState.activeTask || rawRoadmap[curIdx] || taskDatabase['G1_MATH_01'];
+      appState.activeTask = task;
+
+      // Switch screen hiển thị Buồng lái
+      childSwitchScreen('workspace');
+
       const isChore = (task && task.cat === 'chore');
       const wsTagEl = document.getElementById('child-workspace-island-tag');
       if (wsTagEl) {
@@ -259,7 +287,11 @@
           wsTagEl.className = "text-[10px] font-black px-2 py-0.5 rounded-full border bg-teal-100 text-teal-800 border-teal-300";
         }
       }
-      document.getElementById('child-workspace-island-name').innerText = `🏝️ Đảo ${appState.currentRoadmapIndex + 1}: ${task.title.slice(0, 16)}...`;
+      const titleSnippet = (task && task.title) ? (task.title.length > 16 ? task.title.slice(0, 16) + '...' : task.title) : 'Đảo Nhiệm Vụ';
+      const wsNameEl = document.getElementById('child-workspace-island-name');
+      if (wsNameEl) {
+        wsNameEl.innerText = `🏝️ Đảo ${curIdx + 1}: ${titleSnippet}`;
+      }
       renderChildWorkspaceStep();
     }
 
@@ -379,4 +411,95 @@
       renderParentActiveRoadmapList();
       renderChildIslandRoadmap();
       showToast("Đã Làm Mới Hải Trình", "Toàn bộ đảo đã được xóa sạch! Hãy giao bài mới cho bé nhé.", "✨");
+    }
+
+    function initRoadmapDragScroll(container) {
+      if (!container || container.dataset.dragInit === 'true') return;
+      container.dataset.dragInit = 'true';
+
+      let isDown = false;
+      let startY = 0;
+      let startScrollTop = 0;
+      let hasDragged = false;
+      let capturedPointerId = null;
+      const dragThreshold = 10; // Ngưỡng 10px để phân biệt rạch ròi giữa click và kéo cuộn
+
+      container.style.cursor = 'grab';
+      container.style.touchAction = 'pan-y';
+
+      // Chặn triệt để native drag drop của trình duyệt khi kéo qua text hoặc icon emoji
+      container.addEventListener('dragstart', (e) => {
+        e.preventDefault();
+      });
+
+      container.addEventListener('pointerdown', (e) => {
+        // Chỉ nhận chuột trái hoặc cảm ứng chạm ngón tay
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        isDown = true;
+        hasDragged = false;
+        startY = e.clientY;
+        startScrollTop = container.scrollTop;
+        capturedPointerId = null;
+        // TUYỆT ĐỐI KHÔNG setPointerCapture ở pointerdown để không cướp mất click của đảo/nút con
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!isDown) return;
+        const deltaY = e.clientY - startY;
+        // Chỉ khi di chuyển vượt quá ngưỡng 10px mới chính thức kích hoạt chế độ Drag
+        if (!hasDragged && Math.abs(deltaY) > dragThreshold) {
+          hasDragged = true;
+          container.style.cursor = 'grabbing';
+          container.classList.add('select-none');
+          if (e.pointerId !== undefined) {
+            capturedPointerId = e.pointerId;
+            try {
+              container.setPointerCapture(e.pointerId);
+            } catch (_) {}
+          }
+        }
+        if (hasDragged) {
+          e.preventDefault();
+          container.scrollTop = startScrollTop - deltaY;
+        }
+      });
+
+      const finishDrag = (e) => {
+        if (!isDown) return;
+        isDown = false;
+        if (capturedPointerId !== null) {
+          try {
+            container.releasePointerCapture(capturedPointerId);
+          } catch (_) {}
+          capturedPointerId = null;
+        }
+        container.style.cursor = 'grab';
+        container.classList.remove('select-none');
+        // Reset hasDragged sau một nhịp ngắn để sự kiện click cùng lúc được kiểm tra chính xác
+        setTimeout(() => {
+          hasDragged = false;
+        }, 80);
+      };
+
+      window.addEventListener('pointerup', finishDrag);
+      window.addEventListener('pointercancel', finishDrag);
+
+      // Chặn click nhầm vào đảo/nút CHỈ KHI người dùng THỰC SỰ kéo chuột (>10px)
+      container.addEventListener('click', (e) => {
+        if (hasDragged) {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
+      }, true);
+    }
+
+    // Expose roadmap APIs to global window object
+    if (typeof window !== 'undefined') {
+      window.startChildQuest = startChildQuest;
+      window.renderChildIslandRoadmap = renderChildIslandRoadmap;
+      window.selectQueuedIsland = selectQueuedIsland;
+      window.alertTreasureStatus = alertTreasureStatus;
+      window.parentRemoveRoadmapTask = parentRemoveRoadmapTask;
+      window.parentClearChildRoadmap = parentClearChildRoadmap;
+      window.initRoadmapDragScroll = initRoadmapDragScroll;
     }

@@ -26,8 +26,8 @@
                 stroke-width="${isPerimeter ? '4' : '2.5'}"
                 stroke-dasharray="${isPerimeter ? '8 4' : 'none'}" />
               
-              <text x="140" y="74" text-anchor="middle" font-size="12" font-weight="900" fill="${isArea ? '#047857' : (isPerimeter ? '#B45309' : '#334155')}">
-                ${isArea ? 'Diện tích S = Dài × Rộng' : (isPerimeter ? 'Chu vi P = (Dài + Rộng) × 2' : 'Hình chữ nhật')}
+              <text x="140" y="74" text-anchor="middle" font-size="12" font-weight="bold" fill="#64748B">
+                Hình chữ nhật
               </text>
               
               <line x1="248" y1="24" x2="248" y2="114" stroke="#0D9488" stroke-width="2" />
@@ -52,7 +52,7 @@
               <text x="70" y="72" font-size="10" font-weight="bold" fill="#BE123C">h = ${heightLabel}</text>
               
               <text x="155" y="132" text-anchor="middle" font-size="11" font-weight="bold" fill="#0F766E">Đáy a = ${baseLabel}</text>
-              <text x="150" y="72" text-anchor="middle" font-size="12" font-weight="900" fill="#047857">S = a × h</text>
+              <text x="150" y="72" text-anchor="middle" font-size="12" font-weight="bold" fill="#64748B">Hình bình hành</text>
             </svg>
           </div>
         `;
@@ -68,7 +68,7 @@
               
               <rect x="135" y="50" width="85" height="50" rx="6" fill="rgba(186, 230, 253, 0.9)" stroke="#0284C7" stroke-width="2" stroke-dasharray="4 2" />
               <text x="177" y="80" text-anchor="middle" font-size="10" font-weight="bold" fill="#0369A1">${nestedName}</text>
-              <text x="75" y="78" text-anchor="middle" font-size="9" font-weight="black" fill="#047857">Phần đất còn lại<br/>S = S(vườn) - S(ao)</text>
+              <text x="75" y="78" text-anchor="middle" font-size="10" font-weight="bold" fill="#047857">Phần đất còn lại</text>
             </svg>
           </div>
         `;
@@ -91,7 +91,7 @@
               
               <!-- Cửa sổ tròn 1 bên trái (ẤN VÀO LÀ ĐÚNG) -->
               <g class="cursor-pointer group" onclick="handleHouseWindowClick(this, 1)">
-                <circle cx="95" cy="95" r="16" fill="#BAE6FD" stroke="#0284C7" stroke-width="3" id="house-circle-win-1" class="transition-all duration-300 group-hover:scale-110" />
+                <circle cx="95" cy="95" r="16" fill="#BAE6FD" stroke="#0284C7" stroke-width="3" id="house-circle-win-1" style="transform-box: fill-box; transform-origin: center;" class="transition-all duration-200 group-hover:scale-125 group-hover:stroke-[4px] group-hover:stroke-sky-600" />
                 <line x1="95" y1="79" x2="95" y2="111" stroke="#0284C7" stroke-width="1.5" pointer-events="none" />
                 <line x1="79" y1="95" x2="111" y2="95" stroke="#0284C7" stroke-width="1.5" pointer-events="none" />
                 <text x="95" y="125" text-anchor="middle" font-size="9" font-weight="900" fill="#0369A1" pointer-events="none">Cửa sổ 1 🔵</text>
@@ -99,7 +99,7 @@
               
               <!-- Cửa sổ tròn 2 bên phải (ẤN VÀO LÀ ĐÚNG) -->
               <g class="cursor-pointer group" onclick="handleHouseWindowClick(this, 2)">
-                <circle cx="185" cy="95" r="16" fill="#BAE6FD" stroke="#0284C7" stroke-width="3" id="house-circle-win-2" class="transition-all duration-300 group-hover:scale-110" />
+                <circle cx="185" cy="95" r="16" fill="#BAE6FD" stroke="#0284C7" stroke-width="3" id="house-circle-win-2" style="transform-box: fill-box; transform-origin: center;" class="transition-all duration-200 group-hover:scale-125 group-hover:stroke-[4px] group-hover:stroke-sky-600" />
                 <line x1="185" y1="79" x2="185" y2="111" stroke="#0284C7" stroke-width="1.5" pointer-events="none" />
                 <line x1="169" y1="95" x2="201" y2="95" stroke="#0284C7" stroke-width="1.5" pointer-events="none" />
                 <text x="185" y="125" text-anchor="middle" font-size="9" font-weight="900" fill="#0369A1" pointer-events="none">Cửa sổ 2 🔵</text>

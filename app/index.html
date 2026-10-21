@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Milo Quest x Trạm Thấu Hiểu - ADHD Platform Live Presentation</title>
   
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
@@ -40,7 +44,7 @@
     }
   </script>
 
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=3.6">
 </head>
 
 <body class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-teal-500 selection:text-white">
@@ -242,43 +246,45 @@
             <!-- ---------------------------------------------------- -->
             <!-- CHILD SCREEN 1: BẢN ĐỒ LỘ TRÌNH ĐẢO BÀI TẬP (ISLAND QUEST) -->
             <!-- ---------------------------------------------------- -->
-            <div id="child-screen-home" class="flex flex-col h-full justify-between p-4 bg-[#FFFDF7] pt-11">
+            <div id="child-screen-home" class="flex-1 min-h-0 flex flex-col bg-[#FFFDF7] overflow-hidden relative">
               
-              <!-- Top Bar -->
-              <div class="flex items-center justify-between">
+              <!-- TẦNG 1: TOP HEADER CỐ ĐỊNH (SHRINK-0) -->
+              <div class="shrink-0 pt-11 px-4 pb-2 z-20 bg-[#FFFDF7] border-b border-slate-100 shadow-2xs">
                 <!-- Avatar + Streak -->
-                <div class="flex items-center gap-2 bg-white px-2.5 py-1.5 rounded-2xl border-2 border-slate-200 shadow-sm cursor-pointer" onclick="openProfileModal()">
-                  <div class="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center text-xl">🦁</div>
-                  <div>
-                    <div class="text-[9px] font-bold text-slate-400 leading-none">BÉ LEO</div>
-                    <div class="text-[11px] font-black text-orange-500 flex items-center gap-0.5 mt-0.5">🔥 5 Ngày</div>
+                <div class="flex items-center justify-between pt-1">
+                  <div class="flex items-center gap-2 bg-white px-2.5 py-1.5 rounded-2xl border-2 border-slate-200 shadow-sm cursor-pointer" onclick="openProfileModal()">
+                    <div class="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center text-xl">🦁</div>
+                    <div>
+                      <div class="text-[9px] font-bold text-slate-400 leading-none">BÉ LEO</div>
+                      <div class="text-[11px] font-black text-orange-500 flex items-center gap-0.5 mt-0.5">🔥 5 Ngày</div>
+                    </div>
                   </div>
+
+                  <!-- Ví Sao + Nút Đổi Quà -->
+                  <button onclick="childSwitchScreen('rewards')" class="btn-3d-yellow px-3 py-1.5 rounded-2xl flex items-center gap-1.5 text-slate-900 font-black shadow-sm">
+                    <span class="text-base">⭐</span>
+                    <span class="sync-star-val text-sm font-black">450</span>
+                    <span class="bg-white/90 text-amber-800 text-[10px] px-1.5 py-0.5 rounded-md font-extrabold ml-0.5">ĐỔI QUÀ 🎁</span>
+                  </button>
                 </div>
 
-                <!-- Ví Sao + Nút Đổi Quà -->
-                <button onclick="childSwitchScreen('rewards')" class="btn-3d-yellow px-3 py-1.5 rounded-2xl flex items-center gap-1.5 text-slate-900 font-black shadow-sm">
-                  <span class="text-base">⭐</span>
-                  <span class="sync-star-val text-sm font-black">450</span>
-                  <span class="bg-white/90 text-amber-800 text-[10px] px-1.5 py-0.5 rounded-md font-extrabold ml-0.5">ĐỔI QUÀ 🎁</span>
-                </button>
-              </div>
-
-              <!-- Thanh Lộ Trình Tiến Trình Đảo -->
-              <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-2.5 my-2 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <span class="text-xl">🏝️</span>
-                  <div>
-                    <h3 id="child-roadmap-counter" class="text-xs font-black text-emerald-950">Đảo 1 / 2: Đang Chinh Phục</h3>
-                    <p class="text-[10px] font-bold text-emerald-700">Hoàn thành hết để mở Rương Báu Hoàng Kim 🏆</p>
+                <!-- Thanh Lộ Trình Tiến Trình Đảo -->
+                <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-2.5 mt-2 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xl">🏝️</span>
+                    <div>
+                      <h3 id="child-roadmap-counter" class="text-xs font-black text-emerald-950">Đảo 1 / 2: Đang Chinh Phục</h3>
+                      <p class="text-[10px] font-bold text-emerald-700">Hoàn thành hết để mở Rương Báu Hoàng Kim 🏆</p>
+                    </div>
                   </div>
+                  <span id="child-roadmap-badge" class="bg-emerald-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+                    MỤC TIÊU TỐI NAY
+                  </span>
                 </div>
-                <span id="child-roadmap-badge" class="bg-emerald-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
-                  MỤC TIÊU TỐI NAY
-                </span>
               </div>
 
-              <!-- S-CURVE ARCHIPELAGO MAP (BẢN ĐỒ CÁC HÒN ĐẢO NỐI TIẾP NHAU) -->
-              <div id="child-island-map-container" class="flex-1 relative flex flex-col items-center justify-between py-2 overflow-y-auto no-scrollbar">
+              <!-- TẦNG 2: S-CURVE ARCHIPELAGO MAP (CUỘN ĐỘC LẬP & KÉO THẢ MƯỢT MÀ) -->
+              <div id="child-island-map-container" class="flex-1 min-h-0 w-full relative overflow-y-auto no-scrollbar select-none cursor-grab active:cursor-grabbing px-4 pb-28">
                 
                 <!-- SVG S-Curve Path kết nối các đảo -->
                 <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 350 440" fill="none">
@@ -341,9 +347,9 @@
 
               </div>
 
-              <!-- Big Primary CTA: Bắt Đầu Chinh Phục Đảo -->
-              <div class="pt-2">
-                <button id="child-btn-start-quest" onclick="startChildQuest()" class="w-full btn-3d-amber text-white font-black text-base py-3.5 rounded-2xl shadow-lg flex items-center justify-center gap-2">
+              <!-- TẦNG 3: Big Primary CTA: Bắt Đầu Chinh Phục Đảo (KHÓA CỨNG Ở ĐÁY BẤT TỬ) -->
+              <div id="child-home-footer-cta" class="absolute bottom-0 left-0 right-0 p-3 pt-2 pb-3 bg-white/95 backdrop-blur-md border-t border-slate-200 z-30 shadow-2xl">
+                <button id="child-btn-start-quest" onclick="startChildQuest()" class="w-full btn-3d-green text-white font-black text-base py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 active:scale-95 transition">
                   <span>VÀO BUỒNG LÁI TẬP TRUNG!</span>
                   <span class="text-xl">🚀</span>
                 </button>
@@ -1350,16 +1356,16 @@
   <!-- ============================================================== -->
   <!-- 4. MODULAR JAVASCRIPT ARCHITECTURE (Single Responsibility) -->
   <!-- ============================================================== -->
-  <script src="js/tasks_data.js"></script>
-  <script src="js/audio.js"></script>
-  <script src="js/sync_bus.js"></script>
-  <script src="js/state.js"></script>
-  <script src="js/geometry.js"></script>
-  <script src="js/roadmap.js"></script>
-  <script src="js/renderers.js"></script>
-  <script src="js/rewards_timer_milo.js"></script>
-  <script src="js/parent_survey.js"></script>
-  <script src="js/decomposer_fallback.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/tasks_data.js?v=3.6"></script>
+  <script src="js/audio.js?v=3.6"></script>
+  <script src="js/sync_bus.js?v=3.6"></script>
+  <script src="js/state.js?v=3.6"></script>
+  <script src="js/geometry.js?v=3.6"></script>
+  <script src="js/roadmap.js?v=3.6"></script>
+  <script src="js/renderers.js?v=3.6"></script>
+  <script src="js/rewards_timer_milo.js?v=3.6"></script>
+  <script src="js/parent_survey.js?v=3.6"></script>
+  <script src="js/decomposer_fallback.js?v=3.6"></script>
+  <script src="js/app.js?v=3.6"></script>
 </body>
 </html>

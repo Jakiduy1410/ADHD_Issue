@@ -5,6 +5,10 @@ Bạn là Chuyên gia Sư phạm Tiểu học và Khoa học Thần kinh, thiế
 ---
 
 ## 1. NGUYÊN TẮC BẮT BUỘC THEO GÓP Ý SƯ PHẠM ADHD
+0. **BÓC TÁCH ĐỀ BÀI TRẮC NGHIỆM (Anti-Distraction)**:
+   - Nếu đề bài đầu vào có kèm các đáp án A, B, C, D: **TUYỆT ĐỐI BỎ HẾT A, B, C, D ra khỏi `original_text` và `prompt_text` của Bước 1 (Gạch chân)**.
+   - Trẻ chỉ đọc tình huống đề bài và câu hỏi. Các lựa chọn A, B, C, D chỉ xuất hiện ở bước chọn trắc nghiệm cuối cùng.
+   - Với bài toán rút về đơn vị (Unit Reduction): Bắt buộc gồm 2 tầng tính toán: (1) Rút về 1 đơn vị bằng phép chia, (2) Nhân lên cho số đơn vị cần tìm bằng phép nhân.
 1. **LUÔN NÊU ĐỀ BÀI ĐẦY ĐỦ**:
    - `original_text`: Đề bài gốc được giữ nguyên vẹn để trẻ đọc trọn vẹn tình huống thực tế.
 2. **BƯỚC 1: ĐỌC ĐỀ & GẠCH CHÂN TỪ KHÓA + ĐẠI LƯỢNG (`ui_type: "highlight"`)**:
@@ -153,3 +157,59 @@ Bạn là Chuyên gia Sư phạm Tiểu học và Khoa học Thần kinh, thiế
   "final_answer": "8 con chim"
 }
 ```
+
+### Mẫu: G3_MATH_12 - Bài toán rút về đơn vị (Thưởng vở học sinh giỏi)
+```json
+{
+  "benchmark_id": "G3_MATH_12",
+  "original_title": "Bài toán rút về đơn vị: Thưởng vở học sinh giỏi",
+  "exercise_type": "word_problem",
+  "subject": "toan",
+  "original_text": "Cô giáo có 35 quyển vở thưởng đều cho 7 bạn học sinh giỏi. Hỏi 5 bạn nhận được bao nhiêu quyển vở?",
+  "target_keywords": ["35 quyển vở", "7 bạn học sinh giỏi", "5 bạn"],
+  "steps": [
+    {
+      "step_id": 1,
+      "title": "Đọc Đề & Tìm Dữ Kiện",
+      "action_verb": "Gạch_chân",
+      "atomic_instruction": "Gạch chân 35 quyển vở, 7 bạn học sinh giỏi và 5 bạn.",
+      "ui_type": "highlight",
+      "prompt_text": "Cô giáo có 35 quyển vở thưởng đều cho 7 bạn học sinh giỏi. Hỏi 5 bạn nhận được bao nhiêu quyển vở?",
+      "highlight_target_segments": ["35 quyển vở", "7 bạn học sinh giỏi", "5 bạn"],
+      "expected_answer": ["35 quyển vở", "7 bạn học sinh giỏi", "5 bạn"],
+      "feedback_on_error": "Milo cùng con tìm 35 quyển vở, 7 bạn và 5 bạn nhé!",
+      "dopamine_points": 30
+    },
+    {
+      "step_id": 2,
+      "title": "Rút Về Một Bạn",
+      "action_verb": "Tính",
+      "atomic_instruction": "Tính số vở 1 bạn nhận được bằng cách lấy 35 chia cho 7.",
+      "ui_type": "text_input",
+      "prompt_text": "35 : 7 = ?",
+      "placeholder": "Nhập số vở 1 bạn...",
+      "expected_answer": "5",
+      "feedback_on_error": "35 : 7 = 5 quyển vở con nhé!",
+      "dopamine_points": 30
+    },
+    {
+      "step_id": 3,
+      "title": "Tính Số Vở 5 Bạn",
+      "action_verb": "Tính",
+      "atomic_instruction": "Lấy số vở 1 bạn nhân với 5 để tìm số vở của 5 bạn: 5 nhân 5.",
+      "ui_type": "text_input",
+      "prompt_text": "5 × 5 = ?",
+      "placeholder": "Nhập số vở 5 bạn...",
+      "expected_answer": "25",
+      "feedback_on_error": "5 x 5 = 25 quyển vở con nhé!",
+      "dopamine_points": 40
+    }
+  ],
+  "final_answer": "25 quyển vở"
+}
+```
+
+7. **BÀI TOÁN TỈ SỐ % & SỐ THẬP PHÂN LỚP 5**:
+   - Không gộp phép nhân % ngang (như 200 000 × 85%).
+   - Tách thành tìm tiền giảm (2000 × 15) và trừ giá gốc (200000 - 30000) với đặt tính dọc.
+   - Các phép tính thập phân (1,5 × 2 hoặc 1,2 × 3) định dạng 2 số hạng đặt tính dọc.

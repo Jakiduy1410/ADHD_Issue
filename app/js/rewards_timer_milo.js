@@ -321,4 +321,18 @@
       inp.value = "";
     }
 
-
+// Window exports
+window.completeChildStep = completeChildStep;
+window.spawnStars = spawnStars;
+window.showCelebration = showCelebration;
+window.proceedToNextRoadmapIsland = proceedToNextRoadmapIsland;
+window.openTreasureCeremony = openTreasureCeremony;
+window.openRedeemFromTreasure = openRedeemFromTreasure;
+window.exitTreasureModal = exitTreasureModal;
+window.toggleSoftPause = toggleSoftPause;
+window.startBoxBreathing = startBoxBreathing;
+window.stopBoxBreathing = stopBoxBreathing;
+window.updateBreathingUI = updateBreathingUI;
+window.useMiloHint = useMiloHint;
+window.childRedeemTicket = childRedeemTicket;
+window.childRedeemCustomTicket = childRedeemCustomTicket;

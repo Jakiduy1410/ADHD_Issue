@@ -194,17 +194,18 @@
     "steps": [
       {
         "step_id": 1,
-        "badge": "Xác Định Dữ Kiện",
-        "action_verb": "Đọc",
-        "atomic_instruction": "Đọc số cam ban đầu và số cam đã ăn.",
-        "text": "Đọc số cam ban đầu và số cam đã ăn.",
+        "badge": "Tìm Dữ Kiện & Từ Khóa",
+        "action_verb": "Gạch_chân",
+        "atomic_instruction": "Gạch chân 2 số lượng cam và từ khóa 'còn lại' trong đề bài.",
+        "text": "Gạch chân 2 số lượng cam và từ khóa 'còn lại' trong đề bài.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
-          "prompt_text": "Mẹ mua 18 quả cam, cả nhà ăn hết 6 quả:",
+          "prompt_text": "Mẹ mua về 18 quả cam. Cả nhà đã ăn hết 6 quả cam. Hỏi mẹ còn lại bao nhiêu quả cam?",
           "highlight_target_segments": [
             "18 quả cam",
-            "6 quả cam"
+            "6 quả cam",
+            "còn lại"
           ]
         },
         "duration_sec": 60,
@@ -214,33 +215,34 @@
           "dopamine_points": 30
         },
         "hints": [
-          "Tìm số 18 và số 6 trong câu chuyện nhé."
+          "Tìm số 18 quả cam, 6 quả cam và từ 'còn lại' nhé con!"
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": [
             "18 quả cam",
-            "6 quả cam"
+            "6 quả cam",
+            "còn lại"
           ],
-          "feedback_on_error": "Cùng Milo nhìn 2 con số 18 và 6 nào!"
+          "feedback_on_error": "Milo cùng con tìm số 18 quả cam, 6 quả cam và chữ 'còn lại' nhé!"
         },
-        "mathematical_or_logical_goal": "Trích xuất dữ kiện đầu vào",
-        "intermediate_output": "Có: 18 quả; Đã ăn: 6 quả",
+        "mathematical_or_logical_goal": "Nhận diện số liệu đầu vào và từ khóa toán tử",
+        "intermediate_output": "Có: 18 quả; Đã ăn: 6 quả; Từ khóa: còn lại",
         "is_final_step": false
       },
       {
         "step_id": 2,
-        "badge": "Thiết Lập Phép Tính",
+        "badge": "Ý Nghĩa Từ Khóa",
         "action_verb": "Chọn",
-        "atomic_instruction": "Chọn phép trừ để tìm số cam còn lại.",
-        "text": "Chọn phép trừ để tìm số cam còn lại.",
+        "atomic_instruction": "Từ khóa 'còn lại' sau khi đã ăn hết cho biết chúng mình cần làm gì?",
+        "text": "Từ khóa 'còn lại' sau khi đã ăn hết cho biết chúng mình cần làm gì?",
         "type": "single_choice",
         "ui_type": "single_choice",
         "ui_data": {
-          "prompt_text": "Đã ăn bớt đi thì làm phép tính gì?",
+          "prompt_text": "Từ 'còn lại' sau khi đã ăn hết tương ứng với thao tác gì?",
           "options": [
-            "18 - 6",
-            "18 + 6"
+            "Bớt đi (Phép trừ -)",
+            "Gộp lại (Phép cộng +)"
           ]
         },
         "duration_sec": 60,
@@ -250,23 +252,56 @@
           "dopamine_points": 30
         },
         "hints": [
-          "Ăn hết là bớt đi, ta làm phép trừ."
+          "Ăn hết nghĩa là bớt đi, ta làm phép trừ (-)."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "18 - 6",
-          "feedback_on_error": "Ăn bớt đi là phép trừ nha con!"
+          "expected_answer": "Bớt đi (Phép trừ -)",
+          "feedback_on_error": "Ăn hết là bớt đi, ta làm phép trừ (-) con nhé!"
         },
-        "mathematical_or_logical_goal": "Thiết lập phép trừ",
-        "intermediate_output": "18 - 6",
+        "mathematical_or_logical_goal": "Liên kết ngữ nghĩa từ khóa với toán tử",
+        "intermediate_output": "còn lại -> phép trừ (-)",
         "is_final_step": false
       },
       {
         "step_id": 3,
+        "badge": "Chọn Phép Tính",
+        "action_verb": "Chọn",
+        "atomic_instruction": "Chọn phép trừ đúng để tìm số cam còn lại của mẹ.",
+        "text": "Chọn phép trừ đúng để tìm số cam còn lại của mẹ.",
+        "type": "single_choice",
+        "ui_type": "single_choice",
+        "ui_data": {
+          "prompt_text": "Phép tính đúng để tìm số cam còn lại là:",
+          "options": [
+            "18 - 6",
+            "18 + 6"
+          ]
+        },
+        "duration_sec": 60,
+        "immediate_reinforcer": {
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
+        },
+        "hints": [
+          "Lấy 18 quả ban đầu trừ đi 6 quả đã ăn."
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": "18 - 6",
+          "feedback_on_error": "Lấy 18 trừ 6 con nhé!"
+        },
+        "mathematical_or_logical_goal": "Thiết lập biểu thức số học",
+        "intermediate_output": "18 - 6",
+        "is_final_step": false
+      },
+      {
+        "step_id": 4,
         "badge": "Tính Đáp Số",
         "action_verb": "Tính",
-        "atomic_instruction": "Tính nhẩm hàng đơn vị 8 trừ 6 để ra kết quả.",
-        "text": "Tính nhẩm hàng đơn vị 8 trừ 6 để ra kết quả.",
+        "atomic_instruction": "Tính kết quả 18 trừ 6 bằng bao nhiêu.",
+        "text": "Tính kết quả 18 trừ 6 bằng bao nhiêu.",
         "type": "text_input",
         "ui_type": "text_input",
         "ui_data": {
@@ -275,23 +310,24 @@
         },
         "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "confetti_cannon",
-          "audio_cue": "harp_glissando_soft",
-          "dopamine_points": 40
+          "visual_asset": "chest_open_burst",
+          "audio_cue": "orchestral_fanfare_c6",
+          "dopamine_points": 30
         },
         "hints": [
-          "8 trừ 6 bằng 2, giữ nguyên 1 chục là 12."
+          "8 trừ 6 bằng 2, thêm 1 chục là 12."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": "12",
-          "feedback_on_error": "8 trừ 6 bằng 2, thêm 1 chục là 12 quả cam!"
+          "feedback_on_error": "18 trừ 6 bằng 12 quả cam con nhé!"
         },
-        "mathematical_or_logical_goal": "Tính toán số học 2 chữ số trừ 1 chữ số",
+        "mathematical_or_logical_goal": "Tính toán và đưa ra kết quả cuối cùng",
         "intermediate_output": "12 quả cam",
         "is_final_step": true
       }
-    ]
+    ],
+    "exercise_type": "word_problem"
   },
   "G1_VIET_03": {
     "id": "G1_VIET_03",
@@ -510,7 +546,7 @@
         "atomic_instruction": "Bé hãy chạm vào cửa sổ hình tròn trên ngôi nhà bên dưới.",
         "text": "Bé hãy chạm vào cửa sổ hình tròn trên ngôi nhà bên dưới.",
         "type": "single_choice",
-        "ui_type": "single_choice",
+        "ui_type": "shape_touch",
         "ui_data": {
           "prompt_text": "Xác định cửa sổ hình tròn: Bé hãy chạm vào cửa sổ hình tròn 🔵 trên ngôi nhà bên dưới nhé!",
           "geometry_spec": {
@@ -523,11 +559,8 @@
             },
             "target": "hình tròn"
           },
-          "options": [
-            "Hai ô cửa sổ (Hình tròn 🔵)",
-            "Mái nhà (Hình tam giác 🔺)",
-            "Cửa chính (Hình chữ nhật 🚪)"
-          ]
+          "options": [],
+          "hide_choice_options": true
         },
         "duration_sec": 60,
         "immediate_reinforcer": {
@@ -597,7 +630,7 @@
     "island": "study",
     "reward": 120,
     "stepSeconds": 60,
-    "original_text": "Choose the correct word to complete the sentence:\n'Look at my new pencil. It is ______.' (Màu đỏ)\nA. blue\nB. green\nC. red\nD. yellow",
+    "original_text": "Choose the correct word to complete the sentence:\n'Look at my new pencil. It is ______.' (Màu đỏ)",
     "final_answer": {
       "value": "C",
       "unit": null,
@@ -751,138 +784,140 @@
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tách Dữ Kiện",
-        "action_verb": "Tìm",
-        "atomic_instruction": "Tìm số cây Đội Một và phần Đội Hai hơn.",
-        "text": "Tìm số cây Đội Một và phần Đội Hai hơn.",
+        "badge": "Tìm Dữ Kiện & Từ Khóa",
+        "action_verb": "Gạch_chân",
+        "atomic_instruction": "Gạch chân 2 số lượng cây và từ khóa 'nhiều hơn' trong đề bài.",
+        "text": "Gạch chân 2 số lượng cây và từ khóa 'nhiều hơn' trong đề bài.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
-          "prompt_text": "Tìm 35 cây của Đội Một và 18 cây nhiều hơn:",
+          "prompt_text": "Đội Một trồng được 35 cây xanh. Đội Hai trồng được nhiều hơn Đội Một 18 cây xanh. Hỏi Đội Hai trồng được bao nhiêu cây xanh?",
           "highlight_target_segments": [
             "35 cây xanh",
-            "18 cây xanh"
+            "18 cây xanh",
+            "nhiều hơn"
           ]
         },
-        "duration_sec": 80,
+        "duration_sec": 60,
         "immediate_reinforcer": {
           "visual_asset": "sparkle_star_01",
           "audio_cue": "positive_bell_c6",
-          "dopamine_points": 25
+          "dopamine_points": 30
         },
         "hints": [
-          "Đội Một có 35 cây, Đội Hai hơn 18 cây."
+          "Gạch chân 35 cây xanh, 18 cây xanh và từ 'nhiều hơn' nhé!"
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": [
             "35 cây xanh",
-            "18 cây xanh"
+            "18 cây xanh",
+            "nhiều hơn"
           ],
-          "feedback_on_error": "Cùng tìm 2 số 35 và 18 nha!"
+          "feedback_on_error": "Milo cùng con tìm 35 cây xanh, 18 cây xanh và từ 'nhiều hơn' nhé!"
         },
-        "mathematical_or_logical_goal": "Tóm tắt dữ kiện đề bài",
-        "intermediate_output": "Đội Một: 35 cây; Đội Hai nhiều hơn: 18 cây",
+        "mathematical_or_logical_goal": "Nhận diện dữ kiện và từ khóa chỉ phép toán",
+        "intermediate_output": "Đội 1: 35 cây; Đội 2 nhiều hơn: 18 cây",
         "is_final_step": false
       },
       {
         "step_id": 2,
-        "badge": "Chọn Phép Tính",
+        "badge": "Ý Nghĩa Từ Khóa",
         "action_verb": "Chọn",
-        "atomic_instruction": "Chọn phép cộng 35 cộng 18 để tìm số lớn.",
-        "text": "Chọn phép cộng 35 cộng 18 để tìm số lớn.",
+        "atomic_instruction": "Từ khóa 'nhiều hơn' cho biết ta cần làm phép tính gì để tìm số cây Đội Hai?",
+        "text": "Từ khóa 'nhiều hơn' cho biết ta cần làm phép tính gì để tìm số cây Đội Hai?",
         "type": "single_choice",
         "ui_type": "single_choice",
         "ui_data": {
-          "prompt_text": "Đội Hai nhiều hơn, ta chọn phép tính:",
+          "prompt_text": "Từ 'nhiều hơn' cho biết số cây của Đội Hai tính bằng phép tính nào?",
+          "options": [
+            "Cộng thêm (Phép cộng +)",
+            "Bớt đi (Phép trừ -)"
+          ]
+        },
+        "duration_sec": 60,
+        "immediate_reinforcer": {
+          "visual_asset": "particle_burst_gold",
+          "audio_cue": "sparkle_ting_short",
+          "dopamine_points": 30
+        },
+        "hints": [
+          "Nhiều hơn nghĩa là cộng thêm."
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": "Cộng thêm (Phép cộng +)",
+          "feedback_on_error": "Nhiều hơn là làm phép cộng (+) nha con!"
+        },
+        "mathematical_or_logical_goal": "Liên kết từ khóa với toán tử cộng",
+        "intermediate_output": "nhiều hơn -> phép cộng (+)",
+        "is_final_step": false
+      },
+      {
+        "step_id": 3,
+        "badge": "Chọn Phép Tính",
+        "action_verb": "Chọn",
+        "atomic_instruction": "Chọn biểu thức tính số cây của Đội Hai.",
+        "text": "Chọn biểu thức tính số cây của Đội Hai.",
+        "type": "single_choice",
+        "ui_type": "single_choice",
+        "ui_data": {
+          "prompt_text": "Phép tính tìm số cây Đội Hai là:",
           "options": [
             "35 + 18",
             "35 - 18"
           ]
         },
-        "duration_sec": 80,
+        "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "particle_burst_gold",
-          "audio_cue": "sparkle_ting_short",
-          "dopamine_points": 25
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
         },
         "hints": [
-          "Nhiều hơn thì chúng mình cộng thêm vào."
+          "Lấy 35 cộng với 18."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": "35 + 18",
-          "feedback_on_error": "Nhiều hơn thì ta lấy 35 + 18 nhé!"
+          "feedback_on_error": "Ta lấy 35 + 18 nhé!"
         },
-        "mathematical_or_logical_goal": "Mô hình hóa toán học sơ đồ đoạn thẳng",
+        "mathematical_or_logical_goal": "Thiết lập phép tính",
         "intermediate_output": "35 + 18",
         "is_final_step": false
       },
       {
-        "step_id": 3,
+        "step_id": 4,
         "badge": "Cộng Có Nhớ",
         "action_verb": "Tính",
-        "atomic_instruction": "Tính 5 cộng 8 bằng 13 nhớ 1.",
-        "text": "Tính 5 cộng 8 bằng 13 nhớ 1.",
+        "atomic_instruction": "Tính 35 + 18 bằng bao nhiêu cây xanh.",
+        "text": "Tính 35 + 18 bằng bao nhiêu cây xanh.",
         "type": "text_input",
         "ui_type": "text_input",
         "ui_data": {
           "prompt_text": "35 + 18 = ?",
-          "placeholder": "Nhập kết quả..."
+          "placeholder": "Nhập số cây..."
         },
-        "duration_sec": 80,
+        "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "milo_thumbs_up",
-          "audio_cue": "gentle_pop_success",
-          "dopamine_points": 35
+          "visual_asset": "chest_open_burst",
+          "audio_cue": "orchestral_fanfare_c6",
+          "dopamine_points": 30
         },
         "hints": [
-          "5 + 8 = 13 viết 3 nhớ 1; 3 + 1 = 4 thêm 1 là 5."
+          "5 + 8 = 13 viết 3 nhớ 1; 3 + 1 = 4 thêm 1 bằng 5."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": "53",
-          "feedback_on_error": "5 + 8 = 13 nhớ 1, kết quả là 53 nha!"
+          "feedback_on_error": "35 + 18 = 53 cây xanh nha con!"
         },
-        "mathematical_or_logical_goal": "Thực hiện phép cộng có nhớ trong phạm vi 100",
-        "intermediate_output": "53",
-        "is_final_step": false
-      },
-      {
-        "step_id": 4,
-        "badge": "Viết Đáp Số",
-        "action_verb": "Kết_luận",
-        "atomic_instruction": "Ghi đáp số 53 cây xanh của Đội Hai.",
-        "text": "Ghi đáp số 53 cây xanh của Đội Hai.",
-        "type": "single_choice",
-        "ui_type": "single_choice",
-        "ui_data": {
-          "prompt_text": "Đáp số cuối cùng của bài toán là:",
-          "options": [
-            "53 cây xanh",
-            "43 cây xanh",
-            "53 cây cam"
-          ]
-        },
-        "duration_sec": 80,
-        "immediate_reinforcer": {
-          "visual_asset": "confetti_cannon",
-          "audio_cue": "harp_glissando_soft",
-          "dopamine_points": 45
-        },
-        "hints": [
-          "Đội Hai trồng được 53 cây xanh."
-        ],
-        "success_criteria": {
-          "evaluation_type": "exact_match",
-          "expected_answer": "53 cây xanh",
-          "feedback_on_error": "Đáp số là 53 cây xanh con nhé!"
-        },
-        "mathematical_or_logical_goal": "Kết luận lời giải",
+        "mathematical_or_logical_goal": "Thực hiện phép cộng có nhớ",
         "intermediate_output": "53 cây xanh",
         "is_final_step": true
       }
-    ]
+    ],
+    "exercise_type": "word_problem"
   },
   "G2_MATH_07": {
     "id": "G2_MATH_07",
@@ -915,99 +950,139 @@
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tính Tổng Lít Dầu",
-        "action_verb": "Nhân",
-        "atomic_instruction": "Tính 4 lít nhân 5 can bằng bao nhiêu.",
-        "text": "Tính 4 lít nhân 5 can bằng bao nhiêu.",
-        "type": "text_input",
-        "ui_type": "text_input",
+        "badge": "Tìm Dữ Kiện & Từ Khóa",
+        "action_verb": "Gạch_chân",
+        "atomic_instruction": "Gạch chân số lượng can, số lít mỗi can và từ khóa 'còn lại'.",
+        "text": "Gạch chân số lượng can, số lít mỗi can và từ khóa 'còn lại'.",
+        "type": "highlight",
+        "ui_type": "highlight",
         "ui_data": {
-          "prompt_text": "4 x 5 = ? (lít)",
-          "placeholder": "Nhập tổng số lít ban đầu..."
+          "prompt_text": "Có 5 can đựng dầu, mỗi can chứa 4 lít dầu. Người ta đã lấy ra 7 lít dầu để dùng. Hỏi trong 5 can đó còn lại tất cả bao nhiêu lít dầu?",
+          "highlight_target_segments": [
+            "5 can",
+            "4 lít dầu",
+            "7 lít dầu",
+            "còn lại"
+          ]
         },
-        "duration_sec": 80,
+        "duration_sec": 60,
         "immediate_reinforcer": {
           "visual_asset": "sparkle_star_01",
           "audio_cue": "positive_bell_c6",
           "dopamine_points": 30
         },
         "hints": [
-          "Bảng nhân 5: 4 x 5 = 20."
+          "Tìm 5 can, 4 lít dầu, 7 lít dầu và chữ 'còn lại' nhé!"
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "20",
-          "feedback_on_error": "4 nhân 5 bằng 20 lít dầu con nha!"
+          "expected_answer": [
+            "5 can",
+            "4 lít dầu",
+            "7 lít dầu",
+            "còn lại"
+          ],
+          "feedback_on_error": "Gạch chân đủ 5 can, 4 lít dầu, 7 lít dầu và 'còn lại' nha!"
         },
-        "mathematical_or_logical_goal": "Tìm đại lượng trung gian tổng thể",
-        "intermediate_output": "4 x 5 = 20 (lít)",
+        "mathematical_or_logical_goal": "Nhận diện dữ kiện toán 2 bước",
+        "intermediate_output": "5 can x 4 lít; lấy ra 7 lít; tìm còn lại",
         "is_final_step": false
       },
       {
         "step_id": 2,
-        "badge": "Trừ Số Lít Đã Dùng",
-        "action_verb": "Trừ",
-        "atomic_instruction": "Lấy 20 lít trừ đi 7 lít đã lấy.",
-        "text": "Lấy 20 lít trừ đi 7 lít đã lấy.",
+        "badge": "Tính Tổng Lít Dầu",
+        "action_verb": "Nhân",
+        "atomic_instruction": "Tính 5 can, mỗi can 4 lít có tất cả bao nhiêu lít dầu.",
+        "text": "Tính 5 can, mỗi can 4 lít có tất cả bao nhiêu lít dầu.",
         "type": "text_input",
         "ui_type": "text_input",
         "ui_data": {
-          "prompt_text": "20 - 7 = ? (lít)",
-          "placeholder": "Nhập số lít còn lại..."
+          "prompt_text": "4 × 5 = ? (lít)",
+          "placeholder": "Nhập tổng số lít..."
         },
-        "duration_sec": 80,
+        "duration_sec": 60,
         "immediate_reinforcer": {
           "visual_asset": "particle_burst_gold",
           "audio_cue": "sparkle_ting_short",
           "dopamine_points": 30
         },
         "hints": [
-          "Lấy 20 trừ đi 7 bằng 13."
+          "4 nhân 5 bằng 20 lít."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "13",
-          "feedback_on_error": "20 trừ 7 bằng 13 lít dầu con nhé!"
+          "expected_answer": "20",
+          "feedback_on_error": "4 x 5 = 20 lít dầu nha con!"
         },
-        "mathematical_or_logical_goal": "Tính số lượng còn lại qua phép trừ",
-        "intermediate_output": "20 - 7 = 13 (lít)",
+        "mathematical_or_logical_goal": "Áp dụng bảng nhân",
+        "intermediate_output": "20 lít",
         "is_final_step": false
       },
       {
         "step_id": 3,
-        "badge": "Ghi Đáp Số",
-        "action_verb": "Kết_luận",
-        "atomic_instruction": "Ghi đáp số 13 lít dầu còn lại.",
-        "text": "Ghi đáp số 13 lít dầu còn lại.",
+        "badge": "Chọn Phép Trừ Còn Lại",
+        "action_verb": "Chọn",
+        "atomic_instruction": "Lấy ra 7 lít để dùng, ta chọn phép tính trừ nào để tìm số dầu còn lại?",
+        "text": "Lấy ra 7 lít để dùng, ta chọn phép tính trừ nào để tìm số dầu còn lại?",
         "type": "single_choice",
         "ui_type": "single_choice",
         "ui_data": {
-          "prompt_text": "Số lít dầu còn lại trong các can là:",
+          "prompt_text": "Phép tính tìm số dầu còn lại là:",
           "options": [
-            "13 lít dầu",
-            "20 lít dầu",
-            "7 lít dầu"
+            "20 - 7",
+            "20 + 7"
           ]
         },
-        "duration_sec": 80,
+        "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "confetti_cannon",
-          "audio_cue": "harp_glissando_soft",
-          "dopamine_points": 40
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
         },
         "hints": [
-          "Đáp số là 13 lít dầu."
+          "Lấy tổng 20 lít trừ đi 7 lít đã dùng."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "13 lít dầu",
-          "feedback_on_error": "Đáp số là 13 lít dầu!"
+          "expected_answer": "20 - 7",
+          "feedback_on_error": "Ta làm phép trừ 20 - 7 nhé!"
         },
-        "mathematical_or_logical_goal": "Kết luận cuối cùng",
+        "mathematical_or_logical_goal": "Thiết lập bước trừ",
+        "intermediate_output": "20 - 7",
+        "is_final_step": false
+      },
+      {
+        "step_id": 4,
+        "badge": "Tính Lít Dầu Còn Lại",
+        "action_verb": "Tính",
+        "atomic_instruction": "Tính 20 trừ 7 bằng bao nhiêu lít dầu.",
+        "text": "Tính 20 trừ 7 bằng bao nhiêu lít dầu.",
+        "type": "text_input",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "20 - 7 = ?",
+          "placeholder": "Nhập số dầu còn lại..."
+        },
+        "duration_sec": 60,
+        "immediate_reinforcer": {
+          "visual_asset": "chest_open_burst",
+          "audio_cue": "orchestral_fanfare_c6",
+          "dopamine_points": 30
+        },
+        "hints": [
+          "20 trừ 7 bằng 13."
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": "13",
+          "feedback_on_error": "20 - 7 = 13 lít dầu con nhé!"
+        },
+        "mathematical_or_logical_goal": "Tính toán đáp số cuối",
         "intermediate_output": "13 lít dầu",
         "is_final_step": true
       }
-    ]
+    ],
+    "exercise_type": "word_problem"
   },
   "G2_VIET_08": {
     "id": "G2_VIET_08",
@@ -1154,7 +1229,7 @@
     "island": "study",
     "reward": 120,
     "stepSeconds": 70,
-    "original_text": "Một sợi dây dài 1 m. Bạn An cắt lấy một đoạn dài 4 dm để buộc bưu phẩm. Hỏi đoạn dây còn lại dài bao nhiêu đề-xi-mét?\nA. 5 dm\nB. 6 dm\nC. 7 dm\nD. 96 dm",
+    "original_text": "Một sợi dây dài 1 m. Bạn An cắt lấy một đoạn dài 4 dm để buộc bưu phẩm. Hỏi đoạn dây còn lại dài bao nhiêu đề-xi-mét?",
     "final_answer": {
       "value": "B",
       "unit": null,
@@ -1175,104 +1250,145 @@
     "steps": [
       {
         "step_id": 1,
+        "badge": "Tìm Dữ Kiện & Đơn Vị",
+        "action_verb": "Gạch_chân",
+        "atomic_instruction": "Gạch chân độ dài sợi dây, đoạn đã cắt và từ khóa 'còn lại'.",
+        "text": "Gạch chân độ dài sợi dây, đoạn đã cắt và từ khóa 'còn lại'.",
+        "type": "highlight",
+        "ui_type": "highlight",
+        "ui_data": {
+          "prompt_text": "Một sợi dây dài 1 m. Bạn An cắt lấy một đoạn dài 4 dm để buộc bưu phẩm. Hỏi đoạn dây còn lại dài bao nhiêu đề-xi-mét?",
+          "highlight_target_segments": [
+            "1 m",
+            "4 dm",
+            "còn lại",
+            "đề-xi-mét"
+          ]
+        },
+        "duration_sec": 60,
+        "immediate_reinforcer": {
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
+        },
+        "hints": [
+          "Gạch chân 1 m, 4 dm, 'còn lại' và 'đề-xi-mét' nhé!"
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": [
+            "1 m",
+            "4 dm",
+            "còn lại",
+            "đề-xi-mét"
+          ],
+          "feedback_on_error": "Milo cùng con tìm 1 m, 4 dm, 'còn lại' và 'đề-xi-mét' nào!"
+        },
+        "mathematical_or_logical_goal": "Nhận diện đơn vị đo khác nhau và từ khóa",
+        "intermediate_output": "1 m, 4 dm, còn lại",
+        "is_final_step": false
+      },
+      {
+        "step_id": 2,
         "badge": "Đổi Đơn Vị Đo",
         "action_verb": "Đổi",
-        "atomic_instruction": "Đổi 1 mét thành bao nhiêu đề-xi-mét.",
-        "text": "Đổi 1 mét thành bao nhiêu đề-xi-mét.",
+        "atomic_instruction": "Đổi 1 mét sang đề-xi-mét.",
+        "text": "Đổi 1 mét sang đề-xi-mét.",
         "type": "single_choice",
         "ui_type": "single_choice",
         "ui_data": {
-          "prompt_text": "1 m = ? dm",
+          "prompt_text": "1 m bằng bao nhiêu đề-xi-mét (dm)?",
           "options": [
             "1 m = 10 dm",
             "1 m = 100 dm",
             "1 m = 5 dm"
           ]
         },
-        "duration_sec": 70,
-        "immediate_reinforcer": {
-          "visual_asset": "sparkle_star_01",
-          "audio_cue": "positive_bell_c6",
-          "dopamine_points": 25
-        },
-        "hints": [
-          "1 mét bằng 10 đề-xi-mét con nhé."
-        ],
-        "success_criteria": {
-          "evaluation_type": "exact_match",
-          "expected_answer": "1 m = 10 dm",
-          "feedback_on_error": "1 m bằng 10 dm con nha!"
-        },
-        "mathematical_or_logical_goal": "Đồng nhất đơn vị đo lường",
-        "intermediate_output": "1 m = 10 dm",
-        "is_final_step": false
-      },
-      {
-        "step_id": 2,
-        "badge": "Thực Hiện Phép Trừ",
-        "action_verb": "Trừ",
-        "atomic_instruction": "Lấy 10 dm trừ 4 dm đã cắt.",
-        "text": "Lấy 10 dm trừ 4 dm đã cắt.",
-        "type": "text_input",
-        "ui_type": "text_input",
-        "ui_data": {
-          "prompt_text": "10 - 4 = ? (dm)",
-          "placeholder": "Nhập kết quả..."
-        },
-        "duration_sec": 70,
+        "duration_sec": 60,
         "immediate_reinforcer": {
           "visual_asset": "particle_burst_gold",
           "audio_cue": "sparkle_ting_short",
           "dopamine_points": 30
         },
         "hints": [
-          "10 trừ đi 4 còn 6."
+          "1 m = 10 dm."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "6",
-          "feedback_on_error": "10 trừ 4 bằng 6 dm!"
+          "expected_answer": "1 m = 10 dm",
+          "feedback_on_error": "1 m = 10 dm con nha!"
         },
-        "mathematical_or_logical_goal": "Thực hiện phép trừ",
-        "intermediate_output": "10 - 4 = 6 dm",
+        "mathematical_or_logical_goal": "Đổi đơn vị đo độ dài",
+        "intermediate_output": "1 m = 10 dm",
         "is_final_step": false
       },
       {
         "step_id": 3,
+        "badge": "Thực Hiện Phép Trừ",
+        "action_verb": "Trừ",
+        "atomic_instruction": "Tính 10 dm trừ 4 dm bằng bao nhiêu dm.",
+        "text": "Tính 10 dm trừ 4 dm bằng bao nhiêu dm.",
+        "type": "text_input",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "10 - 4 = ? (dm)",
+          "placeholder": "Nhập số dm còn lại..."
+        },
+        "duration_sec": 60,
+        "immediate_reinforcer": {
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
+        },
+        "hints": [
+          "10 trừ 4 bằng 6."
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": "6",
+          "feedback_on_error": "10 - 4 = 6 dm nha con!"
+        },
+        "mathematical_or_logical_goal": "Tính toán độ dài còn lại",
+        "intermediate_output": "6 dm",
+        "is_final_step": false
+      },
+      {
+        "step_id": 4,
         "badge": "Chọn Phương Án B",
         "action_verb": "Chọn",
-        "atomic_instruction": "Chọn phương án B có kết quả 6 dm.",
-        "text": "Chọn phương án B có kết quả 6 dm.",
+        "atomic_instruction": "Chọn phương án đúng trong đề trắc nghiệm.",
+        "text": "Chọn phương án đúng trong đề trắc nghiệm.",
         "type": "single_choice",
         "ui_type": "single_choice",
         "ui_data": {
-          "prompt_text": "Chọn phương án trắc nghiệm đúng:",
+          "prompt_text": "Kết quả 6 dm tương ứng với phương án nào?",
           "options": [
-            "A. 5 dm",
             "B. 6 dm",
+            "A. 5 dm",
             "C. 7 dm",
             "D. 96 dm"
           ]
         },
-        "duration_sec": 70,
+        "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "confetti_cannon",
-          "audio_cue": "harp_glissando_soft",
-          "dopamine_points": 45
+          "visual_asset": "chest_open_burst",
+          "audio_cue": "orchestral_fanfare_c6",
+          "dopamine_points": 30
         },
         "hints": [
-          "Chọn B. 6 dm nhé con."
+          "Chọn B. 6 dm."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": "B. 6 dm",
-          "feedback_on_error": "Phương án B. 6 dm là chuẩn xác!"
+          "feedback_on_error": "Đáp án đúng là B. 6 dm con nhé!"
         },
-        "mathematical_or_logical_goal": "Chọn phương án đúng",
-        "intermediate_output": "Phương án B",
+        "mathematical_or_logical_goal": "Khoanh đáp án chuẩn",
+        "intermediate_output": "B. 6 dm",
         "is_final_step": true
       }
-    ]
+    ],
+    "exercise_type": "word_problem"
   },
   "G2_ENG_10": {
     "id": "G2_ENG_10",
@@ -1285,7 +1401,7 @@
     "island": "study",
     "reward": 120,
     "stepSeconds": 70,
-    "original_text": "Choose the correct option:\n'How many books are there on the table?' - 'There ______ three books.'\nA. is\nB. are\nC. am\nD. be",
+    "original_text": "Choose the correct option:\n'How many books are there on the table?' - 'There ______ three books.'",
     "final_answer": {
       "value": "B",
       "unit": null,
@@ -1436,99 +1552,137 @@
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tìm Gạo Buổi Chiều",
-        "action_verb": "Nhân",
-        "atomic_instruction": "Nhân 24 kg với 3 để tìm gạo chiều.",
-        "text": "Nhân 24 kg với 3 để tìm gạo chiều.",
-        "type": "text_input",
-        "ui_type": "text_input",
+        "badge": "Tìm Dữ Kiện & Từ Khóa",
+        "action_verb": "Gạch_chân",
+        "atomic_instruction": "Gạch chân số gạo buổi sáng, từ 'gấp 3 lần' và 'tất cả'.",
+        "text": "Gạch chân số gạo buổi sáng, từ 'gấp 3 lần' và 'tất cả'.",
+        "type": "highlight",
+        "ui_type": "highlight",
         "ui_data": {
-          "prompt_text": "24 x 3 = ? (kg)",
-          "placeholder": "Nhập số gạo buổi chiều..."
+          "prompt_text": "Cửa hàng buổi sáng bán được 24 kg gạo. Buổi chiều bán được gấp 3 lần buổi sáng. Hỏi cả hai buổi cửa hàng bán được tất cả bao nhiêu ki-lô-gam gạo?",
+          "highlight_target_segments": [
+            "24 kg gạo",
+            "gấp 3 lần",
+            "tất cả"
+          ]
         },
-        "duration_sec": 90,
+        "duration_sec": 60,
         "immediate_reinforcer": {
           "visual_asset": "sparkle_star_01",
           "audio_cue": "positive_bell_c6",
           "dopamine_points": 30
         },
         "hints": [
-          "4 x 3 = 12 viết 2 nhớ 1; 2 x 3 = 6 thêm 1 là 7."
+          "Gạch chân 24 kg gạo, 'gấp 3 lần' và 'tất cả' nhé!"
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "72",
-          "feedback_on_error": "24 nhân 3 bằng 72 kg gạo con nhé!"
+          "expected_answer": [
+            "24 kg gạo",
+            "gấp 3 lần",
+            "tất cả"
+          ],
+          "feedback_on_error": "Tìm 24 kg gạo, 'gấp 3 lần' và 'tất cả' nào con!"
         },
-        "mathematical_or_logical_goal": "Tính đại lượng gấp lên nhiều lần",
-        "intermediate_output": "24 x 3 = 72 (kg)",
+        "mathematical_or_logical_goal": "Trích xuất dữ kiện bài toán hợp",
+        "intermediate_output": "Sáng: 24 kg; Chiều: gấp 3; Hỏi: tất cả",
         "is_final_step": false
       },
       {
         "step_id": 2,
-        "badge": "Tính Tổng Hai Buổi",
-        "action_verb": "Cộng",
-        "atomic_instruction": "Cộng 24 kg sáng với 72 kg chiều.",
-        "text": "Cộng 24 kg sáng với 72 kg chiều.",
+        "badge": "Tìm Gạo Buổi Chiều",
+        "action_verb": "Nhân",
+        "atomic_instruction": "Tính số gạo buổi chiều bán được bằng phép nhân 24 với 3.",
+        "text": "Tính số gạo buổi chiều bán được bằng phép nhân 24 với 3.",
         "type": "text_input",
         "ui_type": "text_input",
         "ui_data": {
-          "prompt_text": "24 + 72 = ? (kg)",
-          "placeholder": "Nhập tổng số gạo cả ngày..."
+          "prompt_text": "24 × 3 = ? (kg)",
+          "placeholder": "Nhập số kg buổi chiều..."
         },
-        "duration_sec": 90,
+        "duration_sec": 60,
         "immediate_reinforcer": {
           "visual_asset": "particle_burst_gold",
           "audio_cue": "sparkle_ting_short",
-          "dopamine_points": 35
+          "dopamine_points": 30
         },
         "hints": [
-          "4 + 2 = 6, 2 + 7 = 9. Kết quả là 96."
+          "4 x 3 = 12 viết 2 nhớ 1; 2 x 3 = 6 thêm 1 là 7 -> 72 kg."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "96",
-          "feedback_on_error": "24 cộng 72 bằng 96 kg gạo nha!"
+          "expected_answer": "72",
+          "feedback_on_error": "24 x 3 = 72 kg con nhé!"
         },
-        "mathematical_or_logical_goal": "Tính tổng hai đại lượng",
-        "intermediate_output": "24 + 72 = 96 (kg)",
+        "mathematical_or_logical_goal": "Tính bước trung gian",
+        "intermediate_output": "72 kg",
         "is_final_step": false
       },
       {
         "step_id": 3,
-        "badge": "Ghi Đáp Số",
-        "action_verb": "Kết_luận",
-        "atomic_instruction": "Ghi đáp số hoàn chỉnh 96 kg gạo.",
-        "text": "Ghi đáp số hoàn chỉnh 96 kg gạo.",
+        "badge": "Chọn Phép Tính Tổng",
+        "action_verb": "Chọn",
+        "atomic_instruction": "Chọn phép cộng để tính số gạo cả hai buổi bán được.",
+        "text": "Chọn phép cộng để tính số gạo cả hai buổi bán được.",
         "type": "single_choice",
         "ui_type": "single_choice",
         "ui_data": {
-          "prompt_text": "Chọn đáp số đúng cho cả hai buổi:",
+          "prompt_text": "Phép tính tìm số gạo cả hai buổi là:",
           "options": [
-            "96 kg gạo",
-            "72 kg gạo",
-            "48 kg gạo"
+            "24 + 72",
+            "72 - 24"
           ]
         },
-        "duration_sec": 90,
+        "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "confetti_cannon",
-          "audio_cue": "harp_glissando_soft",
-          "dopamine_points": 45
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
         },
         "hints": [
-          "Đáp số cả hai buổi là 96 kg gạo."
+          "Cả hai buổi là gộp sáng (24) và chiều (72)."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "96 kg gạo",
-          "feedback_on_error": "Đáp số là 96 kg gạo!"
+          "expected_answer": "24 + 72",
+          "feedback_on_error": "Lấy 24 + 72 nha con!"
         },
-        "mathematical_or_logical_goal": "Kết luận bài toán",
+        "mathematical_or_logical_goal": "Thiết lập phép cộng tổng",
+        "intermediate_output": "24 + 72",
+        "is_final_step": false
+      },
+      {
+        "step_id": 4,
+        "badge": "Tính Tổng Hai Buổi",
+        "action_verb": "Tính",
+        "atomic_instruction": "Tính 24 cộng 72 bằng bao nhiêu ki-lô-gam gạo.",
+        "text": "Tính 24 cộng 72 bằng bao nhiêu ki-lô-gam gạo.",
+        "type": "text_input",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "24 + 72 = ?",
+          "placeholder": "Nhập tổng số kg..."
+        },
+        "duration_sec": 60,
+        "immediate_reinforcer": {
+          "visual_asset": "chest_open_burst",
+          "audio_cue": "orchestral_fanfare_c6",
+          "dopamine_points": 30
+        },
+        "hints": [
+          "4 + 2 = 6; 2 + 7 = 9 -> 96 kg."
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": "96",
+          "feedback_on_error": "24 + 72 = 96 kg gạo con nha!"
+        },
+        "mathematical_or_logical_goal": "Tính kết quả cuối",
         "intermediate_output": "96 kg gạo",
         "is_final_step": true
       }
-    ]
+    ],
+    "exercise_type": "word_problem"
   },
   "G3_MATH_12": {
     "id": "G3_MATH_12",
@@ -1541,7 +1695,7 @@
     "island": "study",
     "reward": 140,
     "stepSeconds": 90,
-    "original_text": "Cô giáo có 35 quyển vở thưởng đều cho 7 bạn học sinh giỏi. Hỏi nếu cô muốn thưởng cho 5 bạn học sinh giỏi như thế thì cần bao nhiêu quyển vở?",
+    "original_text": "Cô giáo có 35 quyển vở thưởng đều cho 7 bạn học sinh giỏi. Hỏi 5 bạn nhận được bao nhiêu quyển vở?",
     "final_answer": {
       "value": 25,
       "unit": "quyển vở",
@@ -1554,105 +1708,110 @@
     },
     "adhd_scaffolding_notes": {
       "working_memory_pitfall": "Trẻ bối rối trước sự xuất hiện của hai số 5 (5 quyển và 5 bạn) dẫn đến nhầm lẫn khái niệm.",
-      "executive_function_scaffolding": "Phân định rõ danh từ đi kèm: '5 quyển/bạn' vs '5 bạn học sinh'.",
+      "executive_function_scaffolding": "Chia bài toán làm 2 bước rõ rệt: (1) Rút về đơn vị (tìm 1 bạn), (2) Nhân lên cho 5 bạn.",
       "visual_or_concrete_aid": "Minh họa 1 gói quà nhỏ đại diện cho 1 bạn chứa 5 cuốn vở."
     },
     "steps": [
       {
         "step_id": 1,
-        "badge": "Rút Về Một Bạn",
-        "action_verb": "Chia",
-        "atomic_instruction": "Chia 35 quyển cho 7 bạn bằng mấy quyển.",
-        "text": "Chia 35 quyển cho 7 bạn bằng mấy quyển.",
-        "type": "text_input",
-        "ui_type": "text_input",
+        "badge": "Tìm Dữ Kiện & Từ Khóa",
+        "action_verb": "Gạch_chân",
+        "atomic_instruction": "Gạch chân 35 quyển vở, 7 bạn học sinh giỏi và 5 bạn.",
+        "text": "Gạch chân 35 quyển vở, 7 bạn học sinh giỏi và 5 bạn.",
+        "type": "highlight",
+        "ui_type": "highlight",
         "ui_data": {
-          "prompt_text": "35 : 7 = ? (quyển vở mỗi bạn)",
-          "placeholder": "Nhập số vở một bạn nhận..."
+          "prompt_text": "Cô giáo có 35 quyển vở thưởng đều cho 7 bạn học sinh giỏi. Hỏi 5 bạn nhận được bao nhiêu quyển vở?",
+          "highlight_target_segments": [
+            "35 quyển vở",
+            "7 bạn học sinh giỏi",
+            "5 bạn"
+          ]
         },
-        "duration_sec": 90,
+        "duration_sec": 60,
         "immediate_reinforcer": {
           "visual_asset": "sparkle_star_01",
           "audio_cue": "positive_bell_c6",
           "dopamine_points": 30
         },
         "hints": [
-          "Bảng chia 7: 7 x 5 = 35."
+          "Gạch chân 35 quyển vở, 7 bạn học sinh giỏi và 5 bạn."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "5",
-          "feedback_on_error": "Mỗi bạn nhận được 5 quyển vở con nhé!"
+          "expected_answer": [
+            "35 quyển vở",
+            "7 bạn học sinh giỏi",
+            "5 bạn"
+          ],
+          "feedback_on_error": "Tìm đủ 35 quyển vở, 7 bạn và 5 bạn nhé con!"
         },
-        "mathematical_or_logical_goal": "Bước rút về giá trị 1 đơn vị",
-        "intermediate_output": "35 : 7 = 5 (quyển vở)",
+        "mathematical_or_logical_goal": "Nhận diện dữ kiện bài toán rút về đơn vị",
+        "intermediate_output": "Có: 35 quyển; 7 bạn; Hỏi: 5 bạn",
         "is_final_step": false
       },
       {
         "step_id": 2,
-        "badge": "Tính Cho 5 Bạn",
-        "action_verb": "Nhân",
-        "atomic_instruction": "Nhân 5 quyển một bạn với 5 bạn.",
-        "text": "Nhân 5 quyển một bạn với 5 bạn.",
+        "badge": "Rút Về Một Bạn",
+        "action_verb": "Tính",
+        "atomic_instruction": "Tính số vở 1 bạn nhận được bằng cách lấy 35 chia cho 7.",
+        "text": "Tính số vở 1 bạn nhận được bằng cách lấy 35 chia cho 7.",
         "type": "text_input",
         "ui_type": "text_input",
         "ui_data": {
-          "prompt_text": "5 x 5 = ? (quyển vở)",
-          "placeholder": "Nhập số vở cho 5 bạn..."
+          "prompt_text": "35 : 7 = ? (quyển)",
+          "placeholder": "Nhập số vở 1 bạn..."
         },
-        "duration_sec": 90,
+        "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "particle_burst_gold",
-          "audio_cue": "sparkle_ting_short",
-          "dopamine_points": 35
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
         },
         "hints": [
-          "Bảng nhân 5: 5 x 5 = 25."
+          "7 x 5 = 35 nên 35 : 7 = 5 quyển vở."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "25",
-          "feedback_on_error": "5 bạn nhận 25 quyển vở nha!"
+          "expected_answer": "5",
+          "feedback_on_error": "35 : 7 = 5 quyển vở con nhé!"
         },
-        "mathematical_or_logical_goal": "Tính giá trị nhiều đơn vị cùng loại",
-        "intermediate_output": "5 x 5 = 25 (quyển vở)",
+        "mathematical_or_logical_goal": "Bước rút về đơn vị",
+        "intermediate_output": "Mỗi bạn: 5 quyển vở",
         "is_final_step": false
       },
       {
         "step_id": 3,
-        "badge": "Ghi Đáp Số",
-        "action_verb": "Kết_luận",
-        "atomic_instruction": "Ghi đáp số 25 quyển vở cô giáo thưởng.",
-        "text": "Ghi đáp số 25 quyển vở cô giáo thưởng.",
-        "type": "single_choice",
-        "ui_type": "single_choice",
+        "badge": "Tính Số Vở Của 5 Bạn",
+        "action_verb": "Tính",
+        "atomic_instruction": "Lấy số vở 1 bạn nhân với 5 để tìm số vở của 5 bạn: 5 nhân 5.",
+        "text": "Lấy số vở 1 bạn nhân với 5 để tìm số vở của 5 bạn: 5 nhân 5.",
+        "type": "text_input",
+        "ui_type": "text_input",
         "ui_data": {
-          "prompt_text": "Đáp số của bài toán là:",
-          "options": [
-            "25 quyển vở",
-            "35 quyển vở",
-            "15 quyển vở"
-          ]
+          "prompt_text": "5 × 5 = ? (quyển)",
+          "placeholder": "Nhập số vở 5 bạn..."
         },
-        "duration_sec": 90,
+        "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "confetti_cannon",
-          "audio_cue": "harp_glissando_soft",
-          "dopamine_points": 45
+          "visual_asset": "chest_open_burst",
+          "audio_cue": "orchestral_fanfare_c6",
+          "dopamine_points": 40
         },
         "hints": [
-          "Đáp số là 25 quyển vở."
+          "5 x 5 = 25 quyển vở."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "25 quyển vở",
-          "feedback_on_error": "Đáp số là 25 quyển vở!"
+          "expected_answer": "25",
+          "feedback_on_error": "5 x 5 = 25 quyển vở con nhé!"
         },
-        "mathematical_or_logical_goal": "Đáp số hoàn thiện",
+        "mathematical_or_logical_goal": "Tính kết quả cuối",
         "intermediate_output": "25 quyển vở",
         "is_final_step": true
       }
-    ]
+    ],
+    "exercise_type": "word_problem"
   },
   "G3_VIET_13": {
     "id": "G3_VIET_13",
@@ -1807,7 +1966,7 @@
     "island": "study",
     "reward": 130,
     "stepSeconds": 80,
-    "original_text": "Một mảnh đất hình chữ nhật có chiều dài 15 m và chiều rộng 8 m. Chu vi của mảnh đất đó là:\nA. 23 m\nB. 46 m\nC. 120 m\nD. 46 mét vuông",
+    "original_text": "Một mảnh đất hình chữ nhật có chiều dài 15 m và chiều rộng 8 m. Chu vi của mảnh đất đó là bao nhiêu?",
     "final_answer": {
       "value": "B",
       "unit": null,
@@ -1828,101 +1987,169 @@
     "steps": [
       {
         "step_id": 1,
+        "badge": "Tìm Kích Thước & Mục Tiêu",
+        "action_verb": "Gạch_chân",
+        "atomic_instruction": "Gạch chân chiều dài 15 m, chiều rộng 8 m và từ 'Chu vi'.",
+        "text": "Gạch chân chiều dài 15 m, chiều rộng 8 m và từ 'Chu vi'.",
+        "type": "highlight",
+        "ui_type": "highlight",
+        "ui_data": {
+          "prompt_text": "Một mảnh đất hình chữ nhật có chiều dài 15 m và chiều rộng 8 m. Chu vi mảnh đất đó là bao nhiêu?",
+          "highlight_target_segments": [
+            "chiều dài 15 m",
+            "chiều rộng 8 m",
+            "Chu vi"
+          ]
+        },
+        "duration_sec": 60,
+        "immediate_reinforcer": {
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
+        },
+        "hints": [
+          "Gạch chân chiều dài 15 m, chiều rộng 8 m và chữ Chu vi."
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": [
+            "chiều dài 15 m",
+            "chiều rộng 8 m",
+            "Chu vi"
+          ],
+          "feedback_on_error": "Gạch chân đủ 3 dữ kiện nhé!"
+        },
+        "mathematical_or_logical_goal": "Định vị dữ kiện hình học",
+        "intermediate_output": "dài: 15m; rộng: 8m; tìm: chu vi",
+        "is_final_step": false
+      },
+      {
+        "step_id": 2,
         "badge": "Nhớ Công Thức Chu Vi",
-        "action_verb": "Nhớ",
-        "atomic_instruction": "Nhớ công thức: dài cộng rộng nhân hai.",
-        "text": "Nhớ công thức: dài cộng rộng nhân hai.",
+        "action_verb": "Chọn",
+        "atomic_instruction": "Chọn công thức tính chu vi hình chữ nhật.",
+        "text": "Chọn công thức tính chu vi hình chữ nhật.",
         "type": "single_choice",
         "ui_type": "single_choice",
         "ui_data": {
           "prompt_text": "Công thức tính chu vi hình chữ nhật là:",
           "options": [
-            "(Dài + Rộng) x 2",
-            "Dài x Rộng",
-            "Dài + Rộng"
+            "(Chiều dài + Chiều rộng) × 2",
+            "Chiều dài × Chiều rộng",
+            "Chiều dài + Chiều rộng"
           ]
         },
-        "duration_sec": 80,
+        "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "sparkle_star_01",
-          "audio_cue": "positive_bell_c6",
-          "dopamine_points": 25
+          "visual_asset": "particle_burst_gold",
+          "audio_cue": "sparkle_ting_short",
+          "dopamine_points": 30
         },
         "hints": [
-          "Chu vi bằng (dài + rộng) x 2."
+          "(Dài + Rộng) rồi nhân 2."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "(Dài + Rộng) x 2",
-          "feedback_on_error": "Chu vi hình chữ nhật bằng (Dài + Rộng) x 2 nhé!"
+          "expected_answer": "(Chiều dài + Chiều rộng) × 2",
+          "feedback_on_error": "Chu vi = (Dài + Rộng) x 2 nha!"
         },
-        "mathematical_or_logical_goal": "Truy xuất công thức hình học",
+        "mathematical_or_logical_goal": "Nhớ công thức",
         "intermediate_output": "P = (a + b) x 2",
         "is_final_step": false
       },
       {
-        "step_id": 2,
-        "badge": "Tính Chu Vi",
+        "step_id": 3,
+        "badge": "Tính Nửa Chu Vi",
         "action_verb": "Tính",
-        "atomic_instruction": "Tính 15 cộng 8 rồi nhân 2.",
-        "text": "Tính 15 cộng 8 rồi nhân 2.",
+        "atomic_instruction": "Tính nửa chu vi mảnh đất bằng cách lấy 15 cộng 8.",
+        "text": "Tính nửa chu vi mảnh đất bằng cách lấy 15 cộng 8.",
         "type": "text_input",
         "ui_type": "text_input",
         "ui_data": {
-          "prompt_text": "(15 + 8) x 2 = ? (m)",
-          "placeholder": "Nhập chu vi..."
+          "prompt_text": "15 + 8 = ? (m)",
+          "placeholder": "Nhập nửa chu vi..."
         },
-        "duration_sec": 80,
+        "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "particle_burst_gold",
-          "audio_cue": "sparkle_ting_short",
-          "dopamine_points": 35
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
         },
         "hints": [
-          "15 + 8 = 23; 23 x 2 = 46."
+          "15 + 8 = 23 m."
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": "23",
+          "feedback_on_error": "15 + 8 = 23 m con nhé!"
+        },
+        "mathematical_or_logical_goal": "Tính nửa chu vi",
+        "intermediate_output": "23 m",
+        "is_final_step": false
+      },
+      {
+        "step_id": 4,
+        "badge": "Tính Chu Vi Mảnh Đất",
+        "action_verb": "Tính",
+        "atomic_instruction": "Lấy nửa chu vi nhân với 2 để tìm chu vi: 23 nhân 2.",
+        "text": "Lấy nửa chu vi nhân với 2 để tìm chu vi: 23 nhân 2.",
+        "type": "text_input",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "23 × 2 = ? (m)",
+          "placeholder": "Nhập chu vi..."
+        },
+        "duration_sec": 60,
+        "immediate_reinforcer": {
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
+        },
+        "hints": [
+          "23 x 2 = 46 m."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": "46",
-          "feedback_on_error": "23 nhân 2 bằng 46 m con nha!"
+          "feedback_on_error": "23 x 2 = 46 m con nhé!"
         },
-        "mathematical_or_logical_goal": "Thực hiện tính toán 2 bước",
+        "mathematical_or_logical_goal": "Tính toán chu vi",
         "intermediate_output": "46 m",
         "is_final_step": false
       },
       {
-        "step_id": 3,
+        "step_id": 5,
         "badge": "Chọn Phương Án B",
         "action_verb": "Chọn",
-        "atomic_instruction": "Chọn phương án B có đơn vị mét (46 m).",
-        "text": "Chọn phương án B có đơn vị mét (46 m).",
+        "atomic_instruction": "Chọn phương án đúng trong đề trắc nghiệm.",
+        "text": "Chọn phương án đúng trong đề trắc nghiệm.",
         "type": "single_choice",
         "ui_type": "single_choice",
         "ui_data": {
-          "prompt_text": "Chú ý đơn vị mét (m), không phải mét vuông (m2):",
+          "prompt_text": "Chu vi mảnh đất là 46 m, chọn đáp án đúng:",
           "options": [
-            "A. 23 m",
             "B. 46 m",
-            "C. 120 m",
-            "D. 46 mét vuông"
+            "A. 23 m",
+            "D. 46 m2",
+            "C. 120 m"
           ]
         },
-        "duration_sec": 80,
+        "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "confetti_cannon",
-          "audio_cue": "harp_glissando_soft",
-          "dopamine_points": 45
+          "visual_asset": "chest_open_burst",
+          "audio_cue": "orchestral_fanfare_c6",
+          "dopamine_points": 30
         },
         "hints": [
-          "Chu vi đơn vị là m: B. 46 m."
+          "Chu vi đo bằng mét (m), không phải m2. Chọn B."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": "B. 46 m",
-          "feedback_on_error": "Đáp án đúng là B. 46 m!"
+          "feedback_on_error": "Chọn B. 46 m con nha!"
         },
-        "mathematical_or_logical_goal": "Kiểm tra danh số & loại trừ bẫy",
-        "intermediate_output": "Chọn phương án B",
+        "mathematical_or_logical_goal": "Khoanh đáp án đúng",
+        "intermediate_output": "B. 46 m",
         "is_final_step": true
       }
     ]
@@ -1938,7 +2165,7 @@
     "island": "study",
     "reward": 130,
     "stepSeconds": 80,
-    "original_text": "Reorder the words to make a correct sentence:\n'swim / but / can / fly / can't / A duck / .'\nChoose the correct sentence:\nA. A duck can swim but can't fly.\nB. A duck can't swim but can fly.\nC. Can swim but fly a duck can't.\nD. A duck fly can but can't swim.",
+    "original_text": "Reorder the words to make a correct sentence:\n'swim / but / can / fly / can't / A duck / .'\nChoose the correct sentence:",
     "final_answer": {
       "value": "A",
       "unit": null,
@@ -2109,8 +2336,9 @@
         "ui_data": {
           "prompt_text": "Tìm tổng số sách và số sách lớp 4A nhiều hơn:",
           "highlight_target_segments": [
-            "280 quyển sách",
-            "40 quyển"
+            "280 quyển",
+            "40 quyển",
+            "nhiều hơn"
           ]
         },
         "duration_sec": 90,
@@ -2228,7 +2456,8 @@
         "intermediate_output": "Lớp 4A: 160 quyển; Lớp 4B: 120 quyển",
         "is_final_step": true
       }
-    ]
+    ],
+    "exercise_type": "word_problem"
   },
   "G4_MATH_17": {
     "id": "G4_MATH_17",
@@ -2260,99 +2489,138 @@
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tính Số Con Gà",
-        "action_verb": "Tính",
-        "atomic_instruction": "Lấy 1200 chia 5 rồi nhân 3 tìm gà.",
-        "text": "Lấy 1200 chia 5 rồi nhân 3 tìm gà.",
-        "type": "text_input",
-        "ui_type": "text_input",
+        "badge": "Tìm Dữ Kiện & Phân Số",
+        "action_verb": "Gạch_chân",
+        "atomic_instruction": "Gạch chân 1200 con gia cầm, phân số 3/5 và từ con vịt.",
+        "text": "Gạch chân 1200 con gia cầm, phân số 3/5 và từ con vịt.",
+        "type": "highlight",
+        "ui_type": "highlight",
         "ui_data": {
-          "prompt_text": "1200 x 3/5 = ? (con gà)",
-          "placeholder": "Nhập số con gà..."
+          "prompt_text": "Một trang trại có 1200 con gia cầm gồm gà và vịt. Trong đó số gà chiếm 3/5 tổng số gia cầm. Hỏi trang trại đó có bao nhiêu con vịt?",
+          "highlight_target_segments": [
+            "1200 con gia cầm",
+            "3/5",
+            "bao nhiêu con vịt"
+          ]
         },
-        "duration_sec": 90,
+        "duration_sec": 70,
         "immediate_reinforcer": {
           "visual_asset": "sparkle_star_01",
           "audio_cue": "positive_bell_c6",
           "dopamine_points": 30
         },
         "hints": [
-          "1200 : 5 = 240; 240 x 3 = 720."
+          "Gạch chân 1200 con gia cầm, 3/5 và 'bao nhiêu con vịt'."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "720",
-          "feedback_on_error": "Trang trại có 720 con gà nhé con!"
+          "expected_answer": [
+            "1200 con gia cầm",
+            "3/5",
+            "bao nhiêu con vịt"
+          ],
+          "feedback_on_error": "Tìm đủ 3 dữ kiện nhé!"
         },
-        "mathematical_or_logical_goal": "Tìm giá trị phân số của một số",
-        "intermediate_output": "1200 x 3/5 = 720 (con gà)",
+        "mathematical_or_logical_goal": "Nhận diện dữ kiện phân số",
+        "intermediate_output": "Tổng: 1200 con; Gà: 3/5; Tìm vịt",
         "is_final_step": false
       },
       {
         "step_id": 2,
+        "badge": "Tính Số Con Gà",
+        "action_verb": "Tính",
+        "atomic_instruction": "Tính số gà bằng cách lấy 1200 nhân 3 rồi chia 5.",
+        "text": "Tính số gà bằng cách lấy 1200 nhân 3 rồi chia 5.",
+        "type": "text_input",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "1200 × 3 : 5 = ? (con gà)",
+          "placeholder": "Nhập số con gà..."
+        },
+        "duration_sec": 70,
+        "immediate_reinforcer": {
+          "visual_asset": "particle_burst_gold",
+          "audio_cue": "sparkle_ting_short",
+          "dopamine_points": 30
+        },
+        "hints": [
+          "1200 : 5 = 240; 240 x 3 = 720 con gà."
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": "720",
+          "feedback_on_error": "Số gà là 720 con con nhé!"
+        },
+        "mathematical_or_logical_goal": "Tìm phân số của một số",
+        "intermediate_output": "720 con gà",
+        "is_final_step": false
+      },
+      {
+        "step_id": 3,
         "badge": "Tìm Số Con Vịt",
         "action_verb": "Trừ",
-        "atomic_instruction": "Lấy 1200 tổng trừ đi 720 con gà.",
-        "text": "Lấy 1200 tổng trừ đi 720 con gà.",
+        "atomic_instruction": "Lấy tổng 1200 trừ đi 720 con gà để tìm số con vịt.",
+        "text": "Lấy tổng 1200 trừ đi 720 con gà để tìm số con vịt.",
         "type": "text_input",
         "ui_type": "text_input",
         "ui_data": {
           "prompt_text": "1200 - 720 = ? (con vịt)",
           "placeholder": "Nhập số con vịt..."
         },
-        "duration_sec": 90,
+        "duration_sec": 70,
         "immediate_reinforcer": {
-          "visual_asset": "particle_burst_gold",
-          "audio_cue": "sparkle_ting_short",
-          "dopamine_points": 35
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
         },
         "hints": [
-          "1200 - 720 = 480."
+          "1200 trừ 720 bằng 480 con."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": "480",
-          "feedback_on_error": "Số vịt là 480 con con nhé!"
+          "feedback_on_error": "1200 - 720 = 480 con vịt nha!"
         },
-        "mathematical_or_logical_goal": "Thực hiện phép trừ bù tập hợp",
-        "intermediate_output": "1200 - 720 = 480 (con vịt)",
+        "mathematical_or_logical_goal": "Thực hiện phép trừ",
+        "intermediate_output": "480 con vịt",
         "is_final_step": false
       },
       {
-        "step_id": 3,
+        "step_id": 4,
         "badge": "Ghi Đáp Số Vịt",
-        "action_verb": "Kết_luận",
-        "atomic_instruction": "Ghi đáp số 480 con vịt của trang trại.",
-        "text": "Ghi đáp số 480 con vịt của trang trại.",
+        "action_verb": "Chọn",
+        "atomic_instruction": "Chọn đáp số số con vịt của trang trại.",
+        "text": "Chọn đáp số số con vịt của trang trại.",
         "type": "single_choice",
         "ui_type": "single_choice",
         "ui_data": {
-          "prompt_text": "Đề bài hỏi số con vịt, vậy đáp số là:",
+          "prompt_text": "Đáp số số con vịt là:",
           "options": [
             "480 con vịt",
             "720 con gà",
             "600 con vịt"
           ]
         },
-        "duration_sec": 90,
+        "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "confetti_cannon",
-          "audio_cue": "harp_glissando_soft",
-          "dopamine_points": 45
+          "visual_asset": "chest_open_burst",
+          "audio_cue": "orchestral_fanfare_c6",
+          "dopamine_points": 30
         },
         "hints": [
-          "Đáp số là 480 con vịt."
+          "Chọn 480 con vịt."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": "480 con vịt",
-          "feedback_on_error": "Đáp số là 480 con vịt!"
+          "feedback_on_error": "Đáp số là 480 con vịt con nha!"
         },
-        "mathematical_or_logical_goal": "Kết luận",
+        "mathematical_or_logical_goal": "Kết luận đáp số",
         "intermediate_output": "480 con vịt",
         "is_final_step": true
       }
-    ]
+    ],
+    "exercise_type": "word_problem"
   },
   "G4_VIET_18": {
     "id": "G4_VIET_18",
@@ -2509,7 +2777,7 @@
     "island": "study",
     "reward": 140,
     "stepSeconds": 85,
-    "original_text": "Một mảnh đất hình bình hành có độ dài đáy là 24 m, chiều cao tương ứng là 15 m và độ dài cạnh bên là 18 m. Diện tích mảnh đất đó là:\nA. 360 m2\nB. 432 m2\nC. 78 m\nD. 180 m2",
+    "original_text": "Một mảnh đất hình bình hành có độ dài đáy là 24 m, chiều cao tương ứng là 15 m và độ dài cạnh bên là 18 m. Diện tích mảnh đất đó là là bao nhiêu?",
     "final_answer": {
       "value": "A",
       "unit": null,
@@ -2531,68 +2799,74 @@
     "steps": [
       {
         "step_id": 1,
-        "badge": "Nhớ Công Thức Diện Tích",
-        "action_verb": "Nhớ",
-        "atomic_instruction": "Nhớ công thức: diện tích bằng đáy nhân chiều cao.",
-        "text": "Nhớ công thức: diện tích bằng đáy nhân chiều cao.",
-        "type": "single_choice",
-        "ui_type": "single_choice",
+        "badge": "Tìm Dữ Kiện Đáy & Chiều Cao",
+        "action_verb": "Gạch_chân",
+        "atomic_instruction": "Gạch chân độ dài đáy 24 m, chiều cao 15 m và từ 'diện tích'.",
+        "text": "Gạch chân độ dài đáy 24 m, chiều cao 15 m và từ 'diện tích'.",
+        "type": "highlight",
+        "ui_type": "highlight",
         "ui_data": {
-          "prompt_text": "Công thức diện tích hình bình hành là:",
-          "options": [
-            "S = a x h",
-            "S = (a + b) x 2",
-            "S = a x b"
+          "prompt_text": "Một mảnh đất hình bình hành có độ dài đáy là 24 m, chiều cao tương ứng là 15 m và độ dài cạnh bên là 18 m. Diện tích mảnh đất đó là bao nhiêu?",
+          "highlight_target_segments": [
+            "đáy là 24 m",
+            "chiều cao tương ứng là 15 m",
+            "Diện tích"
           ]
         },
-        "duration_sec": 85,
+        "duration_sec": 70,
         "immediate_reinforcer": {
           "visual_asset": "sparkle_star_01",
           "audio_cue": "positive_bell_c6",
-          "dopamine_points": 25
+          "dopamine_points": 30
         },
         "hints": [
-          "Diện tích bình hành = Đáy nhân Chiều cao."
+          "Gạch chân đáy là 24 m, chiều cao tương ứng là 15 m và Diện tích."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "S = a x h",
-          "feedback_on_error": "S = a x h (đáy nhân chiều cao) con nhé!"
+          "expected_answer": [
+            "đáy là 24 m",
+            "chiều cao tương ứng là 15 m",
+            "Diện tích"
+          ],
+          "feedback_on_error": "Tìm đủ đáy 24m, chiều cao 15m và Diện tích nhé!"
         },
-        "mathematical_or_logical_goal": "Xác định công thức chuẩn",
-        "intermediate_output": "S = đáy x chiều cao",
+        "mathematical_or_logical_goal": "Lọc dữ kiện cốt lõi",
+        "intermediate_output": "đáy: 24m; cao: 15m; bỏ cạnh bên 18m",
         "is_final_step": false
       },
       {
         "step_id": 2,
-        "badge": "Bỏ Dữ Kiện Nhiễu",
-        "action_verb": "Lọc",
-        "atomic_instruction": "Chọn đáy 24m, cao 15m và bỏ cạnh bên 18m.",
-        "text": "Chọn đáy 24m, cao 15m và bỏ cạnh bên 18m.",
-        "type": "checkbox",
-        "ui_type": "checkbox",
+        "badge": "Nhớ Công Thức Diện Tích",
+        "action_verb": "Chọn",
+        "atomic_instruction": "Chọn công thức tính diện tích hình bình hành.",
+        "text": "Chọn công thức tính diện tích hình bình hành.",
+        "type": "single_choice",
+        "ui_type": "single_choice",
         "ui_data": {
-          "prompt_text": "Dữ kiện 18m cạnh bên là chi tiết gây nhiễu, cần bỏ qua?",
+          "prompt_text": "Công thức tính diện tích hình bình hành là:",
           "options": [
-            "Đúng, chỉ lấy 24m đáy và 15m chiều cao"
+            "S = a × h (Đáy × Chiều cao)",
+            "S = (a + b) × 2",
+            "S = a × b (Đáy × Cạnh bên)"
           ]
         },
-        "duration_sec": 85,
+        "duration_sec": 60,
         "immediate_reinforcer": {
           "visual_asset": "particle_burst_gold",
           "audio_cue": "sparkle_ting_short",
-          "dopamine_points": 25
+          "dopamine_points": 30
         },
         "hints": [
-          "Không nhân với cạnh bên 18m nha."
+          "Diện tích hình bình hành bằng Đáy nhân Chiều cao."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": true,
-          "feedback_on_error": "Đúng rồi, chỉ dùng đáy 24m và cao 15m thôi!"
+          "expected_answer": "S = a × h (Đáy × Chiều cao)",
+          "feedback_on_error": "S = a x h con nhé!"
         },
-        "mathematical_or_logical_goal": "Khử nhiễu dữ kiện (Inhibition control)",
-        "intermediate_output": "a = 24; h = 15 (bỏ 18)",
+        "mathematical_or_logical_goal": "Xác định công thức",
+        "intermediate_output": "S = a x h",
         "is_final_step": false
       },
       {
@@ -2604,24 +2878,24 @@
         "type": "text_input",
         "ui_type": "text_input",
         "ui_data": {
-          "prompt_text": "24 x 15 = ? (m2)",
+          "prompt_text": "24 × 15 = ? (m2)",
           "placeholder": "Nhập diện tích..."
         },
-        "duration_sec": 85,
+        "duration_sec": 70,
         "immediate_reinforcer": {
-          "visual_asset": "milo_thumbs_up",
-          "audio_cue": "gentle_pop_success",
-          "dopamine_points": 35
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
         },
         "hints": [
-          "24 x 10 = 240; 24 x 5 = 120; 240 + 120 = 360."
+          "24 x 10 = 240; 24 x 5 = 120 -> 240 + 120 = 360 m2."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": "360",
-          "feedback_on_error": "24 nhân 15 bằng 360 m2 con nhé!"
+          "feedback_on_error": "24 x 15 = 360 m2 nha con!"
         },
-        "mathematical_or_logical_goal": "Thực hiện phép tính nhân số có 2 chữ số",
+        "mathematical_or_logical_goal": "Thực hiện phép tính",
         "intermediate_output": "360 m2",
         "is_final_step": false
       },
@@ -2629,12 +2903,12 @@
         "step_id": 4,
         "badge": "Chọn Phương Án A",
         "action_verb": "Chọn",
-        "atomic_instruction": "Chọn phương án A có diện tích 360 m2.",
-        "text": "Chọn phương án A có diện tích 360 m2.",
+        "atomic_instruction": "Chọn phương án đúng trong đề trắc nghiệm.",
+        "text": "Chọn phương án đúng trong đề trắc nghiệm.",
         "type": "single_choice",
         "ui_type": "single_choice",
         "ui_data": {
-          "prompt_text": "Chọn đáp án trắc nghiệm đúng:",
+          "prompt_text": "Diện tích là 360 m2, tương ứng với đáp án nào?",
           "options": [
             "A. 360 m2",
             "B. 432 m2",
@@ -2642,22 +2916,22 @@
             "D. 180 m2"
           ]
         },
-        "duration_sec": 85,
+        "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "confetti_cannon",
-          "audio_cue": "harp_glissando_soft",
-          "dopamine_points": 45
+          "visual_asset": "chest_open_burst",
+          "audio_cue": "orchestral_fanfare_c6",
+          "dopamine_points": 30
         },
         "hints": [
-          "Chọn phương án A. 360 m2."
+          "Chọn A. 360 m2."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": "A. 360 m2",
-          "feedback_on_error": "Phương án A là đáp án chính xác!"
+          "feedback_on_error": "Đáp án đúng là A. 360 m2 con nhé!"
         },
-        "mathematical_or_logical_goal": "Khẳng định đáp án",
-        "intermediate_output": "Phương án A",
+        "mathematical_or_logical_goal": "Khoanh đáp án",
+        "intermediate_output": "A. 360 m2",
         "is_final_step": true
       }
     ]
@@ -2810,7 +3084,7 @@
     "island": "study",
     "reward": 160,
     "stepSeconds": 100,
-    "original_text": "Quãng đường AB dài 180 km. Cùng một lúc vào lúc 7 giờ sáng, một ô tô đi từ A về B với vận tốc 50 km/giờ và một xe máy đi từ B về A với vận tốc 40 km/giờ. Hỏi:\na) Sau bao lâu hai xe gặp nhau?\nb) Hai xe gặp nhau lúc mấy giờ?",
+    "original_text": "Quãng đường AB dài 180 km. Cùng một lúc vào lúc 7 giờ sáng, một ô tô đi từ A về B với vận tốc 50 km/giờ và một xe máy đi từ B về A với vận tốc 40 km/giờ.\n\nHỏi:\na) Sau bao lâu hai xe gặp nhau?\nb) Hai xe gặp nhau lúc mấy giờ?",
     "final_answer": {
       "value": "a) 2 giờ; b) 9 giờ",
       "unit": null,
@@ -2825,136 +3099,187 @@
       ]
     },
     "adhd_scaffolding_notes": {
-      "working_memory_pitfall": "Nhầm lẫn giữa 'thời gian đi' (khoảng thời gian 2 giờ) và 'thời điểm gặp' (mốc thời gian 9 giờ); nhầm vận tốc tổng với vận tốc hiệu.",
-      "executive_function_scaffolding": "Tách thành 2 chặng độc lập với câu hỏi con rõ ràng: Chặng 1: Tìm số giờ đi; Chặng 2: Cộng vào 7 giờ sáng.",
-      "visual_or_concrete_aid": "Trục thời gian và sơ đồ đoạn đường với hai mũi tên xe chạy hướng vào nhau."
+      "working_memory_pitfall": "Bài toán có 2 câu hỏi (a và b) dễ khiến trẻ bị ngợp và quên mất câu hỏi thứ hai.",
+      "executive_function_scaffolding": "Tách bài toán thành từng bước: (1) Tính tổng vận tốc, (2) Tính thời gian gặp (câu a), (3) Tính thời điểm gặp (câu b).",
+      "visual_or_concrete_aid": "Sơ đồ đoạn thẳng AB với 2 mũi tên chuyển động ngược chiều tiến lại gần nhau."
     },
     "steps": [
       {
         "step_id": 1,
+        "badge": "Tìm Dữ Kiện Chuyển Động",
+        "action_verb": "Gạch_chân",
+        "atomic_instruction": "Gạch chân 180 km, 50 km/giờ, 40 km/giờ và sau bao lâu.",
+        "text": "Gạch chân 180 km, 50 km/giờ, 40 km/giờ và sau bao lâu.",
+        "type": "highlight",
+        "ui_type": "highlight",
+        "ui_data": {
+          "prompt_text": "Quãng đường AB dài 180 km. Cùng một lúc vào lúc 7 giờ sáng, một ô tô đi từ A về B với vận tốc 50 km/giờ và một xe máy đi từ B về A với vận tốc 40 km/giờ.\n\nHỏi:\na) Sau bao lâu hai xe gặp nhau?\nb) Hai xe gặp nhau lúc mấy giờ?",
+          "highlight_target_segments": [
+            "180 km",
+            "50 km/giờ",
+            "40 km/giờ",
+            "sau bao lâu"
+          ]
+        },
+        "duration_sec": 70,
+        "immediate_reinforcer": {
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
+        },
+        "hints": [
+          "Gạch chân 180 km, 50 km/giờ, 40 km/giờ và 'sau bao lâu' nhé!"
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": [
+            "180 km",
+            "50 km/giờ",
+            "40 km/giờ",
+            "sau bao lâu"
+          ],
+          "feedback_on_error": "Milo cùng con tìm 180 km, hai vận tốc và 'sau bao lâu' nha!"
+        },
+        "mathematical_or_logical_goal": "Nhận diện dữ kiện chuyển động ngược chiều",
+        "intermediate_output": "S: 180km; v1: 50; v2: 40",
+        "is_final_step": false
+      },
+      {
+        "step_id": 2,
         "badge": "Tính Tổng Vận Tốc",
-        "action_verb": "Cộng",
-        "atomic_instruction": "Cộng vận tốc ô tô 50 và xe máy 40.",
-        "text": "Cộng vận tốc ô tô 50 và xe máy 40.",
+        "action_verb": "Tính",
+        "atomic_instruction": "Đặt tính cộng dọc để tính tổng vận tốc hai xe: lấy 50 cộng 40.",
+        "text": "Đặt tính cộng dọc để tính tổng vận tốc hai xe: lấy 50 cộng 40.",
         "type": "text_input",
         "ui_type": "text_input",
         "ui_data": {
           "prompt_text": "50 + 40 = ? (km/giờ)",
           "placeholder": "Nhập tổng vận tốc..."
         },
-        "duration_sec": 100,
+        "duration_sec": 60,
         "immediate_reinforcer": {
           "visual_asset": "sparkle_star_01",
           "audio_cue": "positive_bell_c6",
-          "dopamine_points": 25
+          "dopamine_points": 30
         },
         "hints": [
-          "Hai xe đi ngược chiều, cộng hai vận tốc lại."
+          "Đặt tính cộng 50 + 40 = 90 km/giờ."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "90",
+          "expected_answer": [
+            "90",
+            "90 km/giờ"
+          ],
           "feedback_on_error": "50 + 40 = 90 km/giờ con nhé!"
         },
-        "mathematical_or_logical_goal": "Tính tổng vận tốc hai chuyển động",
-        "intermediate_output": "50 + 40 = 90 (km/giờ)",
-        "is_final_step": false
-      },
-      {
-        "step_id": 2,
-        "badge": "Tính Thời Gian Gặp",
-        "action_verb": "Chia",
-        "atomic_instruction": "Lấy quãng đường 180 chia tổng vận tốc 90.",
-        "text": "Lấy quãng đường 180 chia tổng vận tốc 90.",
-        "type": "text_input",
-        "ui_type": "text_input",
-        "ui_data": {
-          "prompt_text": "180 : 90 = ? (giờ)",
-          "placeholder": "Nhập thời gian đi..."
-        },
-        "duration_sec": 100,
-        "immediate_reinforcer": {
-          "visual_asset": "particle_burst_gold",
-          "audio_cue": "sparkle_ting_short",
-          "dopamine_points": 35
-        },
-        "hints": [
-          "180 chia 90 bằng 2 giờ."
-        ],
-        "success_criteria": {
-          "evaluation_type": "exact_match",
-          "expected_answer": "2",
-          "feedback_on_error": "Sau 2 giờ hai xe gặp nhau con nhé!"
-        },
-        "mathematical_or_logical_goal": "Tính thời gian gặp nhau (t = s : v_tong)",
-        "intermediate_output": "180 : 90 = 2 (giờ)",
+        "mathematical_or_logical_goal": "Tính tổng vận tốc",
+        "intermediate_output": "90 km/giờ",
         "is_final_step": false
       },
       {
         "step_id": 3,
-        "badge": "Tính Thời Điểm Gặp",
-        "action_verb": "Cộng",
-        "atomic_instruction": "Cộng giờ xuất phát 7 giờ với 2 giờ đi.",
-        "text": "Cộng giờ xuất phát 7 giờ với 2 giờ đi.",
+        "badge": "Thời Gian Gặp Nhau (Ý a)",
+        "action_verb": "Tính",
+        "atomic_instruction": "Tính thời gian hai xe gặp nhau: lấy quãng đường 180 chia tổng vận tốc 90.",
+        "text": "Tính thời gian hai xe gặp nhau: lấy quãng đường 180 chia tổng vận tốc 90.",
         "type": "text_input",
         "ui_type": "text_input",
         "ui_data": {
-          "prompt_text": "7 + 2 = ? (giờ sáng)",
-          "placeholder": "Nhập thời điểm gặp nhau..."
+          "prompt_text": "180 : 90 = ? (giờ)",
+          "placeholder": "Nhập số giờ..."
         },
-        "duration_sec": 100,
+        "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "milo_thumbs_up",
-          "audio_cue": "gentle_pop_success",
-          "dopamine_points": 35
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
         },
         "hints": [
-          "Xuất phát lúc 7 giờ, đi 2 giờ là 9 giờ sáng."
+          "180 : 90 = 2 giờ."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "9",
-          "feedback_on_error": "Hai xe gặp nhau lúc 9 giờ sáng!"
+          "expected_answer": [
+            "2",
+            "2 giờ"
+          ],
+          "feedback_on_error": "180 : 90 = 2 giờ con nhé!"
         },
-        "mathematical_or_logical_goal": "Chuyển đổi thời lượng sang mốc thời gian",
-        "intermediate_output": "7 + 2 = 9 (giờ sáng)",
+        "mathematical_or_logical_goal": "Tính thời gian chuyển động (câu a)",
+        "intermediate_output": "2 giờ",
         "is_final_step": false
       },
       {
         "step_id": 4,
-        "badge": "Ghi Đủ Hai Câu",
-        "action_verb": "Kết_luận",
-        "atomic_instruction": "Chọn đáp án ghi rõ cả 2 giờ và 9 giờ.",
-        "text": "Chọn đáp án ghi rõ cả 2 giờ và 9 giờ.",
-        "type": "single_choice",
-        "ui_type": "single_choice",
+        "badge": "Thời Điểm Gặp Nhau (Ý b)",
+        "action_verb": "Tính",
+        "atomic_instruction": "Đặt tính cộng dọc: xuất phát lúc 7 giờ, đi 2 giờ thì gặp nhau. Lấy 7 cộng 2.",
+        "text": "Đặt tính cộng dọc: xuất phát lúc 7 giờ, đi 2 giờ thì gặp nhau. Lấy 7 cộng 2.",
+        "type": "text_input",
+        "ui_type": "text_input",
         "ui_data": {
-          "prompt_text": "Đáp số câu a và câu b là:",
-          "options": [
-            "a) 2 giờ; b) 9 giờ sáng",
-            "a) 3 giờ; b) 10 giờ sáng",
-            "a) 2 giờ; b) 8 giờ sáng"
-          ]
+          "prompt_text": "7 + 2 = ? (giờ sáng)",
+          "placeholder": "Nhập thời điểm gặp..."
         },
-        "duration_sec": 100,
+        "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "confetti_cannon",
-          "audio_cue": "harp_glissando_soft",
-          "dopamine_points": 50
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
         },
         "hints": [
-          "a) 2 giờ; b) 9 giờ sáng."
+          "Đặt tính cộng 7 + 2 = 9 giờ sáng."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "a) 2 giờ; b) 9 giờ sáng",
-          "feedback_on_error": "Đáp số là a) 2 giờ; b) 9 giờ sáng!"
+          "expected_answer": [
+            "9",
+            "9 giờ",
+            "9 giờ sáng"
+          ],
+          "feedback_on_error": "7 + 2 = 9 giờ sáng con nhé!"
         },
-        "mathematical_or_logical_goal": "Kết luận toàn diện đa câu hỏi",
-        "intermediate_output": "a) 2 giờ; b) 9 giờ sáng",
+        "mathematical_or_logical_goal": "Tính thời điểm gặp nhau (câu b)",
+        "intermediate_output": "9 giờ sáng",
+        "is_final_step": false
+      },
+      {
+        "step_id": 5,
+        "badge": "Tổng Kết Đáp Số",
+        "action_verb": "Chọn",
+        "atomic_instruction": "Chọn đáp án hoàn chỉnh cho cả hai câu hỏi a và b.",
+        "text": "Chọn đáp án hoàn chỉnh cho cả hai câu hỏi a và b.",
+        "type": "single_choice",
+        "ui_type": "single_choice",
+        "ui_data": {
+          "prompt_text": "Đáp số cho cả 2 câu hỏi a) và b) là:",
+          "options": [
+            "a) 2 giờ ; b) 9 giờ sáng",
+            "a) 3 giờ ; b) 10 giờ sáng",
+            "a) 2 giờ ; b) 8 giờ sáng"
+          ]
+        },
+        "duration_sec": 60,
+        "immediate_reinforcer": {
+          "visual_asset": "chest_open_burst",
+          "audio_cue": "orchestral_fanfare_c6",
+          "dopamine_points": 40
+        },
+        "hints": [
+          "a) Sau 2 giờ; b) Gặp nhau lúc 9 giờ sáng."
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": "a) 2 giờ ; b) 9 giờ sáng",
+          "feedback_on_error": "Đáp án đúng là: a) 2 giờ ; b) 9 giờ sáng con nhé!"
+        },
+        "mathematical_or_logical_goal": "Tổng kết kết quả bài toán 2 ý",
+        "intermediate_output": "a) 2 giờ ; b) 9 giờ sáng",
         "is_final_step": true
       }
-    ]
+    ],
+    "exercise_type": "word_problem"
   },
   "G5_MATH_22": {
     "id": "G5_MATH_22",
@@ -2981,46 +3306,123 @@
     },
     "adhd_scaffolding_notes": {
       "working_memory_pitfall": "Quên đổi từ m3 sang dm3 (lấy 3,6 x 60% = 2,16 lít) hoặc nhân nhầm hệ số đổi đơn vị thể tích là 100 thay vì 1000.",
-      "executive_function_scaffolding": "Mẹo neo trí nhớ: 'Mét khối sang Đề-xi-mét khối phải có 3 chữ số 0 (nhân 1000)'.",
+      "executive_function_scaffolding": "Đặt tính dọc số thập phân 1,5 x 2 = 3 m2 và 1,2 x 3 = 3,6 m3. Sau đó đổi sang lít (3600 lít), tính 1% (36 lít) và nhân dọc 36 x 60 = 2160 lít.",
       "visual_or_concrete_aid": "Bể nước 3D có vạch nước dâng lên mức 60%."
     },
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tính Thể Tích Bể",
-        "action_verb": "Nhân",
-        "atomic_instruction": "Nhân 2m với 1,5m rồi nhân 1,2m chiều cao.",
-        "text": "Nhân 2m với 1,5m rồi nhân 1,2m chiều cao.",
-        "type": "text_input",
-        "ui_type": "text_input",
+        "badge": "Tìm Kích Thước & Lượng Nước",
+        "action_verb": "Gạch_chân",
+        "atomic_instruction": "Gạch chân chiều dài 2 m, chiều rộng 1,5 m, chiều cao 1,2 m và 60%.",
+        "text": "Gạch chân chiều dài 2 m, chiều rộng 1,5 m, chiều cao 1,2 m và 60%.",
+        "type": "highlight",
+        "ui_type": "highlight",
         "ui_data": {
-          "prompt_text": "2 x 1,5 x 1,2 = ? (m3)",
-          "placeholder": "Nhập thể tích bể..."
+          "prompt_text": "Một bể nước dạng hình hộp chữ nhật có kích thước bên trong lòng bể là: chiều dài 2 m, chiều rộng 1,5 m và chiều cao 1,2 m. Hiện tại lượng nước trong bể chiếm 60% thể tích bể. Hỏi trong bể đang có bao nhiêu lít nước?",
+          "highlight_target_segments": [
+            "chiều dài 2 m",
+            "chiều rộng 1,5 m",
+            "chiều cao 1,2 m",
+            "60%"
+          ]
         },
-        "duration_sec": 100,
+        "duration_sec": 80,
         "immediate_reinforcer": {
           "visual_asset": "sparkle_star_01",
           "audio_cue": "positive_bell_c6",
-          "dopamine_points": 25
+          "dopamine_points": 30
         },
         "hints": [
-          "2 x 1,5 = 3; 3 x 1,2 = 3,6 m3."
+          "Gạch chân dài 2m, rộng 1,5m, cao 1,2m và 60%."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "3.6",
-          "feedback_on_error": "Thể tích là 3,6 m3 con nhé!"
+          "expected_answer": [
+            "chiều dài 2 m",
+            "chiều rộng 1,5 m",
+            "chiều cao 1,2 m",
+            "60%"
+          ],
+          "feedback_on_error": "Tìm đủ 4 kích thước và tỉ lệ nhé con!"
         },
-        "mathematical_or_logical_goal": "Tính thể tích hình hộp chữ nhật",
-        "intermediate_output": "2 x 1,5 x 1,2 = 3,6 (m3)",
+        "mathematical_or_logical_goal": "Trích xuất dữ kiện thể tích",
+        "intermediate_output": "2m x 1,5m x 1,2m; nước 60%",
         "is_final_step": false
       },
       {
         "step_id": 2,
+        "badge": "Tính Diện Tích Đáy Bể",
+        "action_verb": "Tính",
+        "atomic_instruction": "Đặt tính nhân dọc: lấy 1,5 nhân 2 để tìm diện tích đáy bể.",
+        "text": "Đặt tính nhân dọc: lấy 1,5 nhân 2 để tìm diện tích đáy bể.",
+        "type": "text_input",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "1,5 × 2 = ? (m2)",
+          "placeholder": "Nhập diện tích đáy..."
+        },
+        "duration_sec": 60,
+        "immediate_reinforcer": {
+          "visual_asset": "particle_burst_gold",
+          "audio_cue": "sparkle_ting_short",
+          "dopamine_points": 30
+        },
+        "hints": [
+          "Đặt tính nhân 1,5 x 2 = 3 m2."
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": [
+            "3",
+            "3,0",
+            "3.0"
+          ],
+          "feedback_on_error": "1,5 x 2 = 3 m2 con nhé!"
+        },
+        "mathematical_or_logical_goal": "Tính diện tích đáy bể (đặt tính dọc số thập phân)",
+        "intermediate_output": "3 m2",
+        "is_final_step": false
+      },
+      {
+        "step_id": 3,
+        "badge": "Tính Thể Tích Bể",
+        "action_verb": "Tính",
+        "atomic_instruction": "Đặt tính nhân dọc: lấy 1,2 nhân 3 để tìm thể tích bể.",
+        "text": "Đặt tính nhân dọc: lấy 1,2 nhân 3 để tìm thể tích bể.",
+        "type": "text_input",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "1,2 × 3 = ? (m3)",
+          "placeholder": "Nhập thể tích bể..."
+        },
+        "duration_sec": 60,
+        "immediate_reinforcer": {
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
+        },
+        "hints": [
+          "Đặt tính nhân 1,2 x 3 = 3,6 m3."
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": [
+            "3.6",
+            "3,6"
+          ],
+          "feedback_on_error": "1,2 x 3 = 3,6 m3 con nha!"
+        },
+        "mathematical_or_logical_goal": "Tính thể tích bể (đặt tính dọc số thập phân)",
+        "intermediate_output": "3.6 m3",
+        "is_final_step": false
+      },
+      {
+        "step_id": 4,
         "badge": "Đổi Mét Khối Sang Lít",
         "action_verb": "Đổi",
-        "atomic_instruction": "Đổi 3,6 mét khối sang 3600 lít.",
-        "text": "Đổi 3,6 mét khối sang 3600 lít.",
+        "atomic_instruction": "Đổi 3,6 mét khối sang lít (1 m3 = 1000 lít).",
+        "text": "Đổi 3,6 mét khối sang lít (1 m3 = 1000 lít).",
         "type": "single_choice",
         "ui_type": "single_choice",
         "ui_data": {
@@ -3031,89 +3433,86 @@
             "3,6 m3 = 36000 lít"
           ]
         },
-        "duration_sec": 100,
+        "duration_sec": 60,
         "immediate_reinforcer": {
           "visual_asset": "particle_burst_gold",
           "audio_cue": "sparkle_ting_short",
           "dopamine_points": 30
         },
         "hints": [
-          "Nhân 3,6 với 1000 ra 3600 lít."
+          "3,6 x 1000 = 3600 lít."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": "3,6 m3 = 3600 lít",
-          "feedback_on_error": "3,6 m3 = 3600 dm3 = 3600 lít nha!"
+          "feedback_on_error": "1 m3 = 1000 lít nên 3,6 m3 = 3600 lít con nhé!"
         },
-        "mathematical_or_logical_goal": "Đổi đơn vị đo thể tích: 1 m3 = 1000 dm3",
-        "intermediate_output": "3,6 m3 = 3600 dm3 = 3600 lít",
+        "mathematical_or_logical_goal": "Đổi đơn vị đo thể tích sang dung tích",
+        "intermediate_output": "3600 lít",
         "is_final_step": false
       },
       {
-        "step_id": 3,
-        "badge": "Tính 60% Lượng Nước",
+        "step_id": 5,
+        "badge": "Tính 1% Thể Tích Bể",
         "action_verb": "Tính",
-        "atomic_instruction": "Lấy 3600 lít nhân 60 rồi chia 100.",
-        "text": "Lấy 3600 lít nhân 60 rồi chia 100.",
+        "atomic_instruction": "Tìm 1% thể tích bể bằng cách lấy 3600 chia 100.",
+        "text": "Tìm 1% thể tích bể bằng cách lấy 3600 chia 100.",
         "type": "text_input",
         "ui_type": "text_input",
         "ui_data": {
-          "prompt_text": "3600 x 60 : 100 = ? (lít nước)",
-          "placeholder": "Nhập lượng nước có trong bể..."
+          "prompt_text": "3600 : 100 = ? (lít)",
+          "placeholder": "Nhập số lít..."
         },
-        "duration_sec": 100,
+        "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "milo_thumbs_up",
-          "audio_cue": "gentle_pop_success",
-          "dopamine_points": 35
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
         },
         "hints": [
-          "3600 x 0,6 = 2160 lít."
+          "3600 : 100 = 36 lít."
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": "36",
+          "feedback_on_error": "3600 : 100 = 36 lít con nhé!"
+        },
+        "mathematical_or_logical_goal": "Tính giá trị 1% làm bước đệm",
+        "intermediate_output": "36 lít",
+        "is_final_step": false
+      },
+      {
+        "step_id": 6,
+        "badge": "Tính Lượng Nước 60%",
+        "action_verb": "Tính",
+        "atomic_instruction": "Đặt tính nhân dọc: lấy 36 nhân 60 để tìm lượng nước trong bể.",
+        "text": "Đặt tính nhân dọc: lấy 36 nhân 60 để tìm lượng nước trong bể.",
+        "type": "text_input",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "36 × 60 = ? (lít nước)",
+          "placeholder": "Nhập số lít nước..."
+        },
+        "duration_sec": 70,
+        "immediate_reinforcer": {
+          "visual_asset": "chest_open_burst",
+          "audio_cue": "orchestral_fanfare_c6",
+          "dopamine_points": 40
+        },
+        "hints": [
+          "Đặt tính nhân 36 x 60 = 2160 lít."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": "2160",
-          "feedback_on_error": "Lượng nước là 2160 lít con nha!"
+          "feedback_on_error": "Lượng nước trong bể là 2160 lít con nha!"
         },
-        "mathematical_or_logical_goal": "Tìm giá trị phần trăm của một số",
-        "intermediate_output": "3600 x 60 / 100 = 2160 (lít)",
-        "is_final_step": false
-      },
-      {
-        "step_id": 4,
-        "badge": "Ghi Đáp Số Lít",
-        "action_verb": "Kết_luận",
-        "atomic_instruction": "Ghi đáp số 2160 lít nước trong bể.",
-        "text": "Ghi đáp số 2160 lít nước trong bể.",
-        "type": "single_choice",
-        "ui_type": "single_choice",
-        "ui_data": {
-          "prompt_text": "Đáp số lượng nước đang có là:",
-          "options": [
-            "2160 lít",
-            "3600 lít",
-            "216 lít"
-          ]
-        },
-        "duration_sec": 100,
-        "immediate_reinforcer": {
-          "visual_asset": "confetti_cannon",
-          "audio_cue": "harp_glissando_soft",
-          "dopamine_points": 50
-        },
-        "hints": [
-          "Đáp số là 2160 lít."
-        ],
-        "success_criteria": {
-          "evaluation_type": "exact_match",
-          "expected_answer": "2160 lít",
-          "feedback_on_error": "Đáp số là 2160 lít nước!"
-        },
-        "mathematical_or_logical_goal": "Kết luận bài toán",
+        "mathematical_or_logical_goal": "Đặt tính nhân tìm giá trị 60%",
         "intermediate_output": "2160 lít",
         "is_final_step": true
       }
-    ]
+    ],
+    "exercise_type": "word_problem"
   },
   "G5_VIET_23": {
     "id": "G5_VIET_23",
@@ -3261,7 +3660,7 @@
     "island": "study",
     "reward": 150,
     "stepSeconds": 90,
-    "original_text": "Giá một chiếc cặp sách đầu năm là 200 000 đồng. Nhân dịp khai giảng, cửa hàng giảm giá 15%. Đến tuần lễ vàng, cửa hàng lại giảm tiếp 10% trên giá đã giảm. Hỏi sau hai lần giảm giá, chiếc cặp sách đó có giá là bao nhiêu?\nA. 150 000 đồng\nB. 153 000 đồng\nC. 170 000 đồng\nD. 147 000 đồng",
+    "original_text": "Giá một chiếc cặp sách đầu năm là 200 000 đồng. Nhân dịp khai giảng, cửa hàng giảm giá 15%. Đến tuần lễ vàng, cửa hàng lại giảm tiếp 10% trên giá đã giảm. Hỏi sau hai lần giảm giá, chiếc cặp sách đó có giá là bao nhiêu?",
     "final_answer": {
       "value": "B",
       "unit": null,
@@ -3277,51 +3676,59 @@
     },
     "adhd_scaffolding_notes": {
       "working_memory_pitfall": "Bị cám dỗ bởi phép tính nhẩm nhanh 15 + 10 = 25% dẫn thẳng vào bẫy đáp án A.",
-      "executive_function_scaffolding": "Thiết lập chốt chặn quy tắc: 'Không được cộng hai tỉ số phần trăm khi gốc tính tiền thay đổi'.",
+      "executive_function_scaffolding": "Rút số ngắn: 1% của 200 000đ là 2000đ. Đặt tính nhân 2000 x 15 có 2 dòng tích riêng rồi cộng lại ra 30 000đ. Sau đó trừ dọc tìm giá sau lần 1 (170 000đ). Lần 2 giảm 10% (17 000đ), trừ dọc ra 153 000đ.",
       "visual_or_concrete_aid": "Nhãn giá hạ bậc thang: Giá 200 000 -> Giảm 15% còn 170 000 -> Giảm 10% còn 153 000."
     },
     "steps": [
       {
         "step_id": 1,
-        "badge": "Giá Sau Giảm Lần Một",
-        "action_verb": "Tính",
-        "atomic_instruction": "Tính 200 000 nhân 85% ra giá lần một.",
-        "text": "Tính 200 000 nhân 85% ra giá lần một.",
-        "type": "text_input",
-        "ui_type": "text_input",
+        "badge": "Tìm Dữ Kiện Giá Gốc & Tỉ Lệ Giảm",
+        "action_verb": "Gạch_chân",
+        "atomic_instruction": "Gạch chân 200 000 đồng, giảm giá 15% và giảm tiếp 10% trên giá đã giảm.",
+        "text": "Gạch chân 200 000 đồng, giảm giá 15% và giảm tiếp 10% trên giá đã giảm.",
+        "type": "highlight",
+        "ui_type": "highlight",
         "ui_data": {
-          "prompt_text": "200 000 x 0,85 = ? (đồng)",
-          "placeholder": "Nhập giá lần 1..."
+          "prompt_text": "Giá một chiếc cặp sách đầu năm là 200 000 đồng. Nhân dịp khai giảng, cửa hàng giảm giá 15%. Đến tuần lễ vàng, cửa hàng lại giảm tiếp 10% trên giá đã giảm. Hỏi sau hai lần giảm giá, chiếc cặp sách đó có giá là bao nhiêu?",
+          "highlight_target_segments": [
+            "200 000 đồng",
+            "giảm giá 15%",
+            "giảm tiếp 10% trên giá đã giảm"
+          ]
         },
-        "duration_sec": 90,
+        "duration_sec": 80,
         "immediate_reinforcer": {
           "visual_asset": "sparkle_star_01",
           "audio_cue": "positive_bell_c6",
           "dopamine_points": 30
         },
         "hints": [
-          "200 000 x (100% - 15%) = 170 000 đồng."
+          "Gạch chân 200 000 đồng, giảm giá 15% và giảm tiếp 10% trên giá đã giảm."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "170000",
-          "feedback_on_error": "Giá sau lần 1 là 170 000 đồng con nhé!"
+          "expected_answer": [
+            "200 000 đồng",
+            "giảm giá 15%",
+            "giảm tiếp 10% trên giá đã giảm"
+          ],
+          "feedback_on_error": "Tìm đủ 3 dữ kiện quan trọng nhé!"
         },
-        "mathematical_or_logical_goal": "Tính giá trị sau lần chiết khấu 1",
-        "intermediate_output": "200 000 x 0,85 = 170 000 (đồng)",
+        "mathematical_or_logical_goal": "Định vị dữ kiện tỉ số % thay đổi gốc tính",
+        "intermediate_output": "Gốc: 200.000đ; giảm 15%; giảm tiếp 10%",
         "is_final_step": false
       },
       {
         "step_id": 2,
-        "badge": "Giá Sau Giảm Lần Hai",
+        "badge": "Tính Tiền Giảm Lần 1 (2 Dòng Tích Riêng)",
         "action_verb": "Tính",
-        "atomic_instruction": "Tính 170 000 nhân 90% ra giá lần hai.",
-        "text": "Tính 170 000 nhân 90% ra giá lần hai.",
+        "atomic_instruction": "Giá gốc 200 000đ (1% là 2000đ). Đặt tính nhân 2000 với 15, điền 2 dòng tích riêng rồi cộng lại.",
+        "text": "Giá gốc 200 000đ (1% là 2000đ). Đặt tính nhân 2000 với 15, điền 2 dòng tích riêng rồi cộng lại.",
         "type": "text_input",
         "ui_type": "text_input",
         "ui_data": {
-          "prompt_text": "170 000 x 0,9 = ? (đồng)",
-          "placeholder": "Nhập giá lần 2..."
+          "prompt_text": "2000 × 15 = ? (đồng)",
+          "placeholder": "Nhập tiền giảm lần 1..."
         },
         "duration_sec": 90,
         "immediate_reinforcer": {
@@ -3330,53 +3737,156 @@
           "dopamine_points": 35
         },
         "hints": [
-          "170 000 x (100% - 10%) = 153 000 đồng."
+          "Tích riêng 1: 2000 x 5 = 10000. Tích riêng 2: 2000 x 1 = 2000. Cộng lại được 30000."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "153000",
-          "feedback_on_error": "Giá cuối cùng là 153 000 đồng nha!"
+          "expected_answer": [
+            "30000",
+            "30 000"
+          ],
+          "feedback_on_error": "2000 x 15 = 30 000 đồng con nhé!"
         },
-        "mathematical_or_logical_goal": "Tính giá trị sau lần chiết khấu 2",
-        "intermediate_output": "170 000 x 0,9 = 153 000 (đồng)",
+        "mathematical_or_logical_goal": "Đặt tính nhân 2 chữ số có các dòng tích riêng",
+        "intermediate_output": "30 000 đồng",
         "is_final_step": false
       },
       {
         "step_id": 3,
-        "badge": "Chọn Phương Án B",
+        "badge": "Giá Cặp Sau Lần Giảm 1",
+        "action_verb": "Tính",
+        "atomic_instruction": "Đặt tính trừ dọc: lấy giá gốc 200 000 trừ số tiền giảm 30 000.",
+        "text": "Đặt tính trừ dọc: lấy giá gốc 200 000 trừ số tiền giảm 30 000.",
+        "type": "text_input",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "200000 - 30000 = ? (đồng)",
+          "placeholder": "Nhập giá sau lần 1..."
+        },
+        "duration_sec": 80,
+        "immediate_reinforcer": {
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
+        },
+        "hints": [
+          "200 000 - 30 000 = 170 000 đồng."
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": [
+            "170000",
+            "170 000"
+          ],
+          "feedback_on_error": "200 000 - 30 000 = 170 000 đồng con nhé!"
+        },
+        "mathematical_or_logical_goal": "Đặt tính trừ tìm giá trị sau lần giảm 1",
+        "intermediate_output": "170 000 đồng",
+        "is_final_step": false
+      },
+      {
+        "step_id": 4,
+        "badge": "Tính Tiền Giảm Lần 2 (10%)",
+        "action_verb": "Tính",
+        "atomic_instruction": "Giá mới 170 000đ (1% là 1700đ). Đặt tính nhân tìm số tiền giảm: lấy 1700 nhân 10.",
+        "text": "Giá mới 170 000đ (1% là 1700đ). Đặt tính nhân tìm số tiền giảm: lấy 1700 nhân 10.",
+        "type": "text_input",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "1700 × 10 = ? (đồng)",
+          "placeholder": "Nhập tiền giảm lần 2..."
+        },
+        "duration_sec": 80,
+        "immediate_reinforcer": {
+          "visual_asset": "particle_burst_gold",
+          "audio_cue": "sparkle_ting_short",
+          "dopamine_points": 30
+        },
+        "hints": [
+          "1700 x 10 = 17 000 đồng."
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": [
+            "17000",
+            "17 000"
+          ],
+          "feedback_on_error": "1700 x 10 = 17 000 đồng con nhé!"
+        },
+        "mathematical_or_logical_goal": "Đặt tính nhân tìm tiền giảm lần 2",
+        "intermediate_output": "17 000 đồng",
+        "is_final_step": false
+      },
+      {
+        "step_id": 5,
+        "badge": "Giá Cặp Sau Hai Lần Giảm",
+        "action_verb": "Tính",
+        "atomic_instruction": "Đặt tính trừ dọc: lấy giá 170 000 trừ số tiền giảm 17 000.",
+        "text": "Đặt tính trừ dọc: lấy giá 170 000 trừ số tiền giảm 17 000.",
+        "type": "text_input",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "170000 - 17000 = ? (đồng)",
+          "placeholder": "Nhập giá sau lần 2..."
+        },
+        "duration_sec": 80,
+        "immediate_reinforcer": {
+          "visual_asset": "sparkle_star_01",
+          "audio_cue": "positive_bell_c6",
+          "dopamine_points": 30
+        },
+        "hints": [
+          "170 000 - 17 000 = 153 000 đồng."
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": [
+            "153000",
+            "153 000"
+          ],
+          "feedback_on_error": "170 000 - 17 000 = 153 000 đồng con nhé!"
+        },
+        "mathematical_or_logical_goal": "Đặt tính trừ tìm kết quả cuối",
+        "intermediate_output": "153 000 đồng",
+        "is_final_step": false
+      },
+      {
+        "step_id": 6,
+        "badge": "Chọn Đáp Án Đúng",
         "action_verb": "Chọn",
-        "atomic_instruction": "Chọn phương án B có giá 153 000 đồng.",
-        "text": "Chọn phương án B có giá 153 000 đồng.",
+        "atomic_instruction": "Sau 2 lần giảm giá, chiếc cặp sách có giá là 153 000 đồng. Chọn đáp án đúng:",
+        "text": "Sau 2 lần giảm giá, chiếc cặp sách có giá là 153 000 đồng. Chọn đáp án đúng:",
         "type": "single_choice",
         "ui_type": "single_choice",
         "ui_data": {
-          "prompt_text": "Chọn phương án trắc nghiệm đúng:",
+          "prompt_text": "Chiếc cặp sau hai lần giảm giá có giá là:",
           "options": [
             "A. 150 000 đồng",
             "B. 153 000 đồng",
-            "C. 170 000 đồng",
-            "D. 147 000 đồng"
+            "C. 160 000 đồng",
+            "D. 170 000 đồng"
           ]
         },
-        "duration_sec": 90,
+        "duration_sec": 60,
         "immediate_reinforcer": {
-          "visual_asset": "confetti_cannon",
-          "audio_cue": "harp_glissando_soft",
-          "dopamine_points": 50
+          "visual_asset": "chest_open_burst",
+          "audio_cue": "orchestral_fanfare_c6",
+          "dopamine_points": 40
         },
         "hints": [
-          "Phương án B: 153 000 đồng."
+          "Đáp án là B. 153 000 đồng."
         ],
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": "B. 153 000 đồng",
-          "feedback_on_error": "Phương án B là đáp án chính xác!"
+          "feedback_on_error": "Đáp án đúng là B con nha!"
         },
-        "mathematical_or_logical_goal": "Khẳng định đáp án",
-        "intermediate_output": "Phương án B",
+        "mathematical_or_logical_goal": "Chọn đáp án trắc nghiệm",
+        "intermediate_output": "B. 153 000 đồng",
         "is_final_step": true
       }
-    ]
+    ],
+    "exercise_type": "word_problem"
   },
   "G5_ENG_25": {
     "id": "G5_ENG_25",
@@ -3389,7 +3899,7 @@
     "island": "study",
     "reward": 140,
     "stepSeconds": 80,
-    "original_text": "Read the story:\n'Last summer, Nam went to Da Nang with his parents. They visited Ba Na Hills and took a cable car to the Golden Bridge. The weather was cool and sunny. Nam took lots of beautiful photos. On the last day, they bought some seafood and souvenirs before taking a plane back to Ha Noi.'\nQuestion: How did Nam and his family travel back to Ha Noi?\nA. By train\nB. By coach\nC. By plane\nD. By boat",
+    "original_text": "Read the story:\n'Last summer, Nam went to Da Nang with his parents. They visited Ba Na Hills and took a cable car to the Golden Bridge. The weather was cool and sunny. Nam took lots of beautiful photos. On the last day, they bought some seafood and souvenirs before taking a plane back to Ha Noi.'\nQuestion: How did Nam and his family travel back to Ha Noi?",
     "final_answer": {
       "value": "C",
       "unit": null,
@@ -4010,5 +4520,73 @@
         "is_final_step": true
       }
     ]
+  },
+  "G5_DEMO_DECIMAL": {
+    "id": "G5_DEMO_DECIMAL",
+    "grade": 5,
+    "subject": "Toán",
+    "cat": "math",
+    "catName": "Toán GDPT 2018",
+    "icon": "🧪",
+    "title": "🧪 [MẪU THỬ NGHIỆM] Nhân Số Thập Phân: 25,8 × 1,5",
+    "island": "study",
+    "reward": 100,
+    "stepSeconds": 120,
+    "original_text": "Mẫu thử nghiệm so sánh 3 phương án giao diện đặt tính nhân số thập phân kinh điển: 25,8 × 1,5.",
+    "final_answer": {
+      "value": "38.7",
+      "unit": null,
+      "normalized_display": "38,70",
+      "acceptable_variants": [
+        "38.7",
+        "38,7",
+        "38.70",
+        "38,70"
+      ]
+    },
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Thử nghiệm 3 phong cách giao diện trực quan cho trẻ ADHD.",
+      "executive_function_scaffolding": "Phương án 1 (Lưới khít SGK), Phương án 2 (Vở ô ly), Phương án 3 (Thanh trượt chấm phẩy).",
+      "visual_or_concrete_aid": "Thanh chọn 3 phương án trực tiếp trên đầu thẻ."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Thử Nghiệm Giao Diện 25,8 × 1,5",
+        "action_verb": "Tính",
+        "atomic_instruction": "Thử nghiệm đặt tính nhân: 25,8 nhân 1,5. Bạn có thể bấm chọn 3 phương án giao diện bên dưới!",
+        "text": "Thử nghiệm đặt tính nhân: 25,8 nhân 1,5. Bạn có thể bấm chọn 3 phương án giao diện bên dưới!",
+        "type": "text_input",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "25,8 × 1,5 = ?",
+          "placeholder": "Nhập đáp số...",
+          "is_decimal_demo": true
+        },
+        "duration_sec": 120,
+        "immediate_reinforcer": {
+          "visual_asset": "chest_open_burst",
+          "audio_cue": "orchestral_fanfare_c6",
+          "dopamine_points": 50
+        },
+        "hints": [
+          "25,8 x 1,5 = 38,70."
+        ],
+        "success_criteria": {
+          "evaluation_type": "exact_match",
+          "expected_answer": [
+            "38.7",
+            "38,7",
+            "38.70",
+            "38,70"
+          ],
+          "feedback_on_error": "Kết quả là 38,70 con nhé!"
+        },
+        "mathematical_or_logical_goal": "So sánh 3 phong cách đặt tính nhân số thập phân",
+        "intermediate_output": "38,70",
+        "is_final_step": true
+      }
+    ],
+    "exercise_type": "pure_arithmetic"
   }
 }

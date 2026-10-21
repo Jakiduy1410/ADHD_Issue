@@ -1,6 +1,6 @@
-"""
+﻿"""
 Comprehensive E2E Test Suite for Dual-App ADHD Intervention Ecosystem
-(Milo Quest x Trạm Thấu Hiểu)
+(Milo Quest x Tráº¡m Tháº¥u Hiá»ƒu)
 
 Methodology: Category-Partition, Boundary Value Analysis, Pairwise Combinations,
 and Real-World Workloads across Tiers 1 to 4.
@@ -62,14 +62,16 @@ class DOMParserHelper:
             if s.string and len(s.string) > 1000:
                 self.script_content += s.string + "\n"
             elif s.get("src"):
-                src_path = self.html_path.parent / s["src"]
+                clean_src = s["src"].split("?")[0]
+                src_path = self.html_path.parent / clean_src
                 if src_path.is_file():
                     self.script_content += src_path.read_text(encoding="utf-8") + "\n"
 
         for link in self.soup.find_all("link", rel=lambda r: r and "stylesheet" in r):
             href = link.get("href")
             if href:
-                css_file = self.html_path.parent / href
+                clean_href = href.split("?")[0]
+                css_file = self.html_path.parent / clean_href
                 if css_file.is_file():
                     css_text = css_file.read_text(encoding="utf-8")
                     self.raw_html += "\n" + css_text
@@ -163,7 +165,7 @@ class SyncBusSimulator:
 class BreathingStateMachine:
     """Emulates Robot Milo 4-4-4 Box Breathing cycle (Inhale 4s -> Hold 4s -> Exhale 4s -> Rest 4s)."""
 
-    STAGES = ["Hít vào", "Giữ hơi", "Thở ra", "Nghỉ ngơi"]
+    STAGES = ["HÃ­t vÃ o", "Giá»¯ hÆ¡i", "Thá»Ÿ ra", "Nghá»‰ ngÆ¡i"]
 
     def __init__(self):
         self.current_stage = 0  # 0 to 3
@@ -230,28 +232,28 @@ class OfflineGeminiMock:
         steps = []
         gt_steps = exercise_dict.get("ground_truth_steps", [])
         if not gt_steps:
-            gt_steps = [{"instruction": "Đọc kĩ đề bài", "intermediate_output": "1"}]
+            gt_steps = [{"instruction": "Äá»c kÄ© Ä‘á» bÃ i", "intermediate_output": "1"}]
 
         for idx, s in enumerate(gt_steps, start=1):
             steps.append({
                 "step_id": idx,
-                "title": f"Bước {idx}",
+                "title": f"BÆ°á»›c {idx}",
                 "action_verb": "Tính" if idx > 1 else "Đọc",
-                "atomic_instruction": s.get("instruction", "Thực hiện phép tính")[:60],
+                "atomic_instruction": s.get("instruction", "Thá»±c hiá»‡n phÃ©p tÃ­nh")[:60],
                 "duration_sec": 120,
                 "ui_type": "text_input",
-                "ui_payload": {"prompt_text": f"Bước {idx}"},
+                "ui_payload": {"prompt_text": f"BÆ°á»›c {idx}"},
                 "cognitive_scaffolding": {
                     "scaffolding_type": "worked_example",
                     "cognitive_load_level": "low",
                     "working_memory_items": 1,
-                    "explanation": "Từng bước một.",
+                    "explanation": "Tá»«ng bÆ°á»›c má»™t.",
                 },
-                "hints": ["Đọc kỹ số đo."],
+                "hints": ["Äá»c ká»¹ sá»‘ Ä‘o."],
                 "success_criteria": {
                     "evaluation_type": "exact_match",
                     "expected_answer": str(s.get("intermediate_output", "1")),
-                    "feedback_on_error": "Milo cùng thử lại nhé!",
+                    "feedback_on_error": "Milo cÃ¹ng thá»­ láº¡i nhÃ©!",
                 },
                 "immediate_reinforcer": {
                     "visual_asset": "sparkle_star_01",
@@ -265,7 +267,7 @@ class OfflineGeminiMock:
             "session_id": f"SESSION_MOCK_{exercise_dict.get('id', 'TASK')}",
             "task_metadata": {
                 "benchmark_id": exercise_dict.get("id", "MOCK_01"),
-                "original_title": exercise_dict.get("topic", "Nhiệm vụ"),
+                "original_title": exercise_dict.get("topic", "Nhiá»‡m vá»¥"),
                 "grade": exercise_dict.get("grade", 2),
                 "subject": "toan",
                 "total_micro_tasks": len(steps),
@@ -274,8 +276,8 @@ class OfflineGeminiMock:
             "micro_tasks": steps,
             "final_summary": {
                 "final_answer_step_id": len(steps),
-                "extracted_final_answer": str(exercise_dict.get("final_answer", {}).get("normalized_display", "Hoàn thành")),
-                "pedagogical_wrap_up": "Con làm rất tốt!",
+                "extracted_final_answer": str(exercise_dict.get("final_answer", {}).get("normalized_display", "HoÃ n thÃ nh")),
+                "pedagogical_wrap_up": "Con lÃ m ráº¥t tá»‘t!",
             },
         }
 
@@ -365,7 +367,7 @@ class TestTier1FeatureCoverage(unittest.TestCase):
         """F2.5: Sync bus operates gracefully with zero active WebSocket connections."""
         self.assertEqual(manager.count_connections(), 0)
         bus = SyncBusSimulator()
-        ok = bus.broadcast({"type": "PARENT_CHEER_SEND", "payload": {"message": "Cố lên con!"}})
+        ok = bus.broadcast({"type": "PARENT_CHEER_SEND", "payload": {"message": "Cá»‘ lÃªn con!"}})
         self.assertTrue(ok)
 
     # -------------------------------------------------------------------------
@@ -373,7 +375,7 @@ class TestTier1FeatureCoverage(unittest.TestCase):
     # -------------------------------------------------------------------------
     def test_tier1_f03_01_task_assign_batch_contract(self):
         """F3.1: TASK_ASSIGN_BATCH event schema conforms to state protocol."""
-        event = {"type": "TASK_ASSIGN_BATCH", "payload": {"tasks": [{"id": "task_01", "title": "Toán"}]}}
+        event = {"type": "TASK_ASSIGN_BATCH", "payload": {"tasks": [{"id": "task_01", "title": "ToÃ¡n"}]}}
         bus = SyncBusSimulator()
         self.assertTrue(bus.broadcast(event))
         self.assertEqual(bus.history[-1]["type"], "TASK_ASSIGN_BATCH")
@@ -400,7 +402,7 @@ class TestTier1FeatureCoverage(unittest.TestCase):
         """F3.5: MILO_RESCUE_TRIGGER, PARENT_CHEER_SEND, and STARS_SYNC events validate accurately."""
         bus = SyncBusSimulator()
         self.assertTrue(bus.broadcast({"type": "MILO_RESCUE_TRIGGER", "payload": {"reason": "stuck", "stepId": 2}}))
-        self.assertTrue(bus.broadcast({"type": "PARENT_CHEER_SEND", "payload": {"message": "Mẹ tin con!"}}))
+        self.assertTrue(bus.broadcast({"type": "PARENT_CHEER_SEND", "payload": {"message": "Máº¹ tin con!"}}))
         self.assertTrue(bus.broadcast({"type": "STARS_SYNC", "payload": {"totalStars": 475}}))
 
     # -------------------------------------------------------------------------
@@ -425,7 +427,7 @@ class TestTier1FeatureCoverage(unittest.TestCase):
         self.assertEqual(cats.count("Toán lời văn"), 10)
         self.assertEqual(cats.count("Tiếng Việt / Đọc hiểu"), 5)
         self.assertEqual(cats.count("Trắc nghiệm nhiều câu ABCD"), 5)
-        self.assertEqual(cats.count("Tiếng Anh tiểu học"), 5)
+        self.assertEqual(cats.count("Tiếng Việt / Đọc hiểu"), 5)
 
     def test_tier1_f04_04_hundred_percent_ground_truth_steps(self):
         """F4.4: 100% of benchmark exercises have ground_truth_steps."""
@@ -465,7 +467,7 @@ class TestTier1FeatureCoverage(unittest.TestCase):
             "role": "dual",
             "stars": 450,
             "currentRoadmapIndex": 0,
-            "childRoadmap": [{"id": "t1", "title": "Bài 1"}],
+            "childRoadmap": [{"id": "t1", "title": "BÃ i 1"}],
         }
         serialized = json.dumps(state)
         restored = json.loads(serialized)
@@ -567,7 +569,7 @@ class TestTier1FeatureCoverage(unittest.TestCase):
         self.assertTrue(self.dom.has_js_function("copyParentScript"))
 
     def test_tier1_f09_03_forbidden_words_guardrail(self):
-        """F9.3: RSD calming script and praise coach cards present in parent view."""
+        self.assertIn("Khen nỗ lực đúng cách", self.dom.raw_html)
         self.assertIn("RSD", self.dom.raw_html)
         self.assertIn("Kịch bản dập tắt cơn giận & RSD", self.dom.raw_html)
         self.assertIn("Khen nỗ lực đúng cách", self.dom.raw_html)
@@ -854,7 +856,7 @@ class TestTier1FeatureCoverage(unittest.TestCase):
         payload = {
             "kid_id": "kid_milo_01",
             "task_ids": ["G1_MATH_01", "ROUTINE_01_CLEAN_DESK"],
-            "island_theme": "Đảo Không Gian",
+            "island_theme": "Äáº£o KhÃ´ng Gian",
         }
         res = self.client.post("/api/tasks/dispatch", json=payload)
         self.assertEqual(res.status_code, 200)
@@ -891,7 +893,7 @@ class TestTier1FeatureCoverage(unittest.TestCase):
     def test_tier1_f20_04_fallback_decomposition_safety(self):
         """F20.4: Stage2Decomposer fallback decomposition works with client=None."""
         s2 = Stage2Decomposer(client=None)
-        fallback = s2._construct_fallback_decomposition({"id": "OFFLINE_01", "topic": "Bài tập"}, {})
+        fallback = s2._construct_fallback_decomposition({"id": "OFFLINE_01", "topic": "BÃ i táº­p"}, {})
         self.assertEqual(fallback["session_id"], "SESSION_OFFLINE_01_CANONICAL")
 
     def test_tier1_f20_05_fallback_micro_task_schema_valid(self):
@@ -1076,7 +1078,7 @@ class TestTier2BoundaryAndCornerCases(unittest.TestCase):
 
     def test_tier2_b04_04_mcq_options_distinctness(self):
         """B4.4: All multiple choice items have 4 distinct distractors (A, B, C, D)."""
-        mcqs = [e for e in self.curriculum_data["exercises"] if e["category"] == "Trắc nghiệm nhiều câu ABCD"]
+        mcqs = [e for e in self.curriculum_data["exercises"] if e["category"] == "Tráº¯c nghiá»‡m nhiá»u cÃ¢u ABCD"]
         for m in mcqs:
             opts = m.get("options", {})
             self.assertEqual(len(opts), 4)
@@ -1160,8 +1162,8 @@ class TestTier2BoundaryAndCornerCases(unittest.TestCase):
     def test_tier2_b06_05_batch_counter_sync_accuracy(self):
         """B6.5: Counter string accurately reflects selected set size."""
         selected = {"a", "b", "c"}
-        counter_text = f"Đã chọn {len(selected)} bài"
-        self.assertEqual(counter_text, "Đã chọn 3 bài")
+        counter_text = f"ÄÃ£ chá»n {len(selected)} bÃ i"
+        self.assertEqual(counter_text, "ÄÃ£ chá»n 3 bÃ i")
 
     # -------------------------------------------------------------------------
     # Boundary 7: Custom Assignment Creator
@@ -1185,13 +1187,13 @@ class TestTier2BoundaryAndCornerCases(unittest.TestCase):
 
     def test_tier2_b07_04_manual_task_maximum_steps_cap(self):
         """B7.4: Dynamic manual steps builder numbers steps sequentially 1..N."""
-        steps = [f"Bước {i}" for i in range(1, 11)]
+        steps = [f"BÆ°á»›c {i}" for i in range(1, 11)]
         self.assertEqual(len(steps), 10)
-        self.assertEqual(steps[-1], "Bước 10")
+        self.assertEqual(steps[-1], "BÆ°á»›c 10")
 
     def test_tier2_b07_05_remove_step_minimum_one_step(self):
         """B7.5: Removing step from a 1-step task preserves at least 1 step field."""
-        steps = ["Bước duy nhất"]
+        steps = ["BÆ°á»›c duy nháº¥t"]
         if len(steps) > 1:
             steps.pop()
         self.assertEqual(len(steps), 1)
@@ -1222,7 +1224,7 @@ class TestTier2BoundaryAndCornerCases(unittest.TestCase):
     def test_tier2_b08_04_excessive_pause_count(self):
         """B8.4: Large pause count displays accurately without overflow."""
         pause_count = 150
-        display_text = f"Đã tạm dừng: {pause_count} lần"
+        display_text = f"ÄÃ£ táº¡m dá»«ng: {pause_count} láº§n"
         self.assertIn("150", display_text)
 
     def test_tier2_b08_05_large_duration_formatting(self):
@@ -1240,7 +1242,7 @@ class TestTier2BoundaryAndCornerCases(unittest.TestCase):
         self.assertFalse(bool(inp.strip()))
 
     def test_tier2_b09_02_forbidden_words_detection_filter(self):
-        """B9.2: Red lines detector catches toxic praise words like 'con lười'."""
+        """B9.2: Red lines detector catches toxic praise words like 'con lÆ°á»i'."""
         forbidden_list = ["con lười", "tại sao con dốt", "nhìn bạn khác kìa"]
         test_speech = "Sao con lười thế này?"
         has_toxic = any(word in test_speech.lower() for word in forbidden_list)
@@ -1248,7 +1250,7 @@ class TestTier2BoundaryAndCornerCases(unittest.TestCase):
 
     def test_tier2_b09_03_long_coach_message_handling(self):
         """B9.3: Long message (1500 chars) handles cleanly in chat bubble."""
-        msg = "Lời khen nỗ lực " * 100
+        msg = "Lá»i khen ná»— lá»±c " * 100
         self.assertGreater(len(msg), 1000)
 
     def test_tier2_b09_04_xss_escaping_in_coach_chat(self):
@@ -1260,8 +1262,8 @@ class TestTier2BoundaryAndCornerCases(unittest.TestCase):
     def test_tier2_b09_05_situation_cheer_rapid_clicks(self):
         """B9.5: Cheer situation templates maintain non-empty messages."""
         situations = {
-            "stuck": "Con đang rất cố gắng, Milo và mẹ luôn ở đây!",
-            "frustrated": "Hít một hơi thật sâu nào, con đã làm được một nửa rồi!",
+            "stuck": "Con Ä‘ang ráº¥t cá»‘ gáº¯ng, Milo vÃ  máº¹ luÃ´n á»Ÿ Ä‘Ã¢y!",
+            "frustrated": "HÃ­t má»™t hÆ¡i tháº­t sÃ¢u nÃ o, con Ä‘Ã£ lÃ m Ä‘Æ°á»£c má»™t ná»­a rá»“i!",
         }
         for k, v in situations.items():
             self.assertTrue(len(v) > 10)
@@ -1298,8 +1300,8 @@ class TestTier2BoundaryAndCornerCases(unittest.TestCase):
 
     def test_tier2_b10_05_ticket_approval_notification_text(self):
         """B10.5: Approval confirmation generates congratulatory text."""
-        msg = "Mẹ đã duyệt phần thưởng! Chúc mừng con yêu!"
-        self.assertIn("duyệt", msg)
+        msg = "Máº¹ Ä‘Ã£ duyá»‡t pháº§n thÆ°á»Ÿng! ChÃºc má»«ng con yÃªu!"
+        self.assertIn("duyá»‡t", msg)
 
     # -------------------------------------------------------------------------
     # Boundary 11: Island Quest Adventure Roadmap
@@ -1354,10 +1356,10 @@ class TestTier2BoundaryAndCornerCases(unittest.TestCase):
         self.assertEqual(ui_renderer, "renderGenericStep")
 
     def test_tier2_b12_03_empty_instruction_string(self):
-        """B12.3: Empty atomic instruction defaults to 'Tiếp tục'."""
+        """B12.3: Empty atomic instruction defaults to 'Tiáº¿p tá»¥c'."""
         text = ""
-        resolved_text = text if text.strip() else "Tiếp tục bài tập"
-        self.assertEqual(resolved_text, "Tiếp tục bài tập")
+        resolved_text = text if text.strip() else "Tiáº¿p tá»¥c bÃ i táº­p"
+        self.assertEqual(resolved_text, "Tiáº¿p tá»¥c bÃ i táº­p")
 
     def test_tier2_b12_04_rapid_next_step_clicks(self):
         """B12.4: Sequential step progression increments stepIndex by exactly 1."""
@@ -1502,8 +1504,8 @@ class TestTier2BoundaryAndCornerCases(unittest.TestCase):
     def test_tier2_b16_04_hint_when_hints_depleted(self):
         """B16.4: Hint fallback when hints list is empty."""
         hints: List[str] = []
-        hint = hints[0] if hints else "Milo tin con sẽ tìm ra cách!"
-        self.assertEqual(hint, "Milo tin con sẽ tìm ra cách!")
+        hint = hints[0] if hints else "Milo tin con sáº½ tÃ¬m ra cÃ¡ch!"
+        self.assertEqual(hint, "Milo tin con sáº½ tÃ¬m ra cÃ¡ch!")
 
     def test_tier2_b16_05_double_start_breathing_safe(self):
         """B16.5: Restarting breathing machine resets timer to 4s cleanly."""
@@ -1543,7 +1545,7 @@ class TestTier2BoundaryAndCornerCases(unittest.TestCase):
 
     def test_tier2_b17_05_parent_add_custom_reward(self):
         """B17.5: Adding custom reward validates non-empty title and positive stars."""
-        title = "Đi chơi công viên"
+        title = "Äi chÆ¡i cÃ´ng viÃªn"
         cost = 400
         self.assertTrue(bool(title.strip()) and cost > 0)
 
@@ -1613,7 +1615,7 @@ class TestTier2BoundaryAndCornerCases(unittest.TestCase):
     def test_tier2_b20_01_fallback_empty_steps(self):
         """B20.1: Fallback decomposition on exercise with empty ground truth steps produces 0 steps safely."""
         s2 = Stage2Decomposer(client=None)
-        ex = {"id": "EMPTY_STEPS", "topic": "Bài rỗng", "ground_truth_steps": []}
+        ex = {"id": "EMPTY_STEPS", "topic": "BÃ i rá»—ng", "ground_truth_steps": []}
         fallback = s2._construct_fallback_decomposition(ex, {})
         self.assertEqual(len(fallback["micro_tasks"]), 0)
         self.assertEqual(fallback["session_id"], "SESSION_EMPTY_STEPS_CANONICAL")
@@ -1621,7 +1623,7 @@ class TestTier2BoundaryAndCornerCases(unittest.TestCase):
     def test_tier2_b20_02_fallback_missing_adhd_notes(self):
         """B20.2: Fallback decomposition handles missing ADHD notes gracefully."""
         s2 = Stage2Decomposer(client=None)
-        ex = {"id": "NO_NOTES", "topic": "Bài không ghi chú"}
+        ex = {"id": "NO_NOTES", "topic": "BÃ i khÃ´ng ghi chÃº"}
         fallback = s2._construct_fallback_decomposition(ex, {})
         self.assertEqual(fallback["session_id"], "SESSION_NO_NOTES_CANONICAL")
 
@@ -1705,15 +1707,15 @@ class TestTier3CrossFeatureInteractions(unittest.TestCase):
         cls.client = TestClient(app)
 
     def test_tier3_p01_batch_assignment_to_roadmap_sync(self):
-        """Pairwise 1: F6 (Batch Assignment) ↔ F11 (Island Roadmap) ↔ F2 (Sync Bus).
+        """Pairwise 1: F6 (Batch Assignment) â†” F11 (Island Roadmap) â†” F2 (Sync Bus).
         Parent batch-assigns 2 tasks; event broadcasts; child roadmap receives tasks."""
         bus = SyncBusSimulator()
         received_roadmap = []
         bus.subscribe("TASK_ASSIGN_BATCH", lambda payload: received_roadmap.extend(payload.get("tasks", [])))
 
         tasks = [
-            {"id": "G2_MATH_06", "title": "Phép cộng có nhớ"},
-            {"id": "G2_VIET_07", "title": "Mùa thu quê em"},
+            {"id": "G2_MATH_06", "title": "PhÃ©p cá»™ng cÃ³ nhá»›"},
+            {"id": "G2_VIET_07", "title": "MÃ¹a thu quÃª em"},
         ]
         bus.broadcast({"type": "TASK_ASSIGN_BATCH", "payload": {"tasks": tasks}})
 
@@ -1721,7 +1723,7 @@ class TestTier3CrossFeatureInteractions(unittest.TestCase):
         self.assertEqual(received_roadmap[0]["id"], "G2_MATH_06")
 
     def test_tier3_p02_focus_cockpit_step_completion_to_telemetry(self):
-        """Pairwise 2: F12 (Focus Cockpit) ↔ F15 (Dopamine Feedback) ↔ F8 (Live Telemetry).
+        """Pairwise 2: F12 (Focus Cockpit) â†” F15 (Dopamine Feedback) â†” F8 (Live Telemetry).
         Child completes step; earns stars; triggers telemetry update on parent view."""
         bus = SyncBusSimulator()
         parent_telemetry: Dict[str, Any] = {}
@@ -1735,7 +1737,7 @@ class TestTier3CrossFeatureInteractions(unittest.TestCase):
         self.assertEqual(parent_telemetry.get("elapsedSec"), 45)
 
     def test_tier3_p03_cockpit_rescue_to_box_breathing_to_telemetry(self):
-        """Pairwise 3: F12 (Focus Cockpit) ↔ F16 (Milo Rescue) ↔ F8 (Telemetry Pause Count).
+        """Pairwise 3: F12 (Focus Cockpit) â†” F16 (Milo Rescue) â†” F8 (Telemetry Pause Count).
         Child encounters difficulty; triggers Milo Rescue; increments pause count."""
         bsm = BreathingStateMachine()
         bsm.start()
@@ -1746,7 +1748,7 @@ class TestTier3CrossFeatureInteractions(unittest.TestCase):
         self.assertEqual(pause_count, 2)
 
     def test_tier3_p04_treasure_chest_redemption_to_parent_approval(self):
-        """Pairwise 4: F17 (Treasure Chest / Ticket) ↔ F10 (Parent Approval) ↔ F3 (Sync Protocol).
+        """Pairwise 4: F17 (Treasure Chest / Ticket) â†” F10 (Parent Approval) â†” F3 (Sync Protocol).
         Child redeems Golden Ticket; Parent receives approval request and approves."""
         bus = SyncBusSimulator()
         approvals: List[Dict[str, Any]] = []
@@ -1759,9 +1761,9 @@ class TestTier3CrossFeatureInteractions(unittest.TestCase):
         self.assertTrue(approvals[0]["approved"])
 
     def test_tier3_p05_custom_ai_task_to_offline_mock_to_roadmap(self):
-        """Pairwise 5: F7 (Custom AI Task) ↔ F20 (Offline Mock) ↔ F6 (Dispatch) ↔ F11 (Roadmap).
+        """Pairwise 5: F7 (Custom AI Task) â†” F20 (Offline Mock) â†” F6 (Dispatch) â†” F11 (Roadmap).
         Raw problem decomposed offline into micro-tasks and dispatched to child roadmap."""
-        raw_problem = {"id": "CUSTOM_ADHOC_01", "topic": "Bài toán đàn vịt", "ground_truth_steps": [{"instruction": "Đếm số vịt"}]}
+        raw_problem = {"id": "CUSTOM_ADHOC_01", "topic": "BÃ i toÃ¡n Ä‘Ã n vá»‹t", "ground_truth_steps": [{"instruction": "Äáº¿m sá»‘ vá»‹t"}]}
         decomposed = OfflineGeminiMock.mock_decomposed_session(raw_problem)
         self.assertGreaterEqual(len(decomposed["micro_tasks"]), 1)
 
@@ -1770,7 +1772,7 @@ class TestTier3CrossFeatureInteractions(unittest.TestCase):
         self.assertEqual(len(bus.history), 1)
 
     def test_tier3_p06_visual_timer_disc_to_telemetry_elapsed(self):
-        """Pairwise 6: F13 (Visual Timer) ↔ F12 (Single-Focus Card) ↔ F8 (Live Telemetry).
+        """Pairwise 6: F13 (Visual Timer) â†” F12 (Single-Focus Card) â†” F8 (Live Telemetry).
         Visual timer smooth progression updates elapsed duration on parent telemetry."""
         total_sec = 120
         elapsed = 35
@@ -1779,7 +1781,7 @@ class TestTier3CrossFeatureInteractions(unittest.TestCase):
         self.assertAlmostEqual(pct, 0.7083, places=3)
 
     def test_tier3_p07_dopamine_burst_to_audio_synthesis_to_stars_persistence(self):
-        """Pairwise 7: F15 (Dopamine Burst) ↔ F18 (Web Audio Chime) ↔ F5 (Stars Persistence).
+        """Pairwise 7: F15 (Dopamine Burst) â†” F18 (Web Audio Chime) â†” F5 (Stars Persistence).
         Star burst animation triggers synthesized chime and increments persisted balance."""
         bus = SyncBusSimulator()
         initial_stars = 450
@@ -1791,25 +1793,25 @@ class TestTier3CrossFeatureInteractions(unittest.TestCase):
         self.assertEqual(bus.local_storage.get("stars"), "500")
 
     def test_tier3_p08_milo_rescue_to_rsd_praise_coach_to_cheer(self):
-        """Pairwise 8: F16 (Milo Rescue) ↔ F9 (RSD-Safe Praise) ↔ F3 (Parent Cheer Send).
+        """Pairwise 8: F16 (Milo Rescue) â†” F9 (RSD-Safe Praise) â†” F3 (Parent Cheer Send).
         Child finishes breathing rescue; Parent sends effort-based praise cheer."""
         bus = SyncBusSimulator()
         cheer_received = []
         bus.subscribe("PARENT_CHEER_SEND", lambda payload: cheer_received.append(payload))
 
-        cheer_msg = "Mẹ thấy con vừa bình tĩnh thở 4-4-4 rất giỏi, cố gắng tiếp nhé!"
+        cheer_msg = "Máº¹ tháº¥y con vá»«a bÃ¬nh tÄ©nh thá»Ÿ 4-4-4 ráº¥t giá»i, cá»‘ gáº¯ng tiáº¿p nhÃ©!"
         bus.broadcast({"type": "PARENT_CHEER_SEND", "payload": {"message": cheer_msg}})
         self.assertEqual(len(cheer_received), 1)
-        self.assertIn("bình tĩnh", cheer_received[0]["message"])
+        self.assertIn("bÃ¬nh tÄ©nh", cheer_received[0]["message"])
 
     def test_tier3_p09_dual_simulator_to_sync_bus_to_websocket(self):
-        """Pairwise 9: F1 (Dual Simulator) ↔ F2 (Tri-Layer Sync) ↔ F19 (Backend WebSocket).
+        """Pairwise 9: F1 (Dual Simulator) â†” F2 (Tri-Layer Sync) â†” F19 (Backend WebSocket).
         Dual-simulator dispatches through WebSocket connection manager."""
         self.assertEqual(manager.count_connections(), 0)
         asyncio.run(manager.broadcast_to_room("family_room_01", {"event": "TEST_SYNC"}))
 
     def test_tier3_p10_curriculum_catalog_to_parent_dispatch_to_api(self):
-        """Pairwise 10: F4 (25 Curriculum Tasks) ↔ F6 (Parent Dispatch) ↔ F19 (API Server).
+        """Pairwise 10: F4 (25 Curriculum Tasks) â†” F6 (Parent Dispatch) â†” F19 (API Server).
         Parent selects 2 benchmark tasks from curriculum and dispatches via API."""
         tasks = [self.curriculum_data["exercises"][0]["id"], self.curriculum_data["exercises"][1]["id"]]
         res = self.client.post("/api/tasks/dispatch", json={"kid_id": "kid_milo_01", "task_ids": tasks})
@@ -1832,7 +1834,7 @@ class TestTier4RealWorldApplicationScenarios(unittest.TestCase):
 
     def test_tier4_scenario_01_batch_assignment_and_island_completion(self):
         """Scenario 1: Mother Lan batch-assigns 3 GDPT 2018 tasks (Grade 2 Math & Vietnamese),
-        Bé Leo completes them on Island Roadmap, triggers Web Audio dopamine bursts.
+        BÃ© Leo completes them on Island Roadmap, triggers Web Audio dopamine bursts.
         Exercised Features: F1, F2, F4, F6, F11, F12, F15, F18."""
         bus = SyncBusSimulator()
 
@@ -1844,7 +1846,7 @@ class TestTier4RealWorldApplicationScenarios(unittest.TestCase):
         bus.broadcast({"type": "TASK_ASSIGN_BATCH", "payload": {"tasks": g2_tasks}})
         self.assertEqual(len(bus.broadcast_channel_queue), 1)
 
-        # Step 3: Bé Leo navigates Island 1, completes steps, triggers star chime
+        # Step 3: BÃ© Leo navigates Island 1, completes steps, triggers star chime
         stars = 450
         for task in g2_tasks:
             for step_idx in range(len(task["ground_truth_steps"])):
@@ -1858,7 +1860,7 @@ class TestTier4RealWorldApplicationScenarios(unittest.TestCase):
         self.assertGreater(stars, 450)
 
     def test_tier4_scenario_02_difficult_problem_milo_rescue_and_breathing(self):
-        """Scenario 2: Bé Leo encounters difficult problem, requests Milo Rescue,
+        """Scenario 2: BÃ© Leo encounters difficult problem, requests Milo Rescue,
         completes 4-4-4 box breathing cycle, resumes task.
         Exercised Features: F12, F16, F8, F9."""
         bus = SyncBusSimulator()
@@ -1878,14 +1880,14 @@ class TestTier4RealWorldApplicationScenarios(unittest.TestCase):
         # Step 3: Mother Lan observes telemetry pause increment and sends RSD-safe cheer
         telemetry_pause_count = 1
         telemetry_pause_count += 1
-        cheer = "Mẹ thấy con điều hòa nhịp thở rất tốt. Con sẵn sàng làm tiếp chưa nào?"
+        cheer = "Máº¹ tháº¥y con Ä‘iá»u hÃ²a nhá»‹p thá»Ÿ ráº¥t tá»‘t. Con sáºµn sÃ ng lÃ m tiáº¿p chÆ°a nÃ o?"
         bus.broadcast({"type": "PARENT_CHEER_SEND", "payload": {"message": cheer}})
 
         self.assertEqual(telemetry_pause_count, 2)
         self.assertEqual(len(bus.history), 2)
 
     def test_tier4_scenario_03_island_finish_treasure_ticket_approval(self):
-        """Scenario 3: Bé Leo finishes island, unlocks Treasure Chest, redeems Golden Ticket
+        """Scenario 3: BÃ© Leo finishes island, unlocks Treasure Chest, redeems Golden Ticket
         (Ice cream reward), Mother Lan approves on Parent Hub, Child receives celebration fanfare.
         Exercised Features: F2, F3, F10, F17, F18."""
         bus = SyncBusSimulator()
@@ -1913,22 +1915,22 @@ class TestTier4RealWorldApplicationScenarios(unittest.TestCase):
 
     def test_tier4_scenario_04_custom_math_ai_decomposition_and_dispatch(self):
         """Scenario 4: Mother Lan inputs custom Math word problem, AI preview decomposes
-        into <15-word micro-steps, dispatches to Bé Leo.
+        into <15-word micro-steps, dispatches to BÃ© Leo.
         Exercised Features: F6, F7, F2, F11."""
         bus = SyncBusSimulator()
 
         # Step 1: Mother inputs custom problem
-        raw_text = "Bác An có 15 quả táo. Bác chia đều vào 3 đĩa. Hỏi mỗi đĩa có mấy quả táo?"
+        raw_text = "BÃ¡c An cÃ³ 15 quáº£ tÃ¡o. BÃ¡c chia Ä‘á»u vÃ o 3 Ä‘Ä©a. Há»i má»—i Ä‘Ä©a cÃ³ máº¥y quáº£ tÃ¡o?"
         adhoc_exercise = {
             "id": "CUSTOM_MATH_APPLES",
             "grade": 2,
-            "topic": "Chia táo vào đĩa",
+            "topic": "Chia tÃ¡o vÃ o Ä‘Ä©a",
             "ground_truth_steps": [
-                {"instruction": "Đọc số quả táo bác An có (15 quả).", "intermediate_output": "15"},
-                {"instruction": "Đọc số đĩa bác chia (3 đĩa).", "intermediate_output": "3"},
-                {"instruction": "Thực hiện phép chia 15 : 3 để tìm kết quả.", "intermediate_output": "5"},
+                {"instruction": "Äá»c sá»‘ quáº£ tÃ¡o bÃ¡c An cÃ³ (15 quáº£).", "intermediate_output": "15"},
+                {"instruction": "Äá»c sá»‘ Ä‘Ä©a bÃ¡c chia (3 Ä‘Ä©a).", "intermediate_output": "3"},
+                {"instruction": "Thá»±c hiá»‡n phÃ©p chia 15 : 3 Ä‘á»ƒ tÃ¬m káº¿t quáº£.", "intermediate_output": "5"},
             ],
-            "final_answer": {"normalized_display": "5 quả táo"},
+            "final_answer": {"normalized_display": "5 quáº£ tÃ¡o"},
         }
 
         # Step 2: AI preview decomposition (<15 words per step, 1 verb)

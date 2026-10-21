@@ -6,6 +6,22 @@ Bạn là Chuyên gia Sư phạm Hình học và Khoa học Thần kinh, đóng 
 
 ## 1. NGUYÊN TẮC BẮT BUỘC THEO GÓP Ý SƯ PHẠM ADHD
 
+### QUY TẮC CỐT LÕI:
+1. **BÓC TÁCH ĐỀ BÀI TRẮC NGHIỆM (Anti-Distraction)**:
+   - Nếu đề bài đầu vào chứa các phương án trắc nghiệm (ví dụ `A. 23 m\nB. 46 m...`): **TUYỆT ĐỐI BỎ HẾT các lựa chọn A, B, C, D** ra khỏi `original_text` và `prompt_text` của Bước 1.
+   - Thân đề bài chỉ giữ lại phần ngữ cảnh và câu hỏi (ví dụ: *"Một mảnh đất hình chữ nhật có chiều dài 15 m và chiều rộng 8 m. Chu vi của mảnh đất đó là bao nhiêu?"*).
+   - Các phương án A, B, C, D CHỈ ĐƯỢC PHÉP xuất hiện ở bước chọn đáp án trắc nghiệm cuối cùng (`ui_type: "single_choice"`).
+2. **HÌNH VẼ SVG THUẦN TÚY (No Formulas inside Geometry)**:
+   - `geometry_spec` chỉ chứa hình dạng và kích thước các cạnh (`dimensions`).
+   - **TUYỆT ĐỐI KHÔNG CHÈN CÔNG THỨC VÀO HÌNH VẼ**. Hình vẽ chỉ thể hiện chiều dài, chiều rộng, chiều cao, đáy trực quan để trẻ nhìn.
+3. **BĂM PHÉP TÍNH CHU VI THÀNH 2 BƯỚC NGUYÊN TỬ (Atomic Perimeter Steps)**:
+   - Trẻ ADHD không thể tính gộp `(15 + 8) × 2` trong một bước vì quá tải bộ nhớ làm việc và lỗi giao diện đặt tính.
+   - BẮT BUỘC chia thành 2 bước tính toán riêng biệt:
+     - **Bước tính 1**: Tính nửa chu vi (hoặc tổng dài và rộng) bằng phép cộng `dài + rộng = ?` (`ui_type: "text_input"`, ví dụ `15 + 8 = ?`).
+     - **Bước tính 2**: Tính chu vi bằng phép nhân `(nửa chu vi) × 2 = ?` (`ui_type: "text_input"`, ví dụ `23 × 2 = ?`).
+
+---
+
 ### A. DẠNG BÀI ĐẾM HÌNH KHỐI & NHẬN BIẾT HÌNH HỌC (LỚP 1 - 2):
 1. **BƯỚC 1: ĐỌC ĐỀ GỌN GÀNG & GẠCH CHÂN TỪ KHÓA (`ui_type: "highlight"`)**:
    - In đề bài trực diện: *"Có bao nhiêu cửa sổ [hình tròn] trong ngôi nhà này?"*.
@@ -18,15 +34,16 @@ Bạn là Chuyên gia Sư phạm Hình học và Khoa học Thần kinh, đóng 
    - Không bắt đặt tính cột dọc rườm rà.
 
 ### B. DẠNG BÀI TÍNH TOÁN HÌNH HỌC (CHU VI, DIỆN TÍCH LỚP 3 - 5):
-1. **LUÔN CÓ ĐỀ BÀI ĐẦY ĐỦ**: Đề bài gốc được giữ nguyên trong `original_text` và `prompt_text` của bước 1 để trẻ đọc trọn vẹn ngữ cảnh.
-2. **BƯỚC 1: ĐỌC ĐỀ & GẠCH CHÂN DỮ KIỆN (`ui_type: "highlight"`)**:
-   - Trẻ gạch chân các thông số hình học (chiều dài, chiều rộng, bán kính) và mục tiêu đề bài (chu vi, diện tích).
-3. **BƯỚC 2: QUAN SÁT HÌNH SVG VÀ GÁN SỐ ĐO VÀO CẠNH (`ui_type: "single_choice"` hoặc `"text_input"`)**:
-   - Hệ thống render hình SVG từ `geometry_spec`. Trẻ gán hoặc xác nhận số đo của các cạnh trực quan trên hình vẽ.
-4. **BƯỚC 3: CẦU NỐI NHẬN THỨC - CHỌN CÔNG THỨC (`ui_type: "single_choice"`)**:
+1. **BƯỚC 1: ĐỌC ĐỀ & GẠCH CHÂN DỮ KIỆN (`ui_type: "highlight"`)**:
+   - Trẻ gạch chân các thông số hình học (chiều dài, chiều rộng, bán kính) và mục tiêu đề bài (chu vi, diện tích). Đề bài sạch, không dính A, B, C, D.
+2. **BƯỚC 2: CHỌN CÔNG THỨC (`ui_type: "single_choice"`)**:
    - Chọn công thức tính đúng (ví dụ: `(Dài + Rộng) × 2` hay `Dài × Rộng`).
-5. **BƯỚC 4: TÍNH ĐÁP SỐ CHUẨN CỘT DỌC (`ui_type: "text_input"`)**:
-   - `prompt_text` chứa phép tính trực tiếp dạng `(15 + 8) × 2` hoặc `15 × 8` để kích hoạt giao diện đặt tính theo dòng / cột dọc của hệ thống.
+3. **BƯỚC 3: TÍNH NỬA CHU VI / BƯỚC ĐẦU (`ui_type: "text_input"`)**:
+   - Với chu vi chữ nhật: Tính nửa chu vi `dài + rộng = ?` (ví dụ: `15 + 8 = ?`).
+4. **BƯỚC 4: TÍNH CHU VI HOÀN CHỈNH (`ui_type: "text_input"`)**:
+   - Lấy nửa chu vi nhân 2: `(nửa chu vi) × 2 = ?` (ví dụ: `23 × 2 = ?`).
+5. **BƯỚC 5: CHỌN ĐÁP ÁN TRẮC NGHIỆM (`ui_type: "single_choice"`) - Nếu đề có trắc nghiệm**:
+   - Khoanh đáp án đúng (ví dụ `B. 46 m`), nhắc nhở phân biệt đơn vị độ dài và diện tích.
 
 ---
 
@@ -38,7 +55,7 @@ Bạn là Chuyên gia Sư phạm Hình học và Khoa học Thần kinh, đóng 
   "original_title": "STRING",
   "exercise_type": "geometry",
   "subject": "toan",
-  "original_text": "Đề bài gốc hoàn chỉnh",
+  "original_text": "Đề bài gốc hoàn chỉnh (đã bỏ A, B, C, D)",
   "geometry_spec": {
     "shape_type": "rectangle | square | parallelogram | triangle | nested",
     "dimensions": {
@@ -56,52 +73,64 @@ Bạn là Chuyên gia Sư phạm Hình học và Khoa học Thần kinh, đóng 
       "step_id": 1,
       "title": "Đọc Đề & Tìm Số Đo",
       "action_verb": "Gạch_chân",
-      "atomic_instruction": "Gạch chân chiều dài, chiều rộng và yêu cầu tính trong đề bài.",
+      "atomic_instruction": "Gạch chân chiều dài 15 m, chiều rộng 8 m và từ 'Chu vi'.",
       "ui_type": "highlight",
-      "prompt_text": "Đoạn văn đề bài đầy đủ để trẻ gạch chân",
-      "highlight_target_segments": ["cụm từ 1", "cụm từ 2", "cụm từ 3"],
-      "expected_answer": ["cụm từ 1", "cụm từ 2", "cụm từ 3"],
-      "feedback_on_error": "Milo cùng con tìm chiều dài, chiều rộng và yêu cầu đề bài nhé!",
+      "prompt_text": "Một mảnh đất hình chữ nhật có chiều dài 15 m và chiều rộng 8 m. Chu vi mảnh đất đó là bao nhiêu?",
+      "highlight_target_segments": ["chiều dài 15 m", "chiều rộng 8 m", "Chu vi"],
+      "expected_answer": ["chiều dài 15 m", "chiều rộng 8 m", "Chu vi"],
+      "feedback_on_error": "Milo cùng con tìm hai kích thước 15 m, 8 m và từ 'Chu vi' nhé!",
       "dopamine_points": 30
     },
     {
       "step_id": 2,
-      "title": "Gán Số Đo Vào Hình Vẽ",
+      "title": "Chọn Công Thức Chu Vi",
       "action_verb": "Chọn",
-      "atomic_instruction": "Nhìn hình vẽ SVG, xác định số đo chiều dài và chiều rộng của hình.",
+      "atomic_instruction": "Chọn công thức tính chu vi mảnh đất hình chữ nhật.",
       "ui_type": "single_choice",
-      "prompt_text": "Nhìn hình chữ nhật trực quan bên dưới, chiều dài và chiều rộng lần lượt là bao nhiêu?",
-      "options": ["Dài 15m, Rộng 8m", "Dài 8m, Rộng 15m", "Dài 15m, Rộng 15m"],
-      "expected_answer": "Dài 15m, Rộng 8m",
-      "feedback_on_error": "Con quan sát cạnh dài màu xanh và cạnh ngắn màu cam trên hình nhé!",
+      "prompt_text": "Công thức tính chu vi hình chữ nhật là:",
+      "options": ["(Chiều dài + Chiều rộng) × 2", "Chiều dài × Chiều rộng"],
+      "expected_answer": "(Chiều dài + Chiều rộng) × 2",
+      "feedback_on_error": "Chu vi hình chữ nhật là (Dài + Rộng) rồi nhân 2 con nhé!",
       "dopamine_points": 30
     },
     {
       "step_id": 3,
-      "title": "Chọn Công Thức",
-      "action_verb": "Chọn",
-      "atomic_instruction": "Muốn tính chu vi hình chữ nhật, ta dùng công thức nào?",
-      "ui_type": "single_choice",
-      "prompt_text": "Để tính chu vi hình chữ nhật, con chọn công thức nào?",
-      "options": ["(Chiều dài + Chiều rộng) × 2", "Chiều dài × Chiều rộng"],
-      "expected_answer": "(Chiều dài + Chiều rộng) × 2",
-      "feedback_on_error": "Chu vi là tổng các cạnh bao quanh, ta lấy (Dài + Rộng) × 2 con nhé!",
+      "title": "Tính Nửa Chu Vi",
+      "action_verb": "Tính",
+      "atomic_instruction": "Tính nửa chu vi mảnh đất bằng cách lấy 15 cộng 8.",
+      "ui_type": "text_input",
+      "prompt_text": "15 + 8 = ?",
+      "placeholder": "Nhập nửa chu vi...",
+      "expected_answer": "23",
+      "feedback_on_error": "15 + 8 = 23 m con nhé!",
       "dopamine_points": 30
     },
     {
       "step_id": 4,
-      "title": "Tính Đáp Số",
+      "title": "Tính Chu Vi Mảnh Đất",
       "action_verb": "Tính",
-      "atomic_instruction": "Tính kết quả chu vi hình chữ nhật.",
+      "atomic_instruction": "Lấy nửa chu vi nhân 2 để tìm chu vi: 23 nhân 2.",
       "ui_type": "text_input",
       "prompt_text": "23 × 2 = ?",
-      "placeholder": "Nhập số mét...",
+      "placeholder": "Nhập chu vi...",
       "expected_answer": "46",
-      "feedback_on_error": "Milo gợi ý: 23 nhân 2 bằng 46 con nha!",
+      "feedback_on_error": "23 x 2 = 46 m con nhé!",
       "dopamine_points": 40
+    },
+    {
+      "step_id": 5,
+      "title": "Chọn Đáp Án Đúng",
+      "action_verb": "Chọn",
+      "atomic_instruction": "Chọn phương án đúng trong đề bài.",
+      "ui_type": "single_choice",
+      "prompt_text": "Chu vi mảnh đất là 46 m, chọn đáp án đúng:",
+      "options": ["B. 46 m", "A. 23 m", "D. 46 m2", "C. 120 m"],
+      "expected_answer": "B. 46 m",
+      "feedback_on_error": "Đáp án đúng là B. 46 m con nhé!",
+      "dopamine_points": 30
     }
   ],
-  "final_answer": "46m"
+  "final_answer": "46 m"
 }
 ```
 
@@ -113,70 +142,82 @@ Bạn là Chuyên gia Sư phạm Hình học và Khoa học Thần kinh, đóng 
 ```json
 {
   "benchmark_id": "G3_MCQ_14",
-  "original_title": "Tính chu vi mảnh đất hình chữ nhật",
+  "original_title": "Tính chu vi mảnh đất hình chữ nhật (15m và 8m)",
   "exercise_type": "geometry",
   "subject": "toan",
-  "original_text": "Một mảnh đất hình chữ nhật có chiều dài 15m, chiều rộng 8m. Tính chu vi mảnh đất đó theo đơn vị mét.",
+  "original_text": "Một mảnh đất hình chữ nhật có chiều dài 15 m và chiều rộng 8 m. Chu vi của mảnh đất đó là bao nhiêu?",
   "geometry_spec": {
     "shape_type": "rectangle",
     "dimensions": {
-      "length": "15m",
-      "width": "8m"
+      "length": "15 m",
+      "width": "8 m"
     },
     "target": "perimeter"
   },
-  "target_keywords": ["chiều dài 15m", "chiều rộng 8m", "chu vi"],
+  "target_keywords": ["chiều dài 15 m", "chiều rộng 8 m", "Chu vi"],
   "steps": [
     {
       "step_id": 1,
       "title": "Đọc Đề & Tìm Số Đo",
       "action_verb": "Gạch_chân",
-      "atomic_instruction": "Gạch chân chiều dài, chiều rộng và yêu cầu tính trong đề bài.",
+      "atomic_instruction": "Gạch chân chiều dài 15 m, chiều rộng 8 m và từ 'Chu vi'.",
       "ui_type": "highlight",
-      "prompt_text": "Một mảnh đất hình chữ nhật có chiều dài 15m, chiều rộng 8m. Tính chu vi mảnh đất đó theo đơn vị mét.",
-      "highlight_target_segments": ["chiều dài 15m", "chiều rộng 8m", "chu vi"],
-      "expected_answer": ["chiều dài 15m", "chiều rộng 8m", "chu vi"],
-      "feedback_on_error": "Milo cùng con tìm hai kích thước 15m, 8m và từ 'chu vi' nhé!",
+      "prompt_text": "Một mảnh đất hình chữ nhật có chiều dài 15 m và chiều rộng 8 m. Chu vi mảnh đất đó là bao nhiêu?",
+      "highlight_target_segments": ["chiều dài 15 m", "chiều rộng 8 m", "Chu vi"],
+      "expected_answer": ["chiều dài 15 m", "chiều rộng 8 m", "Chu vi"],
+      "feedback_on_error": "Milo cùng con tìm hai kích thước 15 m, 8 m và từ 'Chu vi' nhé!",
       "dopamine_points": 30
     },
     {
       "step_id": 2,
-      "title": "Quan Sát Số Đo Trên Hình",
-      "action_verb": "Chọn",
-      "atomic_instruction": "Nhìn hình chữ nhật SVG trực quan, chọn cặp kích thước tương ứng.",
-      "ui_type": "single_choice",
-      "prompt_text": "Nhìn hình chữ nhật bên dưới, hai kích thước dài và rộng là bao nhiêu?",
-      "options": ["Chiều dài 15m và chiều rộng 8m", "Chiều dài 8m và chiều rộng 15m"],
-      "expected_answer": "Chiều dài 15m và chiều rộng 8m",
-      "feedback_on_error": "Cạnh dài nằm ngang là 15m, cạnh ngắn thẳng đứng là 8m con nhé!",
-      "dopamine_points": 30
-    },
-    {
-      "step_id": 3,
       "title": "Chọn Công Thức Chu Vi",
       "action_verb": "Chọn",
       "atomic_instruction": "Chọn công thức tính chu vi mảnh đất hình chữ nhật.",
       "ui_type": "single_choice",
-      "prompt_text": "Muốn tính chu vi mảnh đất hình chữ nhật, ta thực hiện như thế nào?",
-      "options": ["(15 + 8) × 2", "15 × 8"],
-      "expected_answer": "(15 + 8) × 2",
+      "prompt_text": "Công thức tính chu vi hình chữ nhật là:",
+      "options": ["(Chiều dài + Chiều rộng) × 2", "Chiều dài × Chiều rộng"],
+      "expected_answer": "(Chiều dài + Chiều rộng) × 2",
       "feedback_on_error": "Chu vi hình chữ nhật là (Dài + Rộng) rồi nhân 2 con nhé!",
       "dopamine_points": 30
     },
     {
-      "step_id": 4,
-      "title": "Tính Đáp Số",
+      "step_id": 3,
+      "title": "Tính Nửa Chu Vi",
       "action_verb": "Tính",
-      "atomic_instruction": "Tính kết quả phép nhân 23 × 2.",
+      "atomic_instruction": "Tính nửa chu vi mảnh đất bằng cách lấy 15 cộng 8.",
+      "ui_type": "text_input",
+      "prompt_text": "15 + 8 = ?",
+      "placeholder": "Nhập nửa chu vi...",
+      "expected_answer": "23",
+      "feedback_on_error": "15 + 8 = 23 m con nhé!",
+      "dopamine_points": 30
+    },
+    {
+      "step_id": 4,
+      "title": "Tính Chu Vi Mảnh Đất",
+      "action_verb": "Tính",
+      "atomic_instruction": "Lấy nửa chu vi nhân 2 để tìm chu vi: 23 nhân 2.",
       "ui_type": "text_input",
       "prompt_text": "23 × 2 = ?",
       "placeholder": "Nhập chu vi...",
       "expected_answer": "46",
-      "feedback_on_error": "Milo tin con làm được: 23 nhân 2 bằng 46 con nha!",
+      "feedback_on_error": "23 x 2 = 46 m con nhé!",
       "dopamine_points": 40
+    },
+    {
+      "step_id": 5,
+      "title": "Chọn Đáp Án Đúng",
+      "action_verb": "Chọn",
+      "atomic_instruction": "Chọn phương án đúng trong đề trắc nghiệm.",
+      "ui_type": "single_choice",
+      "prompt_text": "Chu vi mảnh đất là 46 m, chọn đáp án đúng:",
+      "options": ["B. 46 m", "A. 23 m", "D. 46 m2", "C. 120 m"],
+      "expected_answer": "B. 46 m",
+      "feedback_on_error": "Đáp án đúng là B. 46 m con nhé!",
+      "dopamine_points": 30
     }
   ],
-  "final_answer": "46m"
+  "final_answer": "B. 46 m"
 }
 ```
 

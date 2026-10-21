@@ -7,7 +7,37 @@ Mục tiêu tối thượng: Giảm tải bộ nhớ làm việc (Working Memory
 
 ---
 
-## 2. QUY CHUẨN BĂM BÀI THEO 5 DẠNG BÀI TOÁN & TIẾNG VIỆT / TIẾNG ANH
+## 2. NGUYÊN TẮC BÓC TÁCH ĐỀ BÀI TRẮC NGHIỆM & HÌNH VẼ (ANTI-OVERLOAD)
+1. **BÓC TÁCH PHƯƠNG ÁN TRẮC NGHIỆM (A, B, C, D)**:
+   - Nếu đề bài phụ huynh nhập vào có sẵn các phương án trắc nghiệm (`A. ... B. ... C. ... D. ...`):
+     - **TUYỆT ĐỐI BỎ HẾT các lựa chọn A, B, C, D ra khỏi `original_text` và `prompt_text` của Bước 1 (Gạch chân)**.
+     - Trẻ ADHD chỉ đọc câu chuyện và câu hỏi cốt lõi, không bị phân tán bởi các con số đáp án mớm sẵn.
+     - Các phương án A, B, C, D chỉ xuất hiện DUY NHẤT ở bước chọn phương án trắc nghiệm cuối cùng (`ui_type: "single_choice"`).
+2. **HÌNH VẼ SVG THUẦN TÚY (Không chèn công thức vào hình)**:
+   - `geometry_spec` chỉ chứa hình dạng và kích thước đo đạc.
+   - **TUYỆT ĐỐI KHÔNG CHÈN CÔNG THỨC VÀO TÂM HÌNH VẼ**. Hình vẽ chỉ thể hiện chiều dài, chiều rộng, chiều cao trực quan.
+3. **BĂM CHU VI HÌNH CHỮ NHẬT THÀNH 2 BƯỚC NGUYÊN TỬ**:
+   - Không gộp `(dài + rộng) × 2` vào một bước tính. Bắt buộc: (1) Tính nửa chu vi `dài + rộng`, (2) Tính chu vi `nửa chu vi × 2`.
+4. **BÀI TOÁN RÚT VỀ ĐƠN VỊ**:
+   - Bắt buộc gồm 2 tầng tính toán: (1) Rút về 1 đơn vị bằng phép chia, (2) Nhân lên cho số đơn vị cần tìm bằng phép nhân.
+
+5. **NGUYÊN TẮC BĂM NGUYÊN TỬ PHÉP TÍNH NHIỀU SỐ HẠNG (ATOMIC 2-OPERAND RULE)**:
+   - Trẻ tiểu học và ADHD TUYỆT ĐỐI KHÔNG THỂ tính nhẩm chuỗi 3 số hạng (như a × b × c hay a × b : c) trong cùng một bước.
+   - BẮT BUỘC băm thành từng bước 2 số hạng:
+     - Tính thể tích (dài × rộng × cao): Bước 1 tính diện tích đáy (dài × rộng), Bước 2 lấy diện tích đáy nhân chiều cao.
+     - Tính chu vi chữ nhật ((dài + rộng) × 2): Bước 1 tính nửa chu vi (dài + rộng), Bước 2 nhân 2.
+
+6. **BÀI TOÁN TỈ SỐ PHẦN TRĂM & GIẢM GIÁ (TOÁN LỚP 5)**:
+   - Bài toán giảm giá (ví dụ giảm 15% rồi giảm tiếp 10% của giá 200 000 đồng):
+     (1) Bước 1 (highlight): Gạch chân dữ kiện (200 000 đồng, giảm giá 15%, giảm tiếp 10% trên giá đã giảm).
+     (2) Bước 2 (text_input): Đặt tính nhân giá sau lần 1: `200000 × 0,85 = ? (đồng)` -> 170 000 đồng.
+     (3) Bước 3 (text_input): Đặt tính nhân giá sau lần 2: `170000 × 0,9 = ? (đồng)` -> 153 000 đồng.
+     (4) Bước 4 (single_choice): Chọn đáp án trắc nghiệm đúng: `B. 153 000 đồng`.
+
+7. **BÀI TOÁN ĐẶT TÍNH DỌC (CỘNG, TRỪ, NHÂN & SỐ THẬP PHÂN)**:
+   - Mọi phép tính cộng (như `50 + 40 = ? (km/giờ)` hoặc `7 + 2 = ? (giờ sáng)`), trừ, nhân số tự nhiên và số thập phân (như `1,5 × 2 = ? (m2)` hoặc `1,2 × 3 = ? (m3)`) đều được hệ thống đưa vào BẢNG ĐẶT TÍNH DỌC chuẩn SGK (thừa số trên, thừa số dưới, dấu phép tính căn trái, vạch ngang và ô nhập kết quả căn phải).
+
+## 3. QUY CHUẨN BĂM BÀI THEO 5 DẠNG BÀI TOÁN & TIẾNG VIỆT / TIẾNG ANH
 
 ### A. TOÁN CÓ LỜI VĂN (word_problem)
 - **BƯỚC 1 (ui_type='highlight') - BẮT BUỘC**:

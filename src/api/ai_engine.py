@@ -8,6 +8,7 @@ Không có fallback giả mạo hay regex chống chế. Lỗi mạng/API -> Bá
 """
 
 import os
+import re
 import json
 import logging
 import asyncio
@@ -305,12 +306,13 @@ Khối lớp: Lớp {grade}
 Ngách chuyên biệt đã xác định: {category}
 Hồ sơ nhận thức trẻ: {json.dumps(cognitive_profile or {}, ensure_ascii=False)}
 
-Hãy phân tích và băm bài này thành chuỗi vi nhiệm vụ nguyên tử (3 đến 4 bước) theo đúng JSON Schema đã định.
+Hãy phân tích và băm bài này thành chuỗi vi nhiệm vụ nguyên tử (3 đến 5 bước) theo đúng JSON Schema đã định.
 LƯU Ý QUAN TRỌNG:
-- Luôn giữ nguyên đề bài gốc trong trường `original_text` để trẻ có thể đọc ở Bước 1.
-- Với bài hình học: BƯỚC 1 gạch chân số đo và mục tiêu (chu vi/diện tích); BƯỚC 2 gán số đo vào hình SVG trực quan; BƯỚC 3 chọn công thức; BƯỚC 4 tính toán.
+- BÓC TÁCH ĐỀ BÀI TRẮC NGHIỆM: Nếu đề bài có các đáp án A, B, C, D (ví dụ: 'A. 23 m\nB. 46 m...'): BẮT BUỘC BỎ HẾT các đáp án đó ra khỏi `original_text` và `prompt_text` của Bước 1 (Gạch chân). Thân đề bài chỉ giữ lại câu chuyện và câu hỏi. Các phương án A, B, C, D chỉ xuất hiện ở bước chọn trắc nghiệm cuối cùng.
+- Với bài hình học: TUYỆT ĐỐI KHÔNG đưa công thức vào hình vẽ SVG (`geometry_spec`). Nếu tính chu vi hình chữ nhật: BẮT BUỘC chia làm 2 bước tính toán riêng biệt: Bước tính nửa chu vi (dài + rộng), sau đó Bước tính chu vi (nửa chu vi × 2).
+- Với bài toán rút về đơn vị: BẮT BUỘC chia làm 2 bước tính toán: Bước 1 rút về 1 đơn vị bằng phép chia, Bước 2 nhân lên số đơn vị cần tìm.
 - Với bài toán có lời văn: BƯỚC 1 gạch chân ĐẦY ĐỦ 2 nhóm: đại lượng kèm đơn vị VÀ từ khóa toán tử ('tất cả', 'còn lại', 'nhiều hơn'); BƯỚC 2 hỏi ý nghĩa từ khóa; BƯỚC 3 chọn phép tính; BƯỚC 4 tính toán.
-- Với phép tính cộng/trừ/nhân: `prompt_text` của bước tính toán phải chứa biểu thức số học rõ ràng (ví dụ: '15 + 8 = ?' hoặc '23 × 2 = ?') để kích hoạt giao diện đặt tính cột dọc theo dòng.
+- Với phép tính cộng/trừ/nhân: `prompt_text` của bước tính toán phải chứa biểu thức số học rõ ràng 2 toán hạng (ví dụ: '15 + 8 = ?' hoặc '23 × 2 = ?') để kích hoạt giao diện đặt tính cột dọc theo dòng.
 """
 
     try:
@@ -345,6 +347,14 @@ LƯU Ý QUAN TRỌNG:
         parsed_data = json.loads(response.text)
         
         # 3. Chuẩn hóa dữ liệu đầu ra đồng bộ 100% với tasks_db.json và renderers.js
+        # Tước bỏ triệt để A, B, C, D nếu còn lọt vào original_text
+        cleaned_orig = parsed_data.get("original_text", raw_text)
+        if cleaned_orig and isinstance(cleaned_orig, str):
+            cleaned_orig = re.split(r'\n\s*[A-D][\.\:\)]', cleaned_orig)[0].strip()
+            if cleaned_orig.endswith('là:'):
+                cleaned_orig = cleaned_orig[:-1] + ' là bao nhiêu?'
+            parsed_data["original_text"] = cleaned_orig
+
         transformed_tasks = []
         exercise_type = parsed_data.get("exercise_type", "word_problem")
         geometry_spec = parsed_data.get("geometry_spec")
@@ -352,8 +362,14 @@ LƯU Ý QUAN TRỌNG:
 
         for s in parsed_data.get("steps", []):
             ui_type = s.get("ui_type", "text_input")
+            step_prompt = s.get("prompt_text") or s.get("atomic_instruction")
+            if ui_type == "highlight" and step_prompt and isinstance(step_prompt, str):
+                step_prompt = re.split(r'\n\s*[A-D][\.\:\)]', step_prompt)[0].strip()
+                if step_prompt.endswith('là:'):
+                    step_prompt = step_prompt[:-1] + ' là bao nhiêu?'
+
             ui_payload = {
-                "prompt_text": s.get("prompt_text") or s.get("atomic_instruction"),
+                "prompt_text": step_prompt,
                 "placeholder": s.get("placeholder") or "Nhập kết quả...",
                 "exercise_type": exercise_type
             }

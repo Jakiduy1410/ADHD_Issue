@@ -8,21 +8,38 @@
       const sRew = document.getElementById('child-screen-rewards');
 
       [sHome, sWork, sRew].forEach(el => {
+        if (!el) return;
         el.classList.add('hidden');
         el.classList.remove('flex');
+        el.style.setProperty('display', 'none', 'important');
+        el.scrollTop = 0;
       });
+      const sContainer = document.getElementById('child-screen-container');
+      if (sContainer) sContainer.scrollTop = 0;
 
       if (screenName === 'home') {
-        sHome.classList.remove('hidden');
-        sHome.classList.add('flex');
+        if (sHome) {
+          sHome.classList.remove('hidden');
+          sHome.classList.add('flex');
+          sHome.style.setProperty('display', 'flex', 'important');
+          sHome.scrollTop = 0;
+        }
         stopStepTimer();
         renderChildIslandRoadmap();
       } else if (screenName === 'workspace') {
-        sWork.classList.remove('hidden');
-        sWork.classList.add('flex');
+        if (sWork) {
+          sWork.classList.remove('hidden');
+          sWork.classList.add('flex');
+          sWork.style.setProperty('display', 'flex', 'important');
+          sWork.scrollTop = 0;
+        }
       } else if (screenName === 'rewards') {
-        sRew.classList.remove('hidden');
-        sRew.classList.add('flex');
+        if (sRew) {
+          sRew.classList.remove('hidden');
+          sRew.classList.add('flex');
+          sRew.style.setProperty('display', 'flex', 'important');
+          sRew.scrollTop = 0;
+        }
         stopStepTimer();
       }
     }
@@ -341,7 +358,7 @@
               <span class="text-base font-black text-slate-500">m²</span>
             </div>
             <!-- BÀN PHÍM NUMPAD XÚC GIÁC TACTILE -->
-            <div class="grid grid-cols-3 gap-1.5 w-full max-w-[250px]">
+            <div class="grid grid-cols-3 gap-2 w-full max-w-[250px]">
               <button onclick="pressChildNum('1')" class="btn-3d-white py-2 rounded-xl font-black text-base">1</button>
               <button onclick="pressChildNum('2')" class="btn-3d-white py-2 rounded-xl font-black text-base">2</button>
               <button onclick="pressChildNum('3')" class="btn-3d-white py-2 rounded-xl font-black text-base">3</button>
@@ -353,6 +370,22 @@
               <button onclick="pressChildNum('9')" class="btn-3d-white py-2 rounded-xl font-black text-base">9</button>
               <button onclick="pressChildNum('0')" class="col-span-2 btn-3d-white py-2 rounded-xl font-black text-base">0</button>
               <button onclick="pressChildNum('DEL')" class="btn-3d-white py-2 rounded-xl font-black text-xs text-rose-500">⌫ Xóa</button>
+            </div>
+          </div>
+        `;
+
+      } else if (
+        stepData.action_verb === 'Chạm_hình' || 
+        stepData.ui_type === 'shape_touch' || 
+        (ui.geometry_spec && (ui.geometry_spec.shape_type === 'house_counting' || stepData.badge === 'Xác Định Cửa Sổ Tròn' || ui.hide_choice_options))
+      ) {
+        // VI BƯỚC TƯƠNG TÁC CHẠM HÌNH HỌC THUẦN TÚY (KHÔNG CHÈN TRẮC NGHIỆM GÂY NHIỄU)
+        const geomSvg = (ui.geometry_spec || (task && task.geometry_spec)) ? renderGeometrySvg(ui.geometry_spec || task.geometry_spec) : '';
+        stage.innerHTML = `
+          <div class="flex flex-col gap-2.5 my-auto w-full items-center">
+            ${geomSvg}
+            <div id="choice-feedback" class="text-xs font-bold text-center text-slate-600 min-h-[18px]">
+              👆 Bé hãy chạm trực tiếp vào hình tròn trên ngôi nhà nhé!
             </div>
           </div>
         `;
@@ -370,7 +403,7 @@
           passageDrawerHtml = `
             <details class="bg-indigo-50/80 border border-indigo-200 rounded-xl p-2.5 text-xs text-indigo-950 mb-1 cursor-pointer" open>
               <summary class="font-bold flex items-center justify-between text-indigo-800 select-none">
-                <span class="flex items-center gap-1.5"><span>📖</span> <span>Đoạn văn chuyện gốc:</span></span>
+                <span class="flex items-center gap-2"><span>📖</span> <span>Đoạn văn chuyện gốc:</span></span>
                 <span class="text-[10px] text-indigo-600 underline">Thu gọn/Mở</span>
               </summary>
               <p class="mt-2 text-[11px] leading-relaxed text-slate-700 bg-white p-2.5 rounded-lg border border-indigo-100 whitespace-pre-line">
@@ -405,8 +438,20 @@
           ? stepData.success_criteria.expected_answer 
           : (stepData.expected_answer !== undefined ? stepData.expected_answer : (ui.expected_answer !== undefined ? ui.expected_answer : null));
 
-        // Check for vertical column math: a + b, a - b, a x b (hỗ trợ cả số có dấu cách như 12 000, 18 500, 131 072)
-        const vertMatch = prompt.match(/(\d[\d\s]*)\s*([\+\-\*×x])\s*(\d[\d\s]*)/);
+        // 1. Tách phần đơn vị (trong ngoặc đơn ở cuối nếu có)
+        const unitMatch = prompt.match(/\s*\((.*?)\)\s*$/);
+        const unitText = unitMatch ? unitMatch[1].trim() : '';
+        const mathPart = unitMatch ? prompt.slice(0, unitMatch.index).trim() : prompt.trim();
+
+        // 2. Nhận diện phép tính đặt bảng dọc (+, -, ×, *)
+        const opCount = (mathPart.match(/[\+\-\*×x]/g) || []).length;
+        const hasDivOrPercent = /[:\/%]/.test(mathPart);
+
+        let vertMatch = null;
+        if (opCount === 1 && !hasDivOrPercent) {
+          vertMatch = mathPart.match(/^\s*([0-9\s,\.]+?)\s*([\+\-\*×x])\s*([0-9\s,\.]+?)\s*=\s*(?:\?|[\.\_]+)\s*$/);
+        }
+
         let mathDisplayHtml = '';
 
         if (vertMatch) {
@@ -415,169 +460,195 @@
           if (op === '*' || op === 'x') op = '×';
           let numBottom = vertMatch[3].replace(/\s+/g, '').trim();
 
-          let topInt = parseInt(numTop, 10);
-          let botInt = parseInt(numBottom, 10);
-
-          // Chuẩn sư phạm tiểu học (Toán 4): phép nhân thừa số nhiều chữ số đặt ở trên
-          if (op === '×' && !isNaN(topInt) && !isNaN(botInt) && topInt < botInt) {
-            const tempStr = numTop;
-            numTop = numBottom;
-            numBottom = tempStr;
-            const tempInt = topInt;
-            topInt = botInt;
-            botInt = tempInt;
+          // 1. QUY TẮC: LUÔN CHO SỐ BÉ XUỐNG DƯỚI Ở PHÉP NHÂN ĐỂ TỐI ƯU DÒNG RENDER
+          if (op === '×') {
+            const topClean = numTop.replace(',', '');
+            const botClean = numBottom.replace(',', '');
+            if (topClean.length < botClean.length || (topClean.length === botClean.length && parseFloat(numTop.replace(',', '.')) < parseFloat(numBottom.replace(',', '.')))) {
+              const temp = numTop;
+              numTop = numBottom;
+              numBottom = temp;
+            }
           }
 
-          const isMultiDigitMul = (op === '×' && numBottom.length >= 2 && !isNaN(topInt) && !isNaN(botInt));
+          // 2. PHÂN TÍCH CHỮ SỐ VÀ VỊ TRÍ DẤU PHẨY (THỪA SỐ TRÊN, THỪA SỐ DƯỚI, VÀ KẾT QUẢ)
+          const topParts = numTop.split(',');
+          const topIntStr = topParts[0] || '0';
+          const topDecStr = topParts[1] || '';
+          const topDecLen = topDecStr.length;
+          const topClean = topIntStr + topDecStr;
 
-          // Tính độ dài các số và số cột chuẩn của bảng đặt tính
-          let numCols = Math.max(numTop.length, numBottom.length);
-          let part1DigitsCount = 0;
-          let part2DigitsCount = 0;
-          let totalDigitsCount = 0;
+          const botParts = numBottom.split(',');
+          const botIntStr = botParts[0] || '0';
+          const botDecStr = botParts[1] || '';
+          const botDecLen = botDecStr.length;
+          const botClean = botIntStr + botDecStr;
 
-          if (isMultiDigitMul) {
-            const bottomDigits = numBottom.split('').reverse();
-            const part1Val = (topInt * parseInt(bottomDigits[0], 10)).toString();
-            const part2Val = (topInt * parseInt(bottomDigits[1], 10)).toString();
-            const totalVal = (topInt * botInt).toString();
-            
-            // Dòng 2 lùi 1 cột sang trái nên độ rộng cần tối thiểu là part2Val.length + 1
-            numCols = Math.max(numTop.length, part1Val.length, part2Val.length + 1, totalVal.length);
-            part1DigitsCount = part1Val.length;
-            part2DigitsCount = part2Val.length;
-            totalDigitsCount = totalVal.length;
+          const hasDecimal = (topDecLen > 0 || botDecLen > 0);
+          let resDecLen = 0;
+          if (op === '×') {
+            resDecLen = topDecLen + botDecLen;
           } else {
-            let expectedStr = '';
-            if (expected !== null && expected !== undefined) {
-              expectedStr = (Array.isArray(expected) ? expected[0] : expected).toString().replace(/\D/g, '');
-            }
-            if (!expectedStr) {
-              if (op === '+') expectedStr = (topInt + botInt).toString();
-              else if (op === '-') expectedStr = (topInt - botInt).toString();
-              else if (op === '×') expectedStr = (topInt * botInt).toString();
-            }
-            totalDigitsCount = Math.max(numTop.length, numBottom.length, expectedStr ? expectedStr.length : 0);
-            numCols = Math.max(numCols, totalDigitsCount);
+            resDecLen = Math.max(topDecLen, botDecLen);
           }
 
-          // Cỡ ô chuẩn linh hoạt theo số lượng cột (đảm bảo không bao giờ bị dài, khuất hay tràn mép):
-          let cellCls = 'w-8 h-9 text-xl';
-          let cellHeightPx = 36;
-          if (numCols <= 4) {
-            cellCls = 'w-9 h-10 text-2xl';
-            cellHeightPx = 40;
-          } else if (numCols === 5) {
-            cellCls = 'w-8 h-9 text-xl';
-            cellHeightPx = 36;
-          } else if (numCols === 6) {
-            cellCls = 'w-7 h-8 text-lg';
-            cellHeightPx = 32;
+          // 3. TÍNH TOÁN GIÁ TRỊ VÀ CÁC DÒNG TÍCH RIÊNG ĐỘNG (HỖ TRỢ MỌI SỐ CÓ >= 2 CHỮ SỐ)
+          let totalDigitsStr = '';
+          const partialProducts = []; // Danh sách các dòng tích riêng: part1, part2, part3...
+          const botDigitsRev = botClean.split('').reverse();
+          const hasMultiRows = (op === '×' && botDigitsRev.length >= 2);
+
+          if (op === '×') {
+            const topValInt = parseInt(topClean, 10);
+            const botValInt = parseInt(botClean, 10);
+            const totalValInt = topValInt * botValInt;
+            totalDigitsStr = totalValInt.toString();
+            if (resDecLen > 0 && totalDigitsStr.length <= resDecLen) {
+              totalDigitsStr = totalDigitsStr.padStart(resDecLen + 1, '0');
+            }
+            if (hasMultiRows) {
+              for (let r = 0; r < botDigitsRev.length; r++) {
+                const d = parseInt(botDigitsRev[r], 10);
+                partialProducts.push((topValInt * d).toString());
+              }
+            }
           } else {
-            // >= 7 chữ số
+            const topFloat = parseFloat(numTop.replace(',', '.'));
+            const botFloat = parseFloat(numBottom.replace(',', '.'));
+            const mathRes = (op === '+') ? (topFloat + botFloat) : (topFloat - botFloat);
+            if (resDecLen > 0) {
+              const resFmt = mathRes.toFixed(resDecLen).replace('.', ',');
+              totalDigitsStr = resFmt.replace(',', '');
+            } else {
+              totalDigitsStr = Math.round(mathRes).toString();
+            }
+          }
+
+          // 4. XÁC ĐỊNH SỐ CỘT (NUM COLS) ĐẢM BẢO CHỮ SỐ Ở TẤT CẢ CÁC HÀNG CĂN THẲNG TRỤC DỌC 100%
+          let maxColsNeeded = Math.max(topClean.length, botClean.length, totalDigitsStr.length);
+          if (hasMultiRows) {
+            partialProducts.forEach((pVal, r) => {
+              maxColsNeeded = Math.max(maxColsNeeded, pVal.length + r);
+            });
+          }
+          let numCols = Math.max(maxColsNeeded, 3);
+
+          // Kích thước ô chuẩn:
+          let cellCls = 'w-8 h-9 text-lg';
+          let fontCls = 'text-lg';
+          if (numCols >= 6 && numCols <= 7) {
+            cellCls = 'w-7 h-8 text-base';
+            fontCls = 'text-base';
+          } else if (numCols >= 8) {
             cellCls = 'w-6 h-7 text-sm';
-            cellHeightPx = 28;
+            fontCls = 'text-sm';
           }
-          const colTemplate = `repeat(${numCols}, minmax(0, 1fr))`;
 
-          // 1. Dòng thừa số trên
-          const topPadded = numTop.padStart(numCols, ' ');
-          const rowTopHtml = topPadded.split('').map((ch) => {
-            return `<div class="${cellCls} flex items-center justify-center font-mono font-black text-slate-800">${ch !== ' ' ? ch : ''}</div>`;
-          }).join('');
+          // Dấu phẩy thanh thoát nằm lọt vào khoảng hở 8px giữa 2 ô (không đè viền hộp, không chiếm cột):
+          const gapPx = 8;
+          const makeCommaTag = (isInput = false) => `
+            <div class="absolute left-full top-0 bottom-0 flex items-end justify-center select-none pointer-events-none" style="width: ${gapPx}px; z-index: 20;">
+              <span class="font-mono font-black text-rose-600 ${isInput ? 'text-xl' : fontCls} leading-none mb-1">,</span>
+            </div>
+          `;
 
-          // 2. Dòng thừa số dưới (ĐẦY ĐỦ TẤT CẢ CÁC CHỮ SỐ, KHÔNG BỊ ĐÈ MẤT SỐ NÀO!)
-          const botPadded = numBottom.padStart(numCols, ' ');
-          const rowBotHtml = botPadded.split('').map((ch) => {
-            return `<div class="${cellCls} flex items-center justify-center font-mono font-black text-slate-800">${ch !== ' ' ? ch : ''}</div>`;
-          }).join('');
+          // A. DÒNG THỪA SỐ TRÊN
+          let rowTopHtml = '';
+          for (let c = numCols - 1; c >= 0; c--) {
+            const hasComma = (c === topDecLen && topDecLen > 0);
+            const commaTag = hasComma ? makeCommaTag(false) : '';
+            if (c < topClean.length) {
+              const ch = topClean[topClean.length - 1 - c];
+              rowTopHtml += `<div class="${cellCls} relative flex items-center justify-center font-mono font-black text-slate-800 select-none">${ch}${commaTag}</div>`;
+            } else {
+              rowTopHtml += `<div class="${cellCls} select-none"></div>`;
+            }
+          }
 
-          // 3. Các dòng tích riêng (nếu nhân nhiều số)
+          // B. DÒNG THỪA SỐ DƯỚI (SỐ NGUYÊN KHÔNG CÓ DẤU PHẨY, GIỮ NGUYÊN DẠNG GỐC)
+          let rowBotHtml = '';
+          for (let c = numCols - 1; c >= 0; c--) {
+            const hasComma = (c === botDecLen && botDecLen > 0);
+            const commaTag = hasComma ? makeCommaTag(false) : '';
+            if (c < botClean.length) {
+              const ch = botClean[botClean.length - 1 - c];
+              rowBotHtml += `<div class="${cellCls} relative flex items-center justify-center font-mono font-black text-slate-800 select-none">${ch}${commaTag}</div>`;
+            } else {
+              rowBotHtml += `<div class="${cellCls} select-none"></div>`;
+            }
+          }
+
+          // C. CÁC DÒNG TÍCH RIÊNG ĐỘNG (Sinh đầy đủ part1, part2, part3... theo số chữ số thừa số dưới)
           let multiRowsHtml = '';
-          if (isMultiDigitMul) {
-            // Tích riêng 1: chiếm part1DigitsCount cột tận cùng bên phải
-            const emptyCols1 = numCols - part1DigitsCount;
-            let cells1 = '';
-            for (let c = 0; c < numCols; c++) {
-              if (c < emptyCols1) {
-                cells1 += `<div class="${cellCls}"></div>`;
-              } else {
-                cells1 += `<input type="text" maxlength="1" inputmode="numeric" data-row="part1" data-col="${c}" class="digit-cell ${cellCls} text-center font-mono font-black rounded-lg border-2 border-slate-300 bg-white text-slate-900 focus:bg-teal-50 focus:border-teal-500 focus:outline-none shadow-xs transition" />`;
+          if (hasMultiRows) {
+            const rowsHtmlArr = [];
+            partialProducts.forEach((pVal, r) => {
+              let cells = '';
+              for (let c = numCols - 1; c >= 0; c--) {
+                if (c < r) {
+                  // Cột bị lùi sang trái ở dòng thứ r
+                  cells += `<div class="${cellCls} flex items-center justify-center text-slate-300 font-light select-none">·</div>`;
+                } else if ((c - r) < pVal.length) {
+                  // Cột có chữ số của tích riêng
+                  cells += `<input type="text" maxlength="1" inputmode="numeric" data-row="part${r + 1}" data-col="${c}" class="digit-cell ${cellCls} text-center font-mono font-black rounded-lg border-2 border-slate-300 bg-white text-slate-900 focus:bg-teal-50 focus:border-teal-500 focus:outline-none shadow-xs transition" />`;
+                } else {
+                  // Cột đệm bên trái
+                  cells += `<div class="${cellCls} select-none"></div>`;
+                }
               }
-            }
-
-            // Tích riêng 2: LÙI HẲN SANG TRÁI 1 CỘT (Cột ngoài cùng bên phải c = numCols - 1 để trống!)
-            const endCol2 = numCols - 2;
-            const startCol2 = endCol2 - part2DigitsCount + 1;
-            let cells2 = '';
-            for (let c = 0; c < numCols; c++) {
-              if (c >= startCol2 && c <= endCol2) {
-                cells2 += `<input type="text" maxlength="1" inputmode="numeric" data-row="part2" data-col="${c}" class="digit-cell ${cellCls} text-center font-mono font-black rounded-lg border-2 border-slate-300 bg-white text-slate-900 focus:bg-teal-50 focus:border-teal-500 focus:outline-none shadow-xs transition" />`;
-              } else {
-                cells2 += `<div class="${cellCls}"></div>`;
-              }
-            }
+              rowsHtmlArr.push(`
+                <div class="flex items-center justify-end my-0.5 gap-2">
+                  ${cells}
+                </div>
+              `);
+            });
 
             multiRowsHtml = `
-              <div class="grid gap-1 items-center justify-center my-0.5" style="grid-template-columns: ${colTemplate};">
-                ${cells1}
-              </div>
-              <div class="grid gap-1 items-center justify-center my-0.5" style="grid-template-columns: ${colTemplate};">
-                ${cells2}
-              </div>
-              <div class="w-full h-[2px] bg-slate-600 my-1 rounded-full"></div>
+              ${rowsHtmlArr.join('')}
+              <div class="w-full h-[2px] bg-slate-700 my-1 rounded-full"></div>
             `;
           }
 
-          // 4. Hàng đáp số tổng (nhập từ phải sang trái)
-          const emptyColsTotal = numCols - totalDigitsCount;
+          // D. DÒNG ĐÁP SỐ TỔNG (ĐIỀN TỪ PHẢI QUA TRÁI, DẤU PHẨY CĂN GIỮA KHE KHÔNG ĐÈ HỘP)
           let totalCellsHtml = '';
-          for (let c = 0; c < numCols; c++) {
-            if (c < emptyColsTotal) {
-              totalCellsHtml += `<div class="${cellCls}"></div>`;
+          for (let c = numCols - 1; c >= 0; c--) {
+            const hasComma = (c === resDecLen && resDecLen > 0);
+            const commaTag = hasComma ? makeCommaTag(true) : '';
+            if (c < totalDigitsStr.length) {
+              totalCellsHtml += `<div class="relative"><input type="text" maxlength="1" inputmode="numeric" data-row="total" data-col="${c}" class="digit-cell ${cellCls} text-center font-mono font-black rounded-lg border-2 border-teal-500 bg-teal-50 text-slate-900 focus:bg-teal-100 focus:border-teal-600 focus:outline-none shadow-xs transition" />${commaTag}</div>`;
             } else {
-              totalCellsHtml += `<input type="text" maxlength="1" inputmode="numeric" data-row="total" data-col="${c}" class="digit-cell ${cellCls} text-center font-mono font-black rounded-lg border-2 border-teal-500 bg-teal-50 text-slate-900 focus:bg-teal-100 focus:border-teal-600 focus:outline-none shadow-xs transition" />`;
+              totalCellsHtml += `<div class="${cellCls} select-none"></div>`;
             }
           }
 
           mathDisplayHtml = `
-            <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs flex flex-col items-center justify-center my-1 select-none">
-              <div class="inline-flex flex-col items-center">
-                <!-- Phần trên: Dấu phép tính ở giữa 2 hàng số + 2 hàng số -->
-                <div class="inline-flex items-start justify-center">
-                  <!-- Dấu phép tính căn giữa 2 hàng số theo chiều dọc -->
-                  <div class="flex items-center justify-center font-mono font-black text-teal-600 text-xl pr-2 select-none" style="height: calc(${cellHeightPx * 2}px + 4px);">
-                    ${op}
-                  </div>
+            <div data-math-grid="true" data-res-dec-len="${resDecLen}" class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex flex-col items-center justify-center my-1 select-none max-w-[340px] mx-auto w-full">
+              <div class="inline-flex flex-col items-end">
+                <!-- Hàng thừa số trên -->
+                <div class="flex items-center justify-end my-0.5 gap-2">
+                  ${rowTopHtml}
+                </div>
 
-                  <!-- 2 hàng số -->
-                  <div class="inline-flex flex-col items-center">
-                    <div class="grid gap-1 items-center justify-center my-0.5" style="grid-template-columns: ${colTemplate};">
-                      ${rowTopHtml}
-                    </div>
-                    <div class="grid gap-1 items-center justify-center my-0.5" style="grid-template-columns: ${colTemplate};">
-                      ${rowBotHtml}
-                    </div>
+                <!-- Hàng thừa số dưới: Dấu phép tính căn trái, thừa số căn phải -->
+                <div class="flex items-center justify-end my-0.5 relative w-full gap-2">
+                  <span class="absolute left-0 text-teal-600 font-mono font-black ${fontCls} select-none pl-1">${op}</span>
+                  <div class="flex items-center justify-end gap-2">
+                    ${rowBotHtml}
                   </div>
                 </div>
 
-                <!-- Vạch ngang biểu thị dấu bằng kéo dài hết cả dấu phép tính và các số -->
-                <div class="w-full h-[3px] bg-slate-800 my-1 rounded-full"></div>
+                <!-- Vạch ngang đặt tính -->
+                <div class="w-full h-[2.5px] bg-slate-800 my-1 rounded-full"></div>
 
-                <!-- Phần dưới vạch kẻ ngang: Tích riêng hoặc Dòng tổng -->
-                <div class="inline-flex items-start justify-center">
-                  <!-- Khoảng bù dấu phép tính để các ô đáp số thẳng hàng tuyệt đối với cột chữ số phía trên -->
-                  <div class="pr-2 select-none opacity-0 font-mono text-xl pointer-events-none">${op}</div>
+                <!-- Các dòng tích riêng (nếu có) -->
+                ${multiRowsHtml}
 
-                  <div class="inline-flex flex-col items-center">
-                    ${multiRowsHtml}
-                    <!-- Hàng đáp số tổng -->
-                    <div class="grid gap-1 items-center justify-center my-0.5" style="grid-template-columns: ${colTemplate};">
-                      ${totalCellsHtml}
-                    </div>
-                  </div>
+                <!-- Hàng đáp số tổng -->
+                <div class="flex items-center justify-end my-0.5 gap-2">
+                  ${totalCellsHtml}
                 </div>
 
+                ${unitText ? `<div class="text-[11px] font-bold text-slate-500 mt-2 text-center w-full select-none">Đơn vị: (${unitText})</div>` : ''}
                 <input id="child-stage-text-input" type="hidden" value="" />
               </div>
             </div>
@@ -586,23 +657,40 @@
           setTimeout(() => {
             setupDigitGridListeners(expected);
           }, 60);
-
+        
         } else {
-          // Standard horizontal fallback (phép chia hoặc câu văn)
-          const formulaMatch = prompt.match(/(\d+[\s\d]*\s*[\/:]\s*\d+[\s\d]*)\s*=\s*(?:\?|[\.\_]+)/);
+          // Biểu thức ngang (phép chia, hoặc biểu thức phức hợp)
+          const formulaMatch = mathPart.match(/^([^\?=]+?)\s*=\s*(?:\?|[\.\_]+)/);
           if (formulaMatch) {
             const expression = formulaMatch[1].trim();
             mathDisplayHtml = `
-              <div class="bg-white p-3 rounded-2xl border-2 border-teal-300 shadow-sm flex items-center justify-center gap-2 text-slate-800 font-mono text-lg font-black my-1">
-                <span class="tracking-wider">${expression} =</span>
+              <div class="bg-white py-3 px-4 rounded-2xl border-2 border-teal-300 shadow-sm flex items-center justify-center gap-2 text-slate-800 font-mono text-base font-black my-2 max-w-[320px] mx-auto w-full">
+                <span class="tracking-wider whitespace-nowrap">${expression} =</span>
                 <div class="inline-block w-24">
-                  <input id="child-stage-text-input" type="text" placeholder="${placeholder || '?'}" autofocus class="w-full text-center text-lg font-black p-1.5 rounded-xl border-2 border-teal-400 bg-teal-50 text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-inner placeholder:text-slate-600" oninput='handleChildTextInput(this.value, ${JSON.stringify(expected)})' />
+                  <input id="child-stage-text-input" 
+                         type="text" 
+                         placeholder="${placeholder || '?'}" 
+                         autofocus 
+                         inputmode="numeric"
+                         autocomplete="off"
+                         class="w-full text-center text-lg font-black p-1.5 rounded-xl border-2 border-teal-400 bg-teal-50 text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500 shadow-inner placeholder:text-slate-400" 
+                         oninput='handleChildTextInput(this.value, ${JSON.stringify(expected)})'
+                         onkeydown='if(event.key === "Enter") handleChildTextInputSubmit(${JSON.stringify(expected)})' />
                 </div>
+                ${unitText ? `<span class="text-xs font-bold text-slate-600 whitespace-nowrap">(${unitText})</span>` : ''}
               </div>
             `;
           } else {
             mathDisplayHtml = `
-              <input id="child-stage-text-input" type="text" placeholder="${placeholder}" class="w-full text-center text-sm font-black p-2.5 rounded-2xl border-2 border-teal-300 bg-white shadow-inner focus:outline-none focus:ring-2 focus:ring-teal-400 text-slate-900 placeholder:text-slate-600" oninput='handleChildTextInput(this.value, ${JSON.stringify(expected)})' />
+              <div class="max-w-[300px] mx-auto w-full my-2">
+                <input id="child-stage-text-input" 
+                       type="text" 
+                       placeholder="${placeholder}" 
+                       autofocus 
+                       class="w-full text-center text-base font-black p-2.5 rounded-2xl border-2 border-teal-300 bg-white shadow-inner focus:outline-none focus:ring-2 focus:ring-teal-400 text-slate-900 placeholder:text-slate-400" 
+                       oninput='handleChildTextInput(this.value, ${JSON.stringify(expected)})'
+                       onkeydown='if(event.key === "Enter") handleChildTextInputSubmit(${JSON.stringify(expected)})' />
+              </div>
             `;
           }
         }
@@ -614,7 +702,7 @@
           passageDrawerHtml = `
             <details class="bg-indigo-50/80 border border-indigo-200 rounded-xl p-2.5 text-xs text-indigo-950 mb-1 cursor-pointer" open>
               <summary class="font-bold flex items-center justify-between text-indigo-800 select-none">
-                <span class="flex items-center gap-1.5"><span>📖</span> <span>Đoạn văn chuyện gốc:</span></span>
+                <span class="flex items-center gap-2"><span>📖</span> <span>Đoạn văn chuyện gốc:</span></span>
                 <span class="text-[10px] text-indigo-600 underline">Thu gọn/Mở</span>
               </summary>
               <p class="mt-2 text-[11px] leading-relaxed text-slate-700 bg-white p-2.5 rounded-lg border border-indigo-100 whitespace-pre-line">
@@ -639,8 +727,6 @@
           </div>
         `;
 
-
-
       } else if (stepData.ui_type === 'highlight' || stepData.type === 'highlight') {
         const targetSegments = ui.highlight_target_segments || 
           (stepData.success_criteria && Array.isArray(stepData.success_criteria.expected_answer) ? stepData.success_criteria.expected_answer : []);
@@ -654,6 +740,11 @@
           sentenceToTokenize = ui.prompt_text || stepData.text || (task && task.title) || "Đề bài";
         } else {
           sentenceToTokenize = (task && task.original_text) || ui.prompt_text || stepData.text || "Đề bài";
+        }
+
+        // Tước bỏ triệt để các phương án trắc nghiệm A, B, C, D nếu còn sót lại trong đề bài gốc
+        if (sentenceToTokenize && typeof sentenceToTokenize === 'string') {
+          sentenceToTokenize = sentenceToTokenize.split(/\n\s*[A-D][\.\:\)]/)[0].trim();
         }
 
         let tokens = tokenizeSentenceForHighlight(sentenceToTokenize, targetSegments);
@@ -691,6 +782,9 @@
 
         // Render natural flowing paragraph with authentic yellow highlighter styling
         const paragraphHtml = tokens.map((tok, idx) => {
+          if (tok.isNewline) {
+            return `<span class="block w-full my-1.5"></span>`;
+          }
           if (tok.isTarget) {
             const targetKeyAttr = tok.targetKey ? `data-target-key="${tok.targetKey}"` : '';
             return `
@@ -720,7 +814,7 @@
           passageDrawerHtml = `
             <details class="bg-indigo-50/80 border border-indigo-200 rounded-xl p-2.5 text-xs text-indigo-950 mb-1 cursor-pointer">
               <summary class="font-bold flex items-center justify-between text-indigo-800 select-none">
-                <span class="flex items-center gap-1.5"><span>📖</span> <span>Xem lại toàn bài đọc</span></span>
+                <span class="flex items-center gap-2"><span>📖</span> <span>Xem lại toàn bài đọc</span></span>
                 <span class="text-[10px] text-indigo-600 underline">Mở/Đóng</span>
               </summary>
               <p class="mt-2 text-[11px] leading-relaxed text-slate-700 bg-white p-2.5 rounded-lg border border-indigo-100 whitespace-pre-line">
@@ -817,6 +911,13 @@
         if (btnNext) {
           btnNext.disabled = false;
           btnNext.classList.remove('btn-disabled');
+          btnNext.classList.add('animate-bounce');
+          setTimeout(() => {
+            const curNext = document.getElementById('child-btn-next-step');
+            if (curNext && !curNext.disabled && typeof curNext.click === 'function') {
+              curNext.click();
+            }
+          }, 800);
         }
       }
     }
@@ -832,7 +933,9 @@
     function normalizeAnswer(val) {
       if (val === null || val === undefined) return "";
       let s = String(val).trim().toLowerCase();
-      // Equate Vietnamese decimal comma (12,5) with decimal point (12.5)
+      // Loại bỏ dấu cách giữa các chữ số: "170 000" -> "170000"
+      s = s.replace(/(\d)\s+(\d)/g, "$1$2");
+      // Quy chuẩn dấu phẩy thập phân kiểu Việt Nam (12,5 -> 12.5)
       s = s.replace(/(\d+),(\d+)/g, "$1.$2");
       s = s.replace(/\s+/g, " ");
       return s;
@@ -878,21 +981,27 @@
         }
 
         if (earliestMatch !== null) {
-          const before = remaining.slice(0, earliestMatch.idx);
-          if (before.trim().length > 0) {
-            before.trim().split(/\s+/).forEach(w => {
-              if (w) rawTokens.push({ text: w, isTarget: false });
+          function pushWordsWithNewlines(str) {
+            if (!str) return;
+            const lines = str.split('\n');
+            lines.forEach((line, lIdx) => {
+              if (lIdx > 0) {
+                rawTokens.push({ isNewline: true });
+              }
+              line.trim().split(/\s+/).forEach(w => {
+                if (w) rawTokens.push({ text: w, isTarget: false });
+              });
             });
           }
+
+          const before = remaining.slice(0, earliestMatch.idx);
+          pushWordsWithNewlines(before);
+
           const actualTargetText = remaining.slice(earliestMatch.idx, earliestMatch.idx + earliestMatch.len);
           rawTokens.push({ text: actualTargetText, isTarget: true, targetKey: matchedTarget.toLowerCase() });
           remaining = remaining.slice(earliestMatch.idx + earliestMatch.len);
         } else {
-          if (remaining.trim().length > 0) {
-            remaining.trim().split(/\s+/).forEach(w => {
-              if (w) rawTokens.push({ text: w, isTarget: false });
-            });
-          }
+          pushWordsWithNewlines(remaining);
           break;
         }
       }
@@ -901,8 +1010,10 @@
       const tokens = [];
       for (let i = 0; i < rawTokens.length; i++) {
         const item = rawTokens[i];
-        if (/^[.,!?;:]+$/.test(item.text.trim())) {
-          if (tokens.length > 0 && !tokens[tokens.length - 1].isTarget) {
+        if (item.isNewline) {
+          tokens.push(item);
+        } else if (/^[.,!?;:]+$/.test(item.text.trim())) {
+          if (tokens.length > 0 && !tokens[tokens.length - 1].isTarget && !tokens[tokens.length - 1].isNewline) {
             tokens[tokens.length - 1].text += item.text;
           }
         } else {
@@ -1190,7 +1301,7 @@
               prevCell.select();
             } else {
               // Nhảy sang hàng tiếp theo
-              const allRows = ['part1', 'part2', 'total'];
+              const allRows = Array.from(new Set(cells.map(c => c.dataset.row)));
               const currentRowIdx = allRows.indexOf(rowName);
               if (currentRowIdx !== -1 && currentRowIdx < allRows.length - 1) {
                 const nextRowName = allRows[currentRowIdx + 1];
@@ -1202,6 +1313,17 @@
                 }
               }
             }
+          } else if (e.key === ',' || e.key === '.') {
+            e.preventDefault();
+            // Trong lưới số thập phân: bấm phẩy/chấm tự nhảy sang ô phần nguyên bên trái
+            if (currentIndexInRow > 0) {
+              const prevCell = rowCells[currentIndexInRow - 1];
+              prevCell.focus();
+              prevCell.select();
+            }
+          } else if (e.key === 'Enter') {
+            e.preventDefault();
+            handleChildTextInputSubmit(expected);
           } else if (e.key === 'Backspace') {
             e.preventDefault();
             if (this.value) {
@@ -1265,6 +1387,43 @@
     }
 
     function syncMathGridValues(expected) {
+      const grid = document.querySelector('[data-math-grid="true"]');
+      if (grid) {
+        const resDecLen = parseInt(grid.dataset.resDecLen || '0', 10);
+        const totalCells = Array.from(grid.querySelectorAll('.digit-cell[data-row="total"]'));
+        if (!totalCells.length) return;
+
+        let fullVal = '';
+        if (resDecLen > 0) {
+          let intPart = '';
+          let decPart = '';
+          // totalCells được duyệt theo thứ tự DOM (từ trái qua phải, data-col từ lớn xuống 0)
+          totalCells.forEach(cell => {
+            const col = parseInt(cell.dataset.col, 10);
+            if (col >= resDecLen) {
+              intPart += (cell.value || '');
+            } else {
+              decPart += (cell.value || '');
+            }
+          });
+          fullVal = `${intPart || '0'},${decPart}`;
+        } else {
+          fullVal = totalCells.map(c => c.value || '').join('').trim();
+        }
+
+        const hiddenInput = document.getElementById('child-stage-text-input');
+        if (hiddenInput) {
+          hiddenInput.value = fullVal;
+        }
+
+        const allFilled = totalCells.every(c => (c.value || '').trim() !== '');
+        if (allFilled) {
+          handleChildTextInput(fullVal, expected);
+        }
+        return;
+      }
+
+      // Fallback cho lưới cũ
       const totalCells = Array.from(document.querySelectorAll('.digit-cell[data-row="total"]'));
       if (!totalCells.length) return;
 
@@ -1410,3 +1569,24 @@
     }
 
 
+
+if (typeof window !== 'undefined') {
+  window.childSwitchScreen = childSwitchScreen;
+  window.exitChildWorkspace = exitChildWorkspace;
+  window.renderChildWorkspaceStep = renderChildWorkspaceStep;
+  window.handleChildChoice = handleChildChoice;
+  window.handleHouseWindowClick = handleHouseWindowClick;
+  window.handleHouseWindowWrongClick = handleHouseWindowWrongClick;
+  window.toggleHighlightToken = toggleHighlightToken;
+  window.handleChildTextInput = typeof handleChildTextInput !== 'undefined' ? handleChildTextInput : null;
+  window.handleChildTextInputSubmit = typeof handleChildTextInputSubmit !== 'undefined' ? handleChildTextInputSubmit : null;
+  window.completeChildStep = typeof completeChildStep !== 'undefined' ? completeChildStep : null;
+  window.pressChildNum = pressChildNum;
+  window.selectMathOp = selectMathOp;
+  window.toggleMathClue = typeof toggleMathClue !== 'undefined' ? toggleMathClue : null;
+  window.alertWrongClue = typeof alertWrongClue !== 'undefined' ? alertWrongClue : null;
+  window.cleanDesk = typeof cleanDesk !== 'undefined' ? cleanDesk : null;
+  window.tidyBooks = typeof tidyBooks !== 'undefined' ? tidyBooks : null;
+  window.pickTrash = typeof pickTrash !== 'undefined' ? pickTrash : null;
+  window.pickChoreItem = typeof pickChoreItem !== 'undefined' ? pickChoreItem : null;
+}

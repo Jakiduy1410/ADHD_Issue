@@ -84,8 +84,43 @@ window.addEventListener('DOMContentLoaded', () => {
     window.miloBus.role = paramRole;
   }
 
+  // 4.1 URL Parameter task auto-load (?task=G5_DEMO_DECIMAL or ?demo=1)
+  const paramTask = urlParams.get('task') || (urlParams.get('demo') === '1' ? 'G5_DEMO_DECIMAL' : null);
+  if (paramTask && typeof taskDatabase !== 'undefined' && taskDatabase[paramTask]) {
+    const demoTask = taskDatabase[paramTask];
+    appState.childRoadmap = [demoTask];
+    appState.currentRoadmapIndex = 0;
+    appState.activeTask = demoTask;
+    appState.currentStepIndex = 0;
+    setTimeout(() => {
+      if (typeof startChildQuest === 'function') {
+        startChildQuest();
+      }
+    }, 200);
+  }
+
   // 5. Khởi tạo giao diện ban đầu (Sẽ tự động cập nhật khi nhận WebSocket snapshot)
   renderParentCatalogList();
   renderChildIslandRoadmap();
   updateCognitiveProfileUI(appState.cognitiveProfile);
 });
+
+
+// Ham toan cuc cho phep kich hoat nhanh bai kiem thu mau so thap phan
+window.loadDemoDecimalTask = function() {
+  const task = (typeof taskDatabase !== 'undefined' && taskDatabase['G5_DEMO_DECIMAL']) || null;
+  if (!task) {
+    window.location.href = 'demo.html';
+    return;
+  }
+  appState.childRoadmap = [task];
+  appState.currentRoadmapIndex = 0;
+  appState.activeTask = task;
+  appState.currentStepIndex = 0;
+  if (typeof startChildQuest === 'function') {
+    startChildQuest();
+  }
+  if (typeof showToast === 'function') {
+    showToast('Da mo bai kiem thu mau!', 'Phep nhan 25,8 x 1,5 voi 3 phuong an giao dien.', '🧪');
+  }
+};

@@ -772,7 +772,7 @@
       window.saveSurveyAndCalculateProfile = saveSurveyAndCalculateProfile;
       window.skipSurveyWithDefaults = skipSurveyWithDefaults;
       window.calculateCognitiveProfileFromAnswers = calculateCognitiveProfileFromAnswers;
-      window.DEFAULT_COGNITIVE_PROFILE = DEFAULT_COGNITIVE_PROFILE;
+      window.DEFAULT_COGNITIVE_PROFILE = (typeof DEFAULT_COGNITIVE_PROFILE !== 'undefined') ? DEFAULT_COGNITIVE_PROFILE : (window.DEFAULT_COGNITIVE_PROFILE || {});
       window.updateCognitiveProfileUI = updateCognitiveProfileUI;
       window.renderSurveyQuestions = renderSurveyQuestions;
       window.loadStoredCognitiveProfile = loadStoredCognitiveProfile;

@@ -49,7 +49,7 @@
     /* ============================================================
        B. STATE MANAGEMENT TOÀN BỘ ỨNG DỤNG
        ============================================================ */
-    const DEFAULT_COGNITIVE_PROFILE = {
+    var DEFAULT_COGNITIVE_PROFILE = window.DEFAULT_COGNITIVE_PROFILE = {
       attention_span_minutes: 12,
       recommended_micro_task_duration_sec: 120,
       working_memory_capacity: 3,
@@ -80,7 +80,7 @@
       return Object.assign({}, DEFAULT_COGNITIVE_PROFILE);
     }
 
-    const appState = {
+    var appState = window.appState = {
       role: 'dual', // 'dual', 'child', 'parent'
       stars: 450,
       cognitiveProfile: loadStoredCognitiveProfile(),
@@ -223,3 +223,12 @@
        E. LỘ TRÌNH ĐẢO BÀI TẬP (ISLAND QUEST ROADMAP) LOGIC
        ============================================================ */
 
+
+if (typeof window !== 'undefined') {
+  window.appState = appState;
+  window.DEFAULT_COGNITIVE_PROFILE = DEFAULT_COGNITIVE_PROFILE;
+  window.loadStoredCognitiveProfile = loadStoredCognitiveProfile;
+  window.updateStarsEverywhere = updateStarsEverywhere;
+  window.showToast = showToast;
+  window.formatTime = formatTime;
+}

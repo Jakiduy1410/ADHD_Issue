@@ -576,7 +576,7 @@
           flashError();
         }
       } 
-      // SUBSTAGE 1: Điền số dư (có thể 1 hoặc 2 chữ số)
+      // SUBSTAGE 1: Điền số dư (tính phép trừ)
       else if (currentSubStage === 1) {
         const expectedRemStr = String(curRound.remainder);
         inputBuffer += val;
@@ -587,17 +587,33 @@
 
         if (inputBuffer === expectedRemStr) {
           playSfx('pop');
-          setTimeout(() => {
-            if (curRound.bringDownDigit !== null) {
-              currentSubStage = 2; // Chuyển sang nút Hạ số
-            } else {
-              currentSubStage = 3;
-              triggerStarBurst();
-            }
+          
+          if (curRound.bringDownDigit !== null) {
+            // Bước 1: Hiển thị số dư vừa điền
             inputBuffer = '';
+            currentSubStage = 1.5; // Trạng thái hiệu ứng tự động hạ số
             renderDivisionSimulator();
-            updateMonitorPanel();
-          }, 300);
+            
+            // Bước 2: Tự động hạ số sau 250ms với âm thanh drop sinh động
+            setTimeout(() => {
+              playSfx('drop');
+              currentRoundIdx++;
+              currentSubStage = 0; // Chuyển thẳng sang nhịp tính chia tiếp theo
+              inputBuffer = '';
+              renderDivisionSimulator();
+              updateMonitorPanel();
+            }, 400);
+
+          } else {
+            // Không còn số để hạ -> Hoàn thành toàn bộ!
+            setTimeout(() => {
+              currentSubStage = 3;
+              inputBuffer = '';
+              triggerStarBurst();
+              renderDivisionSimulator();
+              updateMonitorPanel();
+            }, 300);
+          }
         } else if (inputBuffer.length === expectedRemStr.length) {
           flashError();
         }
@@ -741,8 +757,56 @@
                 </div>
               </div>
             `;
+          } else if (currentSubStage === 1.5) {
+            // Tự động hạ số ngay lập tức
+            leftRowsHtml += `
+              <div class="flex items-center">
+                <div class="${signCls}">-</div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.prodStartCol && col <= r.prodEndCol) {
+                      const ch = r.prodStr[col - r.prodStartCol];
+                      return `<div class="${cellCls} text-slate-400">${ch}</div>`;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+              <div class="flex items-center my-0.5">
+                <div class="${signCls}"></div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.prodStartCol && col <= r.prodEndCol) {
+                      return `<div class="${cellCls} flex items-center justify-center"><div class="w-full h-[1.5px] bg-slate-300 rounded-full"></div></div>`;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+              <div class="flex items-center">
+                <div class="${signCls}"></div>
+                <div class="flex items-center font-black">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.remStartCol && col <= r.remEndCol) {
+                      const ch = r.remStr[col - r.remStartCol];
+                      return `<div class="${cellCls} text-slate-900">${ch}</div>`;
+                    }
+                    if (col === r.bringDownCol) {
+                      return `
+                        <div class="${cellCls} flex items-center justify-center">
+                          <span class="text-teal-600 font-black animate-drop">
+                            ${r.bringDownDigit}
+                          </span>
+                        </div>
+                      `;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+            `;
           } else if (currentSubStage === 2) {
-            // Đã điền xong số dư, chờ hạ số
+            // Dự phòng
             leftRowsHtml += `
               <!-- Hàng trừ tích -->
               <div class="flex items-center">
@@ -859,14 +923,14 @@
         }
       }
 
-      // 3. Câu hướng dẫn vi bước
+      // 3. Câu hướng dẫn vi bước tinh gọn 2 nhịp
       let instructionText = '';
       if (currentSubStage === 0) {
-        instructionText = `👉 <strong>Bước 1:</strong> Lấy <strong>${curRound.currentPart}</strong> chia cho <strong>${t.divisor}</strong> được mấy? (Điền thương)`;
+        instructionText = `👉 <strong>1. Tính chia:</strong> Lấy <strong>${curRound.currentPart}</strong> chia cho <strong>${t.divisor}</strong> được mấy? (Điền thương)`;
       } else if (currentSubStage === 1) {
-        instructionText = `👉 <strong>Bước 2:</strong> Lấy ${curRound.currentPart} - ${curRound.product} = ? (Điền số dư)`;
-      } else if (currentSubStage === 2) {
-        instructionText = `👉 <strong>Bước 3:</strong> Click nút <strong>Hạ số ${curRound.bringDownDigit}</strong> xuống cột số dư!`;
+        instructionText = `👉 <strong>2. Tính trừ:</strong> Lấy ${curRound.currentPart} - ${curRound.product} = ? (Điền số dư)`;
+      } else if (currentSubStage === 1.5) {
+        instructionText = `⬇️ <strong>Tự động hạ số ${curRound.bringDownDigit}</strong> xuống cạnh số dư ${curRound.remainder}...`;
       } else {
         instructionText = `🎉 <strong>Hoàn thành!</strong> Kết quả: <strong>${t.dividend} : ${t.divisor} = ${t.quotient}</strong>` + 
           (t.finalRemainder > 0 ? ` (dư ${t.finalRemainder})` : ' (chia hết)');
@@ -956,30 +1020,25 @@
 
           </div>
 
-          <!-- BOTTOM ACTION: HẠ SỐ HOẶC NUMPAD -->
+          <!-- BOTTOM ACTION: BÀN PHÍM NUMPAD XÚC GIÁC XUYÊN SUỐT -->
           <div class="pt-2 pb-5 space-y-2">
             
-            ${currentSubStage === 2 ? `
-              <!-- Nút bấm to hạ số -->
-              <button onclick="triggerBringDown()" class="btn-3d-yellow w-full py-3.5 rounded-2xl font-black text-slate-950 text-sm tracking-wide shadow-md flex items-center justify-center gap-2 animate-bounce">
-                <span>⬇️</span> HẠ CHỮ SỐ <strong class="text-base text-rose-700 bg-white px-2 py-0.5 rounded-lg border border-amber-500">${curRound.bringDownDigit}</strong> XUỐNG CỘT DƯ
-              </button>
-            ` : `
-              <!-- BÀN PHÍM NUMPAD XÚC GIÁC TACTILE -->
-              <div class="grid grid-cols-5 gap-1.5 w-full">
-                ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(n => `
-                  <button onclick="handleKeyInput('${n}')" class="btn-3d-white py-2.5 rounded-xl font-black font-mono text-base text-slate-800">
-                    ${n}
-                  </button>
-                `).join('')}
-              </div>
-              <div class="flex items-center justify-between gap-2 pt-0.5">
-                <button onclick="handleKeyInput('DEL')" class="btn-3d-white px-4 py-2 rounded-xl font-black text-xs text-rose-600 flex items-center gap-1">
-                  <span>⌫</span> Xóa
+            <!-- BÀN PHÍM NUMPAD XÚC GIÁC TACTILE (LUÔN SẴN SÀNG) -->
+            <div class="grid grid-cols-5 gap-1.5 w-full">
+              ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(n => `
+                <button onclick="handleKeyInput('${n}')" class="btn-3d-white py-2.5 rounded-xl font-black font-mono text-base text-slate-800">
+                  ${n}
                 </button>
-                <span class="text-[10px] text-slate-400 font-bold">Có thể gõ phím máy tính trực tiếp</span>
-              </div>
-            `}
+              `).join('')}
+            </div>
+            <div class="flex items-center justify-between gap-2 pt-0.5">
+              <button onclick="handleKeyInput('DEL')" class="btn-3d-white px-4 py-2 rounded-xl font-black text-xs text-rose-600 flex items-center gap-1">
+                <span>⌫</span> Xóa
+              </button>
+              <span class="text-[10px] text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
+                ✨ Số tự động hạ xuống sau khi tính trừ
+              </span>
+            </div>
 
           </div>
 

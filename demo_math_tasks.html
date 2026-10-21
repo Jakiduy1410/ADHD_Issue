@@ -1,17 +1,13 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DEMO: Test Cases Tìm X Đa Dạng & Đồng Bộ Đặt Tính Dọc Mọi Phép Tính</title>
-  
-  <!-- Tailwind CSS CDN -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab Đặt Tính Phép Chia Tiểu Học - ADHD Micro-Scaffolding</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Google Fonts: Nunito & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900;1000&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -20,6 +16,7 @@
           fontFamily: {
             nunito: ['Nunito', 'sans-serif'],
             jakarta: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
           },
           colors: {
             brand: {
@@ -29,10 +26,8 @@
               yellowDark: '#E5A400',
               green: '#58CC02',
               greenDark: '#46A302',
-              sky: '#38BDF8',
               coral: '#FB7185',
-              indigo: '#6366F1',
-              purple: '#8B5CF6'
+              sky: '#38BDF8'
             }
           }
         }
@@ -54,16 +49,16 @@
 
     /* iPhone 16 Pro Mockup */
     .phone-mockup {
-      width: 420px;
-      height: 870px;
-      border-radius: 52px;
+      width: 430px;
+      height: 880px;
+      border-radius: 54px;
       background: #0f172a;
       padding: 10px;
       position: relative;
       box-shadow: 
         0 0 0 2px #334155,
-        0 25px 60px -15px rgba(0, 0, 0, 0.7),
-        0 0 40px rgba(13, 148, 136, 0.2);
+        0 25px 60px -15px rgba(0, 0, 0, 0.8),
+        0 0 40px rgba(13, 148, 136, 0.25);
       flex-shrink: 0;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -71,7 +66,7 @@
     .phone-screen {
       width: 100%;
       height: 100%;
-      border-radius: 44px;
+      border-radius: 46px;
       overflow: hidden !important;
       position: relative;
       display: flex;
@@ -96,6 +91,15 @@
       pointer-events: none;
     }
 
+    /* Vở kẻ ô ly tiểu học */
+    .math-grid-paper {
+      background-color: #FFFFFF;
+      background-image: 
+        linear-gradient(to right, rgba(203, 213, 225, 0.35) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(203, 213, 225, 0.35) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
     /* 3D Tactile Buttons */
     .btn-3d-green {
       background-color: #58CC02;
@@ -117,171 +121,214 @@
       border-bottom-width: 1px;
     }
 
-    .btn-3d-blue {
-      background-color: #38BDF8;
-      border-bottom: 5px solid #0284C7;
+    .btn-3d-teal {
+      background-color: #0D9488;
+      border-bottom: 5px solid #0F766E;
       transition: all 0.1s ease;
     }
-    .btn-3d-blue:active:not(:disabled) {
+    .btn-3d-teal:active:not(:disabled) {
       transform: translateY(4px);
       border-bottom-width: 1px;
     }
 
+    .btn-3d-white {
+      background-color: #FFFFFF;
+      border: 2px solid #E2E8F0;
+      border-bottom: 4px solid #CBD5E1;
+      color: #1E293B;
+      transition: all 0.1s ease;
+    }
+    .btn-3d-white:active:not(:disabled) {
+      transform: translateY(3px);
+      border-bottom-width: 1px;
+      background-color: #F8FAFC;
+    }
+
     .btn-disabled {
       background-color: #E2E8F0 !important;
-      border-bottom: 5px solid #CBD5E1 !important;
+      border-bottom: 4px solid #CBD5E1 !important;
       color: #94A3B8 !important;
       cursor: not-allowed;
     }
 
-    /* Star burst animation */
-    @keyframes flyStar {
-      0% { transform: translateY(0) scale(0.6) rotate(0deg); opacity: 1; }
-      50% { opacity: 1; }
-      100% { transform: translateY(-340px) scale(1.6) rotate(360deg); opacity: 0; }
+    @keyframes slideDownDrop {
+      0% { opacity: 0; transform: translateY(-16px) scale(1.2); }
+      70% { transform: translateY(2px) scale(0.95); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
     }
+    .animate-drop {
+      animation: slideDownDrop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes pulseTarget {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+      50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
+    }
+    .pulse-target {
+      animation: pulseTarget 1.5s infinite;
+    }
+
     .star-burst {
       position: absolute;
       pointer-events: none;
-      animation: flyStar 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      z-index: 99;
+      animation: flyStar 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
-
-    /* Smooth Slide In */
-    .slide-in-down {
-      animation: slideInDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    @keyframes slideInDown {
-      from { opacity: 0; transform: translateY(-8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .notebook-paper {
-      background-color: #FFFFFF;
-      background-image: linear-gradient(#f1f5f9 1px, transparent 1px);
-      background-size: 100% 34px;
-      line-height: 34px;
+    @keyframes flyStar {
+      0% { transform: translateY(0) scale(0.5); opacity: 1; }
+      100% { transform: translateY(-90px) scale(1.3); opacity: 0; }
     }
   </style>
 </head>
-
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-teal-500 selection:text-white">
 
-  <!-- ============================================================== -->
-  <!-- TOP CONTROL BAR -->
-  <!-- ============================================================== -->
-  <header class="w-full bg-slate-900 border-b border-slate-800 px-6 py-3 shrink-0 z-50 sticky top-0">
+  <!-- TOP APP BAR -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md px-6 py-3.5 shrink-0 z-50 sticky top-0">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-teal-500 to-emerald-400 flex items-center justify-center text-2xl shadow-lg shadow-teal-500/20">
-          📐
-        </div>
+        <span class="text-2xl">➗</span>
         <div>
-          <div class="flex items-center gap-2">
-            <span class="font-black text-lg text-white tracking-tight">FIND X MULTI-STEP LAB</span>
-            <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30">
-              Đồng Bộ Đặt Tính Dọc
+          <h1 class="text-base font-black tracking-tight text-white flex items-center gap-2">
+            Phòng Thí Nghiệm Đặt Tính Phép Chia Tiểu Học
+            <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-400 border border-teal-500/30">
+              SGK GDPT 2018
             </span>
-          </div>
-          <p class="text-xs text-slate-400">Mọi phép tính vế phải & chuyển vế đều có cửa sổ đặt tính dọc đồng bộ (RTL), không bắt trẻ tính nhẩm</p>
+          </h1>
+          <p class="text-xs text-slate-400 font-medium">Giàn giáo vi bước ADHD: Ước lượng thương → Nhân trừ tìm dư → Hạ số dần dần</p>
         </div>
       </div>
 
-      <!-- Test Suites Switcher -->
-      <div class="flex flex-wrap items-center gap-2 bg-slate-800/90 p-1.5 rounded-2xl border border-slate-700/80">
-        <!-- Nhóm Tìm X Đã Chuẩn -->
-        <button id="btn-suite-1" onclick="switchSuite('suite1')" class="px-2.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1 text-slate-400 hover:text-white">
-          <span>1️⃣ Tìm X Cơ bản</span>
+      <!-- PRESET BUTTONS -->
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+        <span class="text-xs text-slate-400 font-bold mr-1">Bài mẫu:</span>
+        <button onclick="loadPreset(438, 6, 'Bài 1: 438 : 6 (Tìm x / Lớp 3-4)')" class="preset-btn px-2.5 py-1.5 rounded-xl text-xs font-black transition-all bg-teal-500 text-white shadow-xs">
+          438 : 6
         </button>
-        <button id="btn-suite-2" onclick="switchSuite('suite2')" class="px-2.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1 text-slate-400 hover:text-white">
-          <span>2️⃣ Vế phải biểu thức</span>
+        <button onclick="loadPreset(1200, 5, 'Bài 2: 1200 : 5 (Bài con gà - có số 0 ở cuối)')" class="preset-btn px-2.5 py-1.5 rounded-xl text-xs font-black transition-all bg-slate-800 text-slate-300 hover:text-white">
+          1200 : 5
         </button>
-        <button id="btn-suite-3" onclick="switchSuite('suite3')" class="px-2.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1 text-slate-400 hover:text-white">
-          <span>3️⃣ Hai tầng</span>
+        <button onclick="loadPreset(840, 7, 'Bài 3: 840 : 7 (Bài cam Bác Ba - chia 1 chữ số đầu)')" class="preset-btn px-2.5 py-1.5 rounded-xl text-xs font-black transition-all bg-slate-800 text-slate-300 hover:text-white">
+          840 : 7
         </button>
-        <button id="btn-suite-4" onclick="switchSuite('suite4')" class="px-2.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1 text-slate-400 hover:text-white">
-          <span>4️⃣ Đặt tính a,b,c,d</span>
+        <button onclick="loadPreset(350, 2, 'Bài 4: 350 : 2 (Bài kho thóc / Tổng hiệu)')" class="preset-btn px-2.5 py-1.5 rounded-xl text-xs font-black transition-all bg-slate-800 text-slate-300 hover:text-white">
+          350 : 2
         </button>
-        <!-- Nhóm Các Mẫu Thảo Luận Sư Phạm Mới -->
-        <span class="w-[1px] h-5 bg-slate-700 mx-1"></span>
-        <button id="btn-suite-ga" onclick="switchSuite('suite_ga')" class="px-2.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1 bg-amber-600 text-white shadow-xs">
-          <span>🐔 Bài Con Gà</span>
-        </button>
-        <button id="btn-suite-sach" onclick="switchSuite('suite_sach')" class="px-2.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1 text-slate-400 hover:text-white">
-          <span>📚 Bài Sách Lớp 4</span>
-        </button>
-        <button id="btn-suite-oto" onclick="switchSuite('suite_oto')" class="px-2.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1 text-slate-400 hover:text-white">
-          <span>🚗 Bài Ô Tô (Gọt b)</span>
-        </button>
-        <button id="btn-suite-cap" onclick="switchSuite('suite_cap')" class="px-2.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1 text-slate-400 hover:text-white">
-          <span>🎒 Giảm Giá Cặp</span>
-        </button>
-        <button id="btn-suite-hl" onclick="switchSuite('suite_hl')" class="px-2.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1 text-slate-400 hover:text-white">
-          <span>✏️ Highlight Mở</span>
+        <button onclick="loadPreset(95626, 4, 'Bài 5: 95626 : 4 (Số lớn 5 chữ số có dư)')" class="preset-btn px-2.5 py-1.5 rounded-xl text-xs font-black transition-all bg-slate-800 text-slate-300 hover:text-white">
+          95626 : 4
         </button>
       </div>
     </div>
   </header>
 
-  <!-- ============================================================== -->
-  <!-- MAIN WORKSPACE -->
-  <!-- ============================================================== -->
+  <!-- MAIN WRAPPER -->
   <main class="max-w-7xl mx-auto w-full p-4 md:p-6 flex-1 flex flex-col lg:flex-row items-center lg:items-start justify-center gap-8">
     
-    <!-- LEFT: IPHONE 16 PRO LIVE SIMULATOR -->
+    <!-- LEFT: IPHONE 16 PRO SIMULATOR -->
     <div class="phone-mockup">
-      <div class="dynamic-island">
-        <div class="w-3 h-3 rounded-full bg-slate-900 border border-slate-800"></div>
-        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500/80 animate-pulse"></div>
-      </div>
-
-      <div id="phone-screen-container" class="phone-screen child-font">
-        <!-- Render động -->
+      <div class="phone-screen" id="phone-screen-container">
+        <!-- Rendered dynamically by JavaScript -->
       </div>
     </div>
 
-    <!-- RIGHT: PEDAGOGICAL & SCHEMA EXPLANATION PANEL -->
-    <div class="flex-1 w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl flex flex-col gap-5">
+    <!-- RIGHT: CONTROLLER & PEDAGOGICAL BREAKDOWN -->
+    <div class="flex-1 w-full max-w-xl space-y-4">
       
-      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-        <div>
-          <span id="panel-badge" class="text-xs font-extrabold uppercase px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
-            SUITE 2: VẾ PHẢI LÀ BIỂU THỨC
-          </span>
-          <h2 id="panel-title" class="text-xl font-black text-white mt-2">
-            Đồng Bộ Đặt Tính Cả Bước Vế Phải & Bước Chuyển Vế
+      <!-- CUSTOM INPUT GENERATOR -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-lg">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-black text-white flex items-center gap-2">
+            <span>🎛️</span> Thử Nghiệm Phép Chia Tùy Ý
           </h2>
+          <span class="text-[10px] font-bold text-teal-400 bg-teal-950 px-2.5 py-0.5 rounded-full border border-teal-800">
+            Tự động băm vi bước
+          </span>
         </div>
-        <div class="text-3xl" id="panel-icon">⚡</div>
+
+        <div class="flex items-center gap-3">
+          <div class="flex-1">
+            <label class="text-[11px] font-bold text-slate-400 block mb-1">Số bị chia (Dividend):</label>
+            <input type="number" id="input-dividend" value="438" min="1" max="999999" class="w-full bg-slate-800 border-2 border-slate-700 text-white rounded-xl px-3 py-2 font-mono text-base font-bold focus:border-teal-500 focus:outline-none" />
+          </div>
+          <span class="text-2xl font-black text-slate-500 mt-5">:</span>
+          <div class="w-32">
+            <label class="text-[11px] font-bold text-slate-400 block mb-1">Số chia (Divisor):</label>
+            <input type="number" id="input-divisor" value="6" min="1" max="99" class="w-full bg-slate-800 border-2 border-slate-700 text-white rounded-xl px-3 py-2 font-mono text-base font-bold focus:border-teal-500 focus:outline-none" />
+          </div>
+          <button onclick="startCustomDivision()" class="btn-3d-teal text-white font-black text-xs px-4 py-2.5 rounded-xl mt-5 shrink-0 flex items-center gap-1.5">
+            <span>▶</span> Đặt tính
+          </button>
+        </div>
       </div>
 
-      <!-- Problem Statement & Pedagogy Analysis -->
-      <div class="space-y-3">
-        <h4 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">🧠 Phân tích đồng bộ sư phạm:</h4>
-        <div id="panel-pedagogy" class="bg-slate-800/70 border border-slate-700/60 rounded-2xl p-4 text-xs text-slate-300 leading-relaxed space-y-2">
-          <!-- Render động -->
+      <!-- PEDAGOGICAL BREAKDOWN CARD -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-lg space-y-4">
+        <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
+          <span class="text-xl">🧠</span>
+          <div>
+            <h3 class="text-sm font-black text-white">Cơ chế giàn giáo vi bước cho trẻ ADHD</h3>
+            <p class="text-xs text-slate-400">Giải quyết triệt để tình trạng quá tải nhận thức khi chia nhẩm</p>
+          </div>
+        </div>
+
+        <!-- 3 Nhịp Cốt Lõi -->
+        <div class="grid grid-cols-3 gap-2.5">
+          <div class="bg-slate-950/70 p-3 rounded-2xl border border-teal-900/60">
+            <span class="text-xs font-black text-teal-400 block mb-1">1. CHIA</span>
+            <p class="text-[11px] text-slate-300 leading-snug">
+              Ước lượng thương cho phần lấy ra. Bảng cửu chương xuất hiện trợ giúp.
+            </p>
+          </div>
+          <div class="bg-slate-950/70 p-3 rounded-2xl border border-amber-900/60">
+            <span class="text-xs font-black text-amber-400 block mb-1">2. NHÂN & TRỪ</span>
+            <p class="text-[11px] text-slate-300 leading-snug">
+              Nhân ngược lại và trừ trực tiếp trên cột để tìm số dư từng lần.
+            </p>
+          </div>
+          <div class="bg-slate-950/70 p-3 rounded-2xl border border-sky-900/60">
+            <span class="text-xs font-black text-sky-400 block mb-1">3. HẠ SỐ</span>
+            <p class="text-[11px] text-slate-300 leading-snug">
+              Click nút hạ số, chữ số trượt xuống cạnh số dư để tạo số mới.
+            </p>
+          </div>
+        </div>
+
+        <!-- Current Step State Monitor -->
+        <div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 space-y-1.5 font-mono text-xs">
+          <div class="flex items-center justify-between text-slate-400">
+            <span>Trạng thái máy (FSM):</span>
+            <span id="fsm-status" class="text-teal-400 font-bold">READY</span>
+          </div>
+          <div class="flex items-center justify-between text-slate-400">
+            <span>Đang thực hiện lần chia:</span>
+            <span id="fsm-round" class="text-amber-400 font-bold">Lần 1</span>
+          </div>
+          <div class="flex items-center justify-between text-slate-400">
+            <span>Thao tác yêu cầu:</span>
+            <span id="fsm-action" class="text-emerald-400 font-bold">Ước lượng thương</span>
+          </div>
+          <div class="mt-2 pt-2 border-t border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
+            <span>Gợi ý cửu chương:</span>
+            <span id="fsm-clue" class="text-sky-300 font-bold">6 × 7 = 42</span>
+          </div>
         </div>
       </div>
 
-      <!-- Live JSON Schema Spec -->
-      <div class="space-y-2 flex-1 flex flex-col">
-        <div class="flex items-center justify-between">
-          <h4 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">📦 Schema cấu trúc:</h4>
-          <span class="text-[11px] text-teal-400 font-mono">100% Unified Grid Engine</span>
+      <!-- INSTRUCTIONS ON SCREEN -->
+      <div class="bg-gradient-to-r from-teal-950/40 to-slate-900 border border-teal-800/40 rounded-3xl p-4 text-xs text-slate-300 flex items-start gap-3">
+        <span class="text-2xl mt-0.5">💡</span>
+        <div class="space-y-1">
+          <strong class="text-white block font-black">Hướng dẫn thao tác trên mô phỏng:</strong>
+          <p>• Bạn có thể dùng <strong>Bàn phím số trên màn hình điện thoại</strong> hoặc <strong>gõ trực tiếp phím số từ bàn phím máy tính</strong>.</p>
+          <p>• Khi cần hạ số, nút bấm <strong>"HẠ SỐ XUỐNG"</strong> sẽ sáng rực, chỉ cần click để thấy số trượt xuống sinh động!</p>
         </div>
-        <pre id="panel-schema" class="bg-slate-950 border border-slate-800 rounded-2xl p-4 text-xs text-emerald-400 font-mono overflow-x-auto max-h-[340px] no-scrollbar leading-relaxed">
-        </pre>
       </div>
 
     </div>
-
   </main>
 
-  <!-- ============================================================== -->
-  <!-- JAVASCRIPT: LOGIC & AUDIO SFX -->
-  <!-- ============================================================== -->
   <script>
-    // Audio Synthesizer
+    // ==============================================================
+    // 1. ÂM THANH XÚC GIÁC (WEB AUDIO API)
+    // ==============================================================
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
 
@@ -295,21 +342,33 @@
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(440, now);
-          osc.frequency.exponentialRampToValueAtTime(880, now + 0.05);
+          osc.frequency.setValueAtTime(450, now);
+          osc.frequency.exponentialRampToValueAtTime(900, now + 0.05);
           gain.gain.setValueAtTime(0.12, now);
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
           osc.connect(gain);
           gain.connect(audioCtx.destination);
           osc.start(now);
           osc.stop(now + 0.05);
-        } else if (type === 'pop') {
+        } else if (type === 'drop') {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(580, now);
-          osc.frequency.exponentialRampToValueAtTime(1160, now + 0.08);
+          osc.frequency.setValueAtTime(320, now);
+          osc.frequency.exponentialRampToValueAtTime(180, now + 0.12);
           gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.12);
+        } else if (type === 'pop') {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, now);
+          osc.frequency.exponentialRampToValueAtTime(1200, now + 0.08);
+          gain.gain.setValueAtTime(0.25, now);
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
           osc.connect(gain);
           gain.connect(audioCtx.destination);
@@ -320,13 +379,13 @@
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'triangle';
-            osc.frequency.setValueAtTime(freq, now + i * 0.06);
-            gain.gain.setValueAtTime(0.2, now + i * 0.06);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.06 + 0.2);
+            osc.frequency.setValueAtTime(freq, now + i * 0.07);
+            gain.gain.setValueAtTime(0.25, now + i * 0.07);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.07 + 0.2);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-            osc.start(now + i * 0.06);
-            osc.stop(now + i * 0.06 + 0.2);
+            osc.start(now + i * 0.07);
+            osc.stop(now + i * 0.07 + 0.2);
           });
         }
       } catch (e) {
@@ -338,1768 +397,650 @@
       playSfx('correct');
       const container = document.getElementById('phone-screen-container');
       if (!container) return;
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < 8; i++) {
         const star = document.createElement('div');
-        star.className = 'star-burst text-2xl';
-        star.innerText = ['⭐', '✨', '🌟', '🎉', '💎', '👑'][i % 6];
-        star.style.left = (120 + Math.random() * 160) + 'px';
-        star.style.bottom = '110px';
+        star.className = 'star-burst text-3xl';
+        star.innerText = ['⭐', '✨', '🌟', '🎉', '💫'][i % 5];
+        star.style.left = (120 + Math.random() * 190) + 'px';
+        star.style.bottom = '180px';
         container.appendChild(star);
-        setTimeout(() => star.remove(), 750);
+        setTimeout(() => star.remove(), 800);
       }
     }
 
     // ==============================================================
-    // 4 BỘ TEST CASES VỚI ĐẶT TÍNH DỌC ĐỒNG BỘ
+    // 2. THUẬT TOÁN BĂM VI BƯỚC ĐẶT TÍNH PHÉP CHIA TIỂU HỌC
     // ==============================================================
-    const TEST_SUITES = {
-      // Suite 1: Cơ bản (1 phép tính)
-      suite1: {
-        id: "suite1",
-        title: "Bộ 1: Tìm X Cơ Bản (Đủ 4 phép +, -, ×, :)",
-        header_title: "Bài 1: Tìm x",
-        items: [
-          {
-            id: 'a',
-            label: 'a)',
-            type: 'single_op',
-            equation: "x + 354 = 820",
-            left_lead: "x = 820",
-            correct_op: "-",
-            target_num: "354",
-            formatted_line2: "x = 820 - 354",
-            calc_top: "820",
-            calc_op: "-",
-            calc_bot: "354",
-            expected_x: "466",
-            formatted_line3: "x = 466"
-          },
-          {
-            id: 'b',
-            label: 'b)',
-            type: 'single_op',
-            equation: "x - 128 = 452",
-            left_lead: "x = 452",
-            correct_op: "+",
-            target_num: "128",
-            formatted_line2: "x = 452 + 128",
-            calc_top: "452",
-            calc_op: "+",
-            calc_bot: "128",
-            expected_x: "580",
-            formatted_line3: "x = 580"
-          },
-          {
-            id: 'c',
-            label: 'c)',
-            type: 'single_op',
-            equation: "642 - x = 215",
-            left_lead: "x = 642",
-            correct_op: "-",
-            target_num: "215",
-            formatted_line2: "x = 642 - 215",
-            calc_top: "642",
-            calc_op: "-",
-            calc_bot: "215",
-            expected_x: "427",
-            formatted_line3: "x = 427"
-          },
-          {
-            id: 'd',
-            label: 'd)',
-            type: 'single_op',
-            equation: "x × 6 = 438",
-            left_lead: "x = 438",
-            correct_op: ":",
-            target_num: "6",
-            formatted_line2: "x = 438 : 6",
-            calc_top: "438",
-            calc_op: ":",
-            calc_bot: "6",
-            expected_x: "73",
-            formatted_line3: "x = 73"
-          }
-        ]
-      },
-
-      // Suite 2: Vế phải là biểu thức (Có đặt tính vế phải!)
-      suite2: {
-        id: "suite2",
-        title: "Bộ 2: Tìm X Vế Phải Biểu Thức (Đặt tính cả 2 bước)",
-        header_title: "Bài 2: Tìm x",
-        items: [
-          {
-            id: 'a',
-            label: 'a)',
-            type: 'rhs_expr',
-            equation: "x + 125 = 450 - 150",
-            // Đặt tính vế phải trước
-            rhs_calc: { top: '450', op: '-', bot: '150', expected: '300' },
-            step1_formatted: "x + 125 = 300",
-            // Chuyển vế tìm x
-            step2_lead: "x = 300",
-            step2_op: "-",
-            step2_num: "125",
-            step2_formatted: "x = 300 - 125",
-            // Đặt tính tìm x
-            final_calc: { top: '300', op: '-', bot: '125', expected: '175' },
-            step3_formatted: "x = 175"
-          },
-          {
-            id: 'b',
-            label: 'b)',
-            type: 'rhs_expr',
-            equation: "x - 45 = 25 × 4",
-            rhs_calc: { top: '25', op: '×', bot: '4', expected: '100' },
-            step1_formatted: "x - 45 = 100",
-            step2_lead: "x = 100",
-            step2_op: "+",
-            step2_num: "45",
-            step2_formatted: "x = 100 + 45",
-            final_calc: { top: '100', op: '+', bot: '45', expected: '145' },
-            step3_formatted: "x = 145"
-          },
-          {
-            id: 'c',
-            label: 'c)',
-            type: 'rhs_expr',
-            equation: "x × 4 = 150 + 90",
-            rhs_calc: { top: '150', op: '+', bot: '90', expected: '240' },
-            step1_formatted: "x × 4 = 240",
-            step2_lead: "x = 240",
-            step2_op: ":",
-            step2_num: "4",
-            step2_formatted: "x = 240 : 4",
-            final_calc: { top: '240', op: ':', bot: '4', expected: '60' },
-            step3_formatted: "x = 60"
-          }
-        ]
-      },
-
-      // Suite 3: Hai tầng phép tính (Đặt tính cả 2 tầng)
-      suite3: {
-        id: "suite3",
-        title: "Bộ 3: Hai Tầng Phép Tính (x × a + b = c)",
-        header_title: "Bài 3: Tìm x",
-        items: [
-          {
-            id: 'a',
-            label: 'a)',
-            type: 'two_tier',
-            equation: "x × 3 + 45 = 105",
-            // Tầng 1: tìm cụm x * 3
-            tier1_lead: "x × 3 = 105",
-            tier1_op: "-",
-            tier1_num: "45",
-            tier1_formatted: "x × 3 = 105 - 45",
-            tier1_calc: { top: '105', op: '-', bot: '45', expected: '60' },
-            tier1_res_formatted: "x × 3 = 60",
-            // Tầng 2: tìm x
-            tier2_lead: "x = 60",
-            tier2_op: ":",
-            tier2_num: "3",
-            tier2_formatted: "x = 60 : 3",
-            final_calc: { top: '60', op: ':', bot: '3', expected: '20' },
-            tier3_formatted: "x = 20"
-          },
-          {
-            id: 'b',
-            label: 'b)',
-            type: 'two_tier',
-            equation: "x : 4 - 15 = 25",
-            tier1_lead: "x : 4 = 25",
-            tier1_op: "+",
-            tier1_num: "15",
-            tier1_formatted: "x : 4 = 25 + 15",
-            tier1_calc: { top: '25', op: '+', bot: '15', expected: '40' },
-            tier1_res_formatted: "x : 4 = 40",
-            tier2_lead: "x = 40",
-            tier2_op: "×",
-            tier2_num: "4",
-            tier2_formatted: "x = 40 × 4",
-            final_calc: { top: '40', op: '×', bot: '4', expected: '160' },
-            tier3_formatted: "x = 160"
-          }
-        ]
-      },
-
-      // Suite 4: Ngoặc đơn (x + a) : b = c
-      suite4: {
-        id: "suite4",
-        title: "Bộ 4: Tìm X Có Ngoặc Đơn (x + a) : b = c",
-        header_title: "Bài 4: Tìm x",
-        items: [
-          {
-            id: 'a',
-            label: 'a)',
-            type: 'paren_expr',
-            equation: "(x + 25) : 3 = 40",
-            step1_lead: "x + 25 = 40",
-            step1_op: "×",
-            step1_num: "3",
-            step1_formatted: "x + 25 = 40 × 3",
-            step1_calc: { top: '40', op: '×', bot: '3', expected: '120' },
-            step1_res_formatted: "x + 25 = 120",
-            step2_lead: "x = 120",
-            step2_op: "-",
-            step2_num: "25",
-            step2_formatted: "x = 120 - 25",
-            final_calc: { top: '120', op: '-', bot: '25', expected: '95' },
-            step3_formatted: "x = 95"
-          }
-        ]
-      },
-      // ==============================================================
-      // 5. BÀI CON GÀ (G4_MATH_17): TÁCH PHÉP TÍNH GỘP (1200 : 5 × 3)
-      // ==============================================================
-      suite_ga: {
-        id: "suite_ga",
-        title: "Bộ Test Cases Lũy Tiến Biến Tấu (Con Gà, Cam Bác Ba, Kho Thóc, Giày Thể Thao)",
-        header_title: "Toán có lời văn lũy tiến",
-        category_type: "progressive_word_problem",
-        items: [
-          {
-            label: "🐔 Gà & Vịt (1200 con)",
-            task: {
-              step_badge: "Bước 2 / 4 • Tính số con gà",
-              original_text: "Một trang trại có 1200 con gia cầm gồm gà và vịt. Trong đó số gà chiếm 3/5 tổng số gia cầm. Hỏi trang trại đó có bao nhiêu con vịt?",
-              sub_problem: "Tính số gà bằng 3/5 của 1200 con gia cầm",
-              curStep: 1,
-              step1_lead: "1) Rút về 1 phần (1/5 tổng số gia cầm):",
-              step1_expr: "1200 : 5 =",
-              step1_expected: "240",
-              step1_calc: { top: '1200', op: ':', bot: '5', expected: '240' },
-              step2_lead: "2) Nhân lên 3 phần (Số con gà):",
-              step2_expr: "240 × 3 =",
-              step2_expected: "720",
-              step2_calc: { top: '240', op: '×', bot: '3', expected: '720' },
-              next_step_preview: "Bước 3 tiếp theo (Trang sau bình thường): 1200 - 720 = 480 con vịt"
-            }
-          },
-          {
-            label: "🍊 Cam Bác Ba (840 kg)",
-            task: {
-              step_badge: "Bước 2 / 4 • Tính cam loại một",
-              original_text: "Bác Ba thu hoạch được 840 kg cam. Trong đó số cam loại một chiếm 4/7 tổng số cam. Hỏi bác Ba thu hoạch được bao nhiêu kg cam loại hai?",
-              sub_problem: "Tính số cam loại một bằng 4/7 của 840 kg cam",
-              curStep: 1,
-              step1_lead: "1) Rút về 1 phần (1/7 tổng số cam):",
-              step1_expr: "840 : 7 =",
-              step1_expected: "120",
-              step1_calc: { top: '840', op: ':', bot: '7', expected: '120' },
-              step2_lead: "2) Nhân lên 4 phần (Số cam loại một):",
-              step2_expr: "120 × 4 =",
-              step2_expected: "480",
-              step2_calc: { top: '120', op: '×', bot: '4', expected: '480' },
-              next_step_preview: "Bước 3 tiếp theo (Trang sau): 840 - 480 = 360 kg cam loại hai"
-            }
-          },
-          {
-            label: "🌾 Kho Thóc (350 tấn)",
-            task: {
-              step_badge: "Bước 2 / 4 • Tính thóc kho A",
-              original_text: "Hai kho chứa tất cả 350 tấn thóc. Kho A chứa nhiều hơn kho B là 50 tấn thóc. Hỏi kho B chứa bao nhiêu tấn thóc?",
-              sub_problem: "Tính số lớn (Kho A = (350 + 50) : 2)",
-              curStep: 1,
-              step1_lead: "1) Tính hai lần số thóc kho A:",
-              step1_expr: "350 + 50 =",
-              step1_expected: "400",
-              step1_calc: { top: '350', op: '+', bot: '50', expected: '400' },
-              step2_lead: "2) Chia đôi tìm số thóc kho A:",
-              step2_expr: "400 : 2 =",
-              step2_expected: "200",
-              step2_calc: { top: '400', op: ':', bot: '2', expected: '200' },
-              next_step_preview: "Bước 3 tiếp theo (Trang sau): Kho B = 200 - 50 = 150 tấn thóc"
-            }
-          },
-          {
-            label: "👟 Giày Thể Thao (400k giảm 20%)",
-            task: {
-              step_badge: "Bước 2 / 4 • Tính tiền giảm giá",
-              original_text: "Đôi giày thể thao giá 400 000 đồng, cửa hàng giảm giá 20%. Hỏi sau khi giảm giá, đôi giày có giá bao nhiêu tiền?",
-              sub_problem: "Tính số tiền được giảm giá 20%",
-              curStep: 1,
-              step1_lead: "1) Tính giá trị 1% của đôi giày:",
-              step1_expr: "400000 : 100 =",
-              step1_expected: "4000",
-              step1_calc: { top: '400000', op: ':', bot: '100', expected: '4000' },
-              step2_lead: "2) Số tiền được giảm giá 20% là:",
-              step2_expr: "4000 × 20 =",
-              step2_expected: "80000",
-              step2_calc: { top: '4000', op: '×', bot: '20', expected: '80000' },
-              next_step_preview: "Bước 3 tiếp theo (Trang sau): Giá giày = 400 000 - 80 000 = 320 000 đồng"
-            }
-          }
-        ]
-      },
-
-      // ==============================================================
-      // 6. BÀI SÁCH LỚP 4 (G4_MATH_16): TỔNG - HIỆU BĂM 2 NHỊP
-      // ==============================================================
-      suite_sach: {
-        id: "suite_sach",
-        title: "Bài Sách Lớp 4 (G4_MATH_16): Tìm số lớn (280 + 40) : 2 thành 2 phép tính",
-        header_title: "Toán Tổng - Hiệu",
-        category_type: "progressive_word_problem",
-        task: {
-          step_badge: "Bước 2 / 4 • Tìm số sách lớp 4A",
-          original_text: "Hai lớp 4A và 4B quyên góp được tất cả 280 quyển sách. Lớp 4A nhiều hơn lớp 4B là 40 quyển. Hỏi mỗi lớp quyên góp được bao nhiêu quyển?",
-          sub_problem: "Tìm số lớn (Số sách lớp 4A)",
-          curStep: 1,
-          step1_lead: "1) Tính hai lần số sách lớp 4A:",
-          step1_expr: "280 + 40 =",
-          step1_expected: "320",
-          step1_calc: { top: '280', op: '+', bot: '40', expected: '320' },
-          step2_lead: "2) Chia đôi tìm số sách lớp 4A:",
-          step2_expr: "320 : 2 =",
-          step2_expected: "160",
-          step2_calc: { top: '320', op: ':', bot: '2', expected: '160' },
-          next_step_preview: "Bước 3 tiếp theo (Trang sau): Lớp 4B = 160 - 40 = 120 quyển sách"
-        },
-        items: [{ label: 'Bước 2: Lớp 4A' }]
-      },
-
-      // ==============================================================
-      // 7. BÀI Ô TÔ (G5_MATH_21): GỌT SẠCH CÂU B ĐỂ TẬP TRUNG MỤC TIÊU DUY NHẤT
-      // ==============================================================
-      suite_oto: {
-        id: "suite_oto",
-        title: "Bài Ô Tô (G5_MATH_21): Gọt sạch câu b, chỉ giải câu a tinh gọn 3 bước",
-        header_title: "Toán chuyển động đều",
-        category_type: "oto_clean_focus",
-        task: {
-          cleaned_text: "Quãng đường AB dài 180 km. Lúc 7 giờ sáng, ô tô đi từ A với vận tốc 50 km/giờ và xe máy đi từ B với vận tốc 40 km/giờ. Hỏi sau bao lâu hai xe gặp nhau?",
-          stepIdx: 1,
-          step1_calc: { top: '50', op: '+', bot: '40', expected: '90' },
-          step2_calc: { top: '180', op: ':', bot: '90', expected: '2' }
-        },
-        items: [{ label: 'Ý a: Thời gian gặp' }]
-      },
-
-      // ==============================================================
-      // 8. BÀI GIẢM GIÁ CẶP (G5_MCQ_24): TÍNH TIỀN GIẢM TRƯỚC RỒI TRỪ
-      // ==============================================================
-      suite_cap: {
-        id: "suite_cap",
-        title: "Bài Giảm Giá Cặp (G5_MCQ_24): Lũy tiến tính tiền giảm trước (tránh × 0.85)",
-        header_title: "Toán tỉ số phần trăm",
-        category_type: "progressive_word_problem",
-        task: {
-          step_badge: "Bước 2 / 4 • Tính tiền giảm đợt 1 (15%)",
-          original_text: "Giá chiếc cặp là 200 000 đồng, cửa hàng giảm giá 15%. Hỏi sau khi giảm, chiếc cặp có giá bao nhiêu tiền?",
-          sub_problem: "Tính số tiền được giảm giá 15%",
-          curStep: 1,
-          step1_lead: "1) Tính giá trị 1% của chiếc cặp:",
-          step1_expr: "200000 : 100 =",
-          step1_expected: "2000",
-          step1_calc: { top: '200000', op: ':', bot: '100', expected: '2000' },
-          step2_lead: "2) Số tiền được giảm 15% là:",
-          step2_expr: "2000 × 15 =",
-          step2_expected: "30000",
-          step2_calc: { top: '2000', op: '×', bot: '15', expected: '30000' },
-          next_step_preview: "Bước 3 tiếp theo (Trang sau): Giá cặp = 200 000 - 30 000 = 170 000 đồng"
-        },
-        items: [{ label: 'Bước 2: Tiền giảm' }]
-      },
-
-      // ==============================================================
-      // 9. MẪU HIGHLIGHT MỞ (ANTI-SPOONFEEDING)
-      // ==============================================================
-      suite_hl: {
-        id: "suite_hl",
-        title: "Highlight Mở: Câu lệnh bao quát, không mớm số lượng",
-        header_title: "Gạch chân dữ kiện",
-        category_type: "highlight_demo",
-        task: {
-          instruction: "Gạch chân các số liệu và từ khóa quan trọng trong đề bài.",
-          tokens: [
-            { text: "Trên cành cây có", isTarget: false },
-            { text: "5 con chim", isTarget: true, key: "5" },
-            { text: "đang đậu.", isTarget: false },
-            { text: "Lát sau có thêm", isTarget: false },
-            { text: "3 con chim", isTarget: true, key: "3" },
-            { text: "nữa bay đến.", isTarget: false },
-            { text: "Hỏi trên cành có", isTarget: false },
-            { text: "tất cả", isTarget: true, key: "all" },
-            { text: "bao nhiêu con chim?", isTarget: false }
-          ]
-        },
-        items: [{ label: 'Bước 1: Highlight' }]
+    /**
+     * Phân tích phép chia theo chuẩn SGK GDPT 2018
+     * Mỗi lần chia (round) gồm:
+     * - currentPart: phần số đem chia
+     * - quotientDigit: chữ số thương tìm được
+     * - product: quotientDigit * divisor
+     * - remainder: currentPart - product
+     * - bringDownDigit: chữ số tiếp theo hạ xuống (hoặc null)
+     * - clue: gợi ý cửu chương
+     */
+    function decomposeLongDivision(dividend, divisor) {
+      const dStr = String(dividend);
+      const N = dStr.length;
+      const rounds = [];
+      
+      let cursor = 0;
+      let partStr = dStr[cursor];
+      cursor++;
+      while (Number(partStr) < divisor && cursor < dStr.length) {
+        partStr += dStr[cursor];
+        cursor++;
       }
 
-    };
+      let currentEndCol = cursor - 1;
+      let currentPart = Number(partStr);
 
-    let currentSuiteKey = 'suite_ga'; // Mặc định mở ngay Suite 2 để trải nghiệm
-    let currentItemIdx = 0;
-    
-    // Quản lý trạng thái từng bước của câu hiện tại
-    let curStage = 1;
-    let tempOp = '';
-    let tempNum = '';
-
-    // ==============================================================
-    // CHUYỂN BỘ TEST SUITE
-    // ==============================================================
-    function switchSuite(suiteKey) {
-      currentSuiteKey = suiteKey;
-      currentItemIdx = 0;
-      resetItemState();
-
-      ['suite1', 'suite2', 'suite3', 'suite4', 'suite_ga', 'suite_sach', 'suite_oto', 'suite_cap', 'suite_hl'].forEach(k => {
-        const btn = document.getElementById(`btn-${k.replace('suite', 'suite-')}`);
-        if (!btn) return;
-        if (k === suiteKey) {
-          btn.className = "px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 bg-teal-600 text-white shadow-xs";
-        } else {
-          btn.className = "px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 text-slate-400 hover:text-white";
+      while (true) {
+        const qDigit = Math.floor(currentPart / divisor);
+        const prod = qDigit * divisor;
+        const rem = currentPart - prod;
+        const prodStr = String(prod);
+        const prodStartCol = currentEndCol - prodStr.length + 1;
+        const prodEndCol = currentEndCol;
+        const remStr = String(rem);
+        const remStartCol = currentEndCol - remStr.length + 1;
+        const remEndCol = currentEndCol;
+        
+        let bringDown = null;
+        let bringDownCol = null;
+        if (cursor < dStr.length) {
+          bringDown = dStr[cursor];
+          bringDownCol = cursor;
+          cursor++;
         }
+
+        const clue = `${divisor} × ${qDigit} = ${prod}` + 
+          (currentPart > prod ? ` (dư ${rem}, gần ${currentPart} nhất)` : ` (vừa hết)`);
+
+        rounds.push({
+          roundNum: rounds.length + 1,
+          currentPart: currentPart,
+          quotientDigit: qDigit,
+          product: prod,
+          prodStr: prodStr,
+          prodStartCol: prodStartCol,
+          prodEndCol: prodEndCol,
+          remainder: rem,
+          remStr: remStr,
+          remStartCol: remStartCol,
+          remEndCol: remEndCol,
+          bringDownDigit: bringDown,
+          bringDownCol: bringDownCol,
+          clue: clue
+        });
+
+        if (bringDown === null) {
+          break; // Đã hạ hết các chữ số
+        }
+
+        currentPart = rem * 10 + Number(bringDown);
+        currentEndCol = bringDownCol;
+      }
+
+      return {
+        dividend: dividend,
+        divisor: divisor,
+        dStr: dStr,
+        numCols: N,
+        quotient: Math.floor(dividend / divisor),
+        finalRemainder: dividend % divisor,
+        rounds: rounds
+      };
+    }
+
+    // ==============================================================
+    // 3. QUẢN LÝ TRẠNG THÁI TƯƠNG TÁC (INTERACTIVE STATE)
+    // ==============================================================
+    let currentTask = null;
+    let currentRoundIdx = 0;
+    // subStage:
+    // 0 = Điền chữ số thương (Quotient Digit)
+    // 1 = Điền số dư (Remainder)
+    // 2 = Hạ số tiếp theo (Bring Down)
+    // 3 = Hoàn thành toàn bộ phép chia
+    let currentSubStage = 0;
+    let inputBuffer = '';
+
+    function initDivisionTask(dividend, divisor, taskTitle = "") {
+      currentTask = decomposeLongDivision(dividend, divisor);
+      currentTask.title = taskTitle || `Đặt tính: ${dividend} : ${divisor}`;
+      currentRoundIdx = 0;
+      currentSubStage = 0;
+      inputBuffer = '';
+      renderDivisionSimulator();
+      updateMonitorPanel();
+    }
+
+    function loadPreset(dividend, divisor, title) {
+      document.getElementById('input-dividend').value = dividend;
+      document.getElementById('input-divisor').value = divisor;
+      
+      document.querySelectorAll('.preset-btn').forEach(b => {
+        b.classList.remove('bg-teal-500', 'text-white');
+        b.classList.add('bg-slate-800', 'text-slate-300');
       });
+      event.target.classList.add('bg-teal-500', 'text-white');
+      event.target.classList.remove('bg-slate-800', 'text-slate-300');
 
-      renderSimulator();
-      updateInfoPanel();
+      initDivisionTask(dividend, divisor, title);
     }
 
-    function resetItemState() {
-      curStage = 1;
-      tempOp = '';
-      tempNum = '';
+    function startCustomDivision() {
+      const d = parseInt(document.getElementById('input-dividend').value, 10);
+      const v = parseInt(document.getElementById('input-divisor').value, 10);
+      if (!d || !v || v <= 0) {
+        alert("Vui lòng nhập số hợp lệ (số chia > 0)!");
+        return;
+      }
+      initDivisionTask(d, v, `Đặt tính: ${d} : ${v}`);
     }
 
     // ==============================================================
-    // LƯỚI ĐẶT TÍNH DỌC TỪ PHẢI QUA TRÁI (RTL ENGINE)
+    // 4. XỬ LÝ NHẬP LIỆU (NUMPAD & KEYBOARD)
     // ==============================================================
-    function renderVerticalMathGridRTL(topStr, op, botStr, expectedStr, onDoneCallbackName, titleLabel = "Đặt tính:") {
-      if (op === ':') {
-        const expStr = String(expectedStr).trim();
-        const numCols = expStr.length;
-        const cellCls = "w-7 h-8 text-base font-mono font-black text-center";
+    function handleKeyInput(val) {
+      if (!currentTask || currentSubStage === 2 || currentSubStage === 3) return;
 
-        let rowInputs = '';
-        for (let i = 0; i < numCols; i++) {
-          rowInputs += `
-            <input type="text" maxlength="1" inputmode="numeric" 
-                   data-div-col="${i}" 
-                   class="div-digit-cell ${cellCls} rounded-lg border-2 border-teal-500 bg-teal-50 text-slate-900 focus:bg-teal-100 focus:border-teal-600 focus:outline-none shadow-xs transition" />
-          `;
-        }
+      const curRound = currentTask.rounds[currentRoundIdx];
 
-        setTimeout(() => {
-          setupDivisionLeftToRightListeners(expStr, onDoneCallbackName);
-        }, 50);
-
-        return `
-          <div class="bg-white p-3 rounded-2xl border-2 border-teal-200 shadow-xs flex flex-col items-center justify-center gap-1.5 my-1 select-none max-w-[280px] mx-auto w-full">
-            <div class="flex items-center justify-center gap-2">
-              <span class="font-mono text-base font-black text-slate-800">${topStr} : ${botStr} =</span>
-              <div class="flex items-center gap-1">
-                ${rowInputs}
-              </div>
-            </div>
-            <span class="text-[9px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
-              👉 ${titleLabel} (Điền từ trái sang phải)
-            </span>
-          </div>
-        `;
+      if (val === 'DEL') {
+        inputBuffer = inputBuffer.slice(0, -1);
+        playSfx('tap');
+        renderDivisionSimulator();
+        return;
       }
 
-      const numCols = Math.max(topStr.length, botStr.length, expectedStr.length) + 1;
-      const cellCls = "w-7 h-8 text-base font-mono font-black text-center";
+      playSfx('tap');
 
-      let rowTop = '';
-      for (let i = numCols - 1; i >= 0; i--) {
-        const ch = topStr[topStr.length - 1 - i] || '';
-        rowTop += `<div class="${cellCls} flex items-center justify-center text-slate-800">${ch}</div>`;
-      }
+      // SUBSTAGE 0: Điền thương (chỉ 1 chữ số: 0 - 9)
+      if (currentSubStage === 0) {
+        inputBuffer = val;
+        renderDivisionSimulator();
 
-      let rowBot = '';
-      for (let i = numCols - 1; i >= 0; i--) {
-        const ch = botStr[botStr.length - 1 - i] || '';
-        rowBot += `<div class="${cellCls} flex items-center justify-center text-slate-800">${ch}</div>`;
-      }
-
-      let rowInputs = '';
-      for (let i = numCols - 1; i >= 0; i--) {
-        if (i < expectedStr.length) {
-          rowInputs += `
-            <input type="text" maxlength="1" inputmode="numeric" 
-                   data-col="${i}" 
-                   class="digit-cell ${cellCls} rounded-lg border-2 border-teal-500 bg-teal-50 text-slate-900 focus:bg-teal-100 focus:border-teal-600 focus:outline-none shadow-xs transition" />
-          `;
+        if (parseInt(inputBuffer, 10) === curRound.quotientDigit) {
+          playSfx('pop');
+          setTimeout(() => {
+            currentSubStage = 1; // Chuyển sang tính số dư
+            inputBuffer = '';
+            renderDivisionSimulator();
+            updateMonitorPanel();
+          }, 250);
         } else {
-          rowInputs += `<div class="${cellCls}"></div>`;
+          flashError();
+        }
+      } 
+      // SUBSTAGE 1: Điền số dư (có thể 1 hoặc 2 chữ số)
+      else if (currentSubStage === 1) {
+        const expectedRemStr = String(curRound.remainder);
+        inputBuffer += val;
+        if (inputBuffer.length > expectedRemStr.length) {
+          inputBuffer = val;
+        }
+        renderDivisionSimulator();
+
+        if (inputBuffer === expectedRemStr) {
+          playSfx('pop');
+          setTimeout(() => {
+            if (curRound.bringDownDigit !== null) {
+              currentSubStage = 2; // Chuyển sang nút Hạ số
+            } else {
+              currentSubStage = 3;
+              triggerStarBurst();
+            }
+            inputBuffer = '';
+            renderDivisionSimulator();
+            updateMonitorPanel();
+          }, 300);
+        } else if (inputBuffer.length === expectedRemStr.length) {
+          flashError();
         }
       }
+    }
 
-      setTimeout(() => {
-        setupRightToLeftListeners(expectedStr, onDoneCallbackName);
-      }, 50);
+    function triggerBringDown() {
+      playSfx('drop');
+      const curRound = currentTask.rounds[currentRoundIdx];
+      currentRoundIdx++;
+      currentSubStage = 0; // Sang lần chia tiếp theo
+      inputBuffer = '';
+      renderDivisionSimulator();
+      updateMonitorPanel();
+    }
 
-      return `
-        <div class="bg-white p-3 rounded-2xl border-2 border-teal-200 shadow-xs flex flex-col items-center justify-center my-1 select-none w-full max-w-[280px] mx-auto">
-          <div class="inline-flex flex-col items-end">
-            <div class="flex items-center justify-end gap-1.5">${rowTop}</div>
-            <div class="flex items-center justify-end relative w-full gap-1.5 my-0.5">
-              <span class="absolute left-0 text-teal-600 font-mono font-black text-lg select-none pl-1">${op}</span>
-              <div class="flex items-center justify-end gap-1.5">${rowBot}</div>
-            </div>
-            <div class="w-full h-[2px] bg-slate-800 my-1 rounded-full"></div>
-            <div class="flex items-center justify-end gap-1.5 pt-0.5">
-              ${rowInputs}
-            </div>
+    function flashError() {
+      const activeInput = document.getElementById('active-division-cell');
+      if (activeInput) {
+        activeInput.classList.add('bg-rose-100', 'border-rose-500', 'animate-shake');
+        setTimeout(() => {
+          activeInput.classList.remove('bg-rose-100', 'border-rose-500', 'animate-shake');
+          inputBuffer = '';
+          renderDivisionSimulator();
+        }, 500);
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key >= '0' && e.key <= '9') {
+        handleKeyInput(e.key);
+      } else if (e.key === 'Backspace') {
+        handleKeyInput('DEL');
+      } else if (e.key === 'Enter') {
+        if (currentSubStage === 2) {
+          triggerBringDown();
+        }
+      }
+    });
+
+    // ==============================================================
+    // 5. RENDER BẢNG ĐẶT TÍNH TIỂU HỌC THẲNG HÀNG 100% THEO CỘT GRID
+    // ==============================================================
+    function renderDivisionSimulator() {
+      const c = document.getElementById('phone-screen-container');
+      if (!c || !currentTask) return;
+
+      const t = currentTask;
+      const curRound = t.rounds[currentRoundIdx] || t.rounds[t.rounds.length - 1];
+      const isCompleted = (currentSubStage === 3);
+      const N = t.numCols;
+
+      // Độ rộng cố định cho từng ô chữ số để thẳng hàng tuyệt đối
+      const cellCls = "w-7 h-7 sm:w-8 sm:h-8 text-base sm:text-lg font-mono font-black flex items-center justify-center shrink-0";
+      const signCls = "w-5 h-7 sm:w-6 sm:h-8 text-sm sm:text-base font-mono font-bold flex items-center justify-end text-slate-400 shrink-0 select-none pr-0.5";
+
+      // 1. CỘT TRÁI: DÃY CÁC HÀNG SỐ BỊ CHIA & CÁC LẦN TRỪ DỌC
+      let leftRowsHtml = `
+        <!-- Hàng 0: Số bị chia -->
+        <div class="flex items-center">
+          <div class="${signCls}"></div>
+          <div class="flex items-center">
+            ${[...t.dStr].map(ch => `
+              <div class="${cellCls} text-slate-900 font-black text-lg sm:text-xl">${ch}</div>
+            `).join('')}
           </div>
-          <span class="text-[9px] font-bold text-teal-700 mt-1.5 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
-            👉 ${titleLabel} (Điền từ phải sang trái)
-          </span>
         </div>
       `;
-    }
 
-    function handleDivInput(val, expected, callbackName) {
-      if (val.trim() === expected) {
-        playSfx('correct');
-        if (window[callbackName]) window[callbackName](expected);
-      }
-    }
+      for (let i = 0; i <= currentRoundIdx; i++) {
+        const r = t.rounds[i];
+        const isCurrentRound = (i === currentRoundIdx);
 
-    function setupDivisionLeftToRightListeners(expectedStr, onDone) {
-      const cells = Array.from(document.querySelectorAll('.div-digit-cell'));
-      if (!cells.length) return;
-
-      cells.sort((a, b) => parseInt(a.dataset.divCol) - parseInt(b.dataset.divCol));
-      const startCell = cells[0];
-      if (startCell) {
-        startCell.focus();
-        startCell.select();
-      }
-
-      function triggerSuccess(fullVal) {
-        if (typeof playSfx === 'function') playSfx('pop');
-        cells.forEach(c => {
-          c.classList.remove('bg-teal-50', 'border-teal-500');
-          c.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-950');
-        });
-        setTimeout(() => {
-          if (typeof onDone === 'function') onDone();
-          else if (typeof onDone === 'string' && typeof window[onDone] === 'function') window[onDone](fullVal);
-        }, 200);
-      }
-
-      cells.forEach((cell, idx) => {
-        cell.onkeydown = function(e) {
-          if (e.key >= '0' && e.key <= '9') {
-            e.preventDefault();
-            this.value = e.key;
-            if (typeof playSfx === 'function') playSfx('tap');
-
-            if (idx < cells.length - 1) {
-              const nextCell = cells[idx + 1];
-              nextCell.focus();
-              nextCell.select();
-            }
-
-            const currentFullVal = cells.map(c => c.value || '').join('');
-            if (currentFullVal === String(expectedStr).trim()) {
-              triggerSuccess(currentFullVal);
-            }
-          } else if (e.key === 'Backspace') {
-            e.preventDefault();
-            this.value = '';
-            if (idx > 0) {
-              const prevCell = cells[idx - 1];
-              prevCell.focus();
-              prevCell.select();
-            }
-          } else if (e.key === 'Enter') {
-            const currentFullVal = cells.map(c => c.value || '').join('');
-            if (currentFullVal === String(expectedStr).trim()) {
-              triggerSuccess(currentFullVal);
-            }
-          }
-        };
-
-        cell.oninput = function() {
-          const val = this.value.replace(/[^0-9]/g, '');
-          this.value = val ? val[val.length - 1] : '';
-          const currentFullVal = cells.map(c => c.value || '').join('');
-          if (currentFullVal === String(expectedStr).trim()) {
-            triggerSuccess(currentFullVal);
-          } else if (this.value && idx < cells.length - 1) {
-            cells[idx + 1].focus();
-            cells[idx + 1].select();
-          }
-        };
-      });
-    }
-
-    function setupRightToLeftListeners(expectedStr, onDoneCallbackName) {
-      const cells = Array.from(document.querySelectorAll('.digit-cell'));
-      if (!cells.length) return;
-
-      cells.sort((a, b) => parseInt(a.dataset.col) - parseInt(b.dataset.col));
-      const startCell = cells[0];
-      if (startCell) {
-        startCell.focus();
-        startCell.select();
-      }
-
-      cells.forEach((cell, idx) => {
-        cell.onkeydown = function(e) {
-          if (e.key >= '0' && e.key <= '9') {
-            e.preventDefault();
-            this.value = e.key;
-            playSfx('tap');
-
-            let currentValRev = '';
-            for (let c of cells) currentValRev += (c.value || '');
-            const currentFullVal = currentValRev.split('').reverse().join('');
-
-            if (idx < cells.length - 1) {
-              const nextLeftCell = cells[idx + 1];
-              nextLeftCell.focus();
-              nextLeftCell.select();
-            }
-
-            if (currentFullVal === expectedStr) {
-              playSfx('pop');
-              cells.forEach(c => {
-                c.classList.remove('bg-teal-50', 'border-teal-500');
-                c.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-950');
-              });
-              if (window[onDoneCallbackName]) {
-                window[onDoneCallbackName](currentFullVal);
-              }
-            }
-          } else if (e.key === 'Backspace') {
-            e.preventDefault();
-            this.value = '';
-            if (idx > 0) {
-              const prevRightCell = cells[idx - 1];
-              prevRightCell.focus();
-              prevRightCell.select();
-            }
-          }
-        };
-      });
-    }
-
-    // ==============================================================
-    // MAIN SIMULATOR DISPATCHER
-    // ==============================================================
-    function renderSimulator() {
-      const c = document.getElementById('phone-screen-container');
-      if (!c) return;
-
-      const suite = TEST_SUITES[currentSuiteKey];
-      const item = suite.items[currentItemIdx];
-      const total = suite.items.length;
-
-      const pills = suite.items.map((it, idx) => {
-        let st = "bg-slate-100 text-slate-400 border-slate-200";
-        if (idx < currentItemIdx) st = "bg-emerald-100 text-emerald-800 border-emerald-300 font-black";
-        else if (idx === currentItemIdx) st = "bg-teal-500 text-white border-teal-600 font-black shadow-xs scale-105";
-        return `<span class="px-2.5 py-1 text-xs rounded-xl border ${st} transition-all">${it.label}</span>`;
-      }).join('');
-
-      let notebookBodyHtml = '';
-      let calcWindowHtml = '';
-      let isFinalComplete = false;
-
-      // -----------------------------------------------------------
-      // ĐẶC BIỆT 1: TOÁN CÓ LỜI VĂN LŨY TIẾN (BÀI CON GÀ, SÁCH LỚP 4, GIẢM GIÁ CẶP)
-      // -----------------------------------------------------------
-      if (suite.category_type === 'progressive_word_problem') {
-        const activeItem = suite.items ? (suite.items[currentItemIdx] || suite.items[0]) : null;
-        const t = (activeItem && activeItem.task) ? activeItem.task : suite.task;
-        const isStep1Done = t.curStep >= 2;
-
-        let calcHtml = '';
-        if (t.curStep === 1) {
-          calcHtml = renderVerticalMathGridRTL(
-            t.step1_calc.top, t.step1_calc.op, t.step1_calc.bot, t.step1_calc.expected,
-            'onProgressiveStep1Done',
-            'Đặt tính:'
-          );
-        } else if (t.curStep === 2) {
-          calcHtml = renderVerticalMathGridRTL(
-            t.step2_calc.top, t.step2_calc.op, t.step2_calc.bot, t.step2_calc.expected,
-            'onProgressiveStep2Done',
-            'Đặt tính:'
-          );
-        } else {
-          calcHtml = `
-            <div class="bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-4 text-center my-2 animate-bounce">
-              <span class="text-2xl">🎉</span>
-              <p class="text-xs font-black text-emerald-900 mt-1">Đã tính xong số con gà = 720 con!</p>
-              <p class="text-[11px] font-bold text-emerald-700 mt-1">${t.next_step_preview}</p>
+        if (!isCurrentRound) {
+          // Lần chia đã xong trong quá khứ
+          leftRowsHtml += `
+            <!-- Hàng trừ tích -->
+            <div class="flex items-center">
+              <div class="${signCls}">-</div>
+              <div class="flex items-center">
+                ${Array.from({length: N}).map((_, col) => {
+                  if (col >= r.prodStartCol && col <= r.prodEndCol) {
+                    const ch = r.prodStr[col - r.prodStartCol];
+                    return `<div class="${cellCls} text-slate-500 font-bold">${ch}</div>`;
+                  }
+                  return `<div class="${cellCls}"></div>`;
+                }).join('')}
+              </div>
+            </div>
+            <!-- Vạch ngang trừ -->
+            <div class="flex items-center my-0.5">
+              <div class="${signCls}"></div>
+              <div class="flex items-center">
+                ${Array.from({length: N}).map((_, col) => {
+                  if (col >= r.prodStartCol && col <= r.prodEndCol) {
+                    return `<div class="${cellCls} flex items-center justify-center"><div class="w-full h-[1.5px] bg-slate-400 rounded-full"></div></div>`;
+                  }
+                  return `<div class="${cellCls}"></div>`;
+                }).join('')}
+              </div>
+            </div>
+            <!-- Hàng số dư và số vừa hạ -->
+            <div class="flex items-center">
+              <div class="${signCls}"></div>
+              <div class="flex items-center font-black">
+                ${Array.from({length: N}).map((_, col) => {
+                  if (col >= r.remStartCol && col <= r.remEndCol) {
+                    const ch = r.remStr[col - r.remStartCol];
+                    return `<div class="${cellCls} text-slate-900 font-black">${ch}</div>`;
+                  }
+                  if (col === r.bringDownCol) {
+                    return `<div class="${cellCls} text-teal-600 font-black animate-drop">${r.bringDownDigit}</div>`;
+                  }
+                  return `<div class="${cellCls}"></div>`;
+                }).join('')}
+              </div>
             </div>
           `;
+        } else {
+          // Lần chia hiện tại
+          if (currentSubStage === 0) {
+            // Đang điền thương: Chưa hiện phép trừ của round này
+          } else if (currentSubStage === 1) {
+            // Đang điền số dư: Hiện phép trừ và ô input số dư
+            leftRowsHtml += `
+              <!-- Hàng trừ tích -->
+              <div class="flex items-center slide-in-down">
+                <div class="${signCls}">-</div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.prodStartCol && col <= r.prodEndCol) {
+                      const ch = r.prodStr[col - r.prodStartCol];
+                      return `<div class="${cellCls} text-slate-500 font-bold">${ch}</div>`;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+              <!-- Vạch ngang trừ -->
+              <div class="flex items-center my-0.5">
+                <div class="${signCls}"></div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.prodStartCol && col <= r.prodEndCol) {
+                      return `<div class="${cellCls} flex items-center justify-center"><div class="w-full h-[2px] bg-amber-400 rounded-full"></div></div>`;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+              <!-- Ô nhập số dư thẳng hàng -->
+              <div class="flex items-center">
+                <div class="${signCls}"></div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.remStartCol && col <= r.remEndCol) {
+                      return `
+                        <div id="active-division-cell" class="${cellCls} bg-amber-100 border-2 border-amber-500 rounded-lg text-amber-950 font-black animate-pulse shadow-xs">
+                          ${inputBuffer || '?'}
+                        </div>
+                      `;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+            `;
+          } else if (currentSubStage === 2) {
+            // Đã điền xong số dư, chờ hạ số
+            leftRowsHtml += `
+              <!-- Hàng trừ tích -->
+              <div class="flex items-center">
+                <div class="${signCls}">-</div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.prodStartCol && col <= r.prodEndCol) {
+                      const ch = r.prodStr[col - r.prodStartCol];
+                      return `<div class="${cellCls} text-slate-400">${ch}</div>`;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+              <!-- Vạch ngang trừ -->
+              <div class="flex items-center my-0.5">
+                <div class="${signCls}"></div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.prodStartCol && col <= r.prodEndCol) {
+                      return `<div class="${cellCls} flex items-center justify-center"><div class="w-full h-[1.5px] bg-slate-300 rounded-full"></div></div>`;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+              <!-- Số dư đã xong + vị trí chuẩn bị hạ số thẳng hàng cột -->
+              <div class="flex items-center">
+                <div class="${signCls}"></div>
+                <div class="flex items-center font-black">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.remStartCol && col <= r.remEndCol) {
+                      const ch = r.remStr[col - r.remStartCol];
+                      return `<div class="${cellCls} text-slate-900">${ch}</div>`;
+                    }
+                    if (col === r.bringDownCol) {
+                      return `
+                        <div class="${cellCls} flex items-center justify-center">
+                          <span class="text-xs font-black text-amber-600 bg-amber-100 border border-amber-400 rounded px-1 animate-bounce">
+                            ↓ ?
+                          </span>
+                        </div>
+                      `;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+            `;
+          } else if (currentSubStage === 3) {
+            // Hoàn thành toàn bộ
+            leftRowsHtml += `
+              <!-- Hàng trừ tích -->
+              <div class="flex items-center">
+                <div class="${signCls}">-</div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.prodStartCol && col <= r.prodEndCol) {
+                      const ch = r.prodStr[col - r.prodStartCol];
+                      return `<div class="${cellCls} text-slate-400">${ch}</div>`;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+              <!-- Vạch ngang trừ -->
+              <div class="flex items-center my-0.5">
+                <div class="${signCls}"></div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.prodStartCol && col <= r.prodEndCol) {
+                      return `<div class="${cellCls} flex items-center justify-center"><div class="w-full h-[2px] bg-emerald-500 rounded-full"></div></div>`;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+              <!-- Số dư cuối cùng -->
+              <div class="flex items-center">
+                <div class="${signCls}"></div>
+                <div class="flex items-center">
+                  ${Array.from({length: N}).map((_, col) => {
+                    if (col >= r.remStartCol && col <= r.remEndCol) {
+                      const ch = r.remStr[col - r.remStartCol];
+                      return `<div class="${cellCls} text-emerald-700 font-black text-lg">${ch}</div>`;
+                    }
+                    return `<div class="${cellCls}"></div>`;
+                  }).join('')}
+                </div>
+              </div>
+            `;
+          }
         }
-
-        c.innerHTML = `
-          <!-- Header Bar -->
-          <div class="px-5 pt-12 pb-2 bg-gradient-to-b from-amber-50 to-transparent flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-bold text-slate-500">← Bài tập</span>
-              <span class="bg-amber-100 text-amber-800 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase">
-                ${t.step_badge}
-              </span>
-            </div>
-            <div class="flex items-center gap-1 bg-amber-100/80 px-2.5 py-1 rounded-full border border-amber-300 text-amber-800 font-black text-xs">
-              <span>⭐</span> <span>+40</span>
-            </div>
-          </div>
-
-          <!-- Variant Switcher Pills nếu có nhiều câu -->
-          ${suite.items && suite.items.length > 1 ? `
-            <div class="px-5 py-1.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-              ${suite.items.map((it, idx) => `
-                <button onclick="switchVariantItem(${idx})" class="px-2.5 py-1 text-[11px] rounded-xl font-bold whitespace-nowrap transition-all border ${idx === currentItemIdx ? 'bg-amber-500 text-white border-amber-600 shadow-xs font-black scale-105' : 'bg-white text-slate-600 border-slate-200 hover:border-amber-300'}">
-                  ${it.label}
-                </button>
-              `).join('')}
-            </div>
-          ` : `
-            <!-- Progress Segments -->
-            <div class="px-5 py-1.5 flex gap-1.5">
-              <div class="h-2 flex-1 rounded-full bg-emerald-500"></div>
-              <div class="h-2 flex-1 rounded-full bg-amber-400 ring-2 ring-amber-200 animate-pulse"></div>
-              <div class="h-2 flex-1 rounded-full bg-slate-200"></div>
-              <div class="h-2 flex-1 rounded-full bg-slate-200"></div>
-            </div>
-          `}
-
-          <!-- Instruction Card -->
-          <div class="px-5 pt-2 pb-1">
-            <div class="bg-white border-2 border-amber-200 rounded-2xl p-3 shadow-xs">
-              <span class="text-[10px] font-extrabold uppercase text-amber-600 block mb-0.5">Mục tiêu vi bước:</span>
-              <h3 class="text-sm font-black text-slate-800 leading-snug">${t.sub_problem}</h3>
-            </div>
-          </div>
-
-          <!-- Main Interactive Stage: Trang Vở Lũy Tiến Tích Lũy -->
-          <div class="px-5 py-2 flex-1 flex flex-col justify-between overflow-y-auto no-scrollbar">
-            
-            <!-- Vở học sinh tích lũy -->
-            <div class="bg-[#FFFDF7] border-2 border-amber-300/80 rounded-2xl p-3.5 shadow-sm space-y-2.5">
-              
-              <!-- Phép tính 1 -->
-              <div>
-                <p class="text-xs font-bold text-slate-600 mb-1">${t.step1_lead}</p>
-                <div class="flex items-center gap-2 text-base font-mono font-black ${isStep1Done ? 'text-emerald-700' : 'text-slate-800'}">
-                  <span>${t.step1_expr}</span>
-                  <span class="px-2 py-0.5 rounded-lg border-2 ${isStep1Done ? 'bg-emerald-100 border-emerald-400 text-emerald-900' : 'bg-amber-100 border-amber-400 text-amber-900'} min-w-[50px] text-center">
-                    ${isStep1Done ? t.step1_expected + ' ✓' : '?'}
-                  </span>
-                </div>
-              </div>
-
-              <!-- Phép tính 2 -->
-              ${isStep1Done ? `
-                <div class="pt-2 border-t border-dashed border-amber-200 slide-in-down">
-                  <p class="text-xs font-bold text-slate-600 mb-1">${t.step2_lead}</p>
-                  <div class="flex items-center gap-2 text-base font-mono font-black ${t.curStep >= 3 ? 'text-emerald-700' : 'text-slate-800'}">
-                    <span>${t.step2_expr}</span>
-                    <span class="px-2 py-0.5 rounded-lg border-2 ${t.curStep >= 3 ? 'bg-emerald-100 border-emerald-400 text-emerald-900' : 'bg-amber-100 border-amber-400 text-amber-900'} min-w-[50px] text-center">
-                      ${t.curStep >= 3 ? t.step2_expected + ' ✓' : '?'}
-                    </span>
-                  </div>
-                </div>
-              ` : ''}
-            </div>
-
-            <!-- Cửa sổ tính toán RTL đồng bộ -->
-            <div class="my-auto">
-              ${calcHtml}
-            </div>
-
-            <!-- Bottom Button -->
-            <div class="pt-2 pb-6">
-              <button id="btn-next-step" ${t.curStep >= 3 ? '' : 'disabled'} onclick="playSfx('correct'); alert('Chuyển sang Bước 3 (Trang sau bình thường: 1200 - 720 = 480 con vịt)!');" class="${t.curStep >= 3 ? 'btn-3d-green text-white cursor-pointer' : 'btn-disabled'} w-full py-3.5 rounded-2xl font-black text-sm tracking-wide shadow-md transition-all">
-                ${t.curStep >= 3 ? 'TIẾP TỤC TÍNH SỐ VỊT (BƯỚC 3) ➔' : 'ĐANG TÍNH TOÁN...'}
-              </button>
-            </div>
-          </div>
-        `;
-        return;
       }
 
-      // -----------------------------------------------------------
-      // ĐẶC BIỆT 2: BÀI TOÁN Ô TÔ GỌT SẠCH CÂU B (oto_clean_focus)
-      // -----------------------------------------------------------
-      if (suite.category_type === 'oto_clean_focus') {
-        const t = suite.task;
-        const isStep1Done = t.stepIdx >= 2;
-
-        c.innerHTML = `
-          <!-- Header Bar -->
-          <div class="px-5 pt-12 pb-2 bg-gradient-to-b from-teal-50 to-transparent flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-bold text-slate-500">← Lộ trình</span>
-              <span class="bg-teal-100 text-teal-800 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase">
-                ${isStep1Done ? 'Bước 3 / 3 • Thời gian gặp' : 'Bước 2 / 3 • Tổng vận tốc'}
-              </span>
-            </div>
-            <div class="flex items-center gap-1 bg-teal-100 px-2.5 py-1 rounded-full border border-teal-300 text-teal-800 font-black text-xs">
-              <span>🚗</span> <span>Vận tốc</span>
-            </div>
-          </div>
-
-          <!-- Progress 3 đốt gọn gàng -->
-          <div class="px-5 py-1.5 flex gap-1.5">
-            <div class="h-2 flex-1 rounded-full bg-emerald-500"></div>
-            <div class="h-2 flex-1 rounded-full ${isStep1Done ? 'bg-emerald-500' : 'bg-teal-400 ring-2 ring-teal-200 animate-pulse'}"></div>
-            <div class="h-2 flex-1 rounded-full ${isStep1Done ? 'bg-teal-400 ring-2 ring-teal-200 animate-pulse' : 'bg-slate-200'}"></div>
-          </div>
-
-          <!-- Đề bài sạch sẽ không có câu b -->
-          <div class="px-5 pt-2 pb-1">
-            <div class="bg-indigo-50/70 border border-indigo-200 rounded-2xl p-3 text-xs leading-relaxed text-indigo-950">
-              <span class="font-extrabold text-indigo-700 block mb-0.5">Đề bài mục tiêu duy nhất:</span>
-              ${t.cleaned_text}
-            </div>
-          </div>
-
-          <div class="px-5 py-2 flex-1 flex flex-col justify-between overflow-y-auto no-scrollbar">
-            ${!isStep1Done ? `
-              <!-- Bước 2: Tính tổng vận tốc -->
-              <div class="bg-white border-2 border-teal-200 rounded-2xl p-4 shadow-xs text-center my-auto">
-                <p class="text-xs font-bold text-slate-600 mb-2">Tính tổng vận tốc 2 xe chuyển động ngược chiều:</p>
-                <div class="text-lg font-mono font-black text-slate-800 mb-2">50 + 40 = ? (km/giờ)</div>
-                ${renderVerticalMathGridRTL('50', '+', '40', '90', 'onOtoStep1Done', 'Đặt tính cộng vận tốc:')}
+      // 2. CỘT PHẢI: DÃY CÁC CHỮ SỐ THƯƠNG
+      let quotientCellsHtml = '';
+      for (let i = 0; i < t.rounds.length; i++) {
+        const r = t.rounds[i];
+        if (i < currentRoundIdx) {
+          quotientCellsHtml += `<div class="${cellCls} text-emerald-700 font-black text-lg sm:text-xl">${r.quotientDigit}</div>`;
+        } else if (i === currentRoundIdx) {
+          if (currentSubStage === 0) {
+            quotientCellsHtml += `
+              <div id="active-division-cell" class="${cellCls} bg-amber-100 border-2 border-amber-500 rounded-lg text-amber-950 font-black text-lg sm:text-xl animate-pulse shadow-xs">
+                ${inputBuffer || '?'}
               </div>
-            ` : `
-              <!-- Bước 3: Tính thời gian gặp nhau -->
-              <div class="bg-white border-2 border-teal-200 rounded-2xl p-4 shadow-xs text-center my-auto slide-in-down">
-                <span class="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md inline-block mb-2">✓ Tổng vận tốc: 90 km/giờ</span>
-                <p class="text-xs font-bold text-slate-600 mb-1">Thời gian hai xe gặp nhau (Quãng đường : Tổng vận tốc):</p>
-                <div class="text-lg font-mono font-black text-slate-800 mb-2">180 : 90 = ? (giờ)</div>
-                ${renderVerticalMathGridRTL('180', ':', '90', '2', 'onOtoStep2Done', 'Tính phép chia:')}
-              </div>
-            `}
-
-            <div class="pt-2 pb-6">
-              <button id="btn-next-step" ${t.stepIdx >= 3 ? '' : 'disabled'} onclick="playSfx('star'); alert('🎉 Xuất sắc! Hai xe gặp nhau sau 2 giờ!');" class="${t.stepIdx >= 3 ? 'btn-3d-green text-white cursor-pointer' : 'btn-disabled'} w-full py-3.5 rounded-2xl font-black text-sm tracking-wide shadow-md transition-all">
-                ${t.stepIdx >= 3 ? 'HOÀN THÀNH BÀI TOÁN 🏆' : 'GIẢI XONG ĐỂ VỀ ĐÍCH'}
-              </button>
-            </div>
-          </div>
-        `;
-        return;
-      }
-
-      // -----------------------------------------------------------
-      // ĐẶC BIỆT 3: HIGHLIGHT CÂU LỆNH MỞ (highlight_demo)
-      // -----------------------------------------------------------
-      if (suite.category_type === 'highlight_demo') {
-        const t = suite.task;
-        const tokensHtml = t.tokens.map((tok, idx) => {
-          if (tok.isTarget) {
-            return `
-              <button onclick="toggleHighlightDemo(this, '${tok.key}')" class="hl-chip inline-flex items-center gap-1 px-2.5 py-1 mx-1 my-1 rounded-xl border-b-2 border-dashed border-amber-400 bg-amber-50 text-slate-900 text-xs font-bold cursor-pointer hover:bg-amber-100 transition shadow-xs">
-                <span>✏️</span> <span>${tok.text}</span>
-              </button>
             `;
           } else {
-            return `<span class="text-slate-800 text-xs font-medium leading-relaxed">${tok.text}</span>`;
+            quotientCellsHtml += `<div class="${cellCls} text-emerald-700 font-black text-lg sm:text-xl">${r.quotientDigit}</div>`;
           }
-        }).join(' ');
-
-        c.innerHTML = `
-          <!-- Header Bar -->
-          <div class="px-5 pt-12 pb-2 bg-gradient-to-b from-teal-50 to-transparent flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-bold text-slate-500">← Nhiệm vụ</span>
-              <span class="bg-teal-100 text-teal-800 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase">
-                Bước 1 / 4 • Dữ Kiện & Từ Khóa
-              </span>
-            </div>
-            <div class="flex items-center gap-1 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-300 text-amber-800 font-black text-xs">
-              <span>⭐</span> <span>+30</span>
-            </div>
-          </div>
-
-          <!-- Progress -->
-          <div class="px-5 py-1.5 flex gap-1.5">
-            <div class="h-2 flex-1 rounded-full bg-teal-400 ring-2 ring-teal-200 animate-pulse"></div>
-            <div class="h-2 flex-1 rounded-full bg-slate-200"></div>
-            <div class="h-2 flex-1 rounded-full bg-slate-200"></div>
-            <div class="h-2 flex-1 rounded-full bg-slate-200"></div>
-          </div>
-
-          <!-- Tiêu đề câu lệnh mở (KHÔNG MỚM SỐ LƯỢNG) -->
-          <div class="px-5 pt-2 pb-1">
-            <div class="bg-[#F0FDFA] border-2 border-teal-300 rounded-2xl p-3 shadow-xs">
-              <span class="text-[10px] font-extrabold uppercase text-teal-700 block mb-0.5">Chỉ dẫn mở (Anti-Spoonfeeding):</span>
-              <h3 class="text-xs font-black text-slate-800 leading-snug">${t.instruction}</h3>
-            </div>
-          </div>
-
-          <!-- Text Canvas -->
-          <div class="px-5 py-2 flex-1 flex flex-col justify-between overflow-y-auto no-scrollbar">
-            <div class="bg-white border-2 border-slate-200 rounded-2xl p-4 shadow-sm leading-loose my-auto text-left">
-              ${tokensHtml}
-            </div>
-
-            <div id="hl-feedback" class="text-center text-xs font-bold text-teal-800 min-h-[20px] my-2">
-              👆 Chạm vào những con số và từ khóa quan trọng của bài toán nhé!
-            </div>
-
-            <div class="pt-2 pb-6">
-              <button id="btn-next-step" disabled onclick="playSfx('correct'); alert('Tuyệt vời! Đã nạp đủ dữ kiện!');" class="btn-disabled w-full py-3.5 rounded-2xl font-black text-sm tracking-wide shadow-md transition-all">
-                XÁC NHẬN DỮ KIỆN
-              </button>
-            </div>
-          </div>
-        `;
-        return;
+        } else {
+          quotientCellsHtml += `<div class="${cellCls} text-slate-300 font-black text-lg sm:text-xl flex items-center justify-center">·</div>`;
+        }
       }
 
-      // -----------------------------------------------------------
-      // TYPE 1: SINGLE OP (Tìm x cơ bản 1 phép tính)
-      // -----------------------------------------------------------
-      if (item.type === 'single_op') {
-        notebookBodyHtml = `
-          <!-- Dòng 1: Đề bài -->
-          <div class="flex items-center text-slate-800 text-lg pl-1">${item.equation}</div>
-
-          <!-- Dòng 2: Chuyển vế -->
-          <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1">
-            ${curStage === 1 ? `
-              <span class="text-teal-700">${item.left_lead}</span>
-              <select id="op-sel" onchange="onSingleOpChange(this.value)" class="w-8 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none appearance-none cursor-pointer shadow-2xs shrink-0">
-                <option value="">?</option>
-                <option value="+" ${tempOp === '+' ? 'selected' : ''}>+</option>
-                <option value="-" ${tempOp === '-' ? 'selected' : ''}>-</option>
-                <option value="×" ${tempOp === '×' ? 'selected' : ''}>×</option>
-                <option value=":" ${tempOp === ':' ? 'selected' : ''}>:</option>
-              </select>
-              <input type="text" value="${tempNum}" oninput="onSingleNumChange(this.value)" placeholder="số?" class="w-16 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none placeholder:text-slate-400 placeholder:text-xs shadow-2xs shrink-0" />
-            ` : `
-              <span class="text-emerald-700 slide-in-down flex items-center gap-1.5">
-                ${item.formatted_line2}
-                <span class="text-xs text-emerald-600 font-sans">✓</span>
-              </span>
-            `}
-          </div>
-
-          <!-- Dòng 3: Kết luận -->
-          ${curStage === 3 ? `
-            <div class="flex items-center gap-2 text-lg text-emerald-800 slide-in-down pl-1">
-              <span class="text-emerald-900 font-black">${item.formatted_line3}</span>
-              <span class="text-sm">🎉</span>
-            </div>
-          ` : ''}
-        `;
-
-        if (curStage === 2) {
-          calcWindowHtml = `
-            <div class="mt-3 pt-2 border-t-2 border-dashed border-teal-200 slide-in-down">
-              ${renderVerticalMathGridRTL(item.calc_top, item.calc_op, item.calc_bot, item.expected_x, 'onSingleCalcDone', "Đặt tính tìm x")}
-            </div>
-          `;
-        }
-        isFinalComplete = (curStage === 3);
-
-      // -----------------------------------------------------------
-      // TYPE 2: RHS EXPR (Vế phải là biểu thức: ĐẶT TÍNH CẢ 2 BƯỚC!)
-      // -----------------------------------------------------------
-      } else if (item.type === 'rhs_expr') {
-        notebookBodyHtml = `
-          <!-- Dòng 1: Đề bài -->
-          <div class="flex items-center text-slate-800 text-lg pl-1">${item.equation}</div>
-
-          <!-- Dòng 2: Kết quả vế phải (sau khi đặt tính ở stage 1) -->
-          ${curStage >= 2 ? `
-            <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1 slide-in-down">
-              <span class="text-emerald-700 flex items-center gap-1.5">
-                ${item.step1_formatted}
-                <span class="text-xs text-emerald-600 font-sans">✓</span>
-              </span>
-            </div>
-          ` : ''}
-
-          <!-- Dòng 3: Chuyển vế tìm x -->
-          ${curStage >= 2 ? `
-            <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1">
-              ${curStage === 2 ? `
-                <span class="text-teal-700">${item.step2_lead}</span>
-                <select id="op-sel" onchange="onRhsOpChange(this.value)" class="w-8 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none appearance-none cursor-pointer shadow-2xs shrink-0">
-                  <option value="">?</option>
-                  <option value="+" ${tempOp === '+' ? 'selected' : ''}>+</option>
-                  <option value="-" ${tempOp === '-' ? 'selected' : ''}>-</option>
-                  <option value="×" ${tempOp === '×' ? 'selected' : ''}>×</option>
-                  <option value=":" ${tempOp === ':' ? 'selected' : ''}>:</option>
-                </select>
-                <input type="text" value="${tempNum}" oninput="onRhsNumChange(this.value)" placeholder="số?" class="w-16 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none placeholder:text-slate-400 placeholder:text-xs shadow-2xs shrink-0" />
-              ` : `
-                <span class="text-emerald-700 slide-in-down flex items-center gap-1.5">
-                  ${item.step2_formatted}
-                  <span class="text-xs text-emerald-600 font-sans">✓</span>
-                </span>
-              `}
-            </div>
-          ` : ''}
-
-          <!-- Dòng 4: Kết luận x -->
-          ${curStage === 4 ? `
-            <div class="flex items-center gap-2 text-lg text-emerald-800 slide-in-down pl-1">
-              <span class="text-emerald-900 font-black">${item.step3_formatted}</span>
-              <span class="text-sm">🎉</span>
-            </div>
-          ` : ''}
-        `;
-
-        // Stage 1: Cửa sổ đặt tính vế phải
-        if (curStage === 1) {
-          calcWindowHtml = `
-            <div class="mt-3 pt-2 border-t-2 border-dashed border-amber-300 slide-in-down">
-              <div class="text-xs font-black text-amber-800 mb-1 flex items-center gap-1">
-                <span>⚡</span> Bước 1: Đặt tính thu gọn vế phải:
-              </div>
-              ${renderVerticalMathGridRTL(item.rhs_calc.top, item.rhs_calc.op, item.rhs_calc.bot, item.rhs_calc.expected, 'onRhsCalcDone', "Tính vế phải")}
-            </div>
-          `;
-        // Stage 3: Cửa sổ đặt tính tìm x
-        } else if (curStage === 3) {
-          calcWindowHtml = `
-            <div class="mt-3 pt-2 border-t-2 border-dashed border-teal-200 slide-in-down">
-              <div class="text-xs font-black text-teal-800 mb-1 flex items-center gap-1">
-                <span>⚡</span> Bước 2: Đặt tính tìm x:
-              </div>
-              ${renderVerticalMathGridRTL(item.final_calc.top, item.final_calc.op, item.final_calc.bot, item.final_calc.expected, 'onRhsFinalCalcDone', "Tính kết quả x")}
-            </div>
-          `;
-        }
-        isFinalComplete = (curStage === 4);
-
-      // -----------------------------------------------------------
-      // TYPE 3: TWO TIER (Hai tầng phép tính: đặt tính cả 2 tầng)
-      // -----------------------------------------------------------
-      } else if (item.type === 'two_tier') {
-        notebookBodyHtml = `
-          <!-- Dòng 1: Đề bài -->
-          <div class="flex items-center text-slate-800 text-lg pl-1">${item.equation}</div>
-
-          <!-- Dòng 2: Chuyển vế tìm cụm -->
-          <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1">
-            ${curStage === 1 ? `
-              <span class="text-teal-700">${item.tier1_lead}</span>
-              <select id="op-sel" onchange="onTier1OpChange(this.value)" class="w-8 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none appearance-none cursor-pointer shadow-2xs shrink-0">
-                <option value="">?</option>
-                <option value="+" ${tempOp === '+' ? 'selected' : ''}>+</option>
-                <option value="-" ${tempOp === '-' ? 'selected' : ''}>-</option>
-                <option value="×" ${tempOp === '×' ? 'selected' : ''}>×</option>
-                <option value=":" ${tempOp === ':' ? 'selected' : ''}>:</option>
-              </select>
-              <input type="text" value="${tempNum}" oninput="onTier1NumChange(this.value)" placeholder="số?" class="w-16 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none placeholder:text-slate-400 placeholder:text-xs shadow-2xs shrink-0" />
-            ` : `
-              <span class="text-emerald-700 slide-in-down flex items-center gap-1.5">
-                ${item.tier1_formatted}
-                <span class="text-xs text-emerald-600 font-sans">✓</span>
-              </span>
-            `}
-          </div>
-
-          <!-- Dòng 3: Kết quả cụm (sau khi đặt tính ở stage 2) -->
-          ${curStage >= 3 ? `
-            <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1 slide-in-down">
-              <span class="text-emerald-700 flex items-center gap-1.5">
-                ${item.tier1_res_formatted}
-                <span class="text-xs text-emerald-600 font-sans">✓</span>
-              </span>
-            </div>
-          ` : ''}
-
-          <!-- Dòng 4: Tìm x đơn lẻ -->
-          ${curStage >= 3 ? `
-            <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1">
-              ${curStage === 3 ? `
-                <span class="text-teal-700">${item.tier2_lead}</span>
-                <select id="op-sel" onchange="onTier2OpChange(this.value)" class="w-8 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none appearance-none cursor-pointer shadow-2xs shrink-0">
-                  <option value="">?</option>
-                  <option value="+" ${tempOp === '+' ? 'selected' : ''}>+</option>
-                  <option value="-" ${tempOp === '-' ? 'selected' : ''}>-</option>
-                  <option value="×" ${tempOp === '×' ? 'selected' : ''}>×</option>
-                  <option value=":" ${tempOp === ':' ? 'selected' : ''}>:</option>
-                </select>
-                <input type="text" value="${tempNum}" oninput="onTier2NumChange(this.value)" placeholder="số?" class="w-16 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none placeholder:text-slate-400 placeholder:text-xs shadow-2xs shrink-0" />
-              ` : `
-                <span class="text-emerald-700 slide-in-down flex items-center gap-1.5">
-                  ${item.tier2_formatted}
-                  <span class="text-xs text-emerald-600 font-sans">✓</span>
-                </span>
-              `}
-            </div>
-          ` : ''}
-
-          <!-- Dòng 5: Kết luận x -->
-          ${curStage === 5 ? `
-            <div class="flex items-center gap-2 text-lg text-emerald-800 slide-in-down pl-1">
-              <span class="text-emerald-900 font-black">${item.tier3_formatted}</span>
-              <span class="text-sm">🎉</span>
-            </div>
-          ` : ''}
-        `;
-
-        if (curStage === 2) {
-          calcWindowHtml = `
-            <div class="mt-3 pt-2 border-t-2 border-dashed border-amber-300 slide-in-down">
-              <div class="text-xs font-black text-amber-800 mb-1 flex items-center gap-1">
-                <span>⚡</span> Đặt tính tìm giá trị của cụm:
-              </div>
-              ${renderVerticalMathGridRTL(item.tier1_calc.top, item.tier1_calc.op, item.tier1_calc.bot, item.tier1_calc.expected, 'onTier1CalcDone', "Tính cụm")}
-            </div>
-          `;
-        } else if (curStage === 4) {
-          calcWindowHtml = `
-            <div class="mt-3 pt-2 border-t-2 border-dashed border-teal-200 slide-in-down">
-              <div class="text-xs font-black text-teal-800 mb-1 flex items-center gap-1">
-                <span>⚡</span> Đặt tính tìm x:
-              </div>
-              ${renderVerticalMathGridRTL(item.final_calc.top, item.final_calc.op, item.final_calc.bot, item.final_calc.expected, 'onTier2CalcDone', "Tính kết quả x")}
-            </div>
-          `;
-        }
-        isFinalComplete = (curStage === 5);
-
-      // -----------------------------------------------------------
-      // TYPE 4: PARENTHESES (Ngoặc đơn)
-      // -----------------------------------------------------------
-      } else if (item.type === 'paren_expr') {
-        notebookBodyHtml = `
-          <!-- Dòng 1: Đề bài -->
-          <div class="flex items-center text-slate-800 text-lg pl-1">${item.equation}</div>
-
-          <!-- Dòng 2: Phá ngoặc tìm cụm -->
-          <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1">
-            ${curStage === 1 ? `
-              <span class="text-teal-700">${item.step1_lead}</span>
-              <select id="op-sel" onchange="onParenOpChange(this.value)" class="w-8 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none appearance-none cursor-pointer shadow-2xs shrink-0">
-                <option value="">?</option>
-                <option value="+" ${tempOp === '+' ? 'selected' : ''}>+</option>
-                <option value="-" ${tempOp === '-' ? 'selected' : ''}>-</option>
-                <option value="×" ${tempOp === '×' ? 'selected' : ''}>×</option>
-                <option value=":" ${tempOp === ':' ? 'selected' : ''}>:</option>
-              </select>
-              <input type="text" value="${tempNum}" oninput="onParenNumChange(this.value)" placeholder="số?" class="w-16 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none placeholder:text-slate-400 placeholder:text-xs shadow-2xs shrink-0" />
-            ` : `
-              <span class="text-emerald-700 slide-in-down flex items-center gap-1.5">
-                ${item.step1_formatted}
-                <span class="text-xs text-emerald-600 font-sans">✓</span>
-              </span>
-            `}
-          </div>
-
-          <!-- Dòng 3: Kết quả cụm ngoặc -->
-          ${curStage >= 3 ? `
-            <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1 slide-in-down">
-              <span class="text-emerald-700 flex items-center gap-1.5">
-                ${item.step1_res_formatted}
-                <span class="text-xs text-emerald-600 font-sans">✓</span>
-              </span>
-            </div>
-          ` : ''}
-
-          <!-- Dòng 4: Chuyển vế tìm x -->
-          ${curStage >= 3 ? `
-            <div class="flex items-center gap-1.5 whitespace-nowrap text-base sm:text-lg pl-1">
-              ${curStage === 3 ? `
-                <span class="text-teal-700">${item.step2_lead}</span>
-                <select id="op-sel" onchange="onParenStep2OpChange(this.value)" class="w-8 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none appearance-none cursor-pointer shadow-2xs shrink-0">
-                  <option value="">?</option>
-                  <option value="+" ${tempOp === '+' ? 'selected' : ''}>+</option>
-                  <option value="-" ${tempOp === '-' ? 'selected' : ''}>-</option>
-                  <option value="×" ${tempOp === '×' ? 'selected' : ''}>×</option>
-                  <option value=":" ${tempOp === ':' ? 'selected' : ''}>:</option>
-                </select>
-                <input type="text" value="${tempNum}" oninput="onParenStep2NumChange(this.value)" placeholder="số?" class="w-16 h-8 text-center bg-amber-50 border-2 border-amber-400 text-amber-900 rounded-lg font-mono text-sm font-black focus:outline-none placeholder:text-slate-400 placeholder:text-xs shadow-2xs shrink-0" />
-              ` : `
-                <span class="text-emerald-700 slide-in-down flex items-center gap-1.5">
-                  ${item.step2_formatted}
-                  <span class="text-xs text-emerald-600 font-sans">✓</span>
-                </span>
-              `}
-            </div>
-          ` : ''}
-
-          <!-- Dòng 5: Kết luận x -->
-          ${curStage === 5 ? `
-            <div class="flex items-center gap-2 text-lg text-emerald-800 slide-in-down pl-1">
-              <span class="text-emerald-900 font-black">${item.step3_formatted}</span>
-              <span class="text-sm">🎉</span>
-            </div>
-          ` : ''}
-        `;
-
-        if (curStage === 2) {
-          calcWindowHtml = `
-            <div class="mt-3 pt-2 border-t-2 border-dashed border-amber-300 slide-in-down">
-              <div class="text-xs font-black text-amber-800 mb-1 flex items-center gap-1">
-                <span>⚡</span> Đặt tính cụm trong ngoặc:
-              </div>
-              ${renderVerticalMathGridRTL(item.step1_calc.top, item.step1_calc.op, item.step1_calc.bot, item.step1_calc.expected, 'onParenCalc1Done', "Tính cụm ngoặc")}
-            </div>
-          `;
-        } else if (curStage === 4) {
-          calcWindowHtml = `
-            <div class="mt-3 pt-2 border-t-2 border-dashed border-teal-200 slide-in-down">
-              <div class="text-xs font-black text-teal-800 mb-1 flex items-center gap-1">
-                <span>⚡</span> Đặt tính tìm x:
-              </div>
-              ${renderVerticalMathGridRTL(item.final_calc.top, item.final_calc.op, item.final_calc.bot, item.final_calc.expected, 'onParenFinalCalcDone', "Tính kết quả x")}
-            </div>
-          `;
-        }
-        isFinalComplete = (curStage === 5);
+      // 3. Câu hướng dẫn vi bước
+      let instructionText = '';
+      if (currentSubStage === 0) {
+        instructionText = `👉 <strong>Bước 1:</strong> Lấy <strong>${curRound.currentPart}</strong> chia cho <strong>${t.divisor}</strong> được mấy? (Điền thương)`;
+      } else if (currentSubStage === 1) {
+        instructionText = `👉 <strong>Bước 2:</strong> Lấy ${curRound.currentPart} - ${curRound.product} = ? (Điền số dư)`;
+      } else if (currentSubStage === 2) {
+        instructionText = `👉 <strong>Bước 3:</strong> Click nút <strong>Hạ số ${curRound.bringDownDigit}</strong> xuống cột số dư!`;
+      } else {
+        instructionText = `🎉 <strong>Hoàn thành!</strong> Kết quả: <strong>${t.dividend} : ${t.divisor} = ${t.quotient}</strong>` + 
+          (t.finalRemainder > 0 ? ` (dư ${t.finalRemainder})` : ' (chia hết)');
       }
 
-      // RENDER GIAO DIỆN
       c.innerHTML = `
-        <div class="flex flex-col h-full justify-between p-4 bg-[#F4F9F9] pt-11 relative">
+        <!-- Top Dynamic Island & Status Bar -->
+        <div class="dynamic-island">
+          <div class="w-2.5 h-2.5 rounded-full bg-teal-500 animate-pulse"></div>
+          <span class="text-[9px] font-mono text-white/80 font-bold">Chia cột SGK</span>
+          <div class="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+        </div>
+
+        <!-- Header -->
+        <div class="px-5 pt-12 pb-2 flex items-center justify-between border-b border-amber-200/60 bg-gradient-to-b from-amber-50 to-transparent">
+          <div class="flex items-center gap-2">
+            <span class="text-base">➗</span>
+            <div>
+              <span class="text-[10px] font-extrabold uppercase text-amber-700 tracking-wider block">Đặt tính phép chia</span>
+              <h2 class="text-xs font-black text-slate-800">${t.title}</h2>
+            </div>
+          </div>
+          <div class="bg-amber-100 text-amber-900 border border-amber-300 font-black text-[11px] px-2.5 py-1 rounded-full">
+            Lần ${curRound.roundNum}/${t.rounds.length}
+          </div>
+        </div>
+
+        <!-- Micro-instruction Card -->
+        <div class="px-5 pt-2.5 pb-1">
+          <div class="bg-white border-2 border-amber-300 rounded-2xl p-3 shadow-xs">
+            <p class="text-xs font-bold text-slate-800 leading-snug">${instructionText}</p>
+            ${currentSubStage === 0 ? `
+              <div class="mt-1.5 flex items-center gap-1.5 text-[11px] font-mono text-teal-800 bg-teal-50 px-2 py-1 rounded-lg border border-teal-200">
+                <span>💡 Gợi ý:</span> <span>${curRound.clue}</span>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+
+        <!-- MAIN LONG DIVISION NOTEBOOK (VỞ KẺ Ô LY TIỂU HỌC) -->
+        <div class="px-5 py-2 flex-1 flex flex-col justify-between overflow-y-auto no-scrollbar">
           
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300">
-                ${suite.title}
-              </span>
-              <span class="text-xs font-black text-amber-600 bg-amber-50 px-2.5 py-0.5 rounded-lg border border-amber-200">
-                +40 ⭐ / câu
-              </span>
-            </div>
-
-            <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs mb-2">
-              <div class="flex items-center justify-between">
-                <h3 class="text-xs font-black text-slate-900 uppercase tracking-tight flex items-center gap-1.5">
-                  <span>🎯</span> ${suite.header_title}
-                </h3>
-                <span class="text-[11px] font-bold text-slate-500">Câu ${currentItemIdx + 1} / ${total}</span>
-              </div>
-              <div class="flex items-center gap-1.5 mt-2">
-                ${pills}
-              </div>
-            </div>
-          </div>
-
-          <!-- KHUNG VỞ TOÁN TƯƠNG TÁC -->
-          <div class="flex-1 flex flex-col justify-start my-1 overflow-y-auto no-scrollbar">
-            <div class="bg-white border-2 border-amber-300 rounded-[24px] p-4 shadow-sm flex flex-col justify-between min-h-[440px] relative">
+          <div class="math-grid-paper border-2 border-slate-300 rounded-2xl p-3 sm:p-4 shadow-sm relative min-h-[250px] flex items-start justify-center">
+            
+            <!-- KHUNG ĐẶT TÍNH CỘT THẲNG HÀNG 100% -->
+            <div class="flex items-start justify-center font-mono">
               
-              <div>
-                <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-100">
-                  <span class="bg-amber-100 text-amber-900 text-[11px] font-black px-2.5 py-0.5 rounded-full uppercase">
-                    CÂU ${item.label}
-                  </span>
-                  <span class="text-[11px] font-bold text-slate-400">
-                    ${isFinalComplete ? '✅ Trình bày hoàn chỉnh' : '✍️ Đang giải từng dòng'}
-                  </span>
-                </div>
-
-                <!-- BẢNG DÒNG VỞ TOÁN -->
-                <div class="notebook-paper p-3 rounded-2xl border border-slate-200 font-mono text-lg font-black text-slate-900 space-y-1.5 shadow-inner">
-                  ${notebookBodyHtml}
-                </div>
-
-                <!-- CỬA SỔ ĐẶT TÍNH ĐỒNG BỘ -->
-                ${calcWindowHtml}
-
-                <!-- THÔNG BÁO HOÀN THÀNH -->
-                ${isFinalComplete ? `
-                  <div class="mt-3 p-2.5 bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-300 rounded-2xl flex items-center gap-2.5 slide-in-down">
-                    <span class="text-2xl">👑</span>
-                    <div>
-                      <h4 class="text-xs font-black text-emerald-950">Bài giải trình bày chuẩn mực!</h4>
-                      <p class="text-[11px] text-emerald-700 font-bold">Các dòng đều căn thẳng hàng đẹp như SGK.</p>
-                    </div>
-                  </div>
-                ` : ''}
-
+              <!-- CỘT BÊN TRÁI: SỐ BỊ CHIA & CÁC LẦN TRỪ DỌC -->
+              <div class="flex flex-col items-start pr-1">
+                ${leftRowsHtml}
               </div>
 
-              <!-- LỜI NHẮC CỦA MILO -->
-              <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-xl flex items-center gap-2 mt-2">
-                <span class="text-lg">🤖</span>
-                <p class="text-[11px] font-bold text-amber-900 leading-tight">
-                  ${isFinalComplete ? 'Milo: Tuyệt đỉnh! Bấm hoàn thành để nhận +40 ⭐ nhé!' : 'Milo: Đặt tính xong là dòng tiếp theo sẽ tự động in ra ngay!'}
-                </p>
+              <!-- VẠCH ĐỨNG CHIA (T BARS) -->
+              <div class="w-[3px] bg-teal-600 self-stretch rounded-full mx-1 shrink-0"></div>
+
+              <!-- CỘT BÊN PHẢI: SỐ CHIA TRÊN & THƯƠNG DƯỚI -->
+              <div class="pl-2 flex flex-col items-start shrink-0">
+                <!-- Số chia -->
+                <div class="flex items-center pb-0.5">
+                  <span class="font-mono text-lg sm:text-xl font-black text-teal-800 tracking-wider">
+                    ${t.divisor}
+                  </span>
+                </div>
+                <!-- Vạch ngang ngăn cách thương -->
+                <div class="w-full h-[3px] bg-teal-600 rounded-full my-0.5"></div>
+                <!-- Dãy thương số -->
+                <div class="flex items-center pt-0.5">
+                  ${quotientCellsHtml}
+                </div>
               </div>
 
             </div>
+
+            <!-- Overlay chúc mừng khi xong -->
+            ${isCompleted ? `
+              <div class="absolute inset-0 bg-emerald-500/90 backdrop-blur-xs rounded-2xl flex flex-col items-center justify-center p-4 text-center text-white animate-drop">
+                <span class="text-4xl">🎉</span>
+                <h3 class="text-lg font-black mt-1">Xuất Sắc! Đã Chia Xong</h3>
+                <p class="text-xs font-bold text-emerald-100 mt-1 font-mono">
+                  ${t.dividend} : ${t.divisor} = ${t.quotient} ${t.finalRemainder > 0 ? `(dư ${t.finalRemainder})` : '(dư 0)'}
+                </p>
+                <button onclick="initDivisionTask(currentTask.dividend, currentTask.divisor, currentTask.title)" class="mt-3 px-4 py-2 bg-white text-emerald-900 rounded-xl font-black text-xs shadow-md">
+                  ↺ Thực hành lại
+                </button>
+              </div>
+            ` : ''}
+
           </div>
 
-          <!-- FOOTER BUTTON -->
-          <div class="pt-2 shrink-0">
-            ${isFinalComplete ? `
-              <button onclick="nextItem()" class="w-full btn-3d-green text-white font-black text-sm py-3.5 rounded-2xl shadow-md flex items-center justify-center gap-2 animate-bounce">
-                <span>XONG CÂU ${item.label.toUpperCase()}! (+40 ⭐)</span>
+          <!-- BOTTOM ACTION: HẠ SỐ HOẶC NUMPAD -->
+          <div class="pt-2 pb-5 space-y-2">
+            
+            ${currentSubStage === 2 ? `
+              <!-- Nút bấm to hạ số -->
+              <button onclick="triggerBringDown()" class="btn-3d-yellow w-full py-3.5 rounded-2xl font-black text-slate-950 text-sm tracking-wide shadow-md flex items-center justify-center gap-2 animate-bounce">
+                <span>⬇️</span> HẠ CHỮ SỐ <strong class="text-base text-rose-700 bg-white px-2 py-0.5 rounded-lg border border-amber-500">${curRound.bringDownDigit}</strong> XUỐNG CỘT DƯ
               </button>
             ` : `
-              <button disabled class="w-full btn-3d-green btn-disabled text-white font-black text-sm py-3.5 rounded-2xl shadow-md flex items-center justify-center gap-2">
-                <span>ĐANG GIẢI TỪNG DÒNG...</span>
-              </button>
+              <!-- BÀN PHÍM NUMPAD XÚC GIÁC TACTILE -->
+              <div class="grid grid-cols-5 gap-1.5 w-full">
+                ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(n => `
+                  <button onclick="handleKeyInput('${n}')" class="btn-3d-white py-2.5 rounded-xl font-black font-mono text-base text-slate-800">
+                    ${n}
+                  </button>
+                `).join('')}
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-0.5">
+                <button onclick="handleKeyInput('DEL')" class="btn-3d-white px-4 py-2 rounded-xl font-black text-xs text-rose-600 flex items-center gap-1">
+                  <span>⌫</span> Xóa
+                </button>
+                <span class="text-[10px] text-slate-400 font-bold">Có thể gõ phím máy tính trực tiếp</span>
+              </div>
             `}
+
           </div>
 
         </div>
       `;
     }
 
-    // ==============================================================
-    // EVENT HANDLERS
-    // ==============================================================
+function updateMonitorPanel() {
+      const fsmStatus = document.getElementById('fsm-status');
+      const fsmRound = document.getElementById('fsm-round');
+      const fsmAction = document.getElementById('fsm-action');
+      const fsmClue = document.getElementById('fsm-clue');
 
-    // 1. Suite 1 Handlers
-    function onSingleOpChange(val) {
-      tempOp = val;
-      playSfx('tap');
-      checkSingleOp();
-    }
-    function onSingleNumChange(val) {
-      tempNum = val.trim();
-      checkSingleOp();
-    }
-    function checkSingleOp() {
-      const item = TEST_SUITES.suite1.items[currentItemIdx];
-      if (tempOp === item.correct_op && tempNum === item.target_num) {
-        playSfx('pop');
-        curStage = 2; // Mở đặt tính dọc
-        renderSimulator();
-      }
-    }
-    window.onSingleCalcDone = function(res) {
-      playSfx('correct');
-      setTimeout(() => {
-        curStage = 3; // Kết luận
-        renderSimulator();
-      }, 300);
-    };
+      if (!currentTask) return;
+      const curRound = currentTask.rounds[currentRoundIdx] || currentTask.rounds[currentTask.rounds.length - 1];
 
-    // 2. Suite 2 Handlers (Vế phải biểu thức)
-    window.onRhsCalcDone = function(res) {
-      playSfx('correct');
-      // Đặt tính vế phải xong -> chuyển sang Stage 2 (dòng 2 format, mở ô chuyển vế)
-      setTimeout(() => {
-        curStage = 2;
-        tempOp = '';
-        tempNum = '';
-        renderSimulator();
-      }, 300);
-    };
+      if (fsmRound) fsmRound.innerText = `Lần ${curRound.roundNum} / ${currentTask.rounds.length}`;
+      if (fsmClue) fsmClue.innerText = curRound.clue;
 
-    function onRhsOpChange(val) {
-      tempOp = val;
-      playSfx('tap');
-      checkRhsStep2();
-    }
-    function onRhsNumChange(val) {
-      tempNum = val.trim();
-      checkRhsStep2();
-    }
-    function checkRhsStep2() {
-      const item = TEST_SUITES.suite2.items[currentItemIdx];
-      if (tempOp === item.step2_op && tempNum === item.step2_num) {
-        playSfx('pop');
-        curStage = 3; // Mở đặt tính tìm x
-        renderSimulator();
-      }
-    }
-    window.onRhsFinalCalcDone = function(res) {
-      playSfx('correct');
-      setTimeout(() => {
-        curStage = 4; // Kết luận x
-        renderSimulator();
-      }, 300);
-    };
-
-    // 3. Suite 3 Handlers (Hai tầng phép tính)
-    function onTier1OpChange(val) {
-      tempOp = val;
-      playSfx('tap');
-      checkTier1Step1();
-    }
-    function onTier1NumChange(val) {
-      tempNum = val.trim();
-      checkTier1Step1();
-    }
-    function checkTier1Step1() {
-      const item = TEST_SUITES.suite3.items[currentItemIdx];
-      if (tempOp === item.tier1_op && tempNum === item.tier1_num) {
-        playSfx('pop');
-        curStage = 2; // Mở đặt tính cụm
-        renderSimulator();
-      }
-    }
-    window.onTier1CalcDone = function(res) {
-      playSfx('correct');
-      setTimeout(() => {
-        curStage = 3; // Đã format cụm -> Mở ô tìm x đơn lẻ
-        tempOp = '';
-        tempNum = '';
-        renderSimulator();
-      }, 300);
-    };
-
-    function onTier2OpChange(val) {
-      tempOp = val;
-      playSfx('tap');
-      checkTier2();
-    }
-    function onTier2NumChange(val) {
-      tempNum = val.trim();
-      checkTier2();
-    }
-    function checkTier2() {
-      const item = TEST_SUITES.suite3.items[currentItemIdx];
-      if (tempOp === item.tier2_op && tempNum === item.tier2_num) {
-        playSfx('pop');
-        curStage = 4; // Mở đặt tính tìm x
-        renderSimulator();
-      }
-    }
-    window.onTier2CalcDone = function(res) {
-      playSfx('correct');
-      setTimeout(() => {
-        curStage = 5; // Kết luận x
-        renderSimulator();
-      }, 300);
-    };
-
-    // 4. Suite 4 Handlers (Ngoặc đơn)
-    function onParenOpChange(val) {
-      tempOp = val;
-      playSfx('tap');
-      checkParenStep1();
-    }
-    function onParenNumChange(val) {
-      tempNum = val.trim();
-      checkParenStep1();
-    }
-    function checkParenStep1() {
-      const item = TEST_SUITES.suite4.items[currentItemIdx];
-      if (tempOp === item.step1_op && tempNum === item.step1_num) {
-        playSfx('pop');
-        curStage = 2; // Mở đặt tính phá ngoặc
-        renderSimulator();
-      }
-    }
-    window.onParenCalc1Done = function(res) {
-      playSfx('correct');
-      setTimeout(() => {
-        curStage = 3; // Đã format cụm ngoặc -> Mở ô chuyển vế tìm x
-        tempOp = '';
-        tempNum = '';
-        renderSimulator();
-      }, 300);
-    };
-
-    function onParenStep2OpChange(val) {
-      tempOp = val;
-      playSfx('tap');
-      checkParenStep2();
-    }
-    function onParenStep2NumChange(val) {
-      tempNum = val.trim();
-      checkParenStep2();
-    }
-    function checkParenStep2() {
-      const item = TEST_SUITES.suite4.items[currentItemIdx];
-      if (tempOp === item.step2_op && tempNum === item.step2_num) {
-        playSfx('pop');
-        curStage = 4; // Mở đặt tính tìm x
-        renderSimulator();
-      }
-    }
-    window.onParenFinalCalcDone = function(res) {
-      playSfx('correct');
-      setTimeout(() => {
-        curStage = 5; // Kết luận x
-        renderSimulator();
-      }, 300);
-    };
-
-    function nextItem() {
-      triggerStarBurst();
-      resetItemState();
-      const suite = TEST_SUITES[currentSuiteKey];
-      if (currentItemIdx < suite.items.length - 1) {
-        currentItemIdx++;
-        setTimeout(renderSimulator, 400);
-      } else {
-        alert(`🎉 Chúc mừng! Con đã hoàn thành xuất sắc tất cả các câu trong ${suite.title}!`);
-        currentItemIdx = 0;
-        setTimeout(renderSimulator, 400);
+      if (currentSubStage === 0) {
+        if (fsmStatus) fsmStatus.innerText = "CHIA (Ước lượng thương)";
+        if (fsmAction) fsmAction.innerText = `Tìm chữ số thương cho ${curRound.currentPart} : ${currentTask.divisor}`;
+      } else if (currentSubStage === 1) {
+        if (fsmStatus) fsmStatus.innerText = "NHÂN & TRỪ (Tìm số dư)";
+        if (fsmAction) fsmAction.innerText = `Tính ${curRound.currentPart} - ${curRound.product}`;
+      } else if (currentSubStage === 2) {
+        if (fsmStatus) fsmStatus.innerText = "HẠ SỐ (Bring down)";
+        if (fsmAction) fsmAction.innerText = `Hạ chữ số ${curRound.bringDownDigit} xuống cạnh số dư ${curRound.remainder}`;
+      } else if (currentSubStage === 3) {
+        if (fsmStatus) fsmStatus.innerText = "HOÀN THÀNH (Done)";
+        if (fsmAction) fsmAction.innerText = `Kết quả = ${currentTask.quotient}`;
       }
     }
 
-    // ==============================================================
-    // UPDATE PANEL GIẢI THÍCH
-    // ==============================================================
-    function updateInfoPanel() {
-      const pBadge = document.getElementById('panel-badge');
-      const pTitle = document.getElementById('panel-title');
-      const pIcon = document.getElementById('panel-icon');
-      const pPedagogy = document.getElementById('panel-pedagogy');
-      const pSchema = document.getElementById('panel-schema');
-
-      const suite = TEST_SUITES[currentSuiteKey];
-
-      if (currentSuiteKey === 'suite_ga') {
-        pBadge.innerText = "BÀI CON GÀ (G4_MATH_17): TÁCH PHÉP TÍNH GỘP (1200 : 5 × 3)";
-        pTitle.innerText = "Chỉ Lũy Tiến Phép Nhân Chia Số Gà, Số Vịt Ở Trang Sau Bình Thường";
-        pIcon.innerText = "🐔";
-        pPedagogy.innerHTML = `
-          <p><strong>1. Tránh đóng băng nhận thức (No Cognitive Freezing):</strong> Không ép trẻ lớp 4 tính nhẩm chuỗi <code>1200 × 3 : 5</code> trong 1 bước. Băm thành 2 phép tính trên 1 card: (1) Rút về 1 phần <code>1200 : 5 = 240</code>, (2) Nhân lên 3 phần <code>240 × 3 = 720</code>.</p>
-          <p><strong>2. Đúng tinh thần 'Không lạm dụng':</strong> Chỉ áp dụng lũy tiến cho phép tính nhiều toán hạng bị gộp. Bước tính số con vịt (<code>1200 - 720 = 480</code>) vẫn là bước tiếp theo ở trang sau như bình thường!</p>
-        `;
-        pSchema.innerText = JSON.stringify({
-          "task_id": "G4_MATH_17",
-          "progressive_calculation_step": {
-            "sub_problem": "Tính số gà bằng 3/5 của 1200 con",
-            "phase_1": "1200 : 5 = 240 (rút về 1 đơn vị)",
-            "phase_2": "240 × 3 = 720 (nhân lên số phần)",
-            "output": "720 con gà"
-          },
-          "subsequent_step": "1200 - 720 = 480 con vịt (Trang sau)"
-        }, null, 2);
-        return;
-      }
-
-      if (currentSuiteKey === 'suite_sach') {
-        pBadge.innerText = "BÀI SÁCH LỚP 4 (G4_MATH_16): TOÁN TỔNG - HIỆU";
-        pTitle.innerText = "Lũy Tiến Tìm Số Lớn: (280 + 40) : 2 Thành 2 Phép Tính";
-        pIcon.innerText = "📚";
-        pPedagogy.innerHTML = `
-          <p><strong>1. Điểm tựa thị giác (Visual Anchor):</strong> Tính 2 lần số lớn trước: <code>280 + 40 = 320</code>. Số <code>320</code> được lưu ngay trên dòng 1 làm số bị chia cho nhịp 2 <code>320 : 2 = 160</code>.</p>
-          <p><strong>2. Không cần lật trang để nhớ số:</strong> Trẻ không bị rơi rụng trí nhớ ngắn hạn.</p>
-        `;
-        pSchema.innerText = JSON.stringify({
-          "task_id": "G4_MATH_16",
-          "progressive_step": {
-            "phase_1": "280 + 40 = 320 (hai lần số lớn)",
-            "phase_2": "320 : 2 = 160 (số sách lớp 4A)"
-          }
-        }, null, 2);
-        return;
-      }
-
-      if (currentSuiteKey === 'suite_oto') {
-        pBadge.innerText = "BÀI Ô TÔ (G5_MATH_21): GỌT BỎ CÂU B";
-        pTitle.innerText = "Tập Trung Duy Nhất Vào Mục Tiêu Câu A (Sau Bao Lâu Gặp Nhau)";
-        pIcon.innerText = "🚗";
-        pPedagogy.innerHTML = `
-          <p><strong>1. Trực diện & Đơn mục tiêu:</strong> Đề bài gốc 2 câu hỏi làm trẻ ADHD quá tải. Cắt bỏ hẳn câu b, giữ lại câu a để tạo lộ trình 3 bước gọn nhẹ.</p>
-          <p><strong>2. Cấu trúc 3 bước:</strong> Bước 1 Highlight -> Bước 2 Tính tổng vận tốc (50+40=90) -> Bước 3 Tính thời gian (180:90=2 giờ).</p>
-        `;
-        pSchema.innerText = JSON.stringify({
-          "task_id": "G5_MATH_21",
-          "cleaned_original_text": "Quãng đường AB dài 180 km... Hỏi sau bao lâu hai xe gặp nhau?",
-          "steps": ["Highlight", "Tổng vận tốc (50+40=90)", "Thời gian gặp (180:90=2)"]
-        }, null, 2);
-        return;
-      }
-
-      if (currentSuiteKey === 'suite_cap') {
-        pBadge.innerText = "GIẢM GIÁ CẶP (G5_MCQ_24): LỘ TRÌNH SGK TỰ NHIÊN";
-        pTitle.innerText = "Tính Tiền Giảm Trước Rồi Trừ (Tránh Bước Nhảy Cóc Nhân 0.85)";
-        pIcon.innerText = "🎒";
-        pPedagogy.innerHTML = `
-          <p><strong>1. Đúng tư duy tiểu học:</strong> Tính giá trị 1% là 2000đ -> Giảm 15% là 2000 × 15 = 30.000đ -> Giá thực tế: 200.000 - 30.000 = 170.000đ.</p>
-          <p><strong>2. Không dùng nhân 0.85:</strong> Trẻ tiểu học chưa học kỹ năng giải tắt của đại số trung học.</p>
-        `;
-        pSchema.innerText = JSON.stringify({
-          "task_id": "G5_MCQ_24",
-          "flow": [
-            "1. 200 000 : 100 = 2000 (1%)",
-            "2. 2000 × 15 = 30 000 (tiền giảm)",
-            "3. 200 000 - 30 000 = 170 000 (giá sau giảm)"
-          ]
-        }, null, 2);
-        return;
-      }
-
-      if (currentSuiteKey === 'suite_hl') {
-        pBadge.innerText = "HIGHLIGHT CHUẨN: CÂU LỆNH MỞ (ANTI-SPOONFEEDING)";
-        pTitle.innerText = "Dạy Trẻ Tự Quan Sát & Chọn Lọc, Không 'Mớm Số Lượng'";
-        pIcon.innerText = "✏️";
-        pPedagogy.innerHTML = `
-          <p><strong>1. Câu lệnh mở:</strong> 'Gạch chân các số liệu và từ khóa quan trọng trong đề bài'.</p>
-          <p><strong>2. Tránh mớm ý:</strong> Tuyệt đối không ghi 'Gạch chân 2 số lượng' hay 'Gạch chân từ khóa hình tròn'.</p>
-        `;
-        pSchema.innerText = JSON.stringify({
-          "instruction": "Gạch chân các số liệu và từ khóa quan trọng trong đề bài.",
-          "ui_type": "highlight"
-        }, null, 2);
-        return;
-      }
-
-      if (currentSuiteKey === 'suite2') {
-        pBadge.innerText = "SUITE 2: VẾ PHẢI LÀ BIỂU THỨC (ĐẶT TÍNH ĐỒNG BỘ 100%)";
-        pTitle.innerText = "Cả Bước Thu Gọn Vế Phải & Bước Tìm X Đều Có Cửa Sổ Đặt Tính Dọc";
-        pIcon.innerText = "⚡";
-        pPedagogy.innerHTML = `
-          <p><strong>1. Đồng bộ hóa trải nghiệm:</strong> Không bắt trẻ phải tính nhẩm vế phải trong đầu. Ngay ở dòng 1 (<code>x + 125 = 450 - 150</code>), cửa sổ đặt tính dọc <code>450 - 150</code> xuất hiện để trẻ tính từ phải qua trái.</p>
-          <p><strong>2. Format tự động nối tiếp:</strong> Đặt tính vế phải xong ➔ dòng 2 tự động in ra <code>x + 125 = 300 ✓</code> ➔ mở ô chuyển vế <code>x = 300 - 125</code> ➔ lại mở cửa sổ đặt tính <code>300 - 125</code> ➔ in kết quả cuối cùng <code>x = 175 🎉</code>.</p>
-          <p><strong>3. Vừa vặn nhận thức ADHD:</strong> Mỗi lần trẻ chỉ tập trung vào 1 phép tính duy nhất!</p>
-        `;
-        pSchema.innerText = JSON.stringify({
-          "test_suite": "suite2_unified_calculation_pipeline",
-          "flow": [
-            "1. Equation: x + 125 = 450 - 150",
-            "2. Grid 1 (RHS): 450 - 150 -> 300",
-            "3. Format Line 2: x + 125 = 300",
-            "4. Fill Line 3: x = 300 - 125",
-            "5. Grid 2 (Solve X): 300 - 125 -> 175",
-            "6. Format Line 4: x = 175"
-          ]
-        }, null, 2);
-
-      } else if (currentSuiteKey === 'suite1') {
-        pBadge.innerText = "SUITE 1: TÌM X CƠ BẢN (1 PHÉP TÍNH + - × :)";
-        pTitle.innerText = "Đầy Đủ 4 Phép Tính • Điền Dấu & Số Trực Tiếp";
-        pIcon.innerText = "1️⃣";
-        pPedagogy.innerHTML = `
-          <p><strong>Đầy đủ 4 phép tính:</strong> Cộng, Trừ, Nhân, Chia.</p>
-          <p><strong>Luồng 3 dòng:</strong> Điền dấu & số ➔ Cửa sổ đặt tính dọc ➔ Format đáp số.</p>
-        `;
-        pSchema.innerText = JSON.stringify({
-          "test_suite": "suite1_basic_ops",
-          "cases": suite.items.map(it => ({
-            "equation": it.equation,
-            "step2": it.formatted_line2,
-            "step3": it.formatted_line3
-          }))
-        }, null, 2);
-
-      } else if (currentSuiteKey === 'suite3') {
-        pBadge.innerText = "SUITE 3: HAI TẦNG PHÉP TÍNH (x × a + b = c)";
-        pTitle.innerText = "Đặt Tính Cả 2 Tầng (Tìm Cụm Chứa x & Tìm x)";
-        pIcon.innerText = "3️⃣";
-        pPedagogy.innerHTML = `
-          <p><strong>Đồng bộ đặt tính cả 2 tầng:</strong></p>
-          <ul class="list-disc pl-4 space-y-1">
-            <li>Tầng 1: Chuyển vế <code>x × 3 = 105 - 45</code> ➔ Đặt tính dọc <code>105 - 45 = 60</code>.</li>
-            <li>Tầng 2: Tìm x <code>x = 60 : 3</code> ➔ Tính nhẩm chia ra <code>x = 20</code>.</li>
-          </ul>
-        `;
-        pSchema.innerText = JSON.stringify({
-          "test_suite": "suite3_two_tier_with_double_grid",
-          "pipeline": "Line 1 -> Fill Cluster -> Grid 1 -> Line 3 -> Fill X -> Grid 2 -> Line 5 Final"
-        }, null, 2);
-
-      } else if (currentSuiteKey === 'suite4') {
-        pBadge.innerText = "SUITE 4: TÌM X CÓ NGOẶC ĐƠN (x + a) : b = c";
-        pTitle.innerText = "Đặt Tính Phá Ngoặc & Đặt Tính Tìm x";
-        pIcon.innerText = "4️⃣";
-        pPedagogy.innerHTML = `
-          <p><strong>2 lần đặt tính liên hoàn:</strong></p>
-          <ul class="list-disc pl-4 space-y-1">
-            <li>Đặt tính phá ngoặc: <code>40 × 3 = 120</code> ➔ Dòng: <code>x + 25 = 120</code>.</li>
-            <li>Đặt tính tìm x: <code>120 - 25 = 95</code> ➔ Dòng: <code>x = 95</code>.</li>
-          </ul>
-        `;
-        pSchema.innerText = JSON.stringify({
-          "test_suite": "suite4_parentheses_with_double_grid",
-          "pipeline": "Line 1 -> Unwrap Paren -> Grid 1 -> Line 3 -> Isolate X -> Grid 2 -> Line 5 Final"
-        }, null, 2);
-      }
-    }
-
-
-    // ==============================================================
-    // CALLBACKS CHO CÁC BÀI TOÁN THẢO LUẬN MỚI
-    // ==============================================================
-
-    window.switchVariantItem = function(idx) {
-      currentItemIdx = idx;
-      playSfx('tap');
-      const suite = TEST_SUITES[currentSuiteKey];
-      if (suite && suite.items && suite.items[idx] && suite.items[idx].task) {
-        suite.items[idx].task.curStep = 1;
-      }
-      renderSimulator();
-    };
-
-    window.onProgressiveStep1Done = function(val) {
-      playSfx('correct');
-      const suite = TEST_SUITES[currentSuiteKey];
-      const activeItem = suite && suite.items ? (suite.items[currentItemIdx] || suite.items[0]) : null;
-      const t = (activeItem && activeItem.task) ? activeItem.task : (suite ? suite.task : null);
-      if (t) {
-        t.curStep = 2;
-        setTimeout(() => {
-          renderSimulator();
-        }, 200);
-      }
-    };
-
-    window.onProgressiveStep2Done = function(val) {
-      playSfx('star');
-      const suite = TEST_SUITES[currentSuiteKey];
-      const activeItem = suite && suite.items ? (suite.items[currentItemIdx] || suite.items[0]) : null;
-      const t = (activeItem && activeItem.task) ? activeItem.task : (suite ? suite.task : null);
-      if (t) {
-        t.curStep = 3;
-        setTimeout(() => {
-          renderSimulator();
-        }, 200);
-      }
-    };
-
-    window.onOtoStep1Done = function(val) {
-      playSfx('correct');
-      const suite = TEST_SUITES['suite_oto'];
-      if (suite && suite.task) {
-        suite.task.stepIdx = 2;
-        setTimeout(() => {
-          renderSimulator();
-        }, 200);
-      }
-    };
-
-    window.onOtoStep2Done = function(val) {
-      playSfx('star');
-      const suite = TEST_SUITES['suite_oto'];
-      if (suite && suite.task) {
-        suite.task.stepIdx = 3;
-        setTimeout(() => {
-          renderSimulator();
-        }, 200);
-      }
-    };
-
-    const hlSelected = new Set();
-    window.toggleHighlightDemo = function(btn, key) {
-      playSfx('tap');
-      if (hlSelected.has(key)) {
-        hlSelected.delete(key);
-        btn.classList.remove('bg-amber-300', 'border-amber-600', 'scale-105');
-        btn.classList.add('bg-amber-50', 'border-amber-400');
-      } else {
-        hlSelected.add(key);
-        btn.classList.add('bg-amber-300', 'border-amber-600', 'scale-105');
-        btn.classList.remove('bg-amber-50', 'border-amber-400');
-      }
-
-      const fb = document.getElementById('hl-feedback');
-      const nextBtn = document.getElementById('btn-next-step');
-      if (hlSelected.size >= 3) {
-        playSfx('star');
-        if (fb) fb.innerHTML = '✨ <span class="text-emerald-700 font-black">Tuyệt vời! Bé đã tìm đủ các số liệu và từ khóa quan trọng!</span>';
-        if (nextBtn) {
-          nextBtn.disabled = false;
-          nextBtn.className = 'btn-3d-green text-white cursor-pointer w-full py-3.5 rounded-2xl font-black text-sm tracking-wide shadow-md transition-all';
-        }
-      } else {
-        if (fb) fb.innerHTML = `🎯 Đã tìm được <strong>${hlSelected.size}/3</strong> dữ kiện quan trọng`;
-        if (nextBtn) {
-          nextBtn.disabled = true;
-          nextBtn.className = 'btn-disabled w-full py-3.5 rounded-2xl font-black text-sm tracking-wide shadow-md transition-all';
-        }
-      }
-    };
-
-    // Khởi chạy mặc định Suite 2
+    // Khởi động mặc định bài 438 : 6
     window.addEventListener('DOMContentLoaded', () => {
-      switchSuite('suite2');
+      initDivisionTask(438, 6, "Bài 1: 438 : 6 (Tìm x / Lớp 3-4)");
     });
   </script>
 

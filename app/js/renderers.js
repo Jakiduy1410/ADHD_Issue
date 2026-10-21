@@ -2314,9 +2314,15 @@ if (typeof window !== 'undefined') {
                   ${Array.from({length: N}).map((_, col) => {
                     if (col >= r.remStartCol && col <= r.remEndCol) {
                       return `
-                        <div id="fx-active-div-cell" class="${cellCls} bg-amber-100 border-2 border-amber-500 rounded-lg text-amber-950 font-black animate-pulse shadow-xs">
-                          ${s.inputBuffer || '?'}
-                        </div>
+                        <input type="text"
+                               inputmode="numeric"
+                               pattern="[0-9]*"
+                               id="fx-active-div-input"
+                               value="${s.inputBuffer}"
+                               placeholder="?"
+                               oninput="handleFxDivInput(this.value ? this.value[this.value.length - 1] : '')"
+                               class="${cellCls} bg-amber-100 border-2 border-amber-500 rounded-lg text-amber-950 font-black text-center focus:outline-none focus:bg-amber-200 animate-pulse shadow-xs"
+                               autofocus />
                       `;
                     }
                     return `<div class="${cellCls}"></div>`;
@@ -2424,9 +2430,15 @@ if (typeof window !== 'undefined') {
         } else if (i === s.roundIdx) {
           if (s.subStage === 0) {
             quotientCellsHtml += `
-              <div id="fx-active-div-cell" class="${cellCls} bg-amber-100 border-2 border-amber-500 rounded-lg text-amber-950 font-black text-lg sm:text-xl animate-pulse shadow-xs">
-                ${s.inputBuffer || '?'}
-              </div>
+              <input type="text"
+                     inputmode="numeric"
+                     pattern="[0-9]*"
+                     id="fx-active-div-input"
+                     value="${s.inputBuffer}"
+                     placeholder="?"
+                     oninput="handleFxDivInput(this.value ? this.value[this.value.length - 1] : '')"
+                     class="${cellCls} bg-amber-100 border-2 border-amber-500 rounded-lg text-amber-950 font-black text-lg sm:text-xl text-center focus:outline-none focus:bg-amber-200 animate-pulse shadow-xs"
+                     autofocus />
             `;
           } else {
             quotientCellsHtml += `<div class="${cellCls} text-emerald-700 font-black text-lg sm:text-xl">${r.quotientDigit}</div>`;
@@ -2447,21 +2459,19 @@ if (typeof window !== 'undefined') {
         instructionText = `🎉 <strong>Hoàn thành!</strong> Kết quả: <strong>${t.dividend} : ${t.divisor} = ${t.quotient}</strong>`;
       }
 
-      return `
-        <div class="w-full flex flex-col gap-2 my-1">
-          
-          <!-- Hướng dẫn vi bước & gợi ý cửu chương -->
-          <div class="bg-amber-50/90 border border-amber-200 rounded-xl p-2.5 shadow-2xs">
-            <p class="text-xs font-bold text-slate-800 leading-snug">${instructionText}</p>
-            ${s.subStage === 0 ? `
-              <div class="mt-1 flex items-center gap-1.5 text-[10px] font-mono text-teal-800 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">
-                <span>💡 Gợi ý:</span> <span>${curRound.clue}</span>
-              </div>
-            ` : ''}
-          </div>
+      setTimeout(() => {
+        const inp = document.getElementById('fx-active-div-input');
+        if (inp) {
+          inp.focus();
+          inp.select();
+        }
+      }, 50);
 
-          <!-- Khung bảng đặt tính thẳng hàng 100% -->
-          <div class="bg-white border-2 border-slate-300 rounded-2xl p-2.5 sm:p-3 shadow-xs relative flex items-start justify-center">
+      return `
+        <div class="w-full flex flex-col gap-1.5 my-1">
+          
+          <!-- Khung bảng đặt tính thẳng hàng 100% tinh gọn -->
+          <div class="bg-white border-2 border-slate-300 rounded-2xl p-3 sm:p-4 shadow-xs relative flex items-start justify-center">
             
             <div class="flex items-start justify-center font-mono">
               <!-- Cột trái: Số bị chia & các lần trừ thẳng hàng -->
@@ -2488,32 +2498,13 @@ if (typeof window !== 'undefined') {
 
             <!-- Overlay hoàn thành -->
             ${isCompleted ? `
-              <div class="absolute inset-0 bg-emerald-500/90 backdrop-blur-xs rounded-2xl flex flex-col items-center justify-center p-3 text-center text-white">
+              <div class="absolute inset-0 bg-emerald-500/90 backdrop-blur-xs rounded-2xl flex flex-col items-center justify-center p-3 text-center text-white animate-drop">
                 <span class="text-2xl">🎉</span>
                 <span class="text-xs font-black mt-1">Xuất Sắc! Đã Chia Xong</span>
                 <span class="text-[11px] font-mono font-bold text-emerald-100">${t.dividend} : ${t.divisor} = ${t.quotient}</span>
               </div>
             ` : ''}
 
-          </div>
-
-          <!-- Bàn phím số Numpad cảm ứng xúc giác (luôn sẵn sàng cho điện thoại) -->
-          <div class="w-full max-w-[280px] mx-auto pt-1">
-            <div class="grid grid-cols-5 gap-1 w-full">
-              ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(n => `
-                <button type="button" onclick="handleFxDivInput('${n}')" class="btn-3d-white py-2 rounded-xl font-black font-mono text-sm text-slate-800">
-                  ${n}
-                </button>
-              `).join('')}
-            </div>
-            <div class="flex items-center justify-between gap-2 pt-1">
-              <button type="button" onclick="handleFxDivInput('DEL')" class="btn-3d-white px-3 py-1 rounded-xl font-black text-xs text-rose-600 flex items-center gap-1">
-                <span>⌫</span> Xóa
-              </button>
-              <span class="text-[9px] text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
-                ✨ Số tự động hạ xuống sau khi tính trừ
-              </span>
-            </div>
           </div>
 
         </div>

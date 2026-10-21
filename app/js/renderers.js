@@ -923,6 +923,39 @@
         `;
 
 
+      } else if (stepData.ui_type === 'photo_proof' || stepData.type === 'photo_proof') {
+        // Routine Milestone: Instant Auto-approval Photo Proof
+        stage.innerHTML = `
+          <div class="space-y-3 p-1">
+            <div class="text-center">
+              <span class="text-xs font-black text-slate-800 block uppercase tracking-wider">⭐ Bước Then Chốt: Minh Chứng Thị Giác</span>
+              <span class="text-[11px] text-teal-700 font-extrabold">Bấm 1-chạm chụp ảnh • Hệ thống tự động duyệt ngay!</span>
+            </div>
+
+            <div class="relative bg-slate-900 rounded-3xl overflow-hidden border-4 border-amber-400 shadow-lg aspect-4/3 flex items-center justify-center">
+              <div id="camera-preview-box" class="w-full h-full relative flex items-center justify-center bg-gradient-to-tr from-amber-100 via-orange-50 to-teal-50">
+                <div class="text-center p-3 space-y-1">
+                  <div class="text-5xl">✨🪑📚✨</div>
+                  <div class="text-[11px] font-black text-teal-900">${stepData.text || stepData.atomic_instruction}</div>
+                  <div class="text-[9px] font-bold text-slate-500">Chụp góc bàn/phòng gọn gàng để khoe với Mẹ</div>
+                </div>
+                <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-amber-500"></div>
+                <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-amber-500"></div>
+                <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-amber-500"></div>
+                <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-amber-500"></div>
+                <span class="absolute top-2 left-1/2 -translate-x-1/2 bg-black/60 text-white font-mono text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span> CAMERA READY
+                </span>
+              </div>
+            </div>
+
+            <button onclick="takeRoutinePhotoAndComplete(this)" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-sm rounded-2xl shadow-lg shadow-teal-500/20 active:scale-95 transition flex items-center justify-center gap-2 cursor-pointer">
+              <span class="text-xl">📸</span>
+              <span>BẤM CHỤP &amp; NHẬN +${stepData.dopamine_points || 30}⭐ NGAY!</span>
+            </button>
+            <p class="text-[10px] text-center text-slate-400 font-bold">1 chạm tự động duyệt ngay • Con không cần chờ đợi</p>
+          </div>
+        `;
       } else {
         // Generic Micro-Task Stage (Cho các bài GDPT Tiếng Việt, Tiếng Anh, AI hoặc Soạn bằng tay)
         stage.innerHTML = `

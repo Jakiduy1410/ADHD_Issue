@@ -103,6 +103,14 @@ Mục tiêu tối thượng: Giảm tải bộ nhớ làm việc (Working Memory
 - Mỗi phép tính con là 1 vi bước độc lập (`ui_type='text_input'`).
 - Thưởng sao ngay sau mỗi câu (+30 đến +40 ⭐).
 
+### F. THÓI QUEN SINH HOẠT ĐỜI THƯỜNG (daily_routine)
+- Phân rã theo quy tắc 1-1-30: Mỗi vi bước gồm 1 mục tiêu duy nhất, 1 động từ hành động thể chất (< 15 từ), thời lượng 15 - 45 giây.
+- Các bước phụ (1 và 2): Thao tác tay mô phỏng cơ học (`ui_type='single_choice'` hoặc `'checkbox'`), tự động thưởng điểm Dopamine vi mô tức thì (+10 đến +15 ⭐).
+- **BƯỚC THEN CHỐT CUỐI CÙNG (`is_milestone: true`, `ui_type='photo_proof'`)**:
+  - Yêu cầu trẻ bấm 1-chạm chụp ảnh thành quả (mặt bàn sạch, giường phẳng, cặp đã đóng khóa).
+  - Hệ thống **tự động duyệt ngay lập tức (Instant Gratification)**, nổ pháo hoa + thưởng lớn (+30 ⭐) mà không bắt trẻ phải đứng chờ cha mẹ.
+  - Ảnh tự động gửi ngầm vào Nhật ký của Mẹ để xem lại không đồng bộ (Asynchronous Review).
+
 ---
 
 ## 3. QUY TẮC NGÔN TỪ & DẬP TẮT RSD CHO TRẺ ADHD
@@ -435,3 +443,47 @@ Mục tiêu tối thượng: Giảm tải bộ nhớ làm việc (Working Memory
 }
 ```
 
+### Mẫu 8: Thói quen sinh hoạt đời thường (routine_clean_desk - Dọn bàn học 5 phút)
+```json
+{
+  "id": "routine_clean_desk",
+  "exercise_type": "daily_routine",
+  "timeline_slot": "evening",
+  "slot_time": "19:00",
+  "title": "Dọn bàn học gọn gàng trong 5 phút",
+  "catName": "Nề Nếp Góc Học Tập",
+  "reward": 30,
+  "steps": [
+    {
+      "step_id": 1,
+      "badge": "Cắm bút vào ống",
+      "action_verb": "Cắm_bút",
+      "atomic_instruction": "Chạm vào 3 cây bút bừa bộn trên bàn để cắm vào ống.",
+      "ui_type": "single_choice",
+      "is_milestone": false,
+      "requires_parent_check": false,
+      "dopamine_points": 10
+    },
+    {
+      "step_id": 2,
+      "badge": "Gom rác vào sọt",
+      "action_verb": "Gom_rác",
+      "atomic_instruction": "Chạm vào mẩu giấy nháp bỏ vào sọt rác gầm bàn.",
+      "ui_type": "single_choice",
+      "is_milestone": false,
+      "requires_parent_check": false,
+      "dopamine_points": 10
+    },
+    {
+      "step_id": 3,
+      "badge": "Minh chứng bàn sáng bóng",
+      "action_verb": "Chụp_ảnh",
+      "atomic_instruction": "Chụp 1 tấm ảnh mặt bàn học đã sạch bóng để nhận +30 sao ngay!",
+      "ui_type": "photo_proof",
+      "is_milestone": true,
+      "requires_parent_check": false,
+      "dopamine_points": 10
+    }
+  ]
+}
+```

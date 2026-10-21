@@ -301,7 +301,7 @@
        ============================================================ */
     function parentSwitchTab(tabName) {
       playSfx('tap');
-      const tabs = ['home', 'tasks', 'rewards', 'coach'];
+      const tabs = ['home', 'tasks', 'rewards', 'coach', 'routines'];
       tabs.forEach(t => {
         const sec = document.getElementById(`parent-screen-${t}`);
         const nav = document.getElementById(`p-nav-${t}`);

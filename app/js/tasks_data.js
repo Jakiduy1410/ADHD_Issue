@@ -4934,3 +4934,258 @@ window.TASKS_DB = {
     ]
   }
 };
+
+// ==========================================
+// DEDICATED DAILY ROUTINE DATABASE (TIMELINE LOCKED)
+// ==========================================
+window.routineDatabase = {
+  "routine_morning_bed": {
+    "id": "routine_morning_bed",
+    "timeline_slot": "morning",
+    "slot_time": "06:30",
+    "title": "Gấp chăn gối phẳng phiu sau khi thức dậy",
+    "cat": "routine",
+    "catName": "Thói Quen Buổi Sáng",
+    "icon": "🛏️",
+    "island": "routine",
+    "reward": 20,
+    "target_photo_tag": "LEO_BED_0645.JPG",
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Mới ngủ dậy não bộ còn quán tính giấc ngủ (Sleep Inertia), dễ quên gấp chăn nếu không có quy trình cơ học.",
+      "executive_function_scaffolding": "3 cử động cơ bắp siêu đơn giản: Giũ phẳng -> Gấp đôi -> Đặt gối sát đầu giường.",
+      "visual_or_concrete_aid": "Hoạt ảnh chiếc chăn tự động gấp đôi vuông vắn trên màn hình."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Giũ phẳng chăn",
+        "action_verb": "Giũ",
+        "atomic_instruction": "Cầm hai mép chăn giũ nhẹ để chăn trải phẳng trên giường.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Cầm 2 góc chăn giũ cho phẳng phiu con nhé!"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Gấp đôi mép chăn",
+        "action_verb": "Gấp",
+        "atomic_instruction": "Gấp đôi chăn theo chiều dọc rồi gấp lại thành hình vuông gọn gàng.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Gấp mép chăn vào giữa để tạo thành hình vuông xinh xắn."
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Minh chứng giường phẳng",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Chụp 1 tấm ảnh chiếc giường đã phẳng phiu để lưu vào Nhật ký của Mẹ!",
+        "ui_type": "photo_proof",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 60,
+        "dopamine_points": 10,
+        "hints": [
+          "Giơ máy chụp toàn cảnh chiếc giường gọn gàng nào!"
+        ]
+      }
+    ]
+  },
+  "routine_afterschool_drop": {
+    "id": "routine_afterschool_drop",
+    "timeline_slot": "afternoon",
+    "slot_time": "16:30",
+    "title": "Hạ cánh tan trường: Cất giày & Treo balo",
+    "cat": "routine",
+    "catName": "Nề Nếp Tan Trường",
+    "icon": "🎒",
+    "island": "routine",
+    "reward": 25,
+    "target_photo_tag": "LEO_DROP_1645.JPG",
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Vừa về nhà trẻ muốn lao ngay vào chơi hoặc xem màn hình, vứt giày và cặp giữa sàn nhà.",
+      "executive_function_scaffolding": "Trạm dừng chân 2 phút tại cửa vào (Entryway Decompression): Cởi giày lên kệ -> Treo cặp lên móc.",
+      "visual_or_concrete_aid": "Khung đổ bóng hình đôi giày và chiếc móc treo định vị chính xác vị trí đồ vật."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Xếp giày lên kệ",
+        "action_verb": "Cất_giày",
+        "atomic_instruction": "Cởi đôi giày ra và đặt ngay ngắn lên tầng kệ dép của con.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Đặt mũi giày quay ra ngoài cho ngăn nắp nhé!"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Treo balo lên móc",
+        "action_verb": "Treo_cặp",
+        "atomic_instruction": "Treo quai balo học sinh vào chiếc móc treo tường quen thuộc.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Treo cặp lên móc để sàn nhà không bị vướng lối đi."
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Minh chứng trạm hạ cánh",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Chụp 1 tấm ảnh kệ dép và chiếc balo đã treo gọn gàng gửi Mẹ xem nhé!",
+        "ui_type": "photo_proof",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 60,
+        "dopamine_points": 15,
+        "hints": [
+          "Chụp góc cửa ra vào sạch tinh tươm nào!"
+        ]
+      }
+    ]
+  },
+  "routine_clean_desk": {
+    "id": "routine_clean_desk",
+    "timeline_slot": "evening",
+    "slot_time": "19:00",
+    "title": "Dọn bàn học gọn gàng trong 5 phút",
+    "cat": "routine",
+    "catName": "Nề Nếp Góc Học Tập",
+    "icon": "🧹",
+    "island": "routine",
+    "reward": 30,
+    "target_photo_tag": "LEO_DESK_1915.JPG",
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Mặt bàn bừa bộn nhiều sách vở, bút thước gây quá tải thị giác (Visual Clutter Paralysis).",
+      "executive_function_scaffolding": "Phân rã đơn lẻ từng món: bút vào ống -> rác vào thùng -> chụp ảnh bàn sạch.",
+      "visual_or_concrete_aid": "Hoạt ảnh từng cây bút biến mất vào ống khi chạm ngón tay."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Cắm bút vào ống",
+        "action_verb": "Cắm_bút",
+        "atomic_instruction": "Chạm vào 3 cây bút bừa bộn trên bàn để cắm vào ống cắm bút.",
+        "ui_type": "single_choice",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 10,
+        "hints": [
+          "Cắm bút chì, bút bi và bút màu vào đúng chuồng nhé!"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Gom giấy nháp vào sọt",
+        "action_verb": "Gom_rác",
+        "atomic_instruction": "Chạm vào mẩu giấy nháp bỏ vào sọt rác dưới gầm bàn.",
+        "ui_type": "single_choice",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 10,
+        "hints": [
+          "Bỏ mẩu giấy nháp đã viết kín vào thùng rác nào!"
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Minh chứng bàn sáng bóng",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Chụp 1 tấm ảnh mặt bàn học đã sạch bóng để hệ thống duyệt +30 sao ngay!",
+        "ui_type": "photo_proof",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 60,
+        "dopamine_points": 10,
+        "hints": [
+          "Bấm nút chụp để nhận trọn vẹn sao thưởng tức thì!"
+        ]
+      }
+    ]
+  },
+  "routine_night_teeth": {
+    "id": "routine_night_teeth",
+    "timeline_slot": "night",
+    "slot_time": "21:00",
+    "title": "Đánh răng thơm tho & Thở 4-4-4 đi ngủ",
+    "cat": "routine",
+    "catName": "Thói Quen Trước Giờ Ngủ",
+    "icon": "🦷",
+    "island": "routine",
+    "reward": 25,
+    "target_photo_tag": "LEO_TEETH_2100.JPG",
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Buổi tối năng lượng điều hành (Executive Energy) cạn kiệt, trẻ hay trì hoãn việc đánh răng vì lười đứng 2 phút.",
+      "executive_function_scaffolding": "Đồng hồ thị giác đĩa tròn 2 phút chia làm 4 cung góc (hàm trên/dưới) kết hợp bài thở 4-4-4 hạ nhiệt.",
+      "visual_or_concrete_aid": "Đĩa tròn đổi màu co lại dần theo nhịp bài hát của Milo."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Bóp lượng kem hạt đậu",
+        "action_verb": "Lấy_kem",
+        "atomic_instruction": "Mở nắp tuýp kem và bóp một lượng kem đánh răng bé xíu bằng hạt đậu.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Lượng kem hạt đậu là vừa đủ để răng miệng sạch thơm mát!"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Chải tròn 4 cung răng",
+        "action_verb": "Chải_răng",
+        "atomic_instruction": "Chải vòng tròn mặt ngoài và mặt nhai của cả hai hàm răng trong 2 phút.",
+        "ui_type": "single_choice",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 60,
+        "dopamine_points": 10,
+        "hints": [
+          "Chải xoay tròn từng góc nhỏ để vi khuẩn sâu răng biến mất!"
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Sẵn sàng chìm vào giấc ngủ",
+        "action_verb": "Thở_ngủ",
+        "atomic_instruction": "Súc miệng sạch bọt, trùm chăn ấm và cùng Milo hít thở 4-4-4 chuẩn bị ngủ ngon!",
+        "ui_type": "photo_proof",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 60,
+        "dopamine_points": 10,
+        "hints": [
+          "Hít sâu 4 giây... giữ 4 giây... thở ra 4 giây... chúc Leo ngủ ngon!"
+        ]
+      }
+    ]
+  }
+};
+
+// Merge into taskDatabase for universal access
+if (typeof window.taskDatabase !== 'undefined') {
+  Object.assign(window.taskDatabase, window.routineDatabase);
+}

@@ -589,5 +589,27 @@
           bus.savePersistedState(appState);
         }
       });
+
+      // 11. ROUTINE_PHOTO_SUBMITTED: Child completes photo proof -> Parent notification & gallery update
+      bus.subscribe('ROUTINE_PHOTO_SUBMITTED', (payload) => {
+        if (typeof showToast === 'function') {
+          showToast("Minh Chứng Thói Quen", `Leo vừa hoàn thành [${payload.routine_title || 'Dọn dẹp'}] và lưu ảnh vào Nhật ký!`, "📷");
+        }
+        const itemDone = document.getElementById('p-desk-item-done');
+        const itemWait = document.getElementById('p-desk-item-waiting');
+        if (itemDone && itemWait) {
+          itemWait.classList.add('hidden');
+          itemDone.classList.remove('hidden');
+        }
+        const dot = document.getElementById('p-routine-nav-dot');
+        if (dot) dot.classList.remove('hidden');
+      });
+
+      // 12. ROUTINE_HEART_RECEIVED: Parent sends heart -> Child celebration
+      bus.subscribe('ROUTINE_HEART_RECEIVED', (payload) => {
+        if (typeof triggerRoutineHeartCelebration === 'function') {
+          triggerRoutineHeartCelebration(payload.praise_message || "Mẹ rất thích sự tự giác của con! Thưởng thêm +5⭐!");
+        }
+      });
     }
 

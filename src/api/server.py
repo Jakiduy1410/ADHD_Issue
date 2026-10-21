@@ -37,6 +37,12 @@ if str(REPO_ROOT) not in sys.path:
 load_dotenv(dotenv_path=REPO_ROOT / ".env")
 
 from google import genai
+from src.api.routine_models import (
+    DailyRoutineModel,
+    RoutinesListResponse,
+    RoutineProofSubmitRequest,
+    RoutineHeartCheerRequest,
+)
 def map_subject_code(subject: str) -> str:
     s = subject.lower().strip()
     if "toán" in s or "toan" in s or "math" in s:
@@ -74,6 +80,7 @@ app.add_middleware(
 # Global clients & cache
 CURRICULUM_DATA: Dict[str, Any] = {}
 TASKS_DB_MAP: Dict[str, Any] = {}
+ROUTINES_DB_MAP: Dict[str, Any] = {}
 PRE_DECOMPOSED_ROUTINES: List[Dict[str, Any]] = []
 ROOM_STATES: Dict[str, Dict[str, Any]] = {}
 APP_START_TIME = time.time()
@@ -386,7 +393,7 @@ def get_or_create_room_state(room_id: str) -> Dict[str, Any]:
 
 @app.on_event("startup")
 async def startup_event():
-    global CURRICULUM_DATA, PRE_DECOMPOSED_ROUTINES, TASKS_DB_MAP
+    global CURRICULUM_DATA, PRE_DECOMPOSED_ROUTINES, TASKS_DB_MAP, ROUTINES_DB_MAP
     tasks_db_path = REPO_ROOT / "data" / "curriculum" / "tasks_db.json"
     if tasks_db_path.is_file():
         with open(tasks_db_path, "r", encoding="utf-8") as f:
@@ -400,6 +407,16 @@ async def startup_event():
         logger.info(f"Loaded {len(TASKS_DB_MAP)} formatted tasks from tasks_db.json (Single Source of Truth).")
     else:
         logger.warning(f"tasks_db.json not found at {tasks_db_path}")
+
+    routines_db_path = REPO_ROOT / "data" / "curriculum" / "routines_db.json"
+    if routines_db_path.is_file():
+        with open(routines_db_path, "r", encoding="utf-8") as f:
+            ROUTINES_DB_MAP = json.load(f)
+        logger.info(f"Loaded {len(ROUTINES_DB_MAP)} dedicated daily routines from routines_db.json.")
+        if isinstance(TASKS_DB_MAP, dict):
+            for r_id, r_val in ROUTINES_DB_MAP.items():
+                if r_id not in TASKS_DB_MAP:
+                    TASKS_DB_MAP[r_id] = r_val
 
     PRE_DECOMPOSED_ROUTINES = initialize_pre_decomposed_routines()
     logger.info(f"Loaded {len(PRE_DECOMPOSED_ROUTINES)} pre-decomposed routine tasks.")
@@ -644,6 +661,73 @@ async def get_recommended_curriculum(
         exercises=filtered_exercises,
         routine_tasks=filtered_routines,
     )
+
+
+@app.get("/api/routines", response_model=RoutinesListResponse)
+async def get_daily_routines():
+    """Lấy danh sách các bài sinh hoạt đời thường phân nhóm theo timeline slot."""
+    routines_list = list(ROUTINES_DB_MAP.values())
+    by_slot = {
+        "morning": [],
+        "afternoon": [],
+        "evening": [],
+        "night": [],
+    }
+    for r in routines_list:
+        slot = r.get("timeline_slot", "morning")
+        if slot not in by_slot:
+            by_slot[slot] = []
+        by_slot[slot].append(r)
+    return RoutinesListResponse(
+        total_routines=len(routines_list),
+        timeline_slots=list(by_slot.keys()),
+        routines_by_slot=by_slot,
+        routines=routines_list,
+    )
+
+
+@app.get("/api/routines/{routine_id}", response_model=DailyRoutineModel)
+async def get_daily_routine_detail(routine_id: str):
+    """Lấy chi tiết 1 bài thói quen theo ID."""
+    if routine_id not in ROUTINES_DB_MAP:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Routine '{routine_id}' not found in routines_db.json",
+        )
+    return ROUTINES_DB_MAP[routine_id]
+
+
+@app.post("/api/routines/proof")
+async def submit_routine_proof(req: RoutineProofSubmitRequest):
+    """Bé nộp ảnh minh chứng 1-chạm -> Hệ thống tự động ghi nhận và thông báo ngầm sang Mẹ."""
+    if req.routine_id not in ROUTINES_DB_MAP:
+        raise HTTPException(status_code=404, detail="Routine not found")
+    routine = ROUTINES_DB_MAP[req.routine_id]
+    event_payload = {
+        "event_type": "ROUTINE_PHOTO_SUBMITTED",
+        "routine_id": req.routine_id,
+        "routine_title": routine.get("title"),
+        "kid_id": req.kid_id,
+        "photo_tag": req.photo_tag or routine.get("target_photo_tag"),
+        "timestamp": req.timestamp or time.strftime("%H:%M"),
+        "reward_stars": routine.get("reward", 25)
+    }
+    await manager.broadcast_to_room("family_default", event_payload)
+    return {"status": "success", "message": "Minh chứng đã gửi vào Nhật ký của Mẹ!", "data": event_payload}
+
+
+@app.post("/api/routines/heart")
+async def send_routine_heart_cheer(req: RoutineHeartCheerRequest):
+    """Mẹ thả tim khen ngợi thói quen tự giác của con."""
+    event_payload = {
+        "event_type": "ROUTINE_HEART_RECEIVED",
+        "routine_id": req.routine_id,
+        "parent_id": req.parent_id,
+        "praise_message": req.praise_message,
+        "bonus_stars": req.bonus_stars,
+    }
+    await manager.broadcast_to_room("family_default", event_payload)
+    return {"status": "success", "message": "Đã gửi tim yêu thương sang máy của con!", "data": event_payload}
 
 
 @app.get("/api/curriculum/tasks")

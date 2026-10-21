@@ -21,18 +21,20 @@ Mục tiêu tối thượng: Giảm tải bộ nhớ làm việc (Working Memory
 4. **BÀI TOÁN RÚT VỀ ĐƠN VỊ**:
    - Bắt buộc gồm 2 tầng tính toán: (1) Rút về 1 đơn vị bằng phép chia, (2) Nhân lên cho số đơn vị cần tìm bằng phép nhân.
 
-5. **NGUYÊN TẮC BĂM NGUYÊN TỬ PHÉP TÍNH NHIỀU SỐ HẠNG (ATOMIC 2-OPERAND RULE)**:
-   - Trẻ tiểu học và ADHD TUYỆT ĐỐI KHÔNG THỂ tính nhẩm chuỗi 3 số hạng (như a × b × c hay a × b : c) trong cùng một bước.
-   - BẮT BUỘC băm thành từng bước 2 số hạng:
-     - Tính thể tích (dài × rộng × cao): Bước 1 tính diện tích đáy (dài × rộng), Bước 2 lấy diện tích đáy nhân chiều cao.
-     - Tính chu vi chữ nhật ((dài + rộng) × 2): Bước 1 tính nửa chu vi (dài + rộng), Bước 2 nhân 2.
+5. **NGUYÊN TẮC BĂM NGUYÊN TỬ VÀ LŨY TIẾN 2 NHỊP TRÊN 1 CARD (ATOMIC PROGRESSIVE 2-OPERAND RULE)**:
+   - Trẻ tiểu học và ADHD TUYỆT ĐỐI KHÔNG THỂ tính nhẩm chuỗi 3 số hạng (như a × b : c hay (a + b) : 2) trong cùng một bước.
+   - Với phép tính nhiều toán hạng: Áp dụng cơ chế **Lũy tiến 2 nhịp trên 1 card** cho riêng phép tính tìm đại lượng chính:
+     - Bài tìm phân số của một số: Nhịp 1 rút về 1 phần (`1200 : 5 = 240`), Nhịp 2 nhân lên (`240 × 3 = 720 con gà`).
+     - Bài tổng - hiệu tìm số lớn: Nhịp 1 tính 2 lần số lớn (`280 + 40 = 320`), Nhịp 2 chia đôi (`320 : 2 = 160 quyển`).
+   - **Đừng lạm dụng**: Bước tìm đại lượng còn lại (như tìm số vịt `1200 - 720 = 480`) chuyển sang trang sau bình thường để giữ bài toán thoáng đãng, không nhồi nhét.
+   - Tuyệt đối không sinh các dòng text 'mở khóa' thừa thãi.
 
 6. **BÀI TOÁN TỈ SỐ PHẦN TRĂM & GIẢM GIÁ (TOÁN LỚP 5)**:
-   - Bài toán giảm giá (ví dụ giảm 15% rồi giảm tiếp 10% của giá 200 000 đồng):
-     (1) Bước 1 (highlight): Gạch chân dữ kiện (200 000 đồng, giảm giá 15%, giảm tiếp 10% trên giá đã giảm).
-     (2) Bước 2 (text_input): Đặt tính nhân giá sau lần 1: `200000 × 0,85 = ? (đồng)` -> 170 000 đồng.
-     (3) Bước 3 (text_input): Đặt tính nhân giá sau lần 2: `170000 × 0,9 = ? (đồng)` -> 153 000 đồng.
-     (4) Bước 4 (single_choice): Chọn đáp án trắc nghiệm đúng: `B. 153 000 đồng`.
+   - TUYỆT ĐỐI KHÔNG DÙNG CÁCH GIẢI TẮT NHÂN 0,85 CỦA NGƯỜI LỚN! Trẻ tiểu học chưa học kỹ năng đại số này.
+   - Bắt buộc đi theo trình tự nhận thức tự nhiên của SGK:
+     (1) Bước 1 (highlight): Gạch chân các số liệu và từ khóa quan trọng trong đề bài.
+     (2) Bước 2 (text_input lũy tiến): Tính giá trị 1% (`200 000 : 100 = 2000đ`) -> Tính số tiền giảm 15% (`2000 × 15 = 30 000đ`).
+     (3) Bước 3 (text_input trang sau): Đặt tính trừ tìm giá sau giảm: `200 000 - 30 000 = 170 000đ`.
 
 7. **BÀI TOÁN ĐẶT TÍNH DỌC (CỘNG, TRỪ, NHÂN & SỐ THẬP PHÂN)**:
    - Mọi phép tính cộng (như `50 + 40 = ? (km/giờ)` hoặc `7 + 2 = ? (giờ sáng)`), trừ, nhân số tự nhiên và số thập phân (như `1,5 × 2 = ? (m2)` hoặc `1,2 × 3 = ? (m3)`) đều được hệ thống đưa vào BẢNG ĐẶT TÍNH DỌC chuẩn SGK (thừa số trên, thừa số dưới, dấu phép tính căn trái, vạch ngang và ô nhập kết quả căn phải).
@@ -41,7 +43,9 @@ Mục tiêu tối thượng: Giảm tải bộ nhớ làm việc (Working Memory
 
 ### A. TOÁN CÓ LỜI VĂN (word_problem)
 - **BƯỚC 1 (ui_type='highlight') - BẮT BUỘC**:
-  - Trẻ gạch chân ĐỦ 3 THÀNH PHẦN:
+  - `atomic_instruction`: Bắt buộc là câu lệnh mở mang tính rèn luyện kỹ năng, ví dụ: *"Gạch chân các số liệu và từ khóa quan trọng trong đề bài."*.
+    > 🔴 *CẤM KỴ MỚM Ý (Anti-Spoonfeeding)*: Tuyệt đối KHÔNG viết lộ liễu kiểu "Gạch chân 2 số lượng" hay "Gạch chân từ khóa hình tròn" khiến trẻ chỉ làm như một cái máy.
+  - Trẻ gạch chân ĐỦ 3 THÀNH PHẦN trong mảng `highlight_target_segments`:
     1. Số liệu ban đầu kèm đơn vị (Ví dụ: `5 con chim`, `18 quả cam`).
     2. Số liệu biến động (Ví dụ: `3 con chim`, `6 quả cam`).
     3. **Từ khóa định hướng toán tử (Action/Target Keyword)**: Bắt buộc gạch chân từ khóa chỉ định phép tính như `tất cả`, `thêm`, `bớt đi`, `còn lại`, `nhiều hơn`, `ít hơn`.

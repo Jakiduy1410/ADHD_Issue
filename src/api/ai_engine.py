@@ -97,7 +97,7 @@ GEOMETRY_DECOMPOSER_SCHEMA = {
                     "title": {"type": "STRING"},
                     "action_verb": {"type": "STRING", "enum": ["Gạch_chân", "Chọn", "Tính", "Điền"]},
                     "atomic_instruction": {"type": "STRING", "description": "Chỉ dẫn ngắn gọn < 15 từ"},
-                    "ui_type": {"type": "STRING", "enum": ["highlight", "single_choice", "text_input"]},
+                    "ui_type": {"type": "STRING", "enum": ["highlight", "single_choice", "text_input", "progressive_calculation"]},
                     "prompt_text": {"type": "STRING", "description": "Nội dung câu hỏi hoặc biểu thức tính toán"},
                     "highlight_target_segments": {
                         "type": "ARRAY",
@@ -181,6 +181,31 @@ STANDARD_MATH_DECOMPOSER_SCHEMA = {
                     "placeholder": {"type": "STRING"},
                     "expected_answer": {"type": "STRING"},
                     "feedback_on_error": {"type": "STRING", "description": "Lời động viên nhẹ nhàng RSD-safe của Milo"},
+                    "progressive_phases": {
+                        "type": "ARRAY",
+                        "description": "Danh sách 2 nhịp tính toán lũy tiến nếu phép tính có nhiều toán hạng",
+                        "items": {
+                            "type": "OBJECT",
+                            "properties": {
+                                "phase_id": {"type": "INTEGER"},
+                                "lead_text": {"type": "STRING"},
+                                "expression": {"type": "STRING"},
+                                "calc": {
+                                    "type": "OBJECT",
+                                    "properties": {
+                                        "top": {"type": "STRING"},
+                                        "op": {"type": "STRING"},
+                                        "bot": {"type": "STRING"},
+                                        "expected": {"type": "STRING"}
+                                    },
+                                    "required": ["top", "op", "bot", "expected"]
+                                },
+                                "expected_answer": {"type": "STRING"},
+                                "unit": {"type": "STRING"}
+                            },
+                            "required": ["phase_id", "lead_text", "expression", "calc", "expected_answer"]
+                        }
+                    },
                     "dopamine_points": {"type": "INTEGER"}
                 },
                 "required": ["step_id", "title", "action_verb", "atomic_instruction", "ui_type", "prompt_text", "expected_answer", "feedback_on_error"]
@@ -328,6 +353,7 @@ LƯU Ý QUAN TRỌNG:
 - BÓC TÁCH ĐỀ BÀI TRẮC NGHIỆM: Nếu đề bài có các đáp án A, B, C, D (ví dụ: 'A. 23 m\nB. 46 m...'): BẮT BUỘC BỎ HẾT các đáp án đó ra khỏi `original_text` và `prompt_text` của Bước 1 (Gạch chân). Thân đề bài chỉ giữ lại câu chuyện và câu hỏi. Các phương án A, B, C, D chỉ xuất hiện ở bước chọn trắc nghiệm cuối cùng.
 - Với bài hình học: TUYỆT ĐỐI KHÔNG đưa công thức vào hình vẽ SVG (`geometry_spec`). Nếu tính chu vi hình chữ nhật: BẮT BUỘC chia làm 2 bước tính toán riêng biệt: Bước tính nửa chu vi (dài + rộng), sau đó Bước tính chu vi (nửa chu vi × 2).
 - Với bài toán rút về đơn vị: BẮT BUỘC chia làm 2 bước tính toán: Bước 1 rút về 1 đơn vị bằng phép chia, Bước 2 nhân lên số đơn vị cần tìm.
+- Với phép tính nhiều toán hạng (như tìm phân số A : B × C hoặc tìm số lớn (A + B) : 2): BẮT BUỘC dùng ui_type='progressive_calculation' và chia thành 2 nhịp lũy tiến trong `progressive_phases`: Nhịp 1 rút về 1 đơn vị hoặc tính tổng, Nhịp 2 nhân lên hoặc chia đôi. Bước tìm đại lượng còn lại (như tìm số vịt) chuyển sang bước sau bình thường (không lạm dụng).
 - Với bài toán có lời văn: BƯỚC 1 gạch chân ĐẦY ĐỦ 2 nhóm: đại lượng kèm đơn vị VÀ từ khóa toán tử ('tất cả', 'còn lại', 'nhiều hơn'); BƯỚC 2 hỏi ý nghĩa từ khóa; BƯỚC 3 chọn phép tính; BƯỚC 4 tính toán.
 - Với phép tính cộng/trừ/nhân: `prompt_text` của bước tính toán phải chứa biểu thức số học rõ ràng 2 toán hạng (ví dụ: '15 + 8 = ?' hoặc '23 × 2 = ?') để kích hoạt giao diện đặt tính cột dọc theo dòng.
 """
@@ -394,6 +420,10 @@ LƯU Ý QUAN TRỌNG:
                 ui_payload["geometry_spec"] = geometry_spec
             if reading_passage:
                 ui_payload["reading_passage"] = reading_passage
+
+            if ui_type == "progressive_calculation" or s.get("progressive_phases"):
+                ui_payload["progressive_phases"] = s.get("progressive_phases")
+                ui_type = "progressive_calculation"
 
             if ui_type == "highlight":
                 ui_payload["highlight_target_segments"] = s.get("highlight_target_segments") or parsed_data.get("target_keywords", [])

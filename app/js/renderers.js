@@ -401,6 +401,9 @@
           </div>
         `;
 
+      } else if (stepData.ui_type === 'progressive_calculation' || (ui && ui.progressive_phases && ui.progressive_phases.length > 0)) {
+        renderProgressiveCalculationStage(stage, stepData, task);
+
       } else if ((stepData.ui_type === 'single_choice' || stepData.type === 'single_choice') && ui.options && ui.options.length > 0) {
         const opts = ui.options;
         const prompt = ui.prompt_text || stepData.text || stepData.atomic_instruction || "Chọn đáp án đúng:";
@@ -1581,10 +1584,106 @@
 
 
 
+
+    /* ============================================================
+       MODULE: PROGRESSIVE 2-PHASE WORD PROBLEM CALCULATION
+       ============================================================ */
+    function renderProgressiveCalculationStage(stage, stepData, task) {
+      const ui = stepData.ui_payload || stepData.ui_data || {};
+      const phases = ui.progressive_phases || [];
+      if (!phases.length) return;
+
+      stepData._curPhase = stepData._curPhase || 1;
+      const curPhaseIdx = stepData._curPhase - 1;
+      const currentPhase = phases[curPhaseIdx] || phases[0];
+      const isFinalPhase = stepData._curPhase > phases.length;
+
+      let phasesListHtml = '';
+      phases.forEach((p, pIdx) => {
+        const isDone = (stepData._curPhase > pIdx + 1);
+        const isCurrent = (stepData._curPhase === pIdx + 1);
+        if (isDone) {
+          phasesListHtml += `
+            <div class="space-y-0.5">
+              <p class="text-xs font-bold text-slate-600">${p.lead_text}</p>
+              <div class="flex items-center gap-2 text-base font-mono font-black text-emerald-700">
+                <span>${p.expression}</span>
+                <span class="px-2.5 py-0.5 rounded-lg border-2 bg-emerald-100 border-emerald-400 text-emerald-900 min-w-[50px] text-center">
+                  ${p.expected_answer} ✓
+                </span>
+                ${p.unit ? `<span class="text-xs font-sans text-slate-500 font-bold">(${p.unit})</span>` : ''}
+              </div>
+            </div>
+          `;
+        } else if (isCurrent) {
+          phasesListHtml += `
+            <div class="space-y-0.5 slide-in-down">
+              <p class="text-xs font-bold text-slate-700">${p.lead_text}</p>
+              <div class="flex items-center gap-2 text-base font-mono font-black text-slate-800">
+                <span>${p.expression}</span>
+                <span class="px-2.5 py-0.5 rounded-lg border-2 bg-amber-100 border-amber-400 text-amber-900 min-w-[50px] text-center animate-pulse">
+                  ?
+                </span>
+                ${p.unit ? `<span class="text-xs font-sans text-slate-500 font-bold">(${p.unit})</span>` : ''}
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      let calcHtml = '';
+      if (!isFinalPhase && currentPhase && currentPhase.calc) {
+        calcHtml = renderFxCalcGrid(
+          currentPhase.calc.top,
+          currentPhase.calc.op,
+          currentPhase.calc.bot,
+          currentPhase.calc.expected,
+          () => {
+            stepData._curPhase++;
+            if (stepData._curPhase > phases.length) {
+              if (typeof playSfx === 'function') playSfx('star');
+              const btnNext = document.getElementById('child-btn-next-step');
+              if (btnNext) {
+                btnNext.disabled = false;
+                btnNext.classList.remove('btn-disabled');
+                btnNext.classList.add('animate-bounce');
+              }
+            } else {
+              if (typeof playSfx === 'function') playSfx('correct');
+            }
+            renderChildWorkspaceStep();
+          },
+          "Đặt tính:"
+        );
+      }
+
+      stage.innerHTML = `
+        <div class="flex flex-col gap-2.5 my-auto w-full">
+          <div class="bg-[#FFFDF7] border-2 border-amber-300/80 rounded-2xl p-3.5 shadow-sm space-y-3">
+            ${phasesListHtml}
+          </div>
+          <div class="my-auto">
+            ${calcHtml}
+          </div>
+        </div>
+      `;
+
+      if (isFinalPhase) {
+        const btnNext = document.getElementById('child-btn-next-step');
+        if (btnNext) {
+          btnNext.disabled = false;
+          btnNext.classList.remove('btn-disabled');
+        }
+      }
+    }
+
+
 if (typeof window !== 'undefined') {
   window.childSwitchScreen = childSwitchScreen;
   window.exitChildWorkspace = exitChildWorkspace;
   window.renderChildWorkspaceStep = renderChildWorkspaceStep;
+  window.renderProgressiveCalculationStage = renderProgressiveCalculationStage;
+
   window.handleChildChoice = handleChildChoice;
   window.handleHouseWindowClick = handleHouseWindowClick;
   window.handleHouseWindowWrongClick = handleHouseWindowWrongClick;
@@ -1956,10 +2055,34 @@ if (typeof window !== 'undefined') {
 
     function renderFxCalcGrid(topStr, op, botStr, expectedStr, onDone, titleLabel = "Đặt tính:") {
       if (op === ':') {
+        const expStr = String(expectedStr).trim();
+        const numCols = expStr.length;
+        const cellCls = "w-7 h-8 text-base font-mono font-black text-center";
+
+        let rowInputs = '';
+        for (let i = 0; i < numCols; i++) {
+          rowInputs += `
+            <input type="text" maxlength="1" inputmode="numeric" 
+                   data-div-col="${i}" 
+                   class="div-digit-cell ${cellCls} rounded-lg border-2 border-teal-500 bg-teal-50 text-slate-900 focus:bg-teal-100 focus:border-teal-600 focus:outline-none shadow-xs transition" />
+          `;
+        }
+
+        setTimeout(() => {
+          setupDivisionLeftToRightListeners(expStr, onDone);
+        }, 50);
+
         return `
-          <div class="bg-white p-2.5 rounded-2xl border-2 border-teal-200 shadow-xs flex items-center justify-center gap-2 my-1 select-none max-w-[260px] mx-auto w-full">
-            <span class="font-mono text-base font-black text-slate-800">${topStr} : ${botStr} =</span>
-            <input type="text" oninput="if(this.value.trim() === '${expectedStr}') { playSfx('correct'); (${onDone.toString()})(); }" placeholder="?" class="w-16 text-center font-mono font-black text-base text-teal-700 bg-teal-50 border-2 border-teal-400 rounded-xl px-2 py-1 focus:outline-none" autofocus />
+          <div class="bg-white p-3 rounded-2xl border-2 border-teal-200 shadow-xs flex flex-col items-center justify-center gap-1.5 my-1 select-none max-w-[280px] mx-auto w-full">
+            <div class="flex items-center justify-center gap-2">
+              <span class="font-mono text-base font-black text-slate-800">${topStr} : ${botStr} =</span>
+              <div class="flex items-center gap-1">
+                ${rowInputs}
+              </div>
+            </div>
+            <span class="text-[9px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
+              👉 ${titleLabel} (Điền từ trái sang phải)
+            </span>
           </div>
         `;
       }
@@ -2012,6 +2135,76 @@ if (typeof window !== 'undefined') {
           </span>
         </div>
       `;
+    }
+
+    function setupDivisionLeftToRightListeners(expectedStr, onDone) {
+      const cells = Array.from(document.querySelectorAll('.div-digit-cell'));
+      if (!cells.length) return;
+
+      cells.sort((a, b) => parseInt(a.dataset.divCol) - parseInt(b.dataset.divCol));
+      const startCell = cells[0];
+      if (startCell) {
+        startCell.focus();
+        startCell.select();
+      }
+
+      function triggerSuccess(fullVal) {
+        if (typeof playSfx === 'function') playSfx('pop');
+        cells.forEach(c => {
+          c.classList.remove('bg-teal-50', 'border-teal-500');
+          c.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-950');
+        });
+        setTimeout(() => {
+          if (typeof onDone === 'function') onDone();
+          else if (typeof onDone === 'string' && typeof window[onDone] === 'function') window[onDone](fullVal);
+        }, 200);
+      }
+
+      cells.forEach((cell, idx) => {
+        cell.onkeydown = function(e) {
+          if (e.key >= '0' && e.key <= '9') {
+            e.preventDefault();
+            this.value = e.key;
+            if (typeof playSfx === 'function') playSfx('tap');
+
+            if (idx < cells.length - 1) {
+              const nextCell = cells[idx + 1];
+              nextCell.focus();
+              nextCell.select();
+            }
+
+            const currentFullVal = cells.map(c => c.value || '').join('');
+            if (currentFullVal === String(expectedStr).trim()) {
+              triggerSuccess(currentFullVal);
+            }
+          } else if (e.key === 'Backspace') {
+            e.preventDefault();
+            this.value = '';
+            if (idx > 0) {
+              const prevCell = cells[idx - 1];
+              prevCell.focus();
+              prevCell.select();
+            }
+          } else if (e.key === 'Enter') {
+            const currentFullVal = cells.map(c => c.value || '').join('');
+            if (currentFullVal === String(expectedStr).trim()) {
+              triggerSuccess(currentFullVal);
+            }
+          }
+        };
+
+        cell.oninput = function() {
+          const val = this.value.replace(/[^0-9]/g, '');
+          this.value = val ? val[val.length - 1] : '';
+          const currentFullVal = cells.map(c => c.value || '').join('');
+          if (currentFullVal === String(expectedStr).trim()) {
+            triggerSuccess(currentFullVal);
+          } else if (this.value && idx < cells.length - 1) {
+            cells[idx + 1].focus();
+            cells[idx + 1].select();
+          }
+        };
+      });
     }
 
     function setupMultiRightToLeftListeners(expectedStr, onDone) {

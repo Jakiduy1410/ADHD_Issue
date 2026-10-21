@@ -30,10 +30,10 @@ window.TASKS_DB = {
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tìm Dữ Kiện & Từ Khóa",
+        "badge": "Dữ Kiện & Từ Khóa",
         "action_verb": "Gạch_chân",
-        "atomic_instruction": "Gạch chân 2 số lượng chim và từ khóa 'tất cả' trong đề bài.",
-        "text": "Gạch chân 2 số lượng chim và từ khóa 'tất cả' trong đề bài.",
+        "atomic_instruction": "Gạch chân các số liệu và từ khóa quan trọng trong đề bài.",
+        "text": "Gạch chân các số liệu và từ khóa quan trọng trong đề bài.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
@@ -194,10 +194,10 @@ window.TASKS_DB = {
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tìm Dữ Kiện & Từ Khóa",
+        "badge": "Dữ Kiện & Từ Khóa",
         "action_verb": "Gạch_chân",
-        "atomic_instruction": "Gạch chân 2 số lượng cam và từ khóa 'còn lại' trong đề bài.",
-        "text": "Gạch chân 2 số lượng cam và từ khóa 'còn lại' trong đề bài.",
+        "atomic_instruction": "Gạch chân các số liệu và từ khóa quan trọng trong đề bài.",
+        "text": "Gạch chân các số liệu và từ khóa quan trọng trong đề bài.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
@@ -507,10 +507,10 @@ window.TASKS_DB = {
     "steps": [
       {
         "step_id": 1,
-        "badge": "Đọc Đề & Tìm Dữ Kiện",
+        "badge": "Dữ Kiện & Từ Khóa",
         "action_verb": "Gạch_chân",
-        "atomic_instruction": "Gạch chân từ khóa 'hình tròn' trong đề bài.",
-        "text": "Gạch chân từ khóa 'hình tròn' trong đề bài.",
+        "atomic_instruction": "Gạch chân từ khóa chỉ hình học trong câu hỏi.",
+        "text": "Gạch chân từ khóa chỉ hình học trong câu hỏi.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
@@ -784,10 +784,10 @@ window.TASKS_DB = {
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tìm Dữ Kiện & Từ Khóa",
+        "badge": "Dữ Kiện & Từ Khóa",
         "action_verb": "Gạch_chân",
-        "atomic_instruction": "Gạch chân 2 số lượng cây và từ khóa 'nhiều hơn' trong đề bài.",
-        "text": "Gạch chân 2 số lượng cây và từ khóa 'nhiều hơn' trong đề bài.",
+        "atomic_instruction": "Gạch chân các số liệu và từ khóa quan trọng trong đề bài.",
+        "text": "Gạch chân các số liệu và từ khóa quan trọng trong đề bài.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
@@ -950,10 +950,10 @@ window.TASKS_DB = {
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tìm Dữ Kiện & Từ Khóa",
+        "badge": "Dữ Kiện & Từ Khóa",
         "action_verb": "Gạch_chân",
-        "atomic_instruction": "Gạch chân số lượng can, số lít mỗi can và từ khóa 'còn lại'.",
-        "text": "Gạch chân số lượng can, số lít mỗi can và từ khóa 'còn lại'.",
+        "atomic_instruction": "Gạch chân các số liệu và từ khóa quan trọng trong đề bài.",
+        "text": "Gạch chân các số liệu và từ khóa quan trọng trong đề bài.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
@@ -1250,10 +1250,10 @@ window.TASKS_DB = {
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tìm Dữ Kiện & Đơn Vị",
+        "badge": "Dữ Kiện & Từ Khóa",
         "action_verb": "Gạch_chân",
-        "atomic_instruction": "Gạch chân độ dài sợi dây, đoạn đã cắt và từ khóa 'còn lại'.",
-        "text": "Gạch chân độ dài sợi dây, đoạn đã cắt và từ khóa 'còn lại'.",
+        "atomic_instruction": "Gạch chân các số liệu, đơn vị và từ khóa quan trọng.",
+        "text": "Gạch chân các số liệu, đơn vị và từ khóa quan trọng.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
@@ -1552,10 +1552,10 @@ window.TASKS_DB = {
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tìm Dữ Kiện & Từ Khóa",
+        "badge": "Dữ Kiện & Từ Khóa",
         "action_verb": "Gạch_chân",
-        "atomic_instruction": "Gạch chân số gạo buổi sáng, từ 'gấp 3 lần' và 'tất cả'.",
-        "text": "Gạch chân số gạo buổi sáng, từ 'gấp 3 lần' và 'tất cả'.",
+        "atomic_instruction": "Gạch chân các số liệu và từ khóa quan trọng trong đề bài.",
+        "text": "Gạch chân các số liệu và từ khóa quan trọng trong đề bài.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
@@ -1714,10 +1714,10 @@ window.TASKS_DB = {
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tìm Dữ Kiện & Từ Khóa",
+        "badge": "Dữ Kiện & Từ Khóa",
         "action_verb": "Gạch_chân",
-        "atomic_instruction": "Gạch chân 35 quyển vở, 7 bạn học sinh giỏi và 5 bạn.",
-        "text": "Gạch chân 35 quyển vở, 7 bạn học sinh giỏi và 5 bạn.",
+        "atomic_instruction": "Gạch chân các số liệu và từ khóa quan trọng trong đề bài.",
+        "text": "Gạch chân các số liệu và từ khóa quan trọng trong đề bài.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
@@ -1987,10 +1987,10 @@ window.TASKS_DB = {
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tìm Kích Thước & Mục Tiêu",
+        "badge": "Dữ Kiện & Từ Khóa",
         "action_verb": "Gạch_chân",
-        "atomic_instruction": "Gạch chân chiều dài 15 m, chiều rộng 8 m và từ 'Chu vi'.",
-        "text": "Gạch chân chiều dài 15 m, chiều rộng 8 m và từ 'Chu vi'.",
+        "atomic_instruction": "Gạch chân các kích thước và từ khóa yêu cầu trong đề bài.",
+        "text": "Gạch chân các kích thước và từ khóa yêu cầu trong đề bài.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
@@ -2327,10 +2327,10 @@ window.TASKS_DB = {
     "steps": [
       {
         "step_id": 1,
-        "badge": "Xác Định Tổng Và Hiệu",
+        "badge": "Dữ Kiện & Từ Khóa",
         "action_verb": "Tách",
-        "atomic_instruction": "Tách tổng 280 quyển và hiệu 40 quyển.",
-        "text": "Tách tổng 280 quyển và hiệu 40 quyển.",
+        "atomic_instruction": "Gạch chân các số liệu và từ khóa quan trọng trong đề bài.",
+        "text": "Gạch chân các số liệu và từ khóa quan trọng trong đề bài.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
@@ -2366,13 +2366,40 @@ window.TASKS_DB = {
         "step_id": 2,
         "badge": "Tìm Sách Lớp 4A",
         "action_verb": "Tính",
-        "atomic_instruction": "Tính 280 cộng 40 rồi chia cho 2.",
-        "text": "Tính 280 cộng 40 rồi chia cho 2.",
-        "type": "text_input",
-        "ui_type": "text_input",
+        "atomic_instruction": "Tìm số lớn: Lấy tổng cộng hiệu rồi chia 2.",
+        "text": "Tìm số lớn: Lấy tổng cộng hiệu rồi chia 2.",
+        "type": "progressive_calculation",
+        "ui_type": "progressive_calculation",
         "ui_data": {
-          "prompt_text": "(280 + 40) : 2 = ? (quyển lớp 4A)",
-          "placeholder": "Nhập số sách 4A..."
+          "prompt_text": "Tìm số sách lớp 4A (Số lớn = (280 + 40) : 2):",
+          "progressive_phases": [
+            {
+              "phase_id": 1,
+              "lead_text": "1) Tính hai lần số sách lớp 4A:",
+              "expression": "280 + 40 =",
+              "calc": {
+                "top": "280",
+                "op": "+",
+                "bot": "40",
+                "expected": "320"
+              },
+              "expected_answer": "320",
+              "unit": "quyển"
+            },
+            {
+              "phase_id": 2,
+              "lead_text": "2) Chia đôi tìm số sách lớp 4A:",
+              "expression": "320 : 2 =",
+              "calc": {
+                "top": "320",
+                "op": ":",
+                "bot": "2",
+                "expected": "160"
+              },
+              "expected_answer": "160",
+              "unit": "quyển"
+            }
+          ]
         },
         "duration_sec": 90,
         "immediate_reinforcer": {
@@ -2386,11 +2413,42 @@ window.TASKS_DB = {
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": "160",
-          "feedback_on_error": "Lớp 4A quyên góp được 160 quyển con nha!"
+          "feedback_on_error": "Lấy 280 cộng 40 bằng 320, rồi chia 2 được 160 quyển con nhé!"
         },
         "mathematical_or_logical_goal": "Tính số lớn",
         "intermediate_output": "(280 + 40) : 2 = 320 : 2 = 160 (quyển)",
-        "is_final_step": false
+        "is_final_step": false,
+        "ui_payload": {
+          "prompt_text": "Tìm số sách lớp 4A (Số lớn = (280 + 40) : 2):",
+          "progressive_phases": [
+            {
+              "phase_id": 1,
+              "lead_text": "1) Tính hai lần số sách lớp 4A:",
+              "expression": "280 + 40 =",
+              "calc": {
+                "top": "280",
+                "op": "+",
+                "bot": "40",
+                "expected": "320"
+              },
+              "expected_answer": "320",
+              "unit": "quyển"
+            },
+            {
+              "phase_id": 2,
+              "lead_text": "2) Chia đôi tìm số sách lớp 4A:",
+              "expression": "320 : 2 =",
+              "calc": {
+                "top": "320",
+                "op": ":",
+                "bot": "2",
+                "expected": "160"
+              },
+              "expected_answer": "160",
+              "unit": "quyển"
+            }
+          ]
+        }
       },
       {
         "step_id": 3,
@@ -2489,10 +2547,10 @@ window.TASKS_DB = {
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tìm Dữ Kiện & Phân Số",
+        "badge": "Dữ Kiện & Từ Khóa",
         "action_verb": "Gạch_chân",
-        "atomic_instruction": "Gạch chân 1200 con gia cầm, phân số 3/5 và từ con vịt.",
-        "text": "Gạch chân 1200 con gia cầm, phân số 3/5 và từ con vịt.",
+        "atomic_instruction": "Gạch chân các số liệu, phân số và câu hỏi của đề bài.",
+        "text": "Gạch chân các số liệu, phân số và câu hỏi của đề bài.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
@@ -2529,13 +2587,40 @@ window.TASKS_DB = {
         "step_id": 2,
         "badge": "Tính Số Con Gà",
         "action_verb": "Tính",
-        "atomic_instruction": "Tính số gà bằng cách lấy 1200 nhân 3 rồi chia 5.",
-        "text": "Tính số gà bằng cách lấy 1200 nhân 3 rồi chia 5.",
-        "type": "text_input",
-        "ui_type": "text_input",
+        "atomic_instruction": "Tính số con gà bằng 3/5 của 1200 con.",
+        "text": "Tính số con gà bằng 3/5 của 1200 con.",
+        "type": "progressive_calculation",
+        "ui_type": "progressive_calculation",
         "ui_data": {
-          "prompt_text": "1200 × 3 : 5 = ? (con gà)",
-          "placeholder": "Nhập số con gà..."
+          "prompt_text": "Tính số gà bằng 3/5 của 1200 con gia cầm:",
+          "progressive_phases": [
+            {
+              "phase_id": 1,
+              "lead_text": "1) Rút về 1 phần (1/5 tổng số gia cầm):",
+              "expression": "1200 : 5 =",
+              "calc": {
+                "top": "1200",
+                "op": ":",
+                "bot": "5",
+                "expected": "240"
+              },
+              "expected_answer": "240",
+              "unit": "con"
+            },
+            {
+              "phase_id": 2,
+              "lead_text": "2) Nhân lên 3 phần (Số con gà):",
+              "expression": "240 × 3 =",
+              "calc": {
+                "top": "240",
+                "op": "×",
+                "bot": "3",
+                "expected": "720"
+              },
+              "expected_answer": "720",
+              "unit": "con gà"
+            }
+          ]
         },
         "duration_sec": 70,
         "immediate_reinforcer": {
@@ -2549,11 +2634,42 @@ window.TASKS_DB = {
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": "720",
-          "feedback_on_error": "Số gà là 720 con con nhé!"
+          "feedback_on_error": "Milo cùng con lấy 1200 chia 5 được 240, rồi nhân 3 được 720 con gà nhé!"
         },
         "mathematical_or_logical_goal": "Tìm phân số của một số",
         "intermediate_output": "720 con gà",
-        "is_final_step": false
+        "is_final_step": false,
+        "ui_payload": {
+          "prompt_text": "Tính số gà bằng 3/5 của 1200 con gia cầm:",
+          "progressive_phases": [
+            {
+              "phase_id": 1,
+              "lead_text": "1) Rút về 1 phần (1/5 tổng số gia cầm):",
+              "expression": "1200 : 5 =",
+              "calc": {
+                "top": "1200",
+                "op": ":",
+                "bot": "5",
+                "expected": "240"
+              },
+              "expected_answer": "240",
+              "unit": "con"
+            },
+            {
+              "phase_id": 2,
+              "lead_text": "2) Nhân lên 3 phần (Số con gà):",
+              "expression": "240 × 3 =",
+              "calc": {
+                "top": "240",
+                "op": "×",
+                "bot": "3",
+                "expected": "720"
+              },
+              "expected_answer": "720",
+              "unit": "con gà"
+            }
+          ]
+        }
       },
       {
         "step_id": 3,
@@ -2799,10 +2915,10 @@ window.TASKS_DB = {
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tìm Dữ Kiện Đáy & Chiều Cao",
+        "badge": "Dữ Kiện & Từ Khóa",
         "action_verb": "Gạch_chân",
-        "atomic_instruction": "Gạch chân độ dài đáy 24 m, chiều cao 15 m và từ 'diện tích'.",
-        "text": "Gạch chân độ dài đáy 24 m, chiều cao 15 m và từ 'diện tích'.",
+        "atomic_instruction": "Gạch chân các kích thước và từ khóa yêu cầu trong đề bài.",
+        "text": "Gạch chân các kích thước và từ khóa yêu cầu trong đề bài.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
@@ -3080,22 +3196,19 @@ window.TASKS_DB = {
     "cat": "math",
     "catName": "Toán GDPT 2018",
     "icon": "🚗",
-    "title": "Toán chuyển động đều: Ô tô và xe máy gặp nhau",
+    "title": "Toán chuyển động đều: Ô tô và xe máy gặp nhau (Ý a)",
     "island": "study",
     "reward": 160,
     "stepSeconds": 100,
-    "original_text": "Quãng đường AB dài 180 km. Cùng một lúc vào lúc 7 giờ sáng, một ô tô đi từ A về B với vận tốc 50 km/giờ và một xe máy đi từ B về A với vận tốc 40 km/giờ.\n\nHỏi:\na) Sau bao lâu hai xe gặp nhau?\nb) Hai xe gặp nhau lúc mấy giờ?",
+    "original_text": "Quãng đường AB dài 180 km. Lúc 7 giờ sáng, một ô tô đi từ A về B với vận tốc 50 km/giờ và một xe máy đi từ B về A với vận tốc 40 km/giờ. Hỏi sau bao lâu hai xe gặp nhau?",
     "final_answer": {
-      "value": "a) 2 giờ; b) 9 giờ",
-      "unit": null,
-      "normalized_display": "a) 2 giờ; b) 9 giờ sáng",
+      "value": 2,
+      "unit": "giờ",
+      "normalized_display": "2 giờ",
       "acceptable_variants": [
-        "a) 2 giờ; b) 9 giờ sáng",
-        "a) 2 giờ, b) 9 giờ",
-        "2 giờ và 9 giờ",
-        "2 giờ; 9 giờ",
-        "2 giờ, 9 giờ sáng",
-        "Sau 2 giờ; Lúc 9 giờ"
+        "2",
+        "2 giờ",
+        "hai giờ"
       ]
     },
     "adhd_scaffolding_notes": {
@@ -3106,14 +3219,14 @@ window.TASKS_DB = {
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tìm Dữ Kiện Chuyển Động",
+        "badge": "Dữ Kiện & Từ Khóa",
         "action_verb": "Gạch_chân",
-        "atomic_instruction": "Gạch chân 180 km, 50 km/giờ, 40 km/giờ và sau bao lâu.",
-        "text": "Gạch chân 180 km, 50 km/giờ, 40 km/giờ và sau bao lâu.",
+        "atomic_instruction": "Gạch chân các số liệu chuyển động và câu hỏi của đề bài.",
+        "text": "Gạch chân các số liệu chuyển động và câu hỏi của đề bài.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
-          "prompt_text": "Quãng đường AB dài 180 km. Cùng một lúc vào lúc 7 giờ sáng, một ô tô đi từ A về B với vận tốc 50 km/giờ và một xe máy đi từ B về A với vận tốc 40 km/giờ.\n\nHỏi:\na) Sau bao lâu hai xe gặp nhau?\nb) Hai xe gặp nhau lúc mấy giờ?",
+          "prompt_text": "Quãng đường AB dài 180 km. Lúc 7 giờ sáng, một ô tô đi từ A với vận tốc 50 km/giờ và xe máy đi từ B với vận tốc 40 km/giờ. Hỏi sau bao lâu hai xe gặp nhau?",
           "highlight_target_segments": [
             "180 km",
             "50 km/giờ",
@@ -3121,15 +3234,7 @@ window.TASKS_DB = {
             "sau bao lâu"
           ]
         },
-        "duration_sec": 70,
-        "immediate_reinforcer": {
-          "visual_asset": "sparkle_star_01",
-          "audio_cue": "positive_bell_c6",
-          "dopamine_points": 30
-        },
-        "hints": [
-          "Gạch chân 180 km, 50 km/giờ, 40 km/giờ và 'sau bao lâu' nhé!"
-        ],
+        "duration_sec": 60,
         "success_criteria": {
           "evaluation_type": "exact_match",
           "expected_answer": [
@@ -3138,18 +3243,15 @@ window.TASKS_DB = {
             "40 km/giờ",
             "sau bao lâu"
           ],
-          "feedback_on_error": "Milo cùng con tìm 180 km, hai vận tốc và 'sau bao lâu' nha!"
-        },
-        "mathematical_or_logical_goal": "Nhận diện dữ kiện chuyển động ngược chiều",
-        "intermediate_output": "S: 180km; v1: 50; v2: 40",
-        "is_final_step": false
+          "feedback_on_error": "Con gạch chân 180 km, 50 km/giờ, 40 km/giờ và từ sau bao lâu nhé!"
+        }
       },
       {
         "step_id": 2,
         "badge": "Tính Tổng Vận Tốc",
         "action_verb": "Tính",
-        "atomic_instruction": "Đặt tính cộng dọc để tính tổng vận tốc hai xe: lấy 50 cộng 40.",
-        "text": "Đặt tính cộng dọc để tính tổng vận tốc hai xe: lấy 50 cộng 40.",
+        "atomic_instruction": "Đặt tính cộng dọc để tính tổng vận tốc hai xe.",
+        "text": "Đặt tính cộng dọc để tính tổng vận tốc hai xe.",
         "type": "text_input",
         "ui_type": "text_input",
         "ui_data": {
@@ -3157,32 +3259,18 @@ window.TASKS_DB = {
           "placeholder": "Nhập tổng vận tốc..."
         },
         "duration_sec": 60,
-        "immediate_reinforcer": {
-          "visual_asset": "sparkle_star_01",
-          "audio_cue": "positive_bell_c6",
-          "dopamine_points": 30
-        },
-        "hints": [
-          "Đặt tính cộng 50 + 40 = 90 km/giờ."
-        ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": [
-            "90",
-            "90 km/giờ"
-          ],
-          "feedback_on_error": "50 + 40 = 90 km/giờ con nhé!"
-        },
-        "mathematical_or_logical_goal": "Tính tổng vận tốc",
-        "intermediate_output": "90 km/giờ",
-        "is_final_step": false
+          "expected_answer": "90",
+          "feedback_on_error": "50 cộng 40 bằng 90 km/giờ con nhé!"
+        }
       },
       {
         "step_id": 3,
-        "badge": "Thời Gian Gặp Nhau (Ý a)",
+        "badge": "Thời Gian Gặp Nhau",
         "action_verb": "Tính",
-        "atomic_instruction": "Tính thời gian hai xe gặp nhau: lấy quãng đường 180 chia tổng vận tốc 90.",
-        "text": "Tính thời gian hai xe gặp nhau: lấy quãng đường 180 chia tổng vận tốc 90.",
+        "atomic_instruction": "Lấy quãng đường 180 chia tổng vận tốc 90 để tìm thời gian.",
+        "text": "Lấy quãng đường 180 chia tổng vận tốc 90 để tìm thời gian.",
         "type": "text_input",
         "ui_type": "text_input",
         "ui_data": {
@@ -3190,93 +3278,34 @@ window.TASKS_DB = {
           "placeholder": "Nhập số giờ..."
         },
         "duration_sec": 60,
-        "immediate_reinforcer": {
-          "visual_asset": "sparkle_star_01",
-          "audio_cue": "positive_bell_c6",
-          "dopamine_points": 30
-        },
-        "hints": [
-          "180 : 90 = 2 giờ."
-        ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": [
-            "2",
-            "2 giờ"
-          ],
-          "feedback_on_error": "180 : 90 = 2 giờ con nhé!"
-        },
-        "mathematical_or_logical_goal": "Tính thời gian chuyển động (câu a)",
-        "intermediate_output": "2 giờ",
-        "is_final_step": false
+          "expected_answer": "2",
+          "feedback_on_error": "180 chia 90 bằng 2 giờ con nhé!"
+        }
       },
       {
         "step_id": 4,
-        "badge": "Thời Điểm Gặp Nhau (Ý b)",
-        "action_verb": "Tính",
-        "atomic_instruction": "Đặt tính cộng dọc: xuất phát lúc 7 giờ, đi 2 giờ thì gặp nhau. Lấy 7 cộng 2.",
-        "text": "Đặt tính cộng dọc: xuất phát lúc 7 giờ, đi 2 giờ thì gặp nhau. Lấy 7 cộng 2.",
-        "type": "text_input",
-        "ui_type": "text_input",
-        "ui_data": {
-          "prompt_text": "7 + 2 = ? (giờ sáng)",
-          "placeholder": "Nhập thời điểm gặp..."
-        },
-        "duration_sec": 60,
-        "immediate_reinforcer": {
-          "visual_asset": "sparkle_star_01",
-          "audio_cue": "positive_bell_c6",
-          "dopamine_points": 30
-        },
-        "hints": [
-          "Đặt tính cộng 7 + 2 = 9 giờ sáng."
-        ],
-        "success_criteria": {
-          "evaluation_type": "exact_match",
-          "expected_answer": [
-            "9",
-            "9 giờ",
-            "9 giờ sáng"
-          ],
-          "feedback_on_error": "7 + 2 = 9 giờ sáng con nhé!"
-        },
-        "mathematical_or_logical_goal": "Tính thời điểm gặp nhau (câu b)",
-        "intermediate_output": "9 giờ sáng",
-        "is_final_step": false
-      },
-      {
-        "step_id": 5,
         "badge": "Tổng Kết Đáp Số",
         "action_verb": "Chọn",
-        "atomic_instruction": "Chọn đáp án hoàn chỉnh cho cả hai câu hỏi a và b.",
-        "text": "Chọn đáp án hoàn chỉnh cho cả hai câu hỏi a và b.",
+        "atomic_instruction": "Chọn đáp án đúng về thời gian hai xe gặp nhau.",
+        "text": "Chọn đáp án đúng về thời gian hai xe gặp nhau.",
         "type": "single_choice",
         "ui_type": "single_choice",
         "ui_data": {
-          "prompt_text": "Đáp số cho cả 2 câu hỏi a) và b) là:",
+          "prompt_text": "Sau bao lâu hai xe gặp nhau?",
           "options": [
-            "a) 2 giờ ; b) 9 giờ sáng",
-            "a) 3 giờ ; b) 10 giờ sáng",
-            "a) 2 giờ ; b) 8 giờ sáng"
+            "2 giờ",
+            "3 giờ",
+            "1,5 giờ"
           ]
         },
         "duration_sec": 60,
-        "immediate_reinforcer": {
-          "visual_asset": "chest_open_burst",
-          "audio_cue": "orchestral_fanfare_c6",
-          "dopamine_points": 40
-        },
-        "hints": [
-          "a) Sau 2 giờ; b) Gặp nhau lúc 9 giờ sáng."
-        ],
         "success_criteria": {
           "evaluation_type": "exact_match",
-          "expected_answer": "a) 2 giờ ; b) 9 giờ sáng",
-          "feedback_on_error": "Đáp án đúng là: a) 2 giờ ; b) 9 giờ sáng con nhé!"
-        },
-        "mathematical_or_logical_goal": "Tổng kết kết quả bài toán 2 ý",
-        "intermediate_output": "a) 2 giờ ; b) 9 giờ sáng",
-        "is_final_step": true
+          "expected_answer": "2 giờ",
+          "feedback_on_error": "Hai xe gặp nhau sau 2 giờ con nhé!"
+        }
       }
     ],
     "exercise_type": "word_problem"
@@ -3312,10 +3341,10 @@ window.TASKS_DB = {
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tìm Kích Thước & Lượng Nước",
+        "badge": "Dữ Kiện & Từ Khóa",
         "action_verb": "Gạch_chân",
-        "atomic_instruction": "Gạch chân chiều dài 2 m, chiều rộng 1,5 m, chiều cao 1,2 m và 60%.",
-        "text": "Gạch chân chiều dài 2 m, chiều rộng 1,5 m, chiều cao 1,2 m và 60%.",
+        "atomic_instruction": "Gạch chân các kích thước và tỉ lệ phần trăm trong đề bài.",
+        "text": "Gạch chân các kích thước và tỉ lệ phần trăm trong đề bài.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
@@ -3682,10 +3711,10 @@ window.TASKS_DB = {
     "steps": [
       {
         "step_id": 1,
-        "badge": "Tìm Dữ Kiện Giá Gốc & Tỉ Lệ Giảm",
+        "badge": "Dữ Kiện & Từ Khóa",
         "action_verb": "Gạch_chân",
-        "atomic_instruction": "Gạch chân 200 000 đồng, giảm giá 15% và giảm tiếp 10% trên giá đã giảm.",
-        "text": "Gạch chân 200 000 đồng, giảm giá 15% và giảm tiếp 10% trên giá đã giảm.",
+        "atomic_instruction": "Gạch chân giá ban đầu và các tỉ lệ giảm giá trong đề bài.",
+        "text": "Gạch chân giá ban đầu và các tỉ lệ giảm giá trong đề bài.",
         "type": "highlight",
         "ui_type": "highlight",
         "ui_data": {
@@ -4588,5 +4617,320 @@ window.TASKS_DB = {
       }
     ],
     "exercise_type": "pure_arithmetic"
+  },
+  "G4_MATH_ARITH_MULTI_01": {
+    "id": "G4_MATH_ARITH_MULTI_01",
+    "grade": 4,
+    "subject": "Toán",
+    "cat": "math",
+    "catName": "Toán GDPT 2018",
+    "exercise_type": "multi_item_arithmetic",
+    "icon": "➕",
+    "title": "Đặt tính rồi tính: Phép cộng nhiều chữ số (4 ý)",
+    "header_title": "Bài 1: Đặt tính rồi tính",
+    "island": "study",
+    "reward": 120,
+    "stepSeconds": 180,
+    "original_text": "Bài 1: Đặt tính rồi tính: a) 95626 + 50482   b) 36011 + 17165   c) 52764 + 57532   d) 88891 + 22360",
+    "final_answer": {
+      "value": "146108; 53176; 110296; 111251",
+      "unit": null,
+      "normalized_display": "a) 146108; b) 53176; c) 110296; d) 111251"
+    },
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Trẻ dễ bị quá tải khi nhìn cả 4 phép tính cùng lúc hoặc bị bắt xác định phép tính rườm rà.",
+      "executive_function_scaffolding": "Header chung ghim tiêu đề bài. Mỗi ý là 1 thẻ tập trung duy nhất, điền số từ phải qua trái.",
+      "visual_or_concrete_aid": "Bảng đặt tính cột dọc chuẩn SGK với vạch kẻ ngang và ô nhập số căn lề chuẩn."
+    },
+    "items": [
+      {
+        "item_id": "a",
+        "label": "a)",
+        "top": "95626",
+        "op": "+",
+        "bot": "50482",
+        "expected_answer": "146108",
+        "dopamine_points": 30
+      },
+      {
+        "item_id": "b",
+        "label": "b)",
+        "top": "36011",
+        "op": "+",
+        "bot": "17165",
+        "expected_answer": "53176",
+        "dopamine_points": 30
+      },
+      {
+        "item_id": "c",
+        "label": "c)",
+        "top": "52764",
+        "op": "+",
+        "bot": "57532",
+        "expected_answer": "110296",
+        "dopamine_points": 30
+      },
+      {
+        "item_id": "d",
+        "label": "d)",
+        "top": "88891",
+        "op": "+",
+        "bot": "22360",
+        "expected_answer": "111251",
+        "dopamine_points": 30
+      }
+    ],
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Ý a)",
+        "action_verb": "Tính",
+        "atomic_instruction": "Đặt tính và tính kết quả ý a: 95626 + 50482",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "95626 + 50482 = ?"
+        },
+        "expected_answer": "146108",
+        "duration_sec": 60,
+        "success_criteria": {
+          "expected_answer": "146108"
+        }
+      },
+      {
+        "step_id": 2,
+        "badge": "Ý b)",
+        "action_verb": "Tính",
+        "atomic_instruction": "Đặt tính và tính kết quả ý b: 36011 + 17165",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "36011 + 17165 = ?"
+        },
+        "expected_answer": "53176",
+        "duration_sec": 60,
+        "success_criteria": {
+          "expected_answer": "53176"
+        }
+      },
+      {
+        "step_id": 3,
+        "badge": "Ý c)",
+        "action_verb": "Tính",
+        "atomic_instruction": "Đặt tính và tính kết quả ý c: 52764 + 57532",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "52764 + 57532 = ?"
+        },
+        "expected_answer": "110296",
+        "duration_sec": 60,
+        "success_criteria": {
+          "expected_answer": "110296"
+        }
+      },
+      {
+        "step_id": 4,
+        "badge": "Ý d)",
+        "action_verb": "Tính",
+        "atomic_instruction": "Đặt tính và tính kết quả ý d: 88891 + 22360",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "88891 + 22360 = ?"
+        },
+        "expected_answer": "111251",
+        "duration_sec": 60,
+        "success_criteria": {
+          "expected_answer": "111251"
+        },
+        "is_final_step": true
+      }
+    ]
+  },
+  "G4_MATH_FIND_X_MULTI_02": {
+    "id": "G4_MATH_FIND_X_MULTI_02",
+    "grade": 4,
+    "subject": "Toán",
+    "cat": "math",
+    "catName": "Toán GDPT 2018",
+    "exercise_type": "multi_item_find_x",
+    "icon": "🎯",
+    "title": "Tìm x: Biểu thức nâng cao & 2 tầng phép tính (4 ý)",
+    "header_title": "Bài 2: Tìm x",
+    "island": "study",
+    "reward": 160,
+    "stepSeconds": 240,
+    "original_text": "Bài 2: Tìm x biết: a) x + 354 = 820   b) x + 125 = 450 - 150   c) x × 3 + 45 = 105   d) (x + 25) : 3 = 40",
+    "final_answer": {
+      "value": "466; 175; 20; 95",
+      "unit": null,
+      "normalized_display": "a) x = 466; b) x = 175; c) x = 20; d) x = 95"
+    },
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Trẻ ADHD dễ bị ngợp khi gặp bài tìm x có nhiều phép tính hoặc ngoặc đơn.",
+      "executive_function_scaffolding": "Tương tác lũy tiến từng dòng vở toán, đồng bộ cửa sổ đặt tính cho mọi phép tính nháp, tự động format thành bài giải 3-5 dòng chuẩn SGK.",
+      "visual_or_concrete_aid": "Trang vở ô ly sạch sẽ không nhãn thừa, bảng đặt tính dọc RTL trượt xuống đúng lúc."
+    },
+    "items": [
+      {
+        "item_id": "a",
+        "label": "a)",
+        "sub_type": "single_op",
+        "equation": "x + 354 = 820",
+        "left_lead": "x = 820",
+        "correct_op": "-",
+        "target_num": "354",
+        "formatted_line2": "x = 820 - 354",
+        "calc_top": "820",
+        "calc_op": "-",
+        "calc_bot": "354",
+        "expected_x": "466",
+        "formatted_final": "x = 466",
+        "dopamine_points": 40
+      },
+      {
+        "item_id": "b",
+        "label": "b)",
+        "sub_type": "rhs_expr",
+        "equation": "x + 125 = 450 - 150",
+        "rhs_calc": {
+          "top": "450",
+          "op": "-",
+          "bot": "150",
+          "expected": "300"
+        },
+        "step1_formatted": "x + 125 = 300",
+        "step2_lead": "x = 300",
+        "step2_op": "-",
+        "step2_num": "125",
+        "step2_formatted": "x = 300 - 125",
+        "final_calc": {
+          "top": "300",
+          "op": "-",
+          "bot": "125",
+          "expected": "175"
+        },
+        "formatted_final": "x = 175",
+        "dopamine_points": 40
+      },
+      {
+        "item_id": "c",
+        "label": "c)",
+        "sub_type": "two_tier",
+        "equation": "x × 3 + 45 = 105",
+        "tier1_lead": "x × 3 = 105",
+        "tier1_op": "-",
+        "tier1_num": "45",
+        "tier1_formatted": "x × 3 = 105 - 45",
+        "tier1_calc": {
+          "top": "105",
+          "op": "-",
+          "bot": "45",
+          "expected": "60"
+        },
+        "tier1_res_formatted": "x × 3 = 60",
+        "tier2_lead": "x = 60",
+        "tier2_op": ":",
+        "tier2_num": "3",
+        "tier2_formatted": "x = 60 : 3",
+        "final_calc": {
+          "top": "60",
+          "op": ":",
+          "bot": "3",
+          "expected": "20"
+        },
+        "formatted_final": "x = 20",
+        "dopamine_points": 40
+      },
+      {
+        "item_id": "d",
+        "label": "d)",
+        "sub_type": "paren_expr",
+        "equation": "(x + 25) : 3 = 40",
+        "step1_lead": "x + 25 = 40",
+        "step1_op": "×",
+        "step1_num": "3",
+        "step1_formatted": "x + 25 = 40 × 3",
+        "step1_calc": {
+          "top": "40",
+          "op": "×",
+          "bot": "3",
+          "expected": "120"
+        },
+        "step1_res_formatted": "x + 25 = 120",
+        "step2_lead": "x = 120",
+        "step2_op": "-",
+        "step2_num": "25",
+        "step2_formatted": "x = 120 - 25",
+        "final_calc": {
+          "top": "120",
+          "op": "-",
+          "bot": "25",
+          "expected": "95"
+        },
+        "formatted_final": "x = 95",
+        "dopamine_points": 40
+      }
+    ],
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Câu a)",
+        "action_verb": "Tìm",
+        "atomic_instruction": "Giải câu a: x + 354 = 820",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "x + 354 = 820 => x = ?"
+        },
+        "expected_answer": "466",
+        "duration_sec": 60,
+        "success_criteria": {
+          "expected_answer": "466"
+        }
+      },
+      {
+        "step_id": 2,
+        "badge": "Câu b)",
+        "action_verb": "Tìm",
+        "atomic_instruction": "Giải câu b: x + 125 = 450 - 150",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "x + 125 = 450 - 150 => x = ?"
+        },
+        "expected_answer": "175",
+        "duration_sec": 60,
+        "success_criteria": {
+          "expected_answer": "175"
+        }
+      },
+      {
+        "step_id": 3,
+        "badge": "Câu c)",
+        "action_verb": "Tìm",
+        "atomic_instruction": "Giải câu c: x × 3 + 45 = 105",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "x × 3 + 45 = 105 => x = ?"
+        },
+        "expected_answer": "20",
+        "duration_sec": 60,
+        "success_criteria": {
+          "expected_answer": "20"
+        }
+      },
+      {
+        "step_id": 4,
+        "badge": "Câu d)",
+        "action_verb": "Tìm",
+        "atomic_instruction": "Giải câu d: (x + 25) : 3 = 40",
+        "ui_type": "text_input",
+        "ui_data": {
+          "prompt_text": "(x + 25) : 3 = 40 => x = ?"
+        },
+        "expected_answer": "95",
+        "duration_sec": 60,
+        "success_criteria": {
+          "expected_answer": "95"
+        },
+        "is_final_step": true
+      }
+    ]
   }
 };

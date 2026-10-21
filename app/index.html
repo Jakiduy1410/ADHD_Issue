@@ -1012,13 +1012,17 @@
                   </div>
                 </div>
 
-                <!-- Switcher 2 Hướng: [Hướng 1: Kho Đề Xuất] vs [Hướng 2: Tự Giao] -->
-                <div class="grid grid-cols-2 gap-1.5 bg-slate-200/90 p-1 rounded-2xl text-xs font-black">
-                  <button id="p-mode-btn-catalog" onclick="parentSwitchAssignMode('catalog')" class="py-2 rounded-xl bg-white text-teal-800 shadow-xs transition flex items-center justify-center gap-1.5">
-                    <span>📚</span> <span>Kho Đề Xuất (Băm Sẵn)</span>
+                <!-- Switcher 3 Hướng: [Bài Học GDPT] vs [Nề Nếp Sinh Hoạt] vs [Tự Giao AI] -->
+                <div class="grid grid-cols-3 gap-1 bg-slate-200/90 p-1 rounded-2xl text-[11px] font-black">
+                  <button id="p-mode-btn-catalog" onclick="parentSwitchAssignMode('catalog')" class="py-2 rounded-xl bg-white text-teal-800 shadow-xs transition flex items-center justify-center gap-1 cursor-pointer">
+                    <span>📚</span> <span>Bài Học GDPT</span>
                   </button>
-                  <button id="p-mode-btn-custom" onclick="parentSwitchAssignMode('custom')" class="py-2 rounded-xl text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-1.5">
-                    <span>✍️</span> <span>Tự Giao (AI & Bằng Tay)</span>
+                  <button id="p-mode-btn-routines" onclick="parentSwitchAssignMode('routines')" class="py-2 rounded-xl text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-1 cursor-pointer relative">
+                    <span>🌟</span> <span>Nề Nếp Sống</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 absolute top-1 right-1"></span>
+                  </button>
+                  <button id="p-mode-btn-custom" onclick="parentSwitchAssignMode('custom')" class="py-2 rounded-xl text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-1 cursor-pointer">
+                    <span>✍️</span> <span>Tự Giao AI</span>
                   </button>
                 </div>
 
@@ -1078,7 +1082,60 @@
                 </div>
 
                 <!-- ============================================== -->
-                <!-- HƯỚNG 2: TỰ GIAO (AI TỰ BĂM & SOẠN BẰNG TAY ĐỘNG) -->
+                <!-- HƯỚNG 2: KHO NỀ NẾP & GIAO THÓI QUEN (ROUTINES) -->
+                <!-- ============================================== -->
+                <div id="p-view-routines" class="space-y-2.5 hidden">
+                  
+                  <!-- Banner giải thích khoa học ADHD -->
+                  <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-2.5 flex items-start gap-2 shadow-2xs">
+                    <span class="text-xl shrink-0">🌟</span>
+                    <div class="text-[10px] leading-tight text-amber-950">
+                      <strong class="font-black text-amber-900 block mb-0.5">Nề Nếp Sinh Hoạt Theo Timeline (1-Chạm Băm Sẵn)</strong>
+                      Giao thói quen với mốc giờ mở khóa định sẵn. Bé thao tác vi bước & chụp ảnh 1-chạm gửi vào Nhật Ký Mẹ, không tốn token AI!
+                    </div>
+                  </div>
+
+                  <!-- Filter Pills: Tất cả, Buổi Sáng, Buổi Chiều, Buổi Tối, Trước Ngủ -->
+                  <div class="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5 text-[10px] font-bold">
+                    <button onclick="parentFilterRoutines('all')" id="p-rt-all" class="px-2.5 py-1 rounded-xl bg-amber-500 text-amber-950 font-black shrink-0">Tất cả (12)</button>
+                    <button onclick="parentFilterRoutines('morning')" id="p-rt-morning" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0">🌅 Buổi Sáng (4)</button>
+                    <button onclick="parentFilterRoutines('afternoon')" id="p-rt-afternoon" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0">🌇 Tan Trường (3)</button>
+                    <button onclick="parentFilterRoutines('evening')" id="p-rt-evening" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0">🌙 Buổi Tối (3)</button>
+                    <button onclick="parentFilterRoutines('night')" id="p-rt-night" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0">✨ Trước Ngủ (2)</button>
+                  </div>
+
+                  <!-- Batch Selection Controls -->
+                  <div class="flex items-center justify-between bg-amber-50/70 border border-amber-200/60 px-3 py-1.5 rounded-xl text-[10px] font-bold">
+                    <span class="text-amber-900">Chọn thói quen để giao sang Đảo Thói Quen:</span>
+                    <div class="flex items-center gap-2">
+                      <button onclick="selectAllRoutines(true)" class="text-amber-700 hover:underline cursor-pointer">Chọn tất cả</button>
+                      <span class="text-amber-300">|</span>
+                      <button onclick="selectAllRoutines(false)" class="text-slate-500 hover:underline cursor-pointer">Bỏ chọn</button>
+                    </div>
+                  </div>
+
+                  <!-- Container Danh Sách 12 Thói Quen -->
+                  <div id="parent-routines-catalog-list" class="space-y-2 pr-0.5 max-h-[380px] overflow-y-auto no-scrollbar">
+                    <!-- Render động 12 thói quen từ window.routineDatabase -->
+                  </div>
+
+                  <!-- Sticky Action Bar Giao Thói Quen -->
+                  <div class="sticky bottom-0 bg-white/95 backdrop-blur-md border-2 border-amber-400 rounded-2xl p-3 shadow-xl z-20 space-y-2">
+                    <div class="flex items-center justify-between text-xs">
+                      <span class="font-bold text-slate-700">Đã chọn: <strong id="routine-selected-count" class="text-amber-700 font-black">4</strong> thói quen</span>
+                      <span id="routine-selected-meta" class="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                        4 thói quen • +95 ⭐ tổng thưởng
+                      </span>
+                    </div>
+                    <button onclick="dispatchSelectedRoutines()" class="w-full py-2.5 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 hover:from-amber-500 hover:to-orange-500 text-amber-950 font-black text-xs rounded-xl shadow-md transition active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer">
+                      <span>🚀 GIAO THÓI QUEN SANG ĐẢO CỦA LEO NGAY!</span>
+                    </button>
+                  </div>
+
+                </div>
+
+                <!-- ============================================== -->
+                <!-- HƯỚNG 3: TỰ GIAO (AI TỰ BĂM & SOẠN BẰNG TAY ĐỘNG) -->
                 <!-- ============================================== -->
                 <div id="p-view-custom" class="space-y-3 hidden">
                   
@@ -1211,6 +1268,58 @@
                     </div>
                   </div>
 
+                </div>
+
+              </section>
+
+              <!-- ----------------------------------------- -->
+              <!-- PARENT TAB 2B: NHẬT KÝ NỀ NẾP & MINH CHỨNG -->
+              <!-- ----------------------------------------- -->
+              <section id="parent-screen-routines" class="space-y-3 hidden">
+                
+                <!-- Header Tab Nhật Ký -->
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h2 class="font-bold text-slate-800 text-sm">Nhật Ký Nề Nếp & Thư Viện Minh Chứng</h2>
+                    <p class="text-[10px] text-slate-500">Giám sát tự giác không làm phiền • Bấm xem ảnh & thả tim ❤️</p>
+                  </div>
+                  <div class="bg-orange-50 border border-orange-200 px-2.5 py-1 rounded-xl text-right">
+                    <div class="text-[9px] font-bold text-orange-600">CHUỖI TỰ GIÁC</div>
+                    <div class="text-xs font-black text-orange-700">🔥 5 Ngày</div>
+                  </div>
+                </div>
+
+                <!-- Thẻ tiến độ hôm nay -->
+                <div class="bg-gradient-to-r from-teal-600 to-emerald-600 rounded-3xl p-3.5 text-white shadow-md space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-teal-100 uppercase tracking-wider">Tiến Độ Hôm Nay</span>
+                    <span id="p-audit-stat-rate" class="bg-white/20 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+                      2/4 Hoàn Thành (50%)
+                    </span>
+                  </div>
+                  <div class="flex items-baseline gap-2">
+                    <span id="p-audit-stat-count" class="text-2xl font-black">2</span>
+                    <span class="text-xs text-teal-100">/ 4 thói quen theo timeline</span>
+                  </div>
+                  <div class="w-full bg-teal-950/30 rounded-full h-2 overflow-hidden">
+                    <div id="p-audit-progress-bar" class="bg-amber-300 h-full rounded-full transition-all duration-500" style="width: 50%;"></div>
+                  </div>
+                  <p class="text-[10px] text-teal-100 leading-tight pt-0.5">
+                    💡 Con đã tự chụp ảnh xác nhận. Mẹ bấm vào từng mục để xem ảnh và thả tim khích lệ nhé!
+                  </p>
+                </div>
+
+                <!-- Nút tắt: Giao Thêm Thói Quen Mới -->
+                <div class="flex items-center justify-between px-1">
+                  <span class="text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">Timeline Hoạt Động Của Con</span>
+                  <button onclick="parentJumpToAssignRoutines()" class="text-[10px] font-black text-amber-700 bg-amber-100 hover:bg-amber-200 px-2 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer">
+                    <span>➕</span> <span>Giao thêm thói quen</span>
+                  </button>
+                </div>
+
+                <!-- Danh sách Timeline Items -->
+                <div id="parent-audit-timeline-list" class="space-y-2">
+                  <!-- Render danh sách timeline thói quen đã giao -->
                 </div>
 
               </section>
@@ -1609,7 +1718,15 @@
       btn.innerHTML = "<span class='text-base'>💖</span> <span>THẢ TIM KHEN NGỢI (+5⭐)</span>";
       btn.disabled = false;
 
-      if (key === 'bed') {
+      const routines = window.routineDatabase || {};
+      const rt = routines[key] || (key === 'bed' ? routines['routine_morning_bed'] : key === 'drop' ? routines['routine_afterschool_drop'] : routines['routine_clean_desk']);
+
+      if (rt) {
+        emoji.innerText = `${rt.icon || '📸'}✨`;
+        caption.innerText = `${rt.title} đã hoàn thành!`;
+        sub.innerText = `Chụp bởi Bé Leo • Hoàn thành lúc ${rt.slot_time || '19:00'}`;
+        praise.innerText = `Leo đã tự giác thực hiện '${rt.title}', mẹ rất tự hào về con!`;
+      } else if (key === 'bed') {
         emoji.innerText = "🛏️✨";
         caption.innerText = "Giường ngủ được giũ phẳng và xếp gối";
         sub.innerText = "Chụp bởi Bé Leo • Hoàn thành lúc 06:45";
@@ -1628,6 +1745,111 @@
 
       modal.classList.remove('hidden');
       modal.classList.add('flex');
+    };
+
+    window.renderChildRoutineRoadmapFromTasks = function(routinesList) {
+      const container = document.getElementById('child-routine-map-container');
+      if (!container) return;
+
+      const routines = routinesList || appState.childRoutineRoadmap || [];
+      if (!Array.isArray(routines) || routines.length === 0) return;
+
+      let html = `
+        <svg class="absolute inset-0 w-full h-[620px] pointer-events-none" viewBox="0 0 350 620" fill="none">
+          <path d="M 175 580 C 80 500, 80 430, 175 370 C 270 310, 270 230, 175 160 C 90 90, 260 40, 175 25" stroke="#FDE68A" stroke-width="12" stroke-linecap="round" stroke-dasharray="14 14"/>
+        </svg>
+
+        <div onclick="openRoutineIslandDetail('treasure')" class="relative z-10 flex flex-col items-center cursor-pointer transition hover:scale-105 pt-2">
+          <div class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-amber-300 to-yellow-400 border-b-4 border-amber-600 flex items-center justify-center text-3xl shadow-lg animate-pulse-glow">
+            🏆
+          </div>
+          <span class="text-[10px] font-black text-amber-900 mt-1 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-full shadow-xs">
+            RƯƠNG HOÀNG KIM 🔒
+          </span>
+        </div>
+      `;
+
+      const reversed = [...routines].reverse();
+      const offsets = ['translate-x-12', '-translate-x-10', 'translate-x-10', '-translate-x-12'];
+
+      reversed.forEach((rt, revIdx) => {
+        const origIdx = routines.length - 1 - revIdx;
+        const offsetClass = offsets[revIdx % offsets.length];
+        
+        const isDone = (origIdx < 2 && routines.length >= 3);
+        const isActive = (origIdx === 2 || (routines.length < 3 && origIdx === 0));
+        const isLocked = !isDone && !isActive;
+
+        if (isActive) {
+          html += `
+            <div id="node-routine-island-${origIdx+1}" class="relative z-20 flex flex-col items-center ${offsetClass}">
+              <div class="absolute -left-16 -top-5 flex flex-col items-center animate-milo">
+                <div class="bg-white border-2 border-amber-400 px-2.5 py-1 rounded-2xl rounded-br-none shadow-md text-[10px] font-extrabold text-amber-900 mb-1 max-w-[120px] text-center leading-tight">
+                  Cùng làm nhận ${rt.reward || 30} sao nào! ✨
+                </div>
+                <div class="w-11 h-11 rounded-2xl bg-amber-400 text-amber-950 flex items-center justify-center text-2xl shadow-md">
+                  🦁
+                </div>
+              </div>
+
+              <div onclick="startChildRoutineTask('${rt.id}')" class="w-22 h-22 rounded-[32px] btn-3d-yellow island-active-glow flex flex-col items-center justify-center text-slate-900 shadow-xl ring-6 ring-amber-200 cursor-pointer hover:scale-105 active:scale-95 transition">
+                <span class="text-3xl mb-0.5">${rt.icon || '🌟'}</span>
+                <span class="text-[9px] font-black uppercase tracking-wider bg-black/15 text-amber-950 px-2 py-0.5 rounded-full">+${rt.reward || 30} ⭐</span>
+              </div>
+
+              <div class="mt-1.5 text-center max-w-[200px]">
+                <span class="bg-amber-500 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow-xs">
+                  ĐANG MỞ CỬA 🚀
+                </span>
+                <h4 class="font-black text-xs text-slate-900 mt-0.5">${rt.title}</h4>
+                <span class="text-[9px] font-extrabold text-orange-600 bg-orange-100 px-1.5 py-0.2 rounded-md inline-block mt-0.5">
+                  📸 Có chụp ảnh minh chứng
+                </span>
+              </div>
+            </div>
+          `;
+        } else if (isDone) {
+          html += `
+            <div onclick="openRoutineIslandDetail('${rt.id}')" class="relative z-10 flex flex-col items-center ${offsetClass} cursor-pointer transition hover:scale-105">
+              <div class="w-16 h-16 rounded-2xl bg-emerald-500 text-white border-b-4 border-emerald-700 flex flex-col items-center justify-center shadow-md relative">
+                <span class="text-2xl">${rt.icon || '✓'}</span>
+                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-white text-emerald-600 text-xs font-black flex items-center justify-center shadow">✓</span>
+                <span class="text-[8px] font-black text-emerald-100 mt-0.5">+${rt.reward || 20} ⭐</span>
+              </div>
+              <div class="text-center mt-1">
+                <span class="text-[10px] font-black text-slate-800 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-xs block">
+                  ${rt.title}
+                </span>
+                <span class="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded-full inline-block mt-0.5">
+                  ✓ Đã xong (Xem ảnh)
+                </span>
+              </div>
+            </div>
+          `;
+        } else {
+          html += `
+            <div onclick="alert('🔒 Hoạt động này tự mở lúc ${rt.slot_time || '21:00'}! Milo sẽ nhắc con nhé!')" class="relative z-10 flex flex-col items-center ${offsetClass} cursor-pointer transition hover:scale-105">
+              <div class="w-18 h-18 rounded-[28px] bg-slate-100 border-2 border-slate-300 border-b-4 border-slate-400 flex flex-col items-center justify-center shadow-md relative p-2">
+                <span class="text-3xl opacity-50">${rt.icon || '🔒'}</span>
+                <span class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-slate-800 text-white text-[11px] flex items-center justify-center shadow-md border border-slate-600">
+                  🔒
+                </span>
+                <span class="text-[9px] font-black text-slate-500 mt-0.5">+${rt.reward || 25} ⭐</span>
+              </div>
+              <div class="text-center mt-1">
+                <span class="text-[10px] font-black text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-xs block">
+                  ${rt.title}
+                </span>
+                <span class="text-[9px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.2 rounded-full inline-block mt-0.5">
+                  🔒 Khóa • Mở lúc ${rt.slot_time || '21:00'}
+                </span>
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      container.innerHTML = html;
     };
 
     window.parentClosePhotoModal = function() {

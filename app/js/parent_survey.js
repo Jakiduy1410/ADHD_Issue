@@ -47,21 +47,281 @@
     function parentSwitchAssignMode(mode) {
       playSfx('tap');
       const btnCat = document.getElementById('p-mode-btn-catalog');
+      const btnRt = document.getElementById('p-mode-btn-routines');
       const btnCus = document.getElementById('p-mode-btn-custom');
       const viewCat = document.getElementById('p-view-catalog');
+      const viewRt = document.getElementById('p-view-routines');
       const viewCus = document.getElementById('p-view-custom');
 
+      const allBtns = [btnCat, btnRt, btnCus];
+      allBtns.forEach(b => {
+        if (b) b.className = "py-2 rounded-xl text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-1 cursor-pointer";
+      });
+
+      if (viewCat) viewCat.classList.add('hidden');
+      if (viewRt) viewRt.classList.add('hidden');
+      if (viewCus) viewCus.classList.add('hidden');
+
       if (mode === 'catalog') {
-        btnCat.className = "py-2 rounded-xl bg-white text-teal-800 shadow-xs transition flex items-center justify-center gap-1.5";
-        btnCus.className = "py-2 rounded-xl text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-1.5";
-        viewCat.classList.remove('hidden');
-        viewCus.classList.add('hidden');
+        if (btnCat) btnCat.className = "py-2 rounded-xl bg-white text-teal-800 shadow-xs transition flex items-center justify-center gap-1 cursor-pointer font-black";
+        if (viewCat) viewCat.classList.remove('hidden');
+      } else if (mode === 'routines') {
+        if (btnRt) btnRt.className = "py-2 rounded-xl bg-white text-amber-900 shadow-xs transition flex items-center justify-center gap-1 cursor-pointer font-black";
+        if (viewRt) viewRt.classList.remove('hidden');
+        renderParentRoutinesCatalog();
       } else {
-        btnCus.className = "py-2 rounded-xl bg-white text-teal-800 shadow-xs transition flex items-center justify-center gap-1.5";
-        btnCat.className = "py-2 rounded-xl text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-1.5";
-        viewCus.classList.remove('hidden');
-        viewCat.classList.add('hidden');
+        if (btnCus) btnCus.className = "py-2 rounded-xl bg-white text-indigo-800 shadow-xs transition flex items-center justify-center gap-1 cursor-pointer font-black";
+        if (viewCus) viewCus.classList.remove('hidden');
       }
+    }
+
+    // ============================================================
+    // QUẢN LÝ KHO THÓI QUEN SINH HOẠT & GIAO NỀ NẾP (ROUTINES)
+    // ============================================================
+    function renderParentRoutinesCatalog() {
+      const container = document.getElementById('parent-routines-catalog-list');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (!appState.selectedRoutineIds) {
+        appState.selectedRoutineIds = new Set(['routine_morning_bed', 'routine_afterschool_drop', 'routine_clean_desk', 'routine_night_teeth']);
+      }
+      const filter = appState.routineFilter || 'all';
+      const routines = window.routineDatabase || {};
+
+      const items = Object.values(routines);
+      items.forEach(rt => {
+        if (!rt || !rt.id) return;
+        if (filter !== 'all' && rt.timeline_slot !== filter) return;
+
+        const isChecked = appState.selectedRoutineIds.has(rt.id);
+        const card = document.createElement('div');
+        card.className = `p-3 rounded-2xl border transition ${
+          isChecked ? 'bg-amber-50/80 border-amber-300 shadow-2xs' : 'bg-white border-slate-200 hover:border-slate-300'
+        }`;
+
+        let slotBadge = "";
+        if (rt.timeline_slot === 'morning') slotBadge = `<span class="bg-amber-100 text-amber-800 text-[9px] font-black px-2 py-0.5 rounded-md">🌅 Sáng • ${rt.slot_time}</span>`;
+        else if (rt.timeline_slot === 'afternoon') slotBadge = `<span class="bg-orange-100 text-orange-800 text-[9px] font-black px-2 py-0.5 rounded-md">🌇 Chiều • ${rt.slot_time}</span>`;
+        else if (rt.timeline_slot === 'evening') slotBadge = `<span class="bg-sky-100 text-sky-800 text-[9px] font-black px-2 py-0.5 rounded-md">🌙 Tối • ${rt.slot_time}</span>`;
+        else slotBadge = `<span class="bg-indigo-100 text-indigo-800 text-[9px] font-black px-2 py-0.5 rounded-md">✨ Ngủ • ${rt.slot_time}</span>`;
+
+        card.innerHTML = `
+          <div class="flex items-start gap-2.5">
+            <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleRoutineItem('${rt.id}', this.checked)" class="mt-1 w-4 h-4 rounded text-amber-500 focus:ring-amber-400 cursor-pointer accent-amber-500 shrink-0">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap mb-1">
+                ${slotBadge}
+                <span class="text-[9px] font-extrabold text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">+${rt.reward} ⭐</span>
+              </div>
+              <h4 class="font-extrabold text-xs text-slate-900 leading-snug flex items-center gap-1">
+                <span>${rt.icon || '🌟'}</span>
+                <span>${rt.title}</span>
+              </h4>
+              <p class="text-[10px] text-slate-500 mt-1 leading-tight">
+                ${rt.steps ? rt.steps.length : 3} vi bước atomic • 📸 Chụp ảnh minh chứng
+              </p>
+            </div>
+            <button onclick="parentOpenPhotoModal('${rt.id}')" title="Xem trước minh chứng" class="text-[10px] font-bold text-amber-700 bg-amber-100 hover:bg-amber-200 px-2 py-1 rounded-lg shrink-0 transition flex items-center gap-0.5 cursor-pointer">
+              <span>📷</span> <span>Xem</span>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      updateRoutineSelectedMeta();
+    }
+
+    function parentFilterRoutines(slot) {
+      playSfx('tap');
+      appState.routineFilter = slot;
+      ['all', 'morning', 'afternoon', 'evening', 'night'].forEach(s => {
+        const btn = document.getElementById(`p-rt-${s}`);
+        if (!btn) return;
+        if (s === slot) {
+          btn.className = "px-2.5 py-1 rounded-xl bg-amber-500 text-amber-950 font-black shrink-0 shadow-2xs";
+        } else {
+          btn.className = "px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0";
+        }
+      });
+      renderParentRoutinesCatalog();
+    }
+
+    function toggleRoutineItem(id, isChecked) {
+      if (!appState.selectedRoutineIds) {
+        appState.selectedRoutineIds = new Set();
+      }
+      if (isChecked) {
+        appState.selectedRoutineIds.add(id);
+      } else {
+        appState.selectedRoutineIds.delete(id);
+      }
+      updateRoutineSelectedMeta();
+      renderParentRoutinesCatalog();
+    }
+
+    function selectAllRoutines(selectAll) {
+      playSfx('tap');
+      if (!appState.selectedRoutineIds) {
+        appState.selectedRoutineIds = new Set();
+      }
+      const routines = window.routineDatabase || {};
+      if (selectAll) {
+        Object.keys(routines).forEach(id => appState.selectedRoutineIds.add(id));
+      } else {
+        appState.selectedRoutineIds.clear();
+      }
+      updateRoutineSelectedMeta();
+      renderParentRoutinesCatalog();
+    }
+
+    function updateRoutineSelectedMeta() {
+      const countEl = document.getElementById('routine-selected-count');
+      const metaEl = document.getElementById('routine-selected-meta');
+      if (!countEl || !metaEl) return;
+
+      const count = appState.selectedRoutineIds ? appState.selectedRoutineIds.size : 0;
+      countEl.innerText = count;
+
+      let totalStars = 0;
+      const routines = window.routineDatabase || {};
+      if (appState.selectedRoutineIds) {
+        appState.selectedRoutineIds.forEach(id => {
+          if (routines[id]) totalStars += (routines[id].reward || 20);
+        });
+      }
+
+      metaEl.innerText = `${count} thói quen • +${totalStars} ⭐ tổng thưởng`;
+    }
+
+    function dispatchSelectedRoutines() {
+      playSfx('bell');
+      if (!appState.selectedRoutineIds || appState.selectedRoutineIds.size === 0) {
+        alert("Vui lòng tick chọn ít nhất 1 thói quen để giao cho con!");
+        return;
+      }
+
+      const routines = window.routineDatabase || {};
+      const selected = Array.from(appState.selectedRoutineIds)
+        .map(id => routines[id])
+        .filter(Boolean);
+
+      selected.sort((a, b) => (a.slot_time || '00:00').localeCompare(b.slot_time || '00:00'));
+
+      appState.childRoutineRoadmap = selected;
+
+      const bus = window.miloBus || window.syncBus;
+      if (bus && typeof bus.broadcast === 'function') {
+        bus.broadcast('ROUTINE_ASSIGN_BATCH', {
+          routines: selected,
+          timestamp: Date.now()
+        });
+      }
+
+      if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
+        window.renderChildRoutineRoadmapFromTasks(selected);
+      }
+
+      renderParentAuditTimeline();
+
+      showToast("Đã Giao Nề Nếp", `Mẹ vừa giao ${selected.length} thói quen nề nếp sang Đảo Thói Quen của Leo!`, "🌟");
+    }
+
+    function parentJumpToAssignRoutines() {
+      parentSwitchTab('tasks');
+      parentSwitchAssignMode('routines');
+    }
+
+    function renderParentAuditTimeline() {
+      const container = document.getElementById('parent-audit-timeline-list');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const routines = window.routineDatabase || {};
+      const activeList = (appState.childRoutineRoadmap && appState.childRoutineRoadmap.length > 0)
+        ? appState.childRoutineRoadmap
+        : [routines['routine_morning_bed'], routines['routine_afterschool_drop'], routines['routine_clean_desk'], routines['routine_night_teeth']].filter(Boolean);
+
+      let completedCount = 0;
+
+      activeList.forEach((rt, idx) => {
+        if (!rt) return;
+        const card = document.createElement('div');
+
+        const isDone = (idx < 2);
+        const isCurrent = (idx === 2);
+        const isLocked = (idx > 2);
+
+        if (isDone) completedCount++;
+
+        if (isDone) {
+          card.className = "bg-white rounded-2xl p-3 border border-slate-200 hover:border-teal-400 shadow-2xs flex items-center justify-between cursor-pointer transition active:scale-98";
+          card.onclick = () => parentOpenPhotoModal(rt.id);
+          card.innerHTML = `
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shrink-0">
+                ${rt.icon || '🛏️'}
+              </div>
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <span class="font-extrabold text-xs text-slate-800">${rt.title}</span>
+                  <span class="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded">✓ Xong</span>
+                </div>
+                <span class="text-[10px] text-slate-400 font-medium">Hoàn thành lúc ${rt.slot_time || '07:00'} • +${rt.reward || 20}⭐</span>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-xl bg-teal-50 text-teal-700 text-[10px] font-black border border-teal-200 flex items-center gap-1">
+              <span>📷</span> <span>Xem Ảnh</span>
+            </span>
+          `;
+        } else if (isCurrent) {
+          card.className = "bg-amber-50/70 rounded-2xl p-3 border-2 border-dashed border-amber-300 flex items-center justify-between";
+          card.innerHTML = `
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl shrink-0">
+                ${rt.icon || '🧹'}
+              </div>
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <span class="font-extrabold text-xs text-amber-950">${rt.title}</span>
+                  <span class="text-[9px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.2 rounded animate-pulse">Đang làm • ${rt.slot_time || '19:00'}</span>
+                </div>
+                <span class="text-[10px] text-amber-800 font-medium">Bé đang thực hiện bên Đảo Thói Quen...</span>
+              </div>
+            </div>
+            <span class="text-xs">⏳</span>
+          `;
+        } else {
+          card.className = "bg-slate-100/80 rounded-2xl p-3 border border-slate-200 opacity-75 flex items-center justify-between";
+          card.innerHTML = `
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-slate-200 text-slate-400 flex items-center justify-center text-xl shrink-0">
+                ${rt.icon || '🔒'}
+              </div>
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <span class="font-extrabold text-xs text-slate-600">${rt.title}</span>
+                  <span class="text-[9px] font-bold text-slate-400 bg-slate-200 px-1.5 py-0.2 rounded">Chưa đến giờ</span>
+                </div>
+                <span class="text-[10px] text-slate-400 font-medium">Khóa timeline • Tự mở lúc ${rt.slot_time || '21:00'}</span>
+              </div>
+            </div>
+            <span class="text-xs text-slate-400">🔒</span>
+          `;
+        }
+        container.appendChild(card);
+      });
+
+      const rateEl = document.getElementById('p-audit-stat-rate');
+      const countEl = document.getElementById('p-audit-stat-count');
+      const barEl = document.getElementById('p-audit-progress-bar');
+      const total = activeList.length;
+      const pct = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+
+      if (rateEl) rateEl.innerText = `${completedCount}/${total} Hoàn Thành (${pct}%)`;
+      if (countEl) countEl.innerText = completedCount;
+      if (barEl) barEl.style.width = `${pct}%`;
     }
 
     function renderParentCatalogList() {
@@ -317,6 +577,9 @@
       });
       if (tabName === 'rewards') {
         document.getElementById('p-reward-dot').classList.add('hidden');
+      }
+      if (tabName === 'routines') {
+        renderParentAuditTimeline();
       }
     }
 
@@ -792,3 +1055,13 @@
       window.parentClearChildRoadmap = parentClearChildRoadmap;
     }
 
+
+// Global exports for routines management
+window.parentSwitchAssignMode = parentSwitchAssignMode;
+window.renderParentRoutinesCatalog = renderParentRoutinesCatalog;
+window.parentFilterRoutines = parentFilterRoutines;
+window.toggleRoutineItem = toggleRoutineItem;
+window.selectAllRoutines = selectAllRoutines;
+window.dispatchSelectedRoutines = dispatchSelectedRoutines;
+window.renderParentAuditTimeline = renderParentAuditTimeline;
+window.parentJumpToAssignRoutines = parentJumpToAssignRoutines;

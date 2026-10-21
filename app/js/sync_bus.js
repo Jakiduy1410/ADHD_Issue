@@ -611,5 +611,19 @@
           triggerRoutineHeartCelebration(payload.praise_message || "Mẹ rất thích sự tự giác của con! Thưởng thêm +5⭐!");
         }
       });
+
+      // 13. ROUTINE_ASSIGN_BATCH: Parent assigns routines -> Child routine island updates
+      bus.subscribe('ROUTINE_ASSIGN_BATCH', (payload) => {
+        if (payload && Array.isArray(payload.routines)) {
+          if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
+            window.renderChildRoutineRoadmapFromTasks(payload.routines);
+          }
+          if (typeof showToast === 'function') {
+            showToast("Nề Nếp Mới!", `Mẹ vừa cập nhật ${payload.routines.length} thói quen mới trên Đảo Thói Quen!`, "🌟");
+          }
+          const alertBadge = document.getElementById('badge-routine-alert');
+          if (alertBadge) alertBadge.classList.remove('hidden');
+        }
+      });
     }
 

@@ -173,8 +173,12 @@
       const stepData = task.steps[stepIdx];
 
       const btnNext = document.getElementById('child-btn-next-step');
-      btnNext.disabled = true;
-      btnNext.classList.add('btn-disabled');
+      if (btnNext) {
+        btnNext.disabled = true;
+        btnNext.classList.add('btn-disabled');
+        btnNext.style.display = '';
+        btnNext.innerHTML = '<span>TIẾP TỤC</span> <span class="text-xs">➔</span>';
+      }
 
       // Visual Theme (R5): Distinct visual identity for routines vs study tasks
       const isChore = (task && (task.cat === 'chore' || task.cat === 'routine'));
@@ -247,7 +251,7 @@
 
       if (stepData.type === 'chore_pens') {
         stage.innerHTML = `
-          <div class="relative bg-amber-50/70 border-2 border-dashed border-amber-300 rounded-2xl p-4 min-h-[200px] flex flex-col justify-between">
+          <div class="relative bg-amber-50/70 border border-amber-200 rounded-2xl p-4 min-h-[200px] flex flex-col justify-between">
             <div class="flex justify-between items-center text-xs font-black text-amber-900 mb-1">
               <span>Góc bàn học của Leo:</span>
               <span id="pen-counter" class="bg-amber-200 px-2 py-0.5 rounded-full font-mono">0/3 cây bút</span>
@@ -274,7 +278,7 @@
 
       } else if (stepData.type === 'chore_trash') {
         stage.innerHTML = `
-          <div class="bg-rose-50/70 border-2 border-dashed border-rose-300 rounded-2xl p-4 min-h-[200px] flex flex-col items-center justify-center gap-3">
+          <div class="bg-rose-50/70 border border-rose-200 rounded-2xl p-4 min-h-[200px] flex flex-col items-center justify-center gap-3">
             <div id="trash-items" class="flex items-center gap-3">
               <span class="text-4xl animate-bounce">📄</span>
               <span class="text-3xl opacity-75">🗑️</span>
@@ -288,7 +292,7 @@
 
       } else if (stepData.type === 'chore_books') {
         stage.innerHTML = `
-          <div class="bg-emerald-50/70 border-2 border-dashed border-emerald-300 rounded-2xl p-4 min-h-[200px] flex flex-col items-center justify-center gap-3">
+          <div class="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 min-h-[200px] flex flex-col items-center justify-center gap-3">
             <div id="books-scattered" class="flex items-center gap-2">
               <span class="text-4xl animate-bounce">📚</span>
               <span class="text-3xl opacity-75">📖</span>
@@ -303,7 +307,7 @@
 
       } else if (stepData.type === 'chore_wipe') {
         stage.innerHTML = `
-          <div class="bg-sky-50/70 border-2 border-dashed border-sky-300 rounded-2xl p-4 min-h-[200px] flex flex-col items-center justify-center gap-3">
+          <div class="bg-sky-50/70 border border-sky-200 rounded-2xl p-4 min-h-[200px] flex flex-col items-center justify-center gap-3">
             <div id="desk-surface" class="w-20 h-20 rounded-3xl bg-amber-100/80 border-2 border-amber-300 flex items-center justify-center text-4xl shadow-inner transition duration-500">
               💨
             </div>
@@ -925,6 +929,10 @@
 
       } else if (stepData.ui_type === 'photo_proof' || stepData.type === 'photo_proof') {
         // Routine Milestone: Instant Auto-approval Photo Proof
+        // Khi đến bước chụp ảnh thì mới hiện camera preview & nút chụp ảnh
+        if (btnNext) {
+          btnNext.style.display = 'none';
+        }
         stage.innerHTML = `
           <div class="space-y-3 p-1">
             <div class="text-center">
@@ -956,19 +964,51 @@
             <p class="text-[10px] text-center text-slate-400 font-bold">1 chạm tự động duyệt ngay • Con không cần chờ đợi</p>
           </div>
         `;
-      } else {
-        // Generic Micro-Task Stage (Cho các bài GDPT Tiếng Việt, Tiếng Anh, AI hoặc Soạn bằng tay)
+      } else if (stepData.ui_type === 'checkbox' || stepData.type === 'checkbox' || isChore) {
+        // CÁC BƯỚC NỀ NẾP SINH HOẠT THỰC TẾ:
+        // Thiết kế tối giản, sạch sẽ (Clutter-free cho ADHD):
+        // Tuyệt đối KHÔNG có khung viền nét đứt, KHÔNG lặp lại tiêu đề, KHÔNG có nút bấm trùng lặp
+        const hintText = (stepData.hints && stepData.hints[0]) ? stepData.hints[0] : 'Con hoàn thành động tác thực tế rồi bấm nút bên dưới nhé! ✨';
+        const icon = task.icon || '🦁';
+
         stage.innerHTML = `
-          <div class="bg-teal-50/70 border-2 border-dashed border-teal-300 rounded-2xl p-4 min-h-[200px] flex flex-col items-center justify-center gap-3">
-            <div class="w-14 h-14 rounded-2xl bg-teal-100 border border-teal-200 flex items-center justify-center text-3xl shadow-sm">
-              🎯
+          <div class="bg-amber-50/50 border border-amber-200/80 rounded-3xl p-6 min-h-[160px] flex flex-col items-center justify-center gap-3 text-center shadow-xs my-auto">
+            <div class="w-16 h-16 rounded-2xl bg-white border border-amber-200 flex items-center justify-center text-3xl shadow-xs">
+              ${icon}
             </div>
-            <p class="text-xs font-bold text-slate-700 text-center px-2 leading-relaxed">${stepData.text || stepData.atomic_instruction}</p>
-            <button onclick="completeGenericStep(this)" class="btn-3d-green px-5 py-3 rounded-2xl font-black text-xs text-white shadow-md active:scale-95 transition">
-              ✅ BÉ ĐÃ LÀM XONG BƯỚC NÀY
-            </button>
+            <p class="text-xs font-bold text-amber-950 px-4 leading-relaxed max-w-xs">
+              ${hintText}
+            </p>
           </div>
         `;
+
+        if (btnNext) {
+          btnNext.style.display = '';
+          btnNext.disabled = false;
+          btnNext.classList.remove('btn-disabled');
+          btnNext.innerHTML = `<span>✅ TIẾP TỤC BƯỚC SAU</span> <span class="text-xs">➔</span>`;
+        }
+      } else {
+        // Generic Micro-Task Stage (Cho các bài GDPT Tiếng Việt, Tiếng Anh khác)
+        // Giao diện phẳng sạch sẽ, viền bo liền mượt mà, không dùng hộp nét đứt
+        const hintText = (stepData.hints && stepData.hints[0]) ? stepData.hints[0] : 'Con hoàn thành bước này rồi bấm tiếp tục nhé!';
+        stage.innerHTML = `
+          <div class="bg-teal-50/50 border border-teal-200 rounded-3xl p-6 min-h-[160px] flex flex-col items-center justify-center gap-3 text-center shadow-xs my-auto">
+            <div class="w-16 h-16 rounded-2xl bg-white border border-teal-200 flex items-center justify-center text-3xl shadow-xs">
+              🎯
+            </div>
+            <p class="text-xs font-bold text-teal-950 px-4 leading-relaxed max-w-xs">
+              ${hintText}
+            </p>
+          </div>
+        `;
+
+        if (btnNext) {
+          btnNext.style.display = '';
+          btnNext.disabled = false;
+          btnNext.classList.remove('btn-disabled');
+          btnNext.innerHTML = `<span>✅ TIẾP TỤC</span> <span class="text-xs">➔</span>`;
+        }
       }
     }
 

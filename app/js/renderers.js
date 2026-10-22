@@ -1098,20 +1098,16 @@
             <div class="w-16 h-16 rounded-2xl bg-white border border-amber-200 flex items-center justify-center text-3xl shadow-xs">
               ${icon}
             </div>
-            <div class="space-y-1">
-              <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+            <div class="space-y-1.5">
+              <span class="text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 shadow-xs">
                 ${deviceName} • ${minutes} phút
               </span>
-              <h4 class="text-sm font-black text-amber-950">${dishName}</h4>
+              <h4 class="text-base font-black text-amber-950 mt-1">${dishName}</h4>
             </div>
-            <p class="text-xs font-bold text-slate-600 px-3 leading-relaxed">
-              ${stepData.hints && stepData.hints[0] ? stepData.hints[0] : 'Đặt món vào và bấm chạy, hệ thống sẽ đếm ngầm cho con!'}
-            </p>
-            <button onclick="startPipelineTimerAndNext(this, '${device}', '${dishName}', ${durationSec})" class="w-full max-w-[260px] py-3.5 btn-3d-amber text-slate-900 font-black text-xs rounded-2xl shadow-md active:scale-95 transition flex items-center justify-center gap-2 cursor-pointer">
+            <button onclick="startPipelineTimerAndNext(this, '${device}', '${dishName}', ${durationSec})" class="w-full max-w-[260px] py-3.5 btn-3d-amber text-slate-900 font-black text-xs rounded-2xl shadow-md active:scale-95 transition flex items-center justify-center gap-2 cursor-pointer mt-1">
               <span>⏱️</span>
               <span>BẮT ĐẦU CHẠY &amp; SANG BƯỚC TIẾP</span>
             </button>
-            <span class="text-[10px] font-bold text-slate-400">Thiết bị tự ngắt • Bé làm tiếp bước sau không sợ cháy</span>
           </div>
         `;
         if (btnNext) {
@@ -1794,6 +1790,38 @@
       const routineTitle = (task && task.title) ? task.title : 'Nề nếp sinh hoạt';
       const routineId = (task && task.id) ? task.id : 'routine_clean_desk';
       const reward = (task && task.reward) || 30;
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      // 1. DẬP TẮT TOÀN BỘ TIMER LÒ VI SÓNG / BẾP ĐANG CHẠY CHO BÀI NÀY
+      if (Array.isArray(window.miloActiveTimers)) {
+        window.miloActiveTimers.forEach(t => {
+          if (!t.taskId || t.taskId === routineId || (appState.activeTask && t.taskId === appState.activeTask.id)) {
+            t.isCompleted = true;
+            t.endTime = Date.now();
+          }
+        });
+      }
+      const liveApplianceTxt = document.getElementById('live-appliance-timer-text');
+      if (liveApplianceTxt) {
+        liveApplianceTxt.innerHTML = `<span class="text-emerald-700 font-black">🔔 Món ăn đã hoàn tất trên đĩa!</span>`;
+      }
+      const liveApplianceCard = document.getElementById('live-appliance-card');
+      if (liveApplianceCard) {
+        liveApplianceCard.className = "w-full max-w-[280px] mx-auto mb-2 bg-emerald-100 border-2 border-emerald-300 rounded-2xl p-2.5 flex items-center justify-between shadow-xs";
+      }
+
+      // 2. GHI NHẬN VÀO APPSTATE & MINH CHỨNG THỰC TẾ
+      if (!appState.completedRoutineIds) appState.completedRoutineIds = new Set();
+      appState.completedRoutineIds.add(routineId);
+      if (!appState.routinePhotoProofs) appState.routinePhotoProofs = {};
+      appState.routinePhotoProofs[routineId] = {
+        routine_id: routineId,
+        routine_title: routineTitle,
+        photo_tag: (task && task.target_photo_tag) || 'PHOTO.JPG',
+        timestamp: timeStr,
+        icon: (task && task.icon) || '📸',
+        reward: reward
+      };
 
       // Broadcast sự kiện ROUTINE_PHOTO_SUBMITTED qua SyncBus
       const bus = window.miloBus || window.syncBus;

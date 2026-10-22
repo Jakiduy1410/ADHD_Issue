@@ -25,6 +25,7 @@ logger = logging.getLogger(__name__)
 
 # Model rẻ và nhẹ nhất trong họ Gemini hiện nay
 CHEAPEST_MODEL = "gemini-3.5-flash-lite"
+FALLBACK_MODEL = "gemini-3.5-flash"
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 # --- SCHEMA CHO STAGE 1: CLASSIFIER ---
@@ -471,10 +472,11 @@ LƯU Ý QUAN TRỌNG:
         response = None
         last_err = None
         for attempt in range(3):
+            active_model = CHEAPEST_MODEL if attempt == 0 else FALLBACK_MODEL
             try:
                 response = await asyncio.to_thread(
                     client.models.generate_content,
-                    model=CHEAPEST_MODEL,
+                    model=active_model,
                     contents=user_prompt,
                     config=types.GenerateContentConfig(
                         system_instruction=specialist_prompt,

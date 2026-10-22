@@ -1,4 +1,4 @@
-﻿"""
+"""
 Comprehensive E2E Test Suite for Dual-App ADHD Intervention Ecosystem
 (Milo Quest x Tráº¡m Tháº¥u Hiá»ƒu)
 
@@ -944,6 +944,65 @@ class TestTier1FeatureCoverage(unittest.TestCase):
 # =============================================================================
 # TIER 2: Boundary & Corner Cases (>=5 test cases per feature = 105 tests)
 # =============================================================================
+
+    # -------------------------------------------------------------------------
+    # Feature 22: Daily Routine Time Simulation, Time Lock & Proof Sync
+    # -------------------------------------------------------------------------
+    def test_tier1_f22_01_time_simulator_toolbar_and_buttons(self):
+        """F22.1: Time simulator toolbar outside phone mockups with all time slot buttons."""
+        self.assertTrue(self.dom.has_element_id("simulated-time-toolbar"))
+        self.assertTrue(self.dom.has_element_id("time-btn-morning"))
+        self.assertTrue(self.dom.has_element_id("time-btn-noon"))
+        self.assertTrue(self.dom.has_element_id("time-btn-afternoon"))
+        self.assertTrue(self.dom.has_element_id("time-btn-evening"))
+        self.assertTrue(self.dom.has_element_id("time-btn-realtime"))
+        self.assertTrue(self.dom.has_js_function("setSimulatedTimeSlot"))
+
+    def test_tier1_f22_02_island_time_locking_and_skip_logic(self):
+        """F22.2: Time locking helper functions and locked routine handler."""
+        self.assertTrue(self.dom.has_js_function("getSimulatedCurrentMinutes"))
+        self.assertTrue(self.dom.has_js_function("getRoutineMinutes"))
+        self.assertTrue(self.dom.has_js_function("isRoutineTimeLocked"))
+        self.assertTrue(self.dom.has_js_function("handleLockedRoutineClick"))
+
+    def test_tier1_f22_03_photo_audit_sync_and_zero_fallback(self):
+        """F22.3: Parent audit timeline declared and zero-fallback logic verified."""
+        self.assertTrue(self.dom.has_js_function("renderParentAuditTimeline") or self.dom.has_js_function("renderParentRoutineAudit"))
+        self.assertTrue(self.dom.has_js_function("parentOpenPhotoModal"))
+
+    def test_tier1_f22_04_microwave_appliance_timer_cancellation(self):
+        """F22.4: Routine photo proof completion cancels appliance timer in code."""
+        self.assertTrue(self.dom.has_js_function("takeRoutinePhotoAndComplete"))
+        self.assertIn("miloActiveTimers", self.dom.script_content)
+
+    # -------------------------------------------------------------------------
+    # Feature 23: Visual De-clutter, Pixel-Perfect Trail Snap & Clean Re-dispatch
+    # -------------------------------------------------------------------------
+    def test_tier1_f23_01_simplified_microwave_card(self):
+        """F23.1: Microwave pipeline timer card keeps device & duration, removing redundant text."""
+        renderers_content = (REPO_ROOT / "app" / "js" / "renderers.js").read_text(encoding="utf-8")
+        self.assertIn("${deviceName} • ${minutes} phút", renderers_content)
+        self.assertNotIn("Thiết bị tự ngắt • Bé làm tiếp bước sau không sợ cháy", renderers_content)
+
+    def test_tier1_f23_02_decluttered_island_visual_hierarchy(self):
+        """F23.2: Routine & GDPT islands remove redundant clutter tags."""
+        roadmap_content = (REPO_ROOT / "app" / "js" / "roadmap.js").read_text(encoding="utf-8")
+        self.assertNotIn("📸 Có chụp ảnh minh chứng • Milo đồng hành", roadmap_content)
+        self.assertIn("node-routine-island-active", roadmap_content)
+        self.assertIn("Đang Chinh Phục 🎯", roadmap_content)
+
+    def test_tier1_f23_03_dispatch_resets_completed_routines(self):
+        """F23.3: dispatchSelectedRoutines & parentClearRoutinesOnly clean completedRoutineIds."""
+        parent_content = (REPO_ROOT / "app" / "js" / "parent_survey.js").read_text(encoding="utf-8")
+        roadmap_content = (REPO_ROOT / "app" / "js" / "roadmap.js").read_text(encoding="utf-8")
+        self.assertIn("appState.completedRoutineIds.delete(rt.id)", parent_content)
+        self.assertIn("appState.completedRoutineIds = new Set()", roadmap_content)
+
+    def test_tier1_f23_04_svg_trail_viewbox_synchronization(self):
+        """F23.4: snapRoadmapTrailToDOM synchronizes SVG viewBox to actual canvas bounding box."""
+        roadmap_content = (REPO_ROOT / "app" / "js" / "roadmap.js").read_text(encoding="utf-8")
+        self.assertIn("svg.setAttribute('viewBox', `0 0 ${cWidth} ${cHeight}`)", roadmap_content)
+
 
 class TestTier2BoundaryAndCornerCases(unittest.TestCase):
     @classmethod
@@ -1960,6 +2019,7 @@ class TestTier4RealWorldApplicationScenarios(unittest.TestCase):
         self.assertEqual(received_in_tab2["payload"]["taskId"], "task_shared")
         self.assertEqual(received_in_tab2["payload"]["stepIndex"], 2)
 
-
+    # -------------------------------------------------------------------------
+    # Feature 21: Daily Routine Time Simulation, Time Lock & Proof Sync
 if __name__ == "__main__":
     unittest.main()

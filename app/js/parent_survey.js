@@ -267,12 +267,23 @@
 
       selected.sort((a, b) => (a.slot_time || '00:00').localeCompare(b.slot_time || '00:00'));
 
+      // ĐẢM BẢO RESET TRẠNG THÁI HOÀN THÀNH CHO CÁC THÓI QUEN ĐƯỢC GIAO MỚI
+      if (!appState.completedRoutineIds) appState.completedRoutineIds = new Set();
+      if (!appState.routinePhotoProofs) appState.routinePhotoProofs = {};
+      selected.forEach(rt => {
+        appState.completedRoutineIds.delete(rt.id);
+        delete appState.routinePhotoProofs[rt.id];
+      });
+      appState.selectedActiveRoutineId = null;
+      appState.currentRoutineIndex = 0;
+
       appState.childRoutineRoadmap = selected;
 
       const bus = window.miloBus || window.syncBus;
       if (bus && typeof bus.broadcast === 'function') {
         bus.broadcast('ROUTINE_ASSIGN_BATCH', {
           routines: selected,
+          resetCompletions: true,
           timestamp: Date.now()
         });
       }
@@ -305,20 +316,39 @@
       if (!container) return;
       container.innerHTML = '';
 
+      const rateEl = document.getElementById('p-audit-stat-rate');
+      const countEl = document.getElementById('p-audit-stat-count');
+      const barEl = document.getElementById('p-audit-progress-bar');
+
+      const isCleared = !!appState.routineCleared;
       const routines = window.routineDatabase || {};
-      const activeList = (appState.childRoutineRoadmap && appState.childRoutineRoadmap.length > 0)
-        ? appState.childRoutineRoadmap
-        : [routines['routine_morning_bed'], routines['routine_afterschool_drop'], routines['routine_clean_desk'], routines['routine_night_teeth']].filter(Boolean);
+      const rawList = isCleared ? [] : (appState.childRoutineRoadmap || []);
+      const activeList = rawList.map(r => (typeof r === 'string' ? routines[r] : r)).filter(Boolean);
+
+      // 1. EMPTY STATE KHI CHƯA GIAO THÓI QUEN
+      if (activeList.length === 0) {
+        if (rateEl) rateEl.innerText = "0/0 Hoàn Thành (0%)";
+        if (countEl) countEl.innerText = "0";
+        if (barEl) barEl.style.width = "0%";
+        container.innerHTML = `
+          <div class="bg-white rounded-3xl p-6 border-2 border-dashed border-slate-200 text-center flex flex-col items-center justify-center my-2 space-y-2">
+            <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl">📋</div>
+            <div class="font-black text-xs text-slate-800">Chưa có thói quen nào được giao hôm nay</div>
+            <p class="text-[11px] text-slate-500 max-w-[240px]">Ba mẹ hãy bấm "Giao thêm thói quen" để chọn nề nếp sinh hoạt cho con nhé!</p>
+          </div>
+        `;
+        return;
+      }
 
       let completedCount = 0;
 
-      activeList.forEach((rt, idx) => {
+      activeList.forEach((rt) => {
         if (!rt) return;
         const card = document.createElement('div');
-
-        const isDone = (idx < 2);
-        const isCurrent = (idx === 2);
-        const isLocked = (idx > 2);
+        const isDone = appState.completedRoutineIds && appState.completedRoutineIds.has(rt.id);
+        const isLocked = !isDone && (typeof isRoutineTimeLocked === 'function' ? isRoutineTimeLocked(rt) : false);
+        const isCurrent = !isDone && !isLocked && (appState.activeTask && appState.activeTask.id === rt.id);
+        const proof = (appState.routinePhotoProofs && appState.routinePhotoProofs[rt.id]) || null;
 
         if (isDone) completedCount++;
 
@@ -335,10 +365,10 @@
                   <span class="font-extrabold text-xs text-slate-800">${rt.title}</span>
                   <span class="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded">✓ Xong</span>
                 </div>
-                <span class="text-[10px] text-slate-400 font-medium">Hoàn thành lúc ${rt.slot_time || '07:00'} • +${rt.reward || 20}⭐</span>
+                <span class="text-[10px] text-slate-400 font-medium">Hoàn thành lúc ${proof && proof.timestamp ? proof.timestamp : (rt.slot_time || '07:00')} • +${rt.reward || 25}⭐</span>
               </div>
             </div>
-            <span class="px-2.5 py-1 rounded-xl bg-teal-50 text-teal-700 text-[10px] font-black border border-teal-200 flex items-center gap-1">
+            <span class="px-2.5 py-1 rounded-xl bg-teal-50 text-teal-700 text-[10px] font-black border border-teal-200 flex items-center gap-1 hover:bg-teal-100 transition">
               <span>📷</span> <span>Xem Ảnh</span>
             </span>
           `;
@@ -352,16 +382,32 @@
               <div>
                 <div class="flex items-center gap-1.5">
                   <span class="font-extrabold text-xs text-amber-950">${rt.title}</span>
-                  <span class="text-[9px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.2 rounded animate-pulse">Đang làm • ${rt.slot_time || '19:00'}</span>
+                  <span class="text-[9px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.2 rounded animate-pulse">⚡ Đang làm • ${rt.slot_time || '19:00'}</span>
                 </div>
                 <span class="text-[10px] text-amber-800 font-medium">Bé đang thực hiện bên Đảo Thói Quen...</span>
               </div>
             </div>
             <span class="text-xs">⏳</span>
           `;
+        } else if (isLocked) {
+          card.className = "bg-slate-50/80 rounded-2xl p-3 border border-slate-200 flex items-center justify-between opacity-80";
+          card.innerHTML = `
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center text-xl shrink-0">
+                🔒
+              </div>
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <span class="font-extrabold text-xs text-slate-600">${rt.title}</span>
+                  <span class="text-[9px] font-bold text-slate-500 bg-slate-200/80 px-1.5 py-0.2 rounded">Chưa tới giờ (${rt.slot_time || '19:00'})</span>
+                </div>
+                <span class="text-[10px] text-slate-400 font-medium">Khóa theo timeline • Chờ đến mốc giờ</span>
+              </div>
+            </div>
+            <span class="text-xs text-slate-400">🔒</span>
+          `;
         } else {
-          card.className = "bg-white rounded-2xl p-3 border border-amber-200 hover:border-amber-300 shadow-2xs flex items-center justify-between cursor-pointer transition active:scale-98";
-          card.onclick = () => parentOpenPhotoModal(rt.id);
+          card.className = "bg-white rounded-2xl p-3 border border-slate-200 flex items-center justify-between";
           card.innerHTML = `
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-xl shrink-0">
@@ -370,22 +416,17 @@
               <div>
                 <div class="flex items-center gap-1.5">
                   <span class="font-extrabold text-xs text-slate-800">${rt.title}</span>
-                  <span class="text-[9px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.2 rounded">Sẵn sàng (Đã mở)</span>
+                  <span class="text-[9px] font-bold text-amber-800 bg-amber-50 px-1.5 py-0.2 rounded">Chưa thực hiện • ${rt.slot_time || '07:00'}</span>
                 </div>
-                <span class="text-[10px] text-slate-400 font-medium">${rt.slot_time || '21:00'} • Đã mở khóa test full</span>
+                <span class="text-[10px] text-slate-400 font-medium">Bé có thể quay lại làm bổ sung hoặc chuyển sang bài chiều</span>
               </div>
             </div>
-            <span class="px-2.5 py-1 rounded-xl bg-amber-50 text-amber-800 text-[10px] font-black border border-amber-200 flex items-center gap-1">
-              <span>📷</span> <span>Xem Ảnh</span>
-            </span>
+            <span class="text-xs text-slate-400">⏳</span>
           `;
         }
         container.appendChild(card);
       });
 
-      const rateEl = document.getElementById('p-audit-stat-rate');
-      const countEl = document.getElementById('p-audit-stat-count');
-      const barEl = document.getElementById('p-audit-progress-bar');
       const total = activeList.length;
       const pct = total > 0 ? Math.round((completedCount / total) * 100) : 0;
 
@@ -393,6 +434,9 @@
       if (countEl) countEl.innerText = completedCount;
       if (barEl) barEl.style.width = `${pct}%`;
     }
+
+    window.renderParentAuditTimeline = renderParentAuditTimeline;
+    window.renderParentRoutineAudit = renderParentAuditTimeline;
 
     function renderParentCatalogList() {
       const container = document.getElementById('catalog-tasks-list');

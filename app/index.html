@@ -89,6 +89,28 @@
           🔊
         </button>
 
+        <!-- Time Simulator Switcher (Outside the phones, for tester / parent testing) -->
+        <div id="simulated-time-toolbar" class="flex items-center gap-1 bg-slate-800/95 p-1 rounded-2xl border border-slate-700">
+          <span class="text-[11px] font-extrabold text-amber-400 px-2 flex items-center gap-1">
+            <span>⏰</span> <span class="hidden md:inline">Giờ thử nghiệm:</span>
+          </span>
+          <button id="time-btn-morning" onclick="setSimulatedTimeSlot('morning')" class="px-2.5 py-1 rounded-xl text-xs font-black bg-amber-500 text-slate-950 shadow-sm transition">
+            🌅 Sáng (07:00)
+          </button>
+          <button id="time-btn-noon" onclick="setSimulatedTimeSlot('noon')" class="px-2.5 py-1 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">
+            ☀️ Trưa (11:30)
+          </button>
+          <button id="time-btn-afternoon" onclick="setSimulatedTimeSlot('afternoon')" class="px-2.5 py-1 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">
+            🌤️ Chiều (16:30)
+          </button>
+          <button id="time-btn-evening" onclick="setSimulatedTimeSlot('evening')" class="px-2.5 py-1 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">
+            🌙 Tối (20:30)
+          </button>
+          <button id="time-btn-realtime" onclick="setSimulatedTimeSlot('realtime')" class="px-2.5 py-1 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">
+            ⏱️ Giờ thật
+          </button>
+        </div>
+
         <!-- Live Sync Bus Status Indicator -->
         <div id="sync-status-indicator" class="flex items-center gap-1.5 text-[11px] font-bold bg-slate-800/90 px-2.5 py-1.5 rounded-xl border border-slate-700/80">
           <span class="w-2 h-2 rounded-full bg-teal-400"></span>
@@ -1588,27 +1610,7 @@
           }
         }, 60);
 
-        // Cập nhật nút CTA đáy máy con theo ngữ cảnh Thói Quen Sinh Hoạt
-        if (startQuestBtn) {
-          const routines = Array.isArray(appState.childRoutineRoadmap) ? appState.childRoutineRoadmap : [];
-          if (routines.length > 0) {
-            startQuestBtn.disabled = false;
-            startQuestBtn.className = "w-full btn-3d-yellow text-slate-900 font-black text-base py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer";
-            startQuestBtn.innerHTML = `<span>BẮT ĐẦU NỀ NẾP SINH HOẠT!</span> <span class="text-xl">🌟</span>`;
-            const firstId = typeof routines[0] === 'string' ? routines[0] : (routines[0].id || 'routine_morning_bed');
-            startQuestBtn.onclick = function(e) {
-              if (e) { e.preventDefault(); e.stopPropagation(); }
-              if (typeof startChildRoutineTask === 'function') startChildRoutineTask(firstId);
-            };
-          } else {
-            startQuestBtn.disabled = true;
-            startQuestBtn.className = "w-full bg-slate-200 text-slate-500 font-bold text-sm py-3.5 rounded-2xl cursor-not-allowed flex items-center justify-center gap-2 border border-slate-300";
-            startQuestBtn.innerHTML = `<span>CHỜ BA MẸ GIAO NỀ NẾP... ⏳</span>`;
-            startQuestBtn.onclick = function() {
-              if (typeof showToast === 'function') showToast('Đảo Thói Quen Trống', 'Hãy nhờ ba mẹ tick chọn nề nếp bên Trạm Thấu Hiểu để bắt đầu nhé!', '🌟');
-            };
-          }
-        }
+// Nút CTA đáy được renderChildRoutineRoadmapFromTasks quản lý động chính xác
 
         if (typeof playSfx === 'function') playSfx('tap');
       } else {
@@ -1644,9 +1646,80 @@
       }
     };
 
+    window.setSimulatedTimeSlot = function(slot) {
+      if (typeof playSfx === 'function') playSfx('tap');
+      appState.simulatedTimeSlot = slot;
+
+      const buttons = {
+        morning: document.getElementById('time-btn-morning'),
+        noon: document.getElementById('time-btn-noon'),
+        afternoon: document.getElementById('time-btn-afternoon'),
+        evening: document.getElementById('time-btn-evening'),
+        realtime: document.getElementById('time-btn-realtime')
+      };
+
+      Object.entries(buttons).forEach(([key, btn]) => {
+        if (!btn) return;
+        if (key === slot) {
+          btn.className = "px-2.5 py-1 rounded-xl text-xs font-black bg-amber-500 text-slate-950 shadow-sm transition";
+        } else {
+          btn.className = "px-2.5 py-1 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition";
+        }
+      });
+
+      const slotLabels = {
+        morning: '🌅 07:00 Sáng',
+        noon: '☀️ 11:30 Trưa',
+        afternoon: '🌤️ 16:30 Chiều',
+        evening: '🌙 20:30 Tối / Đêm',
+        realtime: '⏱️ Giờ thực tế'
+      };
+
+      if (typeof showToast === 'function') {
+        showToast("Giả Lập Thời Gian", `Đã chuyển sang mốc: ${slotLabels[slot] || slot}. Các đảo tương ứng sẽ cập nhật trạng thái mở/khóa!`, "⏰");
+      }
+
+      if (typeof renderChildRoutineRoadmapFromTasks === 'function') {
+        renderChildRoutineRoadmapFromTasks(appState.childRoutineRoadmap);
+      }
+      if (typeof renderParentActiveRoadmapList === 'function') {
+        renderParentActiveRoadmapList();
+      }
+      if (typeof renderParentRoutineAudit === 'function') {
+        renderParentRoutineAudit();
+      }
+
+      const bus = window.miloBus || window.syncBus;
+      if (bus && typeof bus.savePersistedState === 'function') {
+        bus.savePersistedState(appState);
+      }
+    };
+
+    window.handleLockedRoutineClick = function(routineId) {
+      const rt = (window.routineDatabase || {})[routineId] || {};
+      if (typeof playSfx === 'function') playSfx('tap');
+      const node = document.querySelector(`[data-routine-id="${routineId}"]`);
+      if (node) {
+        node.classList.add('animate-shake');
+        setTimeout(() => node.classList.remove('animate-shake'), 450);
+      }
+      if (typeof showToast === 'function') {
+        showToast("Chưa Tới Giờ! 🔒", `Nề nếp [${rt.title || 'Sinh hoạt'}] sẽ mở lúc ${rt.slot_time || 'mốc giờ tới'}. Giờ con cứ thong thả nghỉ ngơi hoặc làm bài phù hợp nhé!`, "⏰");
+      }
+    };
+
     window.startChildRoutineTask = function(routineId) {
       const task = (typeof routineDatabase !== 'undefined' && routineDatabase[routineId]) || (typeof taskDatabase !== 'undefined' && taskDatabase[routineId]);
       if (!task) return;
+
+      // Kiểm tra khóa theo giờ: Nếu chưa tới giờ thì rung lắc và báo bé
+      if (typeof isRoutineTimeLocked === 'function' && isRoutineTimeLocked(task)) {
+        if (typeof handleLockedRoutineClick === 'function') {
+          handleLockedRoutineClick(routineId);
+        }
+        return;
+      }
+      appState.selectedActiveRoutineId = routineId;
 
       // Bảo vệ đa nhiệm: Khóa không cho chuyển sang đảo khác khi bếp/thiết bị đang nấu dở cho nhiệm vụ hiện tại!
       const runningTimer = (window.miloActiveTimers || []).find(t => !t.isCompleted && t.endTime > Date.now());
@@ -1701,9 +1774,15 @@
       btn.disabled = false;
 
       const routines = window.routineDatabase || {};
+      const proof = (appState.routinePhotoProofs && appState.routinePhotoProofs[key]) || null;
       const rt = routines[key] || (key === 'bed' ? routines['routine_morning_bed'] : key === 'drop' ? routines['routine_afterschool_drop'] : routines['routine_clean_desk']);
 
-      if (rt) {
+      if (proof) {
+        emoji.innerText = `${proof.icon || (rt && rt.icon) || '📸'}✨`;
+        caption.innerText = `${proof.routine_title || (rt && rt.title)} đã hoàn thành!`;
+        sub.innerText = `Chụp bởi Bé Leo • Hoàn thành lúc ${proof.timestamp || (rt && rt.slot_time) || 'hôm nay'}`;
+        praise.innerText = `Leo đã tự giác hoàn thành [${proof.routine_title || (rt && rt.title)}], mẹ rất tự hào về sự tiến bộ của con!`;
+      } else if (rt) {
         emoji.innerText = `${rt.icon || '📸'}✨`;
         caption.innerText = `${rt.title} đã hoàn thành!`;
         sub.innerText = `Chụp bởi Bé Leo • Hoàn thành lúc ${rt.slot_time || '19:00'}`;

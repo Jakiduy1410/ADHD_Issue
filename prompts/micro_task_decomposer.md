@@ -506,7 +506,7 @@ Mục tiêu tối thượng: Giảm tải bộ nhớ làm việc (Working Memory
   "exercise_type": "daily_routine",
   "timeline_slot": "night",
   "slot_time": "21:00",
-  "title": "Đánh răng thơm tho & Thở 4-4-4 đi ngủ",
+  "title": "Đánh răng tối",
   "catName": "Thói Quen Trước Giờ Ngủ",
   "reward": 25,
   "steps": [

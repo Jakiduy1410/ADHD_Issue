@@ -144,6 +144,9 @@
         const t = roadmap[i] || {};
         const isDone = isAllCompleted || i < curIdx;
         const isActive = !isAllCompleted && i === curIdx;
+
+
+
         const isChore = (t.cat === 'chore');
         const titleSnippet = (t.title && t.title.length > 20) ? (t.title.slice(0, 18) + '...') : (t.title || 'Đảo Nhiệm Vụ');
         const alignClass = (totalIslands === 1) ? 'translate-x-0' : ((r % 2 === 1) ? 'translate-x-12' : '-translate-x-12');
@@ -166,17 +169,13 @@
                 <span id="child-current-reward" class="text-[9px] font-black uppercase tracking-wider bg-black/20 px-2 py-0.5 rounded-full">+${t.reward || 100} ⭐</span>
               </div>
 
-              <div class="mt-1.5 text-center max-w-[240px]">
-                <div class="flex items-center justify-center gap-1 mb-0.5 flex-wrap">
-                  <span id="child-island-tag" class="text-[9px] font-black px-2 py-0.2 rounded-full border ${isChore ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-teal-100 text-teal-800 border-teal-300'}">
-                    ${isChore ? 'ĐẢO SINH HOẠT THƯ THÁI 🌿' : 'ĐẢO BÀI TẬP TẬP TRUNG 🎯'}
-                  </span>
-                  <span id="child-current-badge" class="text-[9px] font-black px-2 py-0.2 rounded-full uppercase border ${isChore ? 'bg-amber-100 text-amber-900 border-amber-300 ring-amber-200' : 'bg-teal-100 text-teal-900 border-teal-300 ring-teal-200'}">
-                    Đang Chinh Phục
+              <div class="mt-1.5 text-center max-w-[200px]">
+                <div class="flex items-center justify-center gap-1 mb-0.5">
+                  <span id="child-current-badge" class="text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase border ${isChore ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-teal-100 text-teal-900 border-teal-300'}">
+                    Đang Chinh Phục 🎯
                   </span>
                 </div>
                 <h2 id="child-current-title" class="text-xs font-black text-slate-800 leading-snug truncate px-1">${t.title}</h2>
-                <p id="child-current-sub" class="text-[10px] font-bold text-slate-500">${t.steps ? t.steps.length : 1} vi nhiệm vụ • Milo hỗ trợ</p>
               </div>
             </div>
           `;
@@ -365,6 +364,14 @@
           else if (rt.timeline_slot === 'evening') slotText = `🌙 Tối ${rt.slot_time || '19:00'}`;
           else slotText = `✨ Ngủ ${rt.slot_time || '21:00'}`;
 
+          const isDone = appState.completedRoutineIds && appState.completedRoutineIds.has(rt.id);
+          const isLocked = !isDone && (typeof isRoutineTimeLocked === 'function' ? isRoutineTimeLocked(rt) : false);
+          let statusBadge = isDone 
+            ? `<span class="text-[8px] font-black text-emerald-700 bg-emerald-100 px-1 rounded border border-emerald-300">✓ Xong</span>`
+            : (isLocked 
+                ? `<span class="text-[8px] font-black text-slate-500 bg-slate-100 px-1 rounded border border-slate-300">🔒 Chờ giờ</span>`
+                : `<span class="text-[8px] font-black text-amber-900 bg-amber-200 px-1 rounded border border-amber-300">⚡ Mở</span>`);
+
           html += `
             <div class="bg-white rounded-xl p-2 border border-amber-200 hover:border-amber-300 flex items-center justify-between gap-2 shadow-2xs">
               <div class="flex items-center gap-2 min-w-0 flex-1">
@@ -375,7 +382,7 @@
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center gap-1">
                     <span class="text-[8px] font-black uppercase px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-900">
-                      ${slotText}
+                      ${slotText}</span> ${statusBadge} <span class="hidden">
                     </span>
                     <span class="text-[8px] font-extrabold text-amber-700 bg-amber-50 px-1 rounded border border-amber-200">
                       +${rt.reward || 20} ⭐
@@ -424,6 +431,7 @@
           const isDone = isAllDone || idx < appState.currentRoadmapIndex;
           const isActive = !isAllDone && idx === appState.currentRoadmapIndex;
           const isChore = (t.cat === 'chore');
+
           html += `
             <div class="bg-white rounded-xl p-2 border ${isActive ? 'border-amber-400 bg-amber-50/40 ring-1 ring-amber-200' : isDone ? 'border-emerald-300 bg-emerald-50/20' : 'border-slate-200'} flex items-center justify-between gap-2 shadow-2xs">
               <div class="flex items-center gap-2 min-w-0 flex-1">
@@ -520,6 +528,11 @@
       appState.childRoutineRoadmap = [];
       appState.routineCleared = true;
       try { if (typeof localStorage !== 'undefined') localStorage.setItem('milo_routine_cleared', 'true'); } catch(_) {}
+
+      appState.completedRoutineIds = new Set();
+      appState.routinePhotoProofs = {};
+      appState.selectedActiveRoutineId = null;
+      appState.currentRoutineIndex = 0;
 
       if (appState.activeTask && appState.activeTask.cat === 'routine') {
         appState.activeTask = null;
@@ -634,6 +647,18 @@
       const ty = Math.round(tRect.top - canvasRect.top + tRect.height / 2);
       points.push({ x: tx, y: ty, isTreasure: true });
 
+      // ĐỒNG BỘ 100% VIEWBOX VÀ WIDTH/HEIGHT CỦA SVG THEO CANVAS THỰC TẾ
+      const svg = container.querySelector(isRoutine ? '#svg-routine-trail' : '#svg-quest-trail') || container.querySelector('svg');
+      if (svg) {
+        const cWidth = Math.round(canvasRect.width);
+        const cHeight = Math.round(canvasRect.height);
+        svg.setAttribute('viewBox', `0 0 ${cWidth} ${cHeight}`);
+        svg.setAttribute('width', cWidth);
+        svg.setAttribute('height', cHeight);
+        svg.style.width = cWidth + 'px';
+        svg.style.height = cHeight + 'px';
+      }
+
       // Xây dựng đường cong Bézier toàn trình đi xuyên qua tâm mọi đảo
       let fullD = `M ${points[0].x} ${points[0].y}`;
       for (let k = 0; k < points.length - 1; k++) {
@@ -649,20 +674,39 @@
       }
 
       // Xây dựng đường cong conquered nếu có
-      const curIdx = isRoutine ? (appState.currentRoutineIndex || 0) : (appState.currentRoadmapIndex || 0);
-      const isAllDone = isRoutine ? ((appState.currentRoutineIndex || 0) >= total) : (appState.currentRoadmapIndex >= total);
-      const maxConqueredPointIdx = isAllDone ? (points.length - 1) : curIdx;
-      if (maxConqueredPointIdx > 0) {
-        let conqD = `M ${points[0].x} ${points[0].y}`;
-        for (let k = 0; k < maxConqueredPointIdx; k++) {
-          const p1 = points[k];
-          const p2 = points[k + 1];
-          const midY = Math.round((p1.y + p2.y) / 2);
-          conqD += ` C ${p1.x} ${midY}, ${p2.x} ${midY}, ${p2.x} ${p2.y}`;
+      const completedSet = appState.completedRoutineIds || new Set();
+      let maxConqueredIdx = 0;
+      if (isRoutine) {
+        const routines = appState.childRoutineRoadmap || [];
+        for (let i = 0; i < total; i++) {
+          const rt = routines[i];
+          if (rt && completedSet.has(rt.id)) {
+            maxConqueredIdx = Math.max(maxConqueredIdx, i + 1);
+          }
         }
-        const conqPath = container.querySelector(isRoutine ? '#svg-routine-path-conquered' : '#svg-quest-path-conquered');
-        if (conqPath) {
+        if (routines.length > 0 && routines.every(r => completedSet.has(r.id))) {
+          maxConqueredIdx = points.length - 1;
+        }
+      } else {
+        const isAllDone = (appState.currentRoadmapIndex >= total);
+        maxConqueredIdx = isAllDone ? (points.length - 1) : (appState.currentRoadmapIndex || 0);
+      }
+
+      const conqPath = container.querySelector(isRoutine ? '#svg-routine-path-conquered' : '#svg-quest-path-conquered');
+      if (conqPath) {
+        if (maxConqueredIdx > 0) {
+          let conqD = `M ${points[0].x} ${points[0].y}`;
+          for (let k = 0; k < maxConqueredIdx; k++) {
+            const p1 = points[k];
+            const p2 = points[k + 1];
+            const midY = Math.round((p1.y + p2.y) / 2);
+            conqD += ` C ${p1.x} ${midY}, ${p2.x} ${midY}, ${p2.x} ${p2.y}`;
+          }
           conqPath.setAttribute('d', conqD);
+          conqPath.style.display = '';
+        } else {
+          conqPath.setAttribute('d', '');
+          conqPath.style.display = 'none';
         }
       }
     }
@@ -781,6 +825,42 @@
     /* ============================================================
        DYNAMIC ROUTINE ROADMAP & S-CURVE ALIGNMENT (PERFECT TROPHY SYNC)
        ============================================================ */
+    /* ============================================================
+       TIMELINE & SIMULATED TIME ENGINE
+       ============================================================ */
+    function getSimulatedCurrentMinutes() {
+      const mode = (appState && appState.simulatedTimeSlot) || 'morning';
+      if (mode === 'morning') return 7 * 60; // 07:00
+      if (mode === 'noon') return 11 * 60 + 30; // 11:30
+      if (mode === 'afternoon') return 16 * 60 + 30; // 16:30
+      if (mode === 'evening') return 20 * 60 + 30; // 20:30
+      const now = new Date();
+      return now.getHours() * 60 + now.getMinutes();
+    }
+
+    function getRoutineMinutes(rt) {
+      if (!rt) return 0;
+      if (rt.slot_time) {
+        const parts = rt.slot_time.split(':').map(Number);
+        if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+          return parts[0] * 60 + parts[1];
+        }
+      }
+      const defaultSlotMinutes = { morning: 7 * 60, noon: 11 * 60 + 30, afternoon: 16 * 60 + 30, evening: 19 * 60, night: 21 * 60 };
+      return defaultSlotMinutes[rt.timeline_slot] || 7 * 60;
+    }
+
+    function isRoutineTimeLocked(rt) {
+      if (!rt) return false;
+      const currentMinutes = getSimulatedCurrentMinutes();
+      const routineMinutes = getRoutineMinutes(rt);
+      return routineMinutes > currentMinutes;
+    }
+
+    window.getSimulatedCurrentMinutes = getSimulatedCurrentMinutes;
+    window.getRoutineMinutes = getRoutineMinutes;
+    window.isRoutineTimeLocked = isRoutineTimeLocked;
+
     function renderChildRoutineRoadmapFromTasks(routinesList) {
       const container = document.getElementById('child-routine-map-container');
       if (!container) return;
@@ -838,10 +918,56 @@
       }
 
       // 2. TÍNH TOÁN TIẾN ĐỘ THÓI QUEN & TRẠNG THÁI ACTIVE
-      const isAllCompleted = (totalIslands > 0 && (appState.currentRoutineIndex || 0) >= totalIslands);
-      const curIdx = isAllCompleted ? (totalIslands - 1) : Math.max(0, Math.min(appState.currentRoutineIndex || 0, Math.max(0, totalIslands - 1)));
+      const completedSet = appState.completedRoutineIds || new Set();
+      const allDone = totalIslands > 0 && validRoutines.every(r => completedSet.has(r.id));
+      const uncompletedRoutines = validRoutines.filter(r => !completedSet.has(r.id));
+      const availableUncompleted = uncompletedRoutines.filter(r => !isRoutineTimeLocked(r));
+
+      let activeRoutine = null;
+      if (appState.selectedActiveRoutineId) {
+        const found = availableUncompleted.find(r => r.id === appState.selectedActiveRoutineId);
+        if (found) activeRoutine = found;
+      }
+      if (!activeRoutine && availableUncompleted.length > 0) {
+        const simSlot = appState.simulatedTimeSlot || 'morning';
+        const matchSlot = availableUncompleted.find(r => r.timeline_slot === simSlot || (simSlot === 'evening' && (r.timeline_slot === 'evening' || r.timeline_slot === 'night')));
+        activeRoutine = matchSlot || availableUncompleted[0];
+      }
+      const activeRoutineId = activeRoutine ? activeRoutine.id : null;
+      const isAllCompleted = allDone;
+      const curIdx = activeRoutine ? validRoutines.findIndex(r => r.id === activeRoutine.id) : (allDone ? totalIslands - 1 : 0);
 
       if (startQuestBtn && isRoutineTab && validRoutines.length > 0) {
+        if (allDone) {
+          startQuestBtn.disabled = false;
+          startQuestBtn.className = "w-full btn-3d-yellow text-slate-900 font-black text-sm py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 cursor-pointer";
+          startQuestBtn.innerHTML = `<span>ĐÃ CHINH PHỤC TẤT CẢ NỀ NẾP! 👑</span>`;
+          startQuestBtn.onclick = function() {
+            if (typeof alertTreasureStatus === 'function') alertTreasureStatus();
+          };
+        } else if (activeRoutine) {
+          const titleSnippet = (activeRoutine.title && activeRoutine.title.length > 20) ? (activeRoutine.title.slice(0, 18) + '...') : activeRoutine.title;
+          startQuestBtn.disabled = false;
+          startQuestBtn.className = "w-full btn-3d-yellow text-slate-900 font-black text-base py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer";
+          startQuestBtn.innerHTML = `<span>BẮT ĐẦU: ${titleSnippet}</span> <span class="text-xl">🌟</span>`;
+          startQuestBtn.onclick = function(e) {
+            if (e) { e.preventDefault(); e.stopPropagation(); }
+            if (typeof startChildRoutineTask === 'function') startChildRoutineTask(activeRoutine.id);
+          };
+        } else {
+          const nextLocked = validRoutines.find(r => !completedSet.has(r.id) && isRoutineTimeLocked(r));
+          const lockTime = nextLocked ? (nextLocked.slot_time || 'mốc tiếp theo') : 'mốc giờ tới';
+          startQuestBtn.disabled = true;
+          startQuestBtn.className = "w-full bg-slate-200 text-slate-500 font-bold text-sm py-3.5 rounded-2xl cursor-not-allowed flex items-center justify-center gap-2 border border-slate-300";
+          startQuestBtn.innerHTML = `<span>CHỜ ĐẾN ${lockTime} ĐỂ MỞ TIẾP... 🔒</span>`;
+          startQuestBtn.onclick = function() {
+            if (nextLocked && typeof handleLockedRoutineClick === 'function') {
+              handleLockedRoutineClick(nextLocked.id);
+            }
+          };
+        }
+      }
+      if (false && startQuestBtn) {
         startQuestBtn.disabled = false;
         startQuestBtn.className = "w-full btn-3d-yellow text-slate-900 font-black text-base py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer";
         startQuestBtn.innerHTML = `<span>BẮT ĐẦU NỀ NẾP SINH HOẠT!</span> <span class="text-xl">🌟</span>`;
@@ -911,25 +1037,24 @@
       for (let r = 1; r <= totalIslands; r++) {
         const i = totalIslands - r;
         const rt = validRoutines[i] || {};
-        const isDone = isAllCompleted || i < curIdx;
-        const isActive = !isAllCompleted && i === curIdx;
+        const isDone = completedSet.has(rt.id);
+        const isLocked = !isDone && isRoutineTimeLocked(rt);
+        const isActive = !allDone && !isDone && (rt.id === activeRoutineId);
+
+
+
         const titleSnippet = (rt.title && rt.title.length > 20) ? (rt.title.slice(0, 18) + '...') : (rt.title || 'Nề nếp');
         const alignClass = (totalIslands === 1) ? 'translate-x-0' : ((r % 2 === 1) ? 'translate-x-12' : '-translate-x-12');
 
         if (isActive) {
-          const miloAlignClass = (totalIslands === 1) ? '-left-16 -top-2' : ((r % 2 === 1) ? '-left-16 -top-2' : '-right-16 -top-2');
+          const miloAlignClass = (totalIslands === 1) ? '-left-14 top-1' : ((r % 2 === 1) ? '-left-14 top-1' : '-right-14 top-1');
           const runningTimerForThis = (window.miloActiveTimers || []).find(t => t.taskId === rt.id && !t.isCompleted && t.endTime > Date.now());
           const isCookingNow = !!runningTimerForThis;
           const statusBadgeText = isCookingNow ? `♨️ ĐANG NẤU: ${runningTimerForThis.dishName}` : `${rt.slot_time || '07:00'} • SẴN SÀNG 🚀`;
-          const statusSubText = isCookingNow ? `⏳ Bếp đang chạy ngầm • Bấm để xem tiếp!` : `📸 Có chụp ảnh minh chứng • Milo đồng hành`;
-          const bubbleText = isCookingNow ? `♨️ Món ăn đang nấu nè! Bấm để vào bếp 👋` : `Nề nếp ${i + 1}: ${titleSnippet} 👋`;
 
           islandsHtml += `
-            <div id="node-routine-island-active" data-routine-index="${i}" class="relative z-20 flex flex-col items-center my-2.5 ${alignClass}">
-              <div class="absolute ${miloAlignClass} flex flex-col items-center animate-milo">
-                <div class="bg-white border-2 border-amber-400 px-2 py-0.5 rounded-xl rounded-br-none shadow-md text-[9px] font-extrabold text-amber-900 mb-0.5 max-w-[105px] text-center leading-tight">
-                  ${bubbleText}
-                </div>
+            <div id="node-routine-island-active" data-routine-id="${rt.id}" data-routine-index="${i}" class="relative z-20 flex flex-col items-center my-2 ${alignClass}">
+              <div class="absolute ${miloAlignClass} flex flex-col items-center animate-milo pointer-events-none">
                 <div class="w-10 h-10 rounded-2xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-2xl shadow-md">
                   🦁
                 </div>
@@ -940,41 +1065,49 @@
                 <span class="text-[9px] font-black uppercase tracking-wider bg-black/15 text-amber-950 px-2 py-0.5 rounded-full">+${rt.reward || 25} ⭐</span>
               </div>
 
-              <div class="mt-1.5 text-center max-w-[200px]">
-                <div class="flex items-center justify-center gap-1 mb-0.5 flex-wrap">
-                  <span class="text-[9px] font-black px-2 py-0.2 rounded-full border bg-amber-100 text-amber-900 border-amber-300">
-                    ĐẢO SINH HOẠT 🌿
-                  </span>
-                  <span class="text-[9px] font-black px-2 py-0.2 rounded-full uppercase border ${isCookingNow ? 'bg-amber-300 text-amber-950 border-amber-500 animate-pulse' : 'bg-amber-200 text-amber-950 border-amber-400'}">
+              <div class="mt-1.5 text-center max-w-[190px]">
+                <div class="flex items-center justify-center gap-1 mb-0.5">
+                  <span class="text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase border ${isCookingNow ? 'bg-amber-300 text-amber-950 border-amber-500 animate-pulse' : 'bg-amber-100 text-amber-900 border-amber-300 shadow-xs'}">
                     ${statusBadgeText}
                   </span>
                 </div>
                 <h2 class="text-xs font-black text-slate-900 leading-snug truncate px-1">${rt.title}</h2>
-                <p class="text-[10px] font-bold text-amber-700">${statusSubText}</p>
               </div>
             </div>
           `;
         } else if (isDone) {
           islandsHtml += `
-            <div data-routine-index="${i}" class="relative z-10 flex flex-col items-center my-2 cursor-pointer opacity-90 hover:opacity-100 transition ${alignClass}" onclick="showToast('Thói Quen Hoàn Thành', 'Leo đã hoàn thành xuất sắc nề nếp này! ⭐', '✅')">
+            <div data-routine-id="${rt.id}" data-routine-index="${i}" class="relative z-10 flex flex-col items-center my-2 cursor-pointer opacity-90 hover:opacity-100 transition ${alignClass}" onclick="showToast('Thói Quen Hoàn Thành', 'Leo đã hoàn thành xuất sắc nề nếp này! ⭐', '✅')">
               <div class="w-14 h-14 rounded-2xl bg-amber-100 border-2 border-amber-400 flex flex-col items-center justify-center shadow-xs">
                 <span class="text-xl">✅</span>
                 <span class="text-[8px] font-black text-amber-800">+${rt.reward || 25} ⭐</span>
               </div>
-              <span class="text-[9px] font-extrabold text-amber-900 mt-1 bg-white border border-amber-200 px-2 py-0.2 rounded-full shadow-xs max-w-[140px] truncate text-center">
-                ${rt.slot_time ? rt.slot_time + ' ' : ''}${rt.title}
+              <span class="text-[9px] font-extrabold text-amber-900 mt-1 bg-white border border-amber-200 px-2.5 py-0.5 rounded-full shadow-xs max-w-[130px] truncate text-center">
+                ${rt.title}
+              </span>
+            </div>
+          `;
+        } else if (isLocked) {
+          islandsHtml += `
+            <div data-routine-id="${rt.id}" data-routine-index="${i}" class="relative z-10 flex flex-col items-center my-2 opacity-50 cursor-pointer hover:opacity-75 transition ${alignClass}" onclick="handleLockedRoutineClick('${rt.id}')">
+              <div class="w-14 h-14 rounded-2xl bg-slate-100 border-2 border-dashed border-slate-300 flex flex-col items-center justify-center shadow-xs">
+                <span class="text-xl">🔒</span>
+                <span class="text-[8px] font-black text-slate-500">+${rt.reward || 25} ⭐</span>
+              </div>
+              <span class="text-[9px] font-bold text-slate-600 mt-1 bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full shadow-xs max-w-[130px] truncate text-center flex items-center justify-center gap-1">
+                <span>🔒</span> <span>${rt.slot_time || 'Chưa tới giờ'}</span>
               </span>
             </div>
           `;
         } else {
           islandsHtml += `
-            <div data-routine-index="${i}" class="relative z-10 flex flex-col items-center my-2 opacity-75 cursor-pointer hover:opacity-95 transition ${alignClass}" onclick="startChildRoutineTask('${rt.id}')">
+            <div data-routine-id="${rt.id}" data-routine-index="${i}" class="relative z-10 flex flex-col items-center my-2 opacity-85 cursor-pointer hover:opacity-100 hover:scale-105 transition ${alignClass}" onclick="startChildRoutineTask('${rt.id}')">
               <div class="w-14 h-14 rounded-2xl bg-amber-50/80 border-2 border-amber-200 flex flex-col items-center justify-center shadow-xs">
                 <span class="text-xl">${rt.icon || '🌟'}</span>
                 <span class="text-[8px] font-black text-amber-700">+${rt.reward || 25} ⭐</span>
               </div>
-              <span class="text-[9px] font-extrabold text-amber-800 mt-1 bg-white/95 border border-amber-200 px-2 py-0.2 rounded-full shadow-xs max-w-[140px] truncate text-center">
-                ${rt.slot_time ? rt.slot_time + ' ' : ''}${rt.title}
+              <span class="text-[9px] font-extrabold text-amber-800 mt-1 bg-white/95 border border-amber-200 px-2.5 py-0.5 rounded-full shadow-xs max-w-[130px] truncate text-center">
+                ${rt.title}
               </span>
             </div>
           `;

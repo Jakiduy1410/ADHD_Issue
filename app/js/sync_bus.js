@@ -328,6 +328,9 @@
             selectedCatalogIds: Array.from(stateSnapshot.selectedCatalogIds || []),
             childRoutineRoadmap: stateSnapshot.childRoutineRoadmap || [],
             selectedRoutineIds: stateSnapshot.selectedRoutineIds ? Array.from(stateSnapshot.selectedRoutineIds) : [],
+            completedRoutineIds: stateSnapshot.completedRoutineIds ? Array.from(stateSnapshot.completedRoutineIds) : [],
+            routinePhotoProofs: stateSnapshot.routinePhotoProofs || {},
+            simulatedTimeSlot: stateSnapshot.simulatedTimeSlot || 'morning',
             roadmapCleared: !!stateSnapshot.roadmapCleared,
             routineCleared: !!stateSnapshot.routineCleared
           });
@@ -596,17 +599,29 @@
 
       // 11. ROUTINE_PHOTO_SUBMITTED: Child completes photo proof -> Parent notification & gallery update
       bus.subscribe('ROUTINE_PHOTO_SUBMITTED', (payload) => {
+        if (!payload) return;
+        if (payload.routine_id) {
+          if (!appState.completedRoutineIds) appState.completedRoutineIds = new Set();
+          appState.completedRoutineIds.add(payload.routine_id);
+          if (!appState.routinePhotoProofs) appState.routinePhotoProofs = {};
+          appState.routinePhotoProofs[payload.routine_id] = payload;
+        }
+
         if (typeof showToast === 'function') {
           showToast("Minh Chứng Thói Quen", `Leo vừa hoàn thành [${payload.routine_title || 'Dọn dẹp'}] và lưu ảnh vào Nhật ký!`, "📷");
         }
-        const itemDone = document.getElementById('p-desk-item-done');
-        const itemWait = document.getElementById('p-desk-item-waiting');
-        if (itemDone && itemWait) {
-          itemWait.classList.add('hidden');
-          itemDone.classList.remove('hidden');
-        }
         const dot = document.getElementById('p-routine-nav-dot');
         if (dot) dot.classList.remove('hidden');
+
+        if (typeof renderParentRoutineAudit === 'function') {
+          renderParentRoutineAudit();
+        }
+        if (typeof renderChildRoutineRoadmapFromTasks === 'function') {
+          renderChildRoutineRoadmapFromTasks(appState.childRoutineRoadmap);
+        }
+        if (typeof bus.savePersistedState === 'function') {
+          bus.savePersistedState(appState);
+        }
       });
 
       // 12. ROUTINE_HEART_RECEIVED: Parent sends heart -> Child celebration
@@ -625,33 +640,25 @@
             try { if (typeof localStorage !== 'undefined') localStorage.removeItem('milo_routine_cleared'); } catch(_) {}
           }
 
+          if (payload.resetCompletions) {
+            if (!appState.completedRoutineIds) appState.completedRoutineIds = new Set();
+            if (!appState.routinePhotoProofs) appState.routinePhotoProofs = {};
+            payload.routines.forEach(rt => {
+              const id = typeof rt === 'string' ? rt : (rt ? rt.id : null);
+              if (id) {
+                appState.completedRoutineIds.delete(id);
+                delete appState.routinePhotoProofs[id];
+              }
+            });
+            appState.selectedActiveRoutineId = null;
+            appState.currentRoutineIndex = 0;
+          }
+
           if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
             window.renderChildRoutineRoadmapFromTasks(payload.routines);
           }
 
-          // Đồng bộ nút CTA đáy máy con nếu máy con đang ở tab thói quen
-          const startQuestBtn = document.getElementById('child-btn-start-quest');
-          const routineTabBtn = document.getElementById('child-tab-routine-btn');
-          const isRoutineTab = routineTabBtn && routineTabBtn.classList.contains('bg-amber-400');
-          if (startQuestBtn && isRoutineTab) {
-            if (payload.routines.length > 0) {
-              startQuestBtn.disabled = false;
-              startQuestBtn.className = "w-full btn-3d-yellow text-slate-900 font-black text-base py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer";
-              startQuestBtn.innerHTML = `<span>BẮT ĐẦU NỀ NẾP SINH HOẠT!</span> <span class="text-xl">🌟</span>`;
-              const firstRoutineId = typeof payload.routines[0] === 'string' ? payload.routines[0] : (payload.routines[0].id || 'routine_morning_bed');
-              startQuestBtn.onclick = function(e) {
-                if (e) { e.preventDefault(); e.stopPropagation(); }
-                if (typeof startChildRoutineTask === 'function') startChildRoutineTask(firstRoutineId);
-              };
-            } else {
-              startQuestBtn.disabled = true;
-              startQuestBtn.className = "w-full bg-slate-200 text-slate-500 font-bold text-sm py-3.5 rounded-2xl cursor-not-allowed flex items-center justify-center gap-2 border border-slate-300";
-              startQuestBtn.innerHTML = `<span>CHỜ BA MẸ GIAO NỀ NẾP... ⏳</span>`;
-              startQuestBtn.onclick = function() {
-                if (typeof showToast === 'function') showToast('Đảo Thói Quen Trống', 'Hãy nhờ ba mẹ tick chọn nề nếp bên Trạm Thấu Hiểu để bắt đầu nhé!', '🌟');
-              };
-            }
-          }
+          // Nút CTA đáy được renderChildRoutineRoadmapFromTasks quản lý động chính xác
 
           if (typeof bus.savePersistedState === 'function') {
             bus.savePersistedState(appState);

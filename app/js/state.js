@@ -169,6 +169,11 @@
         return ids.map(id => routineDatabase[id]).filter(Boolean);
       })(),
       selectedRoutineIds: new Set(['routine_morning_bed', 'routine_afterschool_drop', 'routine_clean_desk', 'routine_night_teeth']),
+      completedRoutineIds: new Set(),
+      routinePhotoProofs: {},
+      simulatedTimeSlot: 'morning',
+      selectedActiveRoutineId: null,
+      currentRoutineIndex: 0,
       routineCleared: typeof localStorage !== 'undefined' && localStorage.getItem('milo_routine_cleared') === 'true',
       roadmapCleared: typeof localStorage !== 'undefined' && localStorage.getItem('milo_roadmap_cleared') === 'true'
     };

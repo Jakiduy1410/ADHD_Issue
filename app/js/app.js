@@ -86,6 +86,15 @@ window.addEventListener('DOMContentLoaded', () => {
     if (saved.selectedRoutineIds !== undefined && Array.isArray(saved.selectedRoutineIds)) {
       appState.selectedRoutineIds = new Set(saved.selectedRoutineIds);
     }
+    if (saved.completedRoutineIds !== undefined && Array.isArray(saved.completedRoutineIds)) {
+      appState.completedRoutineIds = new Set(saved.completedRoutineIds);
+    }
+    if (saved.routinePhotoProofs && typeof saved.routinePhotoProofs === 'object') {
+      appState.routinePhotoProofs = saved.routinePhotoProofs;
+    }
+    if (saved.simulatedTimeSlot) {
+      appState.simulatedTimeSlot = saved.simulatedTimeSlot;
+    }
     if (saved.pendingTicket) {
       appState.pendingTicket = saved.pendingTicket;
       const banner = document.getElementById('parent-golden-ticket-banner');
@@ -131,6 +140,9 @@ window.addEventListener('DOMContentLoaded', () => {
   }
   if (typeof renderParentRoutinesCatalog === 'function') {
     renderParentRoutinesCatalog();
+  }
+  if (typeof renderParentRoutineAudit === 'function') {
+    renderParentRoutineAudit();
   }
   updateCognitiveProfileUI(appState.cognitiveProfile);
 });

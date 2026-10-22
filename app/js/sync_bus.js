@@ -615,14 +615,22 @@
       // 13. ROUTINE_ASSIGN_BATCH: Parent assigns routines -> Child routine island updates
       bus.subscribe('ROUTINE_ASSIGN_BATCH', (payload) => {
         if (payload && Array.isArray(payload.routines)) {
+          appState.childRoutineRoadmap = payload.routines;
           if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
             window.renderChildRoutineRoadmapFromTasks(payload.routines);
           }
           if (typeof showToast === 'function') {
-            showToast("Nề Nếp Mới!", `Mẹ vừa cập nhật ${payload.routines.length} thói quen mới trên Đảo Thói Quen!`, "🌟");
+            if (payload.routines.length > 0) {
+              showToast("Nề Nếp Mới!", `Mẹ vừa cập nhật ${payload.routines.length} thói quen mới trên Đảo Thói Quen!`, "🌟");
+            } else {
+              showToast("Đã Làm Mới", "Mẹ vừa làm mới toàn bộ thói quen trên Đảo Thói Quen!", "✨");
+            }
           }
           const alertBadge = document.getElementById('badge-routine-alert');
-          if (alertBadge) alertBadge.classList.remove('hidden');
+          if (alertBadge) {
+            if (payload.routines.length > 0) alertBadge.classList.remove('hidden');
+            else alertBadge.classList.add('hidden');
+          }
         }
       });
     }

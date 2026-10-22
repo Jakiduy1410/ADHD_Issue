@@ -1657,6 +1657,9 @@
         if (counter) counter.innerText = "Đảo 3 / 4: Bàn Học Tối";
         const badge = document.getElementById('child-roadmap-badge');
         if (badge) badge.innerText = "NỀ NẾP SINH HOẠT";
+        if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
+          window.renderChildRoutineRoadmapFromTasks();
+        }
         if (typeof playSfx === 'function') playSfx('tap');
       } else {
         if (btnStudy) {
@@ -1743,59 +1746,6 @@
 
       modal.classList.remove('hidden');
       modal.classList.add('flex');
-    };
-
-    window.renderChildRoutineRoadmapFromTasks = function(routinesList) {
-      const container = document.getElementById('child-routine-map-container');
-      if (!container) return;
-
-      const routines = routinesList || appState.childRoutineRoadmap || [];
-      if (!Array.isArray(routines) || routines.length === 0) return;
-
-      let html = `
-        <svg class="absolute inset-0 w-full h-[620px] pointer-events-none" viewBox="0 0 350 620" fill="none">
-          <path d="M 175 580 C 80 500, 80 430, 175 370 C 270 310, 270 230, 175 160 C 90 90, 260 40, 175 25" stroke="#FDE68A" stroke-width="12" stroke-linecap="round" stroke-dasharray="14 14"/>
-        </svg>
-
-        <div onclick="openRoutineIslandDetail('treasure')" class="relative z-10 flex flex-col items-center cursor-pointer transition hover:scale-105 pt-2">
-          <div class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-amber-300 to-yellow-400 border-b-4 border-amber-600 flex items-center justify-center text-3xl shadow-lg animate-pulse-glow">
-            🏆
-          </div>
-          <span class="text-[10px] font-black text-amber-900 mt-1 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-full shadow-xs">
-            RƯƠNG HOÀNG KIM 🔒
-          </span>
-        </div>
-      `;
-
-      const reversed = [...routines].reverse();
-      const offsets = ['translate-x-12', '-translate-x-10', 'translate-x-10', '-translate-x-12'];
-
-      reversed.forEach((rt, revIdx) => {
-        const origIdx = routines.length - 1 - revIdx;
-        const offsetClass = offsets[revIdx % offsets.length];
-        
-        // MỞ KHÓA TOÀN BỘ 100% ĐỂ TEST FULL
-        html += `
-          <div id="node-routine-island-${origIdx+1}" class="relative z-20 flex flex-col items-center ${offsetClass} my-2">
-            <div onclick="startChildRoutineTask('${rt.id}')" class="w-20 h-20 rounded-[28px] btn-3d-yellow island-active-glow flex flex-col items-center justify-center text-slate-900 shadow-xl ring-4 ring-amber-300 cursor-pointer hover:scale-105 active:scale-95 transition">
-              <span class="text-3xl mb-0.5">${rt.icon || '🌟'}</span>
-              <span class="text-[9px] font-black uppercase tracking-wider bg-black/15 text-amber-950 px-2 py-0.5 rounded-full">+${rt.reward || 25} ⭐</span>
-            </div>
-
-            <div class="mt-1 text-center max-w-[200px]">
-              <span class="bg-amber-400 text-amber-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow-xs">
-                ${rt.slot_time || '07:00'} • SẴN SÀNG 🚀
-              </span>
-              <h4 class="font-black text-xs text-slate-900 mt-0.5">${rt.title}</h4>
-              <span class="text-[9px] font-extrabold text-orange-600 bg-orange-100 px-1.5 py-0.2 rounded-md inline-block mt-0.5">
-                📸 Có chụp ảnh minh chứng
-              </span>
-            </div>
-          </div>
-        `;
-      });
-
-      container.innerHTML = html;
     };
 
     window.parentClosePhotoModal = function() {

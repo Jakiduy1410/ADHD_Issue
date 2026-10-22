@@ -317,7 +317,7 @@
 
         const routinesDb = window.routineDatabase || {};
         let routineList = appState.childRoutineRoadmap;
-        if (!Array.isArray(routineList) || routineList.length === 0) {
+        if (routineList === undefined || routineList === null) {
           routineList = [
             routinesDb['routine_morning_bed'],
             routinesDb['routine_afterschool_drop'],
@@ -475,6 +475,12 @@
       if (!Array.isArray(appState.childRoutineRoadmap) || index < 0 || index >= appState.childRoutineRoadmap.length) return;
       const removed = appState.childRoutineRoadmap.splice(index, 1)[0];
 
+      if (removed && removed.id && appState.selectedRoutineIds) {
+        appState.selectedRoutineIds.delete(removed.id);
+        if (typeof updateRoutineSelectedMeta === 'function') updateRoutineSelectedMeta();
+        if (typeof renderParentRoutinesCatalog === 'function') renderParentRoutinesCatalog();
+      }
+
       const bus = window.miloBus || window.syncBus;
       if (bus && typeof bus.broadcast === 'function') {
         bus.broadcast('ROUTINE_ASSIGN_BATCH', {
@@ -506,6 +512,11 @@
         }
 
         appState.childRoutineRoadmap = [];
+        if (appState.selectedRoutineIds) {
+          appState.selectedRoutineIds.clear();
+          if (typeof updateRoutineSelectedMeta === 'function') updateRoutineSelectedMeta();
+          if (typeof renderParentRoutinesCatalog === 'function') renderParentRoutinesCatalog();
+        }
 
         const bus = window.miloBus || window.syncBus;
         if (bus && typeof bus.broadcast === 'function') {
@@ -520,7 +531,7 @@
         }
 
         renderParentActiveRoadmapList();
-        showToast("Đã Xóa Sạch Thói Quen", "Toàn bộ thói quen đã được xóa! Hãy giao thói quen mới cho bé nhé.", "✨");
+        showToast("Đã Xóa Sạch Thói Quen", "Toàn bộ thói quen đã được xóa sạch trên cả hai máy! Hãy giao nề nếp mới cho bé nhé.", "🗑️");
 
       } else {
         if (!Array.isArray(appState.childRoadmap) || appState.childRoadmap.length === 0) {
@@ -643,3 +654,121 @@
       window.renderParentActiveRoadmapList = renderParentActiveRoadmapList;
       window.initRoadmapDragScroll = initRoadmapDragScroll;
     }
+
+
+    /* ============================================================
+       DYNAMIC ROUTINE ROADMAP & S-CURVE ALIGNMENT (PERFECT TROPHY SYNC)
+       ============================================================ */
+    function renderChildRoutineRoadmapFromTasks(routinesList) {
+      const container = document.getElementById('child-routine-map-container');
+      if (!container) return;
+
+      let routines = routinesList;
+      if (routines === undefined || routines === null) {
+        routines = appState.childRoutineRoadmap;
+      }
+      if (routines === undefined || routines === null) {
+        routines = [];
+      }
+
+      const routinesDb = window.routineDatabase || {};
+      const validRoutines = routines.map(r => (typeof r === 'string' ? routinesDb[r] : r)).filter(Boolean);
+      const totalIslands = validRoutines.length;
+
+      // 1. EMPTY STATE
+      if (totalIslands === 0) {
+        container.innerHTML = `
+          <div class="flex-1 relative flex flex-col items-center justify-center p-6 text-center min-h-[360px] my-auto">
+            <div class="w-20 h-20 rounded-3xl bg-amber-50 border-2 border-amber-200 flex items-center justify-center text-4xl shadow-inner mb-3 animate-float">
+              🌟
+            </div>
+            <h3 class="text-sm font-black text-slate-800 mb-1">Đảo thói quen đang trống!</h3>
+            <p class="text-xs text-slate-500 leading-relaxed max-w-[240px]">
+              Chưa có nề nếp sinh hoạt nào. Ba mẹ hãy tick chọn thói quen bên <strong>Trạm Thấu Hiểu</strong> và bấm giao bài nhé!
+            </p>
+            <div class="mt-4 flex items-center gap-2 bg-amber-100 border border-amber-300 px-3 py-1.5 rounded-full text-[11px] font-bold text-amber-900">
+              <span>🦁</span>
+              <span>Milo đã sẵn sàng xuất phát</span>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // 2. DYNAMIC POINTS & S-CURVE BÉZIER TRAIL (CANH CHÍNH XÁC VÀO CÚP VÀNG)
+      const points = [];
+      for (let r = totalIslands; r >= 1; r--) {
+        const xr = (totalIslands === 1) ? 170 : ((r % 2 === 1) ? 230 : 110);
+        const yr = 45 + r * 105;
+        points.push({ x: xr, y: yr, rowIndex: r, islandIndex: totalIslands - r });
+      }
+      // Điểm đỉnh: Rương báu cúp vàng tại tọa độ (170, 45)
+      points.push({ x: 170, y: 45, rowIndex: 0, isTreasure: true });
+
+      const totalHeight = 45 + totalIslands * 105 + 55;
+
+      // Vẽ đường cong Bézier kết nối từ đảo dưới cùng lên đỉnh Cúp vàng
+      let fullPathD = `M ${points[0].x} ${points[0].y}`;
+      for (let k = 0; k < points.length - 1; k++) {
+        const p1 = points[k];
+        const p2 = points[k + 1];
+        const midY = (p1.y + p2.y) / 2;
+        fullPathD += ` C ${p1.x} ${midY}, ${p2.x} ${midY}, ${p2.x} ${p2.y}`;
+      }
+
+      const svgTrailHtml = `
+        <svg class="absolute inset-0 w-full pointer-events-none z-0" viewBox="0 0 340 ${totalHeight}" preserveAspectRatio="none" style="height: ${totalHeight}px; min-height: 100%;" fill="none">
+          <path d="${fullPathD}" stroke="#FDE68A" stroke-width="12" stroke-linecap="round" stroke-dasharray="14 14"/>
+        </svg>
+      `;
+
+      // 3. RENDER CÁC NỐT HÒN ĐẢO (TỪ TRÊN XUỐNG: CÚP VÀNG -> ĐẢO N-1 -> ĐẢO 0)
+      let islandsHtml = '';
+
+      // Đỉnh: Cúp Vàng Rương Hoàng Kim (Căn chuẩn tâm điểm nối đường trail)
+      islandsHtml += `
+        <div id="node-routine-treasure" onclick="alertTreasureStatus()" class="relative z-10 flex flex-col items-center cursor-pointer transition hover:scale-105 my-2">
+          <div class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-amber-300 to-yellow-400 border-b-4 border-amber-600 flex items-center justify-center text-3xl shadow-lg animate-pulse-glow">
+            🏆
+          </div>
+          <span class="text-[10px] font-black text-amber-900 mt-1 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-full shadow-xs">
+            RƯƠNG HOÀNG KIM 🔒
+          </span>
+        </div>
+      `;
+
+      for (let r = 1; r <= totalIslands; r++) {
+        const i = totalIslands - r;
+        const rt = validRoutines[i] || {};
+        const alignClass = (totalIslands === 1) ? 'translate-x-0' : ((r % 2 === 1) ? 'translate-x-12' : '-translate-x-12');
+
+        islandsHtml += `
+          <div id="node-routine-island-${i + 1}" class="relative z-20 flex flex-col items-center my-2.5 ${alignClass}">
+            <div onclick="startChildRoutineTask('${rt.id}')" class="w-20 h-20 rounded-[28px] btn-3d-yellow island-active-glow flex flex-col items-center justify-center text-slate-900 shadow-xl ring-4 ring-amber-300 cursor-pointer hover:scale-105 active:scale-95 transition">
+              <span class="text-3xl mb-0.5">${rt.icon || '🌟'}</span>
+              <span class="text-[9px] font-black uppercase tracking-wider bg-black/15 text-amber-950 px-2 py-0.5 rounded-full">+${rt.reward || 25} ⭐</span>
+            </div>
+
+            <div class="mt-1.5 text-center max-w-[200px]">
+              <span class="bg-amber-400 text-amber-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow-xs">
+                ${rt.slot_time || '07:00'} • SẴN SÀNG 🚀
+              </span>
+              <h4 class="font-black text-xs text-slate-900 mt-0.5 truncate px-1">${rt.title}</h4>
+              <span class="text-[9px] font-extrabold text-orange-600 bg-orange-100 px-1.5 py-0.2 rounded-md inline-block mt-0.5">
+                📸 Có chụp ảnh minh chứng
+              </span>
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div class="roadmap-canvas relative w-full flex flex-col items-center justify-between py-2" style="height: ${totalHeight}px; min-height: 100%;">
+          ${svgTrailHtml}
+          ${islandsHtml}
+        </div>
+      `;
+      initRoadmapDragScroll(container);
+    }
+
+    window.renderChildRoutineRoadmapFromTasks = renderChildRoutineRoadmapFromTasks;

@@ -105,49 +105,81 @@
           isChecked ? 'bg-amber-50/80 border-amber-300 shadow-2xs' : 'bg-white border-slate-200 hover:border-slate-300'
         }`;
 
-        let slotBg = "bg-amber-100 text-amber-800";
+        let slotBg = "bg-amber-100 text-amber-900";
         let slotName = "🌅 Sáng";
-        if (rt.timeline_slot === 'afternoon') { slotBg = "bg-orange-100 text-orange-800"; slotName = "🌇 Chiều"; }
-        else if (rt.timeline_slot === 'evening') { slotBg = "bg-sky-100 text-sky-800"; slotName = "🌙 Tối"; }
-        else if (rt.timeline_slot === 'night') { slotBg = "bg-indigo-100 text-indigo-800"; slotName = "✨ Ngủ"; }
+        if (rt.timeline_slot === 'afternoon') { slotBg = "bg-orange-100 text-orange-900"; slotName = "🌇 Chiều"; }
+        else if (rt.timeline_slot === 'evening') { slotBg = "bg-sky-100 text-sky-900"; slotName = "🌙 Tối"; }
+        else if (rt.timeline_slot === 'night') { slotBg = "bg-indigo-100 text-indigo-900"; slotName = "✨ Ngủ"; }
 
         const isMeal = (rt.flex_meal_config || rt.id.includes('dinner') || rt.id.includes('breakfast'));
-        let flexMealBtn = '';
-        if (isMeal) {
-          flexMealBtn = `
-            <button type="button" onclick="parentOpenFlexMealConfig('${rt.id}')" class="text-[9px] font-extrabold text-amber-900 bg-amber-200/90 hover:bg-amber-300 px-2 py-0.5 rounded-md border border-amber-400/80 cursor-pointer flex items-center gap-1 shadow-2xs transition">
-              <span>🍳</span> <span>Soạn món hâm</span>
-            </button>
-          `;
+        let dishesSummary = '';
+        if (isMeal && rt.flex_meal_config && Array.isArray(rt.flex_meal_config.dishes)) {
+          dishesSummary = rt.flex_meal_config.dishes.map(d => `${d.name} (${d.minutes}p - ${d.device_name || d.device})`).join(' • ');
+        } else if (isMeal) {
+          dishesSummary = 'Thịt kho (2p - Lò vi sóng) • Canh rau (2p - Bếp đun)';
         }
-
-        const slotBadge = `
-          <span class="${slotBg} text-[9px] font-black px-2 py-0.5 rounded-md flex items-center gap-1">
-            <span>${slotName}</span>
-            <span>•</span>
-            <input type="time" value="${rt.slot_time || '07:00'}" 
-              onchange="parentUpdateRoutineSlotTime('${rt.id}', this.value)" 
-              title="Chạm để tùy chỉnh giờ nhắc"
-              class="text-[9px] font-black font-mono bg-white/90 border border-slate-300 rounded px-1 py-0 text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500 cursor-pointer" />
-          </span>
-        `;
 
         card.innerHTML = `
           <div class="flex items-start gap-2.5">
             <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleRoutineItem('${rt.id}', this.checked)" class="mt-1 w-4 h-4 rounded text-amber-500 focus:ring-amber-400 cursor-pointer accent-amber-500 shrink-0">
+            
             <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-1.5 flex-wrap mb-1">
-                ${slotBadge}
-                <span class="text-[9px] font-extrabold text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">+${rt.reward} ⭐</span>
-                ${flexMealBtn}
+              <!-- Header Row: Slot badge, Stars, Expand Arrow -->
+              <div class="flex items-center justify-between gap-1 mb-1">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="${slotBg} text-[10px] font-black px-2 py-0.5 rounded-md flex items-center gap-1">
+                    <span>${slotName}</span>
+                    <span>•</span>
+                    <span id="label-time-${rt.id}">${rt.slot_time || '07:00'}</span>
+                  </span>
+                  <span class="text-[10px] font-extrabold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">+${rt.reward} ⭐</span>
+                </div>
+
+                <!-- Nút mũi tên mở thanh tùy chỉnh gọn gàng -->
+                <button type="button" onclick="toggleRoutineDrawer('${rt.id}', event)" class="p-1 rounded-lg text-slate-400 hover:text-amber-800 hover:bg-amber-100 transition flex items-center gap-0.5 text-xs font-bold cursor-pointer" title="Mở bảng tùy chỉnh">
+                  <span class="text-[10px] text-slate-500">Tùy chỉnh</span>
+                  <span id="chevron-${rt.id}" class="transition-transform duration-200 inline-block font-mono">▾</span>
+                </button>
               </div>
+
               <h4 class="font-extrabold text-xs text-slate-900 leading-snug flex items-center gap-1">
                 <span>${rt.icon || '🌟'}</span>
                 <span>${rt.title}</span>
               </h4>
-              <p class="text-[10px] text-slate-500 mt-1 leading-tight">
+              <p class="text-[10px] text-slate-500 mt-0.5 leading-tight">
                 ${rt.steps ? rt.steps.length : 3} vi bước atomic • 📸 Chụp ảnh minh chứng
               </p>
+
+              <!-- THANH RÚT GỌN TÙY CHỈNH (ACCORDION DRAWER) -->
+              <div id="drawer-${rt.id}" class="hidden mt-2 pt-2 border-t border-amber-200/80 flex flex-col gap-2 bg-amber-50/60 -mx-1 px-2.5 py-2 rounded-xl text-left">
+                <!-- 1. Tùy chỉnh giờ nhắc nhở -->
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                    <span>⏱️</span> <span>Giờ nhắc con:</span>
+                  </span>
+                  <input type="time" value="${rt.slot_time || '07:00'}"
+                    onchange="parentUpdateRoutineSlotTime('${rt.id}', this.value)"
+                    class="text-xs font-black font-mono bg-white border border-amber-300 rounded-lg px-2 py-1 text-slate-800 shadow-2xs focus:ring-2 focus:ring-amber-400 focus:outline-none cursor-pointer" />
+                </div>
+
+                <!-- 2. Nếu là món ăn (meal) -->
+                ${isMeal ? `
+                  <div class="pt-1.5 border-t border-amber-200/50 flex flex-col gap-1.5">
+                    <div class="flex items-center justify-between">
+                      <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                        <span>🍳</span> <span>Thực đơn hâm nóng:</span>
+                      </span>
+                      <button type="button" onclick="parentOpenFlexMealConfig('${rt.id}')" class="text-[10px] font-black text-amber-950 bg-amber-300 hover:bg-amber-400 px-2 py-0.5 rounded-lg border border-amber-500 cursor-pointer shadow-2xs transition">
+                        ✏️ Soạn lại món
+                      </button>
+                    </div>
+                    <div class="text-[10px] text-slate-600 bg-white/90 p-2 rounded-lg border border-amber-200 leading-relaxed font-medium">
+                      ${dishesSummary}
+                    </div>
+                  </div>
+                ` : ''}
+              </div>
+
             </div>
           </div>
         `;
@@ -1212,3 +1244,20 @@ window.parentJumpToAssignRoutines = parentJumpToAssignRoutines;
         renderParentRoutinesCatalog();
       }
     }
+
+
+    function toggleRoutineDrawer(routineId, e) {
+      if (e) e.stopPropagation();
+      if (typeof playSfx === 'function') playSfx('tap');
+      const drawer = document.getElementById(`drawer-${routineId}`);
+      const chevron = document.getElementById(`chevron-${routineId}`);
+      if (!drawer) return;
+      if (drawer.classList.contains('hidden')) {
+        drawer.classList.remove('hidden');
+        if (chevron) chevron.style.transform = 'rotate(180deg)';
+      } else {
+        drawer.classList.add('hidden');
+        if (chevron) chevron.style.transform = 'rotate(0deg)';
+      }
+    }
+    window.toggleRoutineDrawer = toggleRoutineDrawer;

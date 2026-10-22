@@ -177,7 +177,7 @@
       btnNext.classList.add('btn-disabled');
 
       // Visual Theme (R5): Distinct visual identity for routines vs study tasks
-      const isChore = (task && task.cat === 'chore');
+      const isChore = (task && (task.cat === 'chore' || task.cat === 'routine'));
 
       const focusCard = document.getElementById('child-focus-card');
       if (focusCard) {
@@ -1559,8 +1559,54 @@
       btn.disabled = true;
 
       const btnNext = document.getElementById('child-btn-next-step');
-      btnNext.disabled = false;
-      btnNext.classList.remove('btn-disabled');
+      if (btnNext) {
+        btnNext.disabled = false;
+        btnNext.classList.remove('btn-disabled');
+        btnNext.classList.add('animate-bounce');
+      }
+    }
+
+    function takeRoutinePhotoAndComplete(btn) {
+      if (typeof playSfx === 'function') playSfx('camera');
+      if (typeof spawnStars === 'function') spawnStars();
+
+      const task = appState.activeTask;
+      const routineTitle = (task && task.title) ? task.title : 'Nề nếp sinh hoạt';
+      const routineId = (task && task.id) ? task.id : 'routine_clean_desk';
+      const reward = (task && task.reward) || 30;
+
+      // Broadcast sự kiện ROUTINE_PHOTO_SUBMITTED qua SyncBus
+      const bus = window.miloBus || window.syncBus;
+      if (bus && typeof bus.broadcast === 'function') {
+        bus.broadcast('ROUTINE_PHOTO_SUBMITTED', {
+          routine_id: routineId,
+          routine_title: routineTitle,
+          photo_tag: (task && task.target_photo_tag) || 'PHOTO.JPG',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.className = "w-full py-3.5 bg-emerald-600 text-white font-black text-sm rounded-2xl shadow-sm transition flex items-center justify-center gap-2 cursor-default";
+        btn.innerHTML = `<span>✅</span> <span>ĐÃ CHỤP ẢNH &amp; DUYỆT +${reward}⭐!</span>`;
+      }
+
+      if (typeof updateStarsEverywhere === 'function') {
+        updateStarsEverywhere(appState.stars + reward);
+      }
+
+      if (typeof showToast === 'function') {
+        showToast("Minh Chứng Thành Công!", `Hệ thống đã lưu ảnh [${routineTitle}] và gửi sang Nhật Ký của Mẹ!`, "📸");
+      }
+
+      setTimeout(() => {
+        if (typeof completeChildStep === 'function') {
+          completeChildStep();
+        } else {
+          childSwitchScreen('home');
+        }
+      }, 700);
     }
 
     // Chores: Dọn bàn
@@ -1869,6 +1915,7 @@ if (typeof window !== 'undefined') {
   window.childSwitchScreen = childSwitchScreen;
   window.exitChildWorkspace = exitChildWorkspace;
   window.renderChildWorkspaceStep = renderChildWorkspaceStep;
+  window.takeRoutinePhotoAndComplete = takeRoutinePhotoAndComplete;
   window.renderProgressiveCalculationStage = renderProgressiveCalculationStage;
   window.autoDetectProgressivePhases = autoDetectProgressivePhases;
 

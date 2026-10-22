@@ -298,21 +298,24 @@
             <span class="text-xs">⏳</span>
           `;
         } else {
-          card.className = "bg-slate-100/80 rounded-2xl p-3 border border-slate-200 opacity-75 flex items-center justify-between";
+          card.className = "bg-white rounded-2xl p-3 border border-amber-200 hover:border-amber-300 shadow-2xs flex items-center justify-between cursor-pointer transition active:scale-98";
+          card.onclick = () => parentOpenPhotoModal(rt.id);
           card.innerHTML = `
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-slate-200 text-slate-400 flex items-center justify-center text-xl shrink-0">
-                ${rt.icon || '🔒'}
+              <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center text-xl shrink-0">
+                ${rt.icon || '🌟'}
               </div>
               <div>
                 <div class="flex items-center gap-1.5">
-                  <span class="font-extrabold text-xs text-slate-600">${rt.title}</span>
-                  <span class="text-[9px] font-bold text-slate-400 bg-slate-200 px-1.5 py-0.2 rounded">Chưa đến giờ</span>
+                  <span class="font-extrabold text-xs text-slate-800">${rt.title}</span>
+                  <span class="text-[9px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.2 rounded">Sẵn sàng (Đã mở)</span>
                 </div>
-                <span class="text-[10px] text-slate-400 font-medium">Khóa timeline • Tự mở lúc ${rt.slot_time || '21:00'}</span>
+                <span class="text-[10px] text-slate-400 font-medium">${rt.slot_time || '21:00'} • Đã mở khóa test full</span>
               </div>
             </div>
-            <span class="text-xs text-slate-400">🔒</span>
+            <span class="px-2.5 py-1 rounded-xl bg-amber-50 text-amber-800 text-[10px] font-black border border-amber-200 flex items-center gap-1">
+              <span>📷</span> <span>Xem Ảnh</span>
+            </span>
           `;
         }
         container.appendChild(card);

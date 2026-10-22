@@ -316,26 +316,24 @@
                   </span>
                 </div>
 
-                <!-- ĐẢO 4 (21:00 - KHÓA TIMELINE): ĐÁNH RĂNG TỐI -->
-                <div id="node-routine-island-4" onclick="handleRoutineIslandClick('routine_night_teeth')" class="relative z-10 flex flex-col items-center translate-x-12 cursor-pointer transition hover:scale-105">
-                  <div id="routine-island-4-icon-box" class="w-18 h-18 rounded-[28px] bg-slate-100 border-2 border-slate-300 border-b-4 border-slate-400 flex flex-col items-center justify-center shadow-md relative p-2">
-                    <span class="text-3xl opacity-50">🦷</span>
-                    <span class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-slate-800 text-white text-[11px] flex items-center justify-center shadow-md border border-slate-600">
-                      🔒
-                    </span>
-                    <span class="text-[9px] font-black text-slate-500 mt-0.5">+25 ⭐</span>
+                <!-- ĐẢO 4 (21:00): ĐÁNH RĂNG TỐI (ĐÃ MỞ KHÓA TOÀN BỘ ĐỂ TEST FULL) -->
+                <div id="node-routine-island-4" onclick="startChildRoutineTask('routine_night_teeth')" class="relative z-10 flex flex-col items-center translate-x-12 cursor-pointer transition hover:scale-105">
+                  <div id="routine-island-4-icon-box" class="w-20 h-20 rounded-[28px] btn-3d-yellow island-active-glow ring-4 ring-amber-300 flex flex-col items-center justify-center shadow-lg relative p-2">
+                    <span class="text-3xl">🦷</span>
+                    <span class="text-[9px] font-black uppercase tracking-wider bg-black/15 text-amber-950 px-2 py-0.5 rounded-full mt-0.5">+25 ⭐</span>
                   </div>
                   <div class="text-center mt-1">
-                    <span class="text-[10px] font-black text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-xs block">
-                      Đảo Đánh Răng Đi Ngủ
+                    <span class="bg-amber-400 text-amber-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow-xs">
+                      21:00 • SẴN SÀNG 🚀
                     </span>
-                    <span class="text-[9px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.2 rounded-full inline-block mt-0.5">
-                      🔒 Khóa • Mở lúc 21:00
+                    <h4 class="font-black text-xs text-slate-900 mt-0.5">Đánh Răng Thơm Tho</h4>
+                    <span class="text-[9px] font-extrabold text-orange-600 bg-orange-100 px-1.5 py-0.2 rounded-md inline-block mt-0.5">
+                      📸 Chụp ảnh trước gương
                     </span>
                   </div>
                 </div>
 
-                <!-- ĐẢO 3 (19:00 - ACTIVE): DỌN BÀN HỌC -->
+                <!-- ĐẢO 3 (19:00): DỌN BÀN HỌC -->
                 <div id="node-routine-island-3" class="relative z-20 flex flex-col items-center -translate-x-10">
                   <div class="absolute -left-16 -top-5 flex flex-col items-center animate-milo">
                     <div class="bg-white border-2 border-amber-400 px-2.5 py-1 rounded-2xl rounded-br-none shadow-md text-[10px] font-extrabold text-amber-900 mb-1 max-w-[120px] text-center leading-tight">
@@ -353,45 +351,45 @@
 
                   <div class="mt-1.5 text-center max-w-[200px]">
                     <span id="routine-island-3-status" class="bg-amber-500 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow-xs">
-                      ĐANG MỞ CỬA 🚀
+                      19:00 • ĐANG MỞ CỬA 🚀
                     </span>
                     <h4 class="font-black text-xs text-slate-900 mt-0.5">Dọn Bàn Học Gọn Gàng</h4>
                     <span class="text-[9px] font-extrabold text-orange-600 bg-orange-100 px-1.5 py-0.2 rounded-md inline-block mt-0.5">
-                      📸 Có chụp ảnh minh chứng
+                      📸 Chụp ảnh bàn sạch
                     </span>
                   </div>
                 </div>
 
-                <!-- ĐẢO 2 (16:30 - ĐÃ XONG): CẤT GIÀY & BALO -->
-                <div onclick="openRoutineIslandDetail('routine_afterschool_drop')" class="relative z-10 flex flex-col items-center translate-x-12 cursor-pointer transition hover:scale-105">
-                  <div class="w-16 h-16 rounded-2xl bg-emerald-500 text-white border-b-4 border-emerald-700 flex flex-col items-center justify-center shadow-md relative">
-                    <span class="text-2xl">🎒</span>
-                    <span class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-white text-emerald-600 text-xs font-black flex items-center justify-center shadow">✓</span>
-                    <span class="text-[8px] font-black text-emerald-100 mt-0.5">+25 ⭐</span>
+                <!-- ĐẢO 2 (16:30): CẤT GIÀY & BALO -->
+                <div onclick="startChildRoutineTask('routine_afterschool_drop')" class="relative z-10 flex flex-col items-center translate-x-12 cursor-pointer transition hover:scale-105">
+                  <div class="w-20 h-20 rounded-[28px] btn-3d-yellow island-active-glow ring-4 ring-amber-300 flex flex-col items-center justify-center shadow-md relative">
+                    <span class="text-3xl">🎒</span>
+                    <span class="text-[9px] font-black uppercase tracking-wider bg-black/15 text-amber-950 px-2 py-0.5 rounded-full mt-0.5">+25 ⭐</span>
                   </div>
                   <div class="text-center mt-1">
-                    <span class="text-[10px] font-black text-slate-800 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-xs block">
-                      Cất Giày &amp; Balo
+                    <span class="bg-amber-400 text-amber-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow-xs">
+                      16:30 • SẴN SÀNG 🚀
                     </span>
-                    <span class="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded-full inline-block mt-0.5">
-                      ✓ Đã xong (Xem ảnh)
+                    <h4 class="font-black text-xs text-slate-900 mt-0.5">Cất Giày &amp; Balo</h4>
+                    <span class="text-[9px] font-extrabold text-orange-600 bg-orange-100 px-1.5 py-0.2 rounded-md inline-block mt-0.5">
+                      📸 Chụp ảnh kệ dép
                     </span>
                   </div>
                 </div>
 
-                <!-- ĐẢO 1 (06:30 - ĐÃ XONG): GẤP CHĂN -->
-                <div onclick="openRoutineIslandDetail('routine_morning_bed')" class="relative z-10 flex flex-col items-center -translate-x-10 cursor-pointer transition hover:scale-105 pb-4">
-                  <div class="w-16 h-16 rounded-2xl bg-emerald-500 text-white border-b-4 border-emerald-700 flex flex-col items-center justify-center shadow-md relative">
-                    <span class="text-2xl">🛏️</span>
-                    <span class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-white text-emerald-600 text-xs font-black flex items-center justify-center shadow">✓</span>
-                    <span class="text-[8px] font-black text-emerald-100 mt-0.5">+20 ⭐</span>
+                <!-- ĐẢO 1 (06:30): GẤP CHĂN GỐI -->
+                <div onclick="startChildRoutineTask('routine_morning_bed')" class="relative z-10 flex flex-col items-center -translate-x-10 cursor-pointer transition hover:scale-105 pb-4">
+                  <div class="w-20 h-20 rounded-[28px] btn-3d-yellow island-active-glow ring-4 ring-amber-300 flex flex-col items-center justify-center shadow-md relative">
+                    <span class="text-3xl">🛏️</span>
+                    <span class="text-[9px] font-black uppercase tracking-wider bg-black/15 text-amber-950 px-2 py-0.5 rounded-full mt-0.5">+20 ⭐</span>
                   </div>
                   <div class="text-center mt-1">
-                    <span class="text-[10px] font-black text-slate-800 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-xs block">
-                      Gấp Chăn Gối Sáng
+                    <span class="bg-amber-400 text-amber-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow-xs">
+                      06:30 • SẴN SÀNG 🚀
                     </span>
-                    <span class="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded-full inline-block mt-0.5">
-                      ✓ Đã xong (Xem ảnh)
+                    <h4 class="font-black text-xs text-slate-900 mt-0.5">Gấp Chăn Gối Sáng</h4>
+                    <span class="text-[9px] font-extrabold text-orange-600 bg-orange-100 px-1.5 py-0.2 rounded-md inline-block mt-0.5">
+                      📸 Chụp ảnh giường ngủ
                     </span>
                   </div>
                 </div>
@@ -1695,15 +1693,15 @@
     };
 
     window.handleRoutineIslandClick = function(routineId) {
-      if (routineId === 'routine_night_teeth') {
-        alert("🔒 Đảo Đánh Răng tự động mở lúc 21:00 tối! Milo sẽ gọi Leo khi đến giờ nhé!");
-        if (typeof playSfx === 'function') playSfx('pop');
-      }
+      startChildRoutineTask(routineId);
     };
 
     window.openRoutineIslandDetail = function(key) {
-      alert("✓ Thói quen này Leo đã hoàn thành xuất sắc và gửi ảnh vào Nhật ký của Mẹ!");
-      if (typeof playSfx === 'function') playSfx('tap');
+      if (key && key !== 'treasure') {
+        startChildRoutineTask(key);
+      } else {
+        alert("🏆 RƯƠNG HOÀNG KIM: Hoàn thành các thói quen trong ngày để nhận thêm +100 sao thưởng!");
+      }
     };
 
     window.parentOpenPhotoModal = function(key) {
@@ -1776,77 +1774,25 @@
         const origIdx = routines.length - 1 - revIdx;
         const offsetClass = offsets[revIdx % offsets.length];
         
-        const isDone = (origIdx < 2 && routines.length >= 3);
-        const isActive = (origIdx === 2 || (routines.length < 3 && origIdx === 0));
-        const isLocked = !isDone && !isActive;
-
-        if (isActive) {
-          html += `
-            <div id="node-routine-island-${origIdx+1}" class="relative z-20 flex flex-col items-center ${offsetClass}">
-              <div class="absolute -left-16 -top-5 flex flex-col items-center animate-milo">
-                <div class="bg-white border-2 border-amber-400 px-2.5 py-1 rounded-2xl rounded-br-none shadow-md text-[10px] font-extrabold text-amber-900 mb-1 max-w-[120px] text-center leading-tight">
-                  Cùng làm nhận ${rt.reward || 30} sao nào! ✨
-                </div>
-                <div class="w-11 h-11 rounded-2xl bg-amber-400 text-amber-950 flex items-center justify-center text-2xl shadow-md">
-                  🦁
-                </div>
-              </div>
-
-              <div onclick="startChildRoutineTask('${rt.id}')" class="w-22 h-22 rounded-[32px] btn-3d-yellow island-active-glow flex flex-col items-center justify-center text-slate-900 shadow-xl ring-6 ring-amber-200 cursor-pointer hover:scale-105 active:scale-95 transition">
-                <span class="text-3xl mb-0.5">${rt.icon || '🌟'}</span>
-                <span class="text-[9px] font-black uppercase tracking-wider bg-black/15 text-amber-950 px-2 py-0.5 rounded-full">+${rt.reward || 30} ⭐</span>
-              </div>
-
-              <div class="mt-1.5 text-center max-w-[200px]">
-                <span class="bg-amber-500 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow-xs">
-                  ĐANG MỞ CỬA 🚀
-                </span>
-                <h4 class="font-black text-xs text-slate-900 mt-0.5">${rt.title}</h4>
-                <span class="text-[9px] font-extrabold text-orange-600 bg-orange-100 px-1.5 py-0.2 rounded-md inline-block mt-0.5">
-                  📸 Có chụp ảnh minh chứng
-                </span>
-              </div>
+        // MỞ KHÓA TOÀN BỘ 100% ĐỂ TEST FULL
+        html += `
+          <div id="node-routine-island-${origIdx+1}" class="relative z-20 flex flex-col items-center ${offsetClass} my-2">
+            <div onclick="startChildRoutineTask('${rt.id}')" class="w-20 h-20 rounded-[28px] btn-3d-yellow island-active-glow flex flex-col items-center justify-center text-slate-900 shadow-xl ring-4 ring-amber-300 cursor-pointer hover:scale-105 active:scale-95 transition">
+              <span class="text-3xl mb-0.5">${rt.icon || '🌟'}</span>
+              <span class="text-[9px] font-black uppercase tracking-wider bg-black/15 text-amber-950 px-2 py-0.5 rounded-full">+${rt.reward || 25} ⭐</span>
             </div>
-          `;
-        } else if (isDone) {
-          html += `
-            <div onclick="openRoutineIslandDetail('${rt.id}')" class="relative z-10 flex flex-col items-center ${offsetClass} cursor-pointer transition hover:scale-105">
-              <div class="w-16 h-16 rounded-2xl bg-emerald-500 text-white border-b-4 border-emerald-700 flex flex-col items-center justify-center shadow-md relative">
-                <span class="text-2xl">${rt.icon || '✓'}</span>
-                <span class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-white text-emerald-600 text-xs font-black flex items-center justify-center shadow">✓</span>
-                <span class="text-[8px] font-black text-emerald-100 mt-0.5">+${rt.reward || 20} ⭐</span>
-              </div>
-              <div class="text-center mt-1">
-                <span class="text-[10px] font-black text-slate-800 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-xs block">
-                  ${rt.title}
-                </span>
-                <span class="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded-full inline-block mt-0.5">
-                  ✓ Đã xong (Xem ảnh)
-                </span>
-              </div>
+
+            <div class="mt-1 text-center max-w-[200px]">
+              <span class="bg-amber-400 text-amber-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow-xs">
+                ${rt.slot_time || '07:00'} • SẴN SÀNG 🚀
+              </span>
+              <h4 class="font-black text-xs text-slate-900 mt-0.5">${rt.title}</h4>
+              <span class="text-[9px] font-extrabold text-orange-600 bg-orange-100 px-1.5 py-0.2 rounded-md inline-block mt-0.5">
+                📸 Có chụp ảnh minh chứng
+              </span>
             </div>
-          `;
-        } else {
-          html += `
-            <div onclick="alert('🔒 Hoạt động này tự mở lúc ${rt.slot_time || '21:00'}! Milo sẽ nhắc con nhé!')" class="relative z-10 flex flex-col items-center ${offsetClass} cursor-pointer transition hover:scale-105">
-              <div class="w-18 h-18 rounded-[28px] bg-slate-100 border-2 border-slate-300 border-b-4 border-slate-400 flex flex-col items-center justify-center shadow-md relative p-2">
-                <span class="text-3xl opacity-50">${rt.icon || '🔒'}</span>
-                <span class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-slate-800 text-white text-[11px] flex items-center justify-center shadow-md border border-slate-600">
-                  🔒
-                </span>
-                <span class="text-[9px] font-black text-slate-500 mt-0.5">+${rt.reward || 25} ⭐</span>
-              </div>
-              <div class="text-center mt-1">
-                <span class="text-[10px] font-black text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-xs block">
-                  ${rt.title}
-                </span>
-                <span class="text-[9px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.2 rounded-full inline-block mt-0.5">
-                  🔒 Khóa • Mở lúc ${rt.slot_time || '21:00'}
-                </span>
-              </div>
-            </div>
-          `;
-        }
+          </div>
+        `;
       });
 
       container.innerHTML = html;

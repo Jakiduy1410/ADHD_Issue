@@ -964,6 +964,107 @@
             <p class="text-[10px] text-center text-slate-400 font-bold">1 chạm tự động duyệt ngay • Con không cần chờ đợi</p>
           </div>
         `;
+      } else if (stepData.ui_type === 'timer_brush' || stepData.type === 'timer_brush') {
+        // ĐÁNH RĂNG KHOA HỌC: ĐẾM NGƯỢC 30S HÀM TRÊN / HÀM DƯỚI + CHUÔNG TING
+        const secTotal = stepData.duration_sec || 30;
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center gap-3 p-4 bg-teal-50/70 border border-teal-200 rounded-3xl my-auto text-center shadow-xs">
+            <span class="text-xs font-black text-teal-800 uppercase tracking-wider">${stepData.badge || 'Đánh Răng Chuẩn Khoa Học'}</span>
+            
+            <div class="relative w-28 h-28 flex items-center justify-center my-1">
+              <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" stroke="#CCFBF1" stroke-width="8" fill="none" />
+                <circle id="brush-timer-circle" cx="50" cy="50" r="42" stroke="#0D9488" stroke-width="8" stroke-linecap="round" fill="none"
+                  stroke-dasharray="264" stroke-dashoffset="0" class="transition-all duration-1000" />
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span id="brush-timer-sec" class="text-3xl font-black font-mono text-teal-950">${secTotal}</span>
+                <span class="text-[9px] font-black text-teal-600 uppercase tracking-widest">GIÂY</span>
+              </div>
+            </div>
+
+            <p id="brush-status-text" class="text-xs font-bold text-teal-950 px-3 leading-relaxed">
+              ${stepData.hints && stepData.hints[0] ? stepData.hints[0] : 'Bấm nút để bắt đầu đếm nhịp 30 giây con nhé!'}
+            </p>
+
+            <button id="btn-start-brush-timer" onclick="startBrushCountdown(this, ${secTotal})" class="w-full max-w-[240px] py-3.5 btn-3d-green text-white font-black text-xs rounded-2xl shadow-md active:scale-95 transition flex items-center justify-center gap-2 cursor-pointer">
+              <span>🪥</span>
+              <span>BẮT ĐẦU CHẢI (${secTotal}S)</span>
+            </button>
+          </div>
+        `;
+
+        if (btnNext) {
+          btnNext.style.display = '';
+          btnNext.disabled = true;
+          btnNext.classList.add('btn-disabled');
+          btnNext.innerHTML = `<span>TIẾP TỤC BƯỚC SAU</span> <span class="text-xs">➔</span>`;
+        }
+
+      } else if (stepData.ui_type === 'pipeline_timer' || stepData.type === 'pipeline_timer') {
+        // HÂM NÓNG BỮA ĂN (PIPELINE TIMER CHẠY NGẦM)
+        const dishName = stepData.dish_name || 'Món ăn';
+        const deviceName = stepData.device_name || 'Lò vi sóng';
+        const device = stepData.device || 'microwave';
+        const durationSec = stepData.duration_sec || 120;
+        const minutes = Math.ceil(durationSec / 60);
+
+        let icon = '📻';
+        if (device === 'airfryer') icon = '♨️';
+        else if (device === 'stove') icon = '🍳';
+        else if (device === 'rice_cooker') icon = '🍚';
+
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center gap-3 p-5 bg-amber-50/70 border border-amber-200/80 rounded-3xl my-auto text-center shadow-xs">
+            <div class="w-16 h-16 rounded-2xl bg-white border border-amber-200 flex items-center justify-center text-3xl shadow-xs">
+              ${icon}
+            </div>
+            <div class="space-y-1">
+              <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                ${deviceName} • ${minutes} phút
+              </span>
+              <h4 class="text-sm font-black text-amber-950">${dishName}</h4>
+            </div>
+            <p class="text-xs font-bold text-slate-600 px-3 leading-relaxed">
+              ${stepData.hints && stepData.hints[0] ? stepData.hints[0] : 'Đặt món vào và bấm chạy, hệ thống sẽ đếm ngầm cho con!'}
+            </p>
+            <button onclick="startPipelineTimerAndNext(this, '${device}', '${dishName}', ${durationSec})" class="w-full max-w-[260px] py-3.5 btn-3d-amber text-slate-900 font-black text-xs rounded-2xl shadow-md active:scale-95 transition flex items-center justify-center gap-2 cursor-pointer">
+              <span>⏱️</span>
+              <span>BẮT ĐẦU CHẠY &amp; SANG BƯỚC TIẾP</span>
+            </button>
+            <span class="text-[10px] font-bold text-slate-400">Thiết bị tự ngắt • Bé làm tiếp bước sau không sợ cháy</span>
+          </div>
+        `;
+        if (btnNext) {
+          btnNext.style.display = 'none';
+        }
+
+      } else if (stepData.ui_type === 'study_bridge' || stepData.type === 'study_bridge') {
+        // CẦU NỐI ĐẢO BÀI TẬP (STUDY ISLAND BRIDGE)
+        stage.innerHTML = `
+          <div class="flex flex-col items-center justify-center gap-3 p-5 bg-indigo-50/70 border border-indigo-200 rounded-3xl my-auto text-center shadow-xs">
+            <div class="w-16 h-16 rounded-2xl bg-white border border-indigo-200 flex items-center justify-center text-3xl shadow-xs">
+              🚀
+            </div>
+            <div class="space-y-1">
+              <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200">
+                Cầu Nối Đảo Bài Tập
+              </span>
+              <h4 class="text-sm font-black text-indigo-950">Milo Cùng Leo Chinh Phục Bài Tập Tối Nay!</h4>
+            </div>
+            <p class="text-xs font-bold text-slate-600 px-4 leading-relaxed">
+              Milo đang mở cổng sang Đảo Bài Tập. Con chỉ cần hoàn thành từ 80% số bài được giao là Milo sẽ tự động duyệt xong nề nếp tối nay nhé!
+            </p>
+            <button onclick="launchStudyIslandBridge(this)" class="w-full max-w-[260px] py-3.5 btn-3d-indigo text-white font-black text-xs rounded-2xl shadow-md active:scale-95 transition flex items-center justify-center gap-2 cursor-pointer">
+              <span>🚀</span>
+              <span>BƯỚC VÀO ĐẢO BÀI TẬP NGAY</span>
+            </button>
+          </div>
+        `;
+        if (btnNext) {
+          btnNext.style.display = 'none';
+        }
+
       } else if (stepData.ui_type === 'checkbox' || stepData.type === 'checkbox' || isChore) {
         // CÁC BƯỚC NỀ NẾP SINH HOẠT THỰC TẾ:
         // Thiết kế tối giản, sạch sẽ (Clutter-free cho ADHD):
@@ -3015,4 +3116,132 @@ function setupMultiRightToLeftListeners(expectedStr, onDone) {
         multiTaskState.curStage = 4;
         triggerFxReRender();
       }
+    }
+
+
+    /* ============================================================
+       ADHD ROUTINE ENHANCEMENTS: BRUSH TIMER, PIPELINE & STUDY BRIDGE
+       ============================================================ */
+    window.miloActiveTimers = window.miloActiveTimers || [];
+
+    function startBrushCountdown(btn, durationSec) {
+      if (typeof playSfx === 'function') playSfx('tap');
+      if (btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-75');
+        btn.innerHTML = `<span>⏳</span> <span>ĐANG ĐẾM NHỊP CHẢI RĂNG...</span>`;
+      }
+
+      let secLeft = durationSec || 30;
+      const secEl = document.getElementById('brush-timer-sec');
+      const circleEl = document.getElementById('brush-timer-circle');
+      const statusEl = document.getElementById('brush-status-text');
+      const circumference = 264;
+
+      if (statusEl) {
+        statusEl.innerHTML = `<span class="text-teal-700 font-extrabold animate-pulse">✨ Chải xoay tròn từng mặt răng đều đặn nhé...</span>`;
+      }
+
+      const timerId = setInterval(() => {
+        secLeft--;
+        if (secEl) secEl.innerText = secLeft;
+
+        if (circleEl) {
+          const offset = circumference - (secLeft / durationSec) * circumference;
+          circleEl.style.strokeDashoffset = offset;
+        }
+
+        if (secLeft <= 0) {
+          clearInterval(timerId);
+          if (typeof playSfx === 'function') {
+            playSfx('star');
+            try { playSfx('bell'); } catch(e){}
+          }
+          if (typeof spawnStars === 'function') spawnStars();
+
+          if (secEl) secEl.innerText = "0";
+          if (statusEl) {
+            statusEl.innerHTML = `<span class="text-emerald-700 font-black text-sm">🔔 TING TING! Xong ${durationSec}s rồi! Bé giỏi quá!</span>`;
+          }
+
+          if (btn) {
+            btn.className = "w-full max-w-[240px] py-3.5 bg-emerald-100 text-emerald-800 font-black text-xs rounded-2xl flex items-center justify-center gap-2";
+            btn.innerHTML = `<span>✅</span> <span>ĐÃ HOÀN THÀNH BƯỚC NÀY!</span>`;
+          }
+
+          const btnNext = document.getElementById('child-btn-next-step');
+          if (btnNext) {
+            btnNext.disabled = false;
+            btnNext.classList.remove('btn-disabled');
+            btnNext.classList.add('animate-bounce');
+            btnNext.innerHTML = `<span>✅ TIẾP TỤC BƯỚC SAU</span> <span class="text-xs">➔</span>`;
+          }
+        }
+      }, 1000);
+    }
+
+    function startPipelineTimerAndNext(btn, device, dishName, durationSec) {
+      if (typeof playSfx === 'function') playSfx('tap');
+
+      const timerItem = {
+        id: 'timer_' + Date.now(),
+        device: device,
+        dishName: dishName,
+        durationSec: durationSec,
+        startTime: Date.now(),
+        endTime: Date.now() + durationSec * 1000,
+        isCompleted: false
+      };
+
+      window.miloActiveTimers.push(timerItem);
+
+      if (typeof showToast === 'function') {
+        const mins = Math.ceil(durationSec / 60);
+        showToast("Bắt Đầu Hâm Nóng", `${dishName} đang chạy ngầm trong ${mins} phút... Con chuẩn bị bát đũa nhé!`, "⏱️");
+      }
+
+      // Schedule alarm sound when timer finishes
+      setTimeout(() => {
+        timerItem.isCompleted = true;
+        if (typeof playSfx === 'function') {
+          playSfx('bell');
+          try { playSfx('star'); } catch(e){}
+        }
+        if (typeof showToast === 'function') {
+          showToast("🔔 TING TING! MÓN ĂN ĐÃ XONG!", `${dishName} đã nóng hổi thơm ngon! Con dùng lót tay bê ra bàn nhé!`, "🍲");
+        }
+      }, durationSec * 1000);
+
+      // Auto advance to next step so child isn't stuck waiting
+      setTimeout(() => {
+        if (typeof completeChildStep === 'function') {
+          completeChildStep();
+        }
+      }, 350);
+    }
+
+    function launchStudyIslandBridge(btn) {
+      if (typeof playSfx === 'function') playSfx('star');
+      if (typeof spawnStars === 'function') spawnStars();
+
+      appState.activeStudySession = {
+        startedAt: Date.now(),
+        targetRatio: 0.8,
+        routineId: (appState.activeTask && appState.activeTask.id) || 'routine_study_checkin'
+      };
+
+      if (typeof showToast === 'function') {
+        showToast("Vào Bàn Học", "Milo chúc Leo học tập thật tập trung và hiệu quả! Hoàn thành ≥80% bài tập sẽ được thưởng lớn!", "🚀");
+      }
+
+      // Switch to study roadmap
+      setTimeout(() => {
+        if (typeof childSwitchScreen === 'function') {
+          childSwitchScreen('home');
+          // Switch to study tab if function exists
+          if (typeof childSwitchIslandTab === 'function') {
+            childSwitchIslandTab('study');
+          }
+        }
+      }, 400);
     }

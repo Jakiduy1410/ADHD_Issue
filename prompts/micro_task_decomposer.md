@@ -498,3 +498,110 @@ Mục tiêu tối thượng: Giảm tải bộ nhớ làm việc (Working Memory
   ]
 }
 ```
+
+### Mẫu 9: Đánh răng chuẩn khoa học ADHD (routine_night_teeth - Đếm ngược 30s hàm trên & hàm dưới)
+```json
+{
+  "id": "routine_night_teeth",
+  "exercise_type": "daily_routine",
+  "timeline_slot": "night",
+  "slot_time": "21:00",
+  "title": "Đánh răng thơm tho & Thở 4-4-4 đi ngủ",
+  "catName": "Thói Quen Trước Giờ Ngủ",
+  "reward": 25,
+  "steps": [
+    {
+      "step_id": 1,
+      "badge": "Bóp kem hạt đậu",
+      "action_verb": "Bóp_kem",
+      "atomic_instruction": "Lấy một lượng kem đánh răng nhỏ bằng hạt đậu lên đầu bàn chải.",
+      "ui_type": "checkbox",
+      "is_milestone": false,
+      "dopamine_points": 5
+    },
+    {
+      "step_id": 2,
+      "badge": "Hàm Trên 30s",
+      "action_verb": "Chải_răng",
+      "atomic_instruction": "Chải đều các mặt răng hàm trên trong 30 giây cho đến khi nghe chuông Ting.",
+      "ui_type": "timer_brush",
+      "duration_sec": 30,
+      "is_milestone": false,
+      "dopamine_points": 5
+    },
+    {
+      "step_id": 3,
+      "badge": "Hàm Dưới 30s",
+      "action_verb": "Chải_răng",
+      "atomic_instruction": "Chuyển xuống chải đều khắp hàm dưới trong 30 giây cho sạch vi khuẩn.",
+      "ui_type": "timer_brush",
+      "duration_sec": 30,
+      "is_milestone": false,
+      "dopamine_points": 5
+    },
+    {
+      "step_id": 4,
+      "badge": "Nụ cười răng thơm trước gương",
+      "action_verb": "Chụp_ảnh",
+      "atomic_instruction": "Súc miệng sạch và soi gương chụp 1 tấm ảnh khoe hàm răng trắng sạch trước khi đi ngủ!",
+      "ui_type": "photo_proof",
+      "is_milestone": true,
+      "dopamine_points": 10
+    }
+  ]
+}
+```
+
+### Mẫu 10: Chuẩn bị bữa cơm tự lập (routine_dinner_prep - Pipeline hâm nóng ngầm & Hội tụ)
+```json
+{
+  "id": "routine_dinner_prep",
+  "exercise_type": "daily_routine",
+  "timeline_slot": "evening",
+  "slot_time": "18:30",
+  "title": "Tự lập chuẩn bị mâm cơm gia đình ấm cúng",
+  "catName": "Nề Nếp Góc Học Tập & Gia Đình",
+  "reward": 25,
+  "steps": [
+    {
+      "step_id": 1,
+      "badge": "Lò vi sóng: Món chính",
+      "action_verb": "Quay_vi_sóng",
+      "atomic_instruction": "Cho đĩa thức ăn chính vào lò vi sóng, chỉnh 2 phút và bấm Start.",
+      "ui_type": "pipeline_timer",
+      "device": "microwave",
+      "dish_name": "Thịt kho",
+      "duration_sec": 120,
+      "dopamine_points": 5
+    },
+    {
+      "step_id": 2,
+      "badge": "Bếp đun: Hâm nồi canh",
+      "action_verb": "Hâm_canh",
+      "atomic_instruction": "Bật bếp nhỏ hâm nồi canh trong 2 phút trong lúc lò vi sóng đang chạy ngầm.",
+      "ui_type": "pipeline_timer",
+      "device": "stove",
+      "dish_name": "Canh rau",
+      "duration_sec": 120,
+      "dopamine_points": 5
+    },
+    {
+      "step_id": 3,
+      "badge": "Lấy bát đũa & Xới cơm",
+      "action_verb": "Lấy_bát",
+      "atomic_instruction": "Lấy bát đũa, thìa và xới bát cơm nóng ra bàn ăn trong lúc các món đang hâm nóng.",
+      "ui_type": "checkbox",
+      "dopamine_points": 5
+    },
+    {
+      "step_id": 4,
+      "badge": "Minh chứng mâm cơm tươm tất",
+      "action_verb": "Chụp_ảnh",
+      "atomic_instruction": "Khi chuông các món đã reo xong, dùng lót tay bê thức ăn ra bàn và chụp ảnh mâm cơm tươm tất gửi Mẹ!",
+      "ui_type": "photo_proof",
+      "is_milestone": true,
+      "dopamine_points": 10
+    }
+  ]
+}
+```

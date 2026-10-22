@@ -105,11 +105,32 @@
           isChecked ? 'bg-amber-50/80 border-amber-300 shadow-2xs' : 'bg-white border-slate-200 hover:border-slate-300'
         }`;
 
-        let slotBadge = "";
-        if (rt.timeline_slot === 'morning') slotBadge = `<span class="bg-amber-100 text-amber-800 text-[9px] font-black px-2 py-0.5 rounded-md">🌅 Sáng • ${rt.slot_time}</span>`;
-        else if (rt.timeline_slot === 'afternoon') slotBadge = `<span class="bg-orange-100 text-orange-800 text-[9px] font-black px-2 py-0.5 rounded-md">🌇 Chiều • ${rt.slot_time}</span>`;
-        else if (rt.timeline_slot === 'evening') slotBadge = `<span class="bg-sky-100 text-sky-800 text-[9px] font-black px-2 py-0.5 rounded-md">🌙 Tối • ${rt.slot_time}</span>`;
-        else slotBadge = `<span class="bg-indigo-100 text-indigo-800 text-[9px] font-black px-2 py-0.5 rounded-md">✨ Ngủ • ${rt.slot_time}</span>`;
+        let slotBg = "bg-amber-100 text-amber-800";
+        let slotName = "🌅 Sáng";
+        if (rt.timeline_slot === 'afternoon') { slotBg = "bg-orange-100 text-orange-800"; slotName = "🌇 Chiều"; }
+        else if (rt.timeline_slot === 'evening') { slotBg = "bg-sky-100 text-sky-800"; slotName = "🌙 Tối"; }
+        else if (rt.timeline_slot === 'night') { slotBg = "bg-indigo-100 text-indigo-800"; slotName = "✨ Ngủ"; }
+
+        const isMeal = (rt.flex_meal_config || rt.id.includes('dinner') || rt.id.includes('breakfast'));
+        let flexMealBtn = '';
+        if (isMeal) {
+          flexMealBtn = `
+            <button type="button" onclick="parentOpenFlexMealConfig('${rt.id}')" class="text-[9px] font-extrabold text-amber-900 bg-amber-200/90 hover:bg-amber-300 px-2 py-0.5 rounded-md border border-amber-400/80 cursor-pointer flex items-center gap-1 shadow-2xs transition">
+              <span>🍳</span> <span>Soạn món hâm</span>
+            </button>
+          `;
+        }
+
+        const slotBadge = `
+          <span class="${slotBg} text-[9px] font-black px-2 py-0.5 rounded-md flex items-center gap-1">
+            <span>${slotName}</span>
+            <span>•</span>
+            <input type="time" value="${rt.slot_time || '07:00'}" 
+              onchange="parentUpdateRoutineSlotTime('${rt.id}', this.value)" 
+              title="Chạm để tùy chỉnh giờ nhắc"
+              class="text-[9px] font-black font-mono bg-white/90 border border-slate-300 rounded px-1 py-0 text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500 cursor-pointer" />
+          </span>
+        `;
 
         card.innerHTML = `
           <div class="flex items-start gap-2.5">
@@ -118,6 +139,7 @@
               <div class="flex items-center gap-1.5 flex-wrap mb-1">
                 ${slotBadge}
                 <span class="text-[9px] font-extrabold text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">+${rt.reward} ⭐</span>
+                ${flexMealBtn}
               </div>
               <h4 class="font-extrabold text-xs text-slate-900 leading-snug flex items-center gap-1">
                 <span>${rt.icon || '🌟'}</span>
@@ -1073,3 +1095,120 @@ window.selectAllRoutines = selectAllRoutines;
 window.dispatchSelectedRoutines = dispatchSelectedRoutines;
 window.renderParentAuditTimeline = renderParentAuditTimeline;
 window.parentJumpToAssignRoutines = parentJumpToAssignRoutines;
+
+
+    /* ============================================================
+       FLEX-TIME & FLEX-MEAL PARENT CONFIGURATION HANDLERS
+       ============================================================ */
+    function parentUpdateRoutineSlotTime(routineId, newTime) {
+      if (!newTime) return;
+      const routines = window.routineDatabase || {};
+      if (routines[routineId]) {
+        routines[routineId].slot_time = newTime;
+        if (typeof showToast === 'function') {
+          showToast("Đã Đổi Giờ Nhắc", `Thói quen [${routines[routineId].title}] sẽ nhắc con vào lúc ${newTime}!`, "⏱️");
+        }
+      }
+    }
+
+    function parentOpenFlexMealConfig(routineId) {
+      if (typeof playSfx === 'function') playSfx('tap');
+      const routines = window.routineDatabase || {};
+      const rt = routines[routineId];
+      if (!rt) return;
+
+      const currentDishes = (rt.flex_meal_config && rt.flex_meal_config.dishes) 
+        ? rt.flex_meal_config.dishes.map(d => `${d.name} (${d.minutes}p - ${d.device_name || d.device})`).join(', ')
+        : 'Thịt kho (2p - Lò vi sóng), Canh rau (2p - Bếp đun)';
+
+      const input = prompt(
+        `🍗 SOẠN THỰC ĐƠN HÂM NÓNG CHO [${rt.title}]:\n` +
+        `Nhập các món ăn mẹ để sẵn (Tên món - số phút - vi sóng/nồi chiên/bếp):\n` +
+        `Ví dụ: Thịt kho - 2p - Lò vi sóng, Canh cải - 2p - Bếp, Sườn - 3p - Nồi chiên`,
+        currentDishes
+      );
+
+      if (input && input.trim()) {
+        const parts = input.split(/[,;\n]+/).map(p => p.trim()).filter(Boolean);
+        const parsedDishes = [];
+        const newSteps = [];
+
+        parts.forEach((part, idx) => {
+          // Parse name, minutes, device
+          let name = part;
+          let mins = 2;
+          let device = 'microwave';
+          let deviceName = 'Lò vi sóng';
+
+          if (/nồi chiên|chiên|airfryer/i.test(part)) {
+            device = 'airfryer';
+            deviceName = 'Nồi chiên không dầu';
+          } else if (/bếp|nấu|đun|canh|stove/i.test(part)) {
+            device = 'stove';
+            deviceName = 'Bếp đun';
+          }
+
+          const minMatch = part.match(/(\d+)\s*(?:p|phút|min)/i);
+          if (minMatch) mins = parseInt(minMatch[1], 10);
+
+          name = part.replace(/\(.*?\)/g, '').replace(/-\s*\d+.*$/g, '').trim();
+
+          parsedDishes.push({
+            name: name,
+            minutes: mins,
+            device: device,
+            device_name: deviceName
+          });
+
+          newSteps.push({
+            step_id: idx + 1,
+            badge: `${deviceName}: ${name}`,
+            action_verb: `Làm_nóng`,
+            atomic_instruction: `Cho ${name} vào ${deviceName}, chỉnh ${mins} phút và bấm Start.`,
+            ui_type: "pipeline_timer",
+            device: device,
+            device_name: deviceName,
+            dish_name: name,
+            duration_sec: mins * 60,
+            dopamine_points: 5,
+            hints: [`Chỉnh ${mins} phút trên ${deviceName} con nhé!`]
+          });
+        });
+
+        // Step dọn bát đũa
+        newSteps.push({
+          step_id: newSteps.length + 1,
+          badge: "Lấy bát đũa & Xới cơm",
+          action_verb: "Lấy_bát",
+          atomic_instruction: "Lấy bát đũa, thìa và xới cơm nóng ra bàn ăn trong lúc các món đang hâm nóng.",
+          ui_type: "checkbox",
+          is_milestone: false,
+          requires_parent_check: false,
+          duration_sec: 60,
+          dopamine_points: 5,
+          hints: ["Lấy đủ bát đũa và xới cơm nóng ra bàn nào!"]
+        });
+
+        // Step chụp ảnh minh chứng
+        newSteps.push({
+          step_id: newSteps.length + 1,
+          badge: "Minh chứng mâm cơm tươm tất",
+          action_verb: "Chụp_ảnh",
+          atomic_instruction: "Khi chuông các món đã reo xong, dùng lót tay bê thức ăn ra bàn và chụp ảnh mâm cơm tươm tất gửi Mẹ!",
+          ui_type: "photo_proof",
+          is_milestone: true,
+          requires_parent_check: false,
+          duration_sec: 45,
+          dopamine_points: 10,
+          hints: ["Mâm cơm nóng hổi thơm ngon đã sẵn sàng, chụp ngay gửi Mẹ nào!"]
+        });
+
+        rt.flex_meal_config = { dishes: parsedDishes };
+        rt.steps = newSteps;
+
+        if (typeof showToast === 'function') {
+          showToast("Đã Lưu Thực Đơn", `Mẹ vừa cập nhật ${parsedDishes.length} món hâm nóng cho bữa cơm của Leo!`, "🍲");
+        }
+        renderParentRoutinesCatalog();
+      }
+    }

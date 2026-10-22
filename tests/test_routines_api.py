@@ -42,10 +42,10 @@ class TestDailyRoutinesAPI(unittest.TestCase):
         self.assertEqual(data["id"], "routine_clean_desk")
         self.assertEqual(data["timeline_slot"], "evening")
         self.assertEqual(data["slot_time"], "19:00")
-        self.assertEqual(len(data["steps"]), 3)
-        # Bước 3 là bước then chốt có photo_proof
-        self.assertTrue(data["steps"][2]["is_milestone"])
-        self.assertEqual(data["steps"][2]["ui_type"], "photo_proof")
+        self.assertEqual(len(data["steps"]), 4)
+        # Bước cuối là bước then chốt có photo_proof
+        self.assertTrue(data["steps"][-1]["is_milestone"])
+        self.assertEqual(data["steps"][-1]["ui_type"], "photo_proof")
         print(" test_02_get_routine_detail PASSED")
 
     def test_03_submit_proof(self):

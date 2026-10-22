@@ -95,14 +95,14 @@
         "step_id": 2,
         "badge": "Uống từng ngụm",
         "action_verb": "Uống_nước",
-        "atomic_instruction": "Uống từ từ từng ngụm nước ấm để đánh thức các cơ quan trong cơ thể.",
+        "atomic_instruction": "Uống từ từ từng ngụm nước ấm đánh thức các cơ quan trong cơ thể cho đến khi hết cốc.",
         "ui_type": "checkbox",
         "is_milestone": false,
         "requires_parent_check": false,
         "duration_sec": 45,
         "dopamine_points": 5,
         "hints": [
-          "Uống từng ngụm nhỏ sảng khoái nào!"
+          "Uống từng ngụm nhỏ chậm rãi thật sảng khoái nào!"
         ]
       },
       {
@@ -133,16 +133,16 @@
     "reward": 20,
     "target_photo_tag": "LEO_TEETH_AM_0650.JPG",
     "adhd_scaffolding_notes": {
-      "working_memory_pitfall": "Mắt còn díu lại, lười vào nhà tắm nếu không có nhịp điệu kích hoạt giác quan.",
-      "executive_function_scaffolding": "Nước mát chạm da mặt kích hoạt hệ thần kinh giao cảm (Sympathetic Alertness).",
-      "visual_or_concrete_aid": "Milo mỉm cười với hàm răng lấp lánh sao."
+      "working_memory_pitfall": "Mới ngủ dậy còn ngái ngủ, trẻ hay quên lượng kem hoặc chải qua loa.",
+      "executive_function_scaffolding": "Checkpoint cụ thể bằng thị giác: Chụp ảnh chiếc bàn chải đã có kem hạt đậu trước khi chải.",
+      "visual_or_concrete_aid": "Hoạt ảnh bóp kem hạt đậu lên bàn chải và nụ cười lấp lánh."
     },
     "steps": [
       {
         "step_id": 1,
         "badge": "Rửa mặt nước mát",
         "action_verb": "Rửa_mặt",
-        "atomic_instruction": "Vặn vòi nước, xoa 2 tay vỗ nước mát lên mặt để tỉnh táo hoàn toàn.",
+        "atomic_instruction": "Vặn vòi nước, xoa hai tay vỗ nước mát lên mặt để tỉnh táo hoàn toàn.",
         "ui_type": "checkbox",
         "is_milestone": false,
         "requires_parent_check": false,
@@ -154,30 +154,30 @@
       },
       {
         "step_id": 2,
-        "badge": "Chải răng 2 phút",
-        "action_verb": "Chải_răng",
-        "atomic_instruction": "Lấy kem bằng hạt đậu và chải đều các mặt răng thơm tho.",
-        "ui_type": "single_choice",
-        "is_milestone": false,
-        "requires_parent_check": false,
-        "duration_sec": 60,
-        "dopamine_points": 10,
-        "hints": [
-          "Chải xoay tròn từng chiếc răng xinh nhé!"
-        ]
-      },
-      {
-        "step_id": 3,
-        "badge": "Minh chứng răng xinh",
+        "badge": "Minh chứng kem hạt đậu",
         "action_verb": "Chụp_ảnh",
-        "atomic_instruction": "Cười thật tươi soi gương chụp tấm ảnh khoe hàm răng sạch bóng!",
+        "atomic_instruction": "Bóp lượng kem đánh răng bằng hạt đậu lên bàn chải và chụp 1 tấm ảnh khoe với Mẹ!",
         "ui_type": "photo_proof",
         "is_milestone": true,
         "requires_parent_check": false,
         "duration_sec": 45,
+        "dopamine_points": 10,
+        "hints": [
+          "Giơ bàn chải đã có kem hạt đậu lên chụp một tấm thật rõ nét nhé!"
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Chải tròn các mặt răng",
+        "action_verb": "Chải_răng",
+        "atomic_instruction": "Chải xoay tròn mặt ngoài và mặt trong của răng trong 2 phút theo nhịp của Milo, rồi súc miệng sạch sẽ.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 60,
         "dopamine_points": 5,
         "hints": [
-          "Nụ cười rạng rỡ chào ngày mới nào Leo!"
+          "Chải xoay tròn từng chiếc răng xinh để vi khuẩn sâu răng biến mất!"
         ]
       }
     ]
@@ -461,14 +461,14 @@
         "step_id": 2,
         "badge": "Xếp bát đũa đủ người",
         "action_verb": "Xếp_bát",
-        "atomic_instruction": "Đếm số người nhà mình và xếp từng chiếc bát cùng đôi đũa ngay ngắn vào từng vị trí.",
+        "atomic_instruction": "Xếp bát và đũa thìa ngay ngắn vào từng vị trí bàn ăn cho cả nhà.",
         "ui_type": "single_choice",
         "is_milestone": false,
         "requires_parent_check": false,
         "duration_sec": 60,
         "dopamine_points": 5,
         "hints": [
-          "Nhà mình có mấy người thì lấy bấy nhiêu chiếc bát nhé!"
+          "Xếp bát đũa thật ngay ngắn, đũa đặt bên tay phải của bát nhé con!"
         ]
       },
       {
@@ -500,50 +500,64 @@
     "target_photo_tag": "LEO_DESK_1915.JPG",
     "adhd_scaffolding_notes": {
       "working_memory_pitfall": "Mặt bàn bừa bộn nhiều sách vở, bút thước gây quá tải thị giác (Visual Clutter Paralysis).",
-      "executive_function_scaffolding": "Phân rã đơn lẻ từng món: bút vào ống -> rác vào thùng -> chụp ảnh bàn sạch.",
-      "visual_or_concrete_aid": "Hoạt ảnh từng cây bút biến mất vào ống khi chạm ngón tay."
+      "executive_function_scaffolding": "Phân loại hành động rõ ràng theo cụm đồ vật: Bút thước vào ống -> Rác vào sọt -> Sách vở xếp chồng -> Chụp bàn sạch.",
+      "visual_or_concrete_aid": "Hoạt ảnh góc bàn sáng bóng không còn đồ vật vương vãi."
     },
     "steps": [
       {
         "step_id": 1,
-        "badge": "Cắm bút vào ống",
+        "badge": "Thu gom bút thước",
         "action_verb": "Cắm_bút",
-        "atomic_instruction": "Chạm vào 3 cây bút bừa bộn trên bàn để cắm vào ống cắm bút.",
-        "ui_type": "single_choice",
+        "atomic_instruction": "Thu gom tất cả bút, thước rải rác trên bàn cắm gọn vào ống đựng bút.",
+        "ui_type": "checkbox",
         "is_milestone": false,
         "requires_parent_check": false,
         "duration_sec": 45,
-        "dopamine_points": 10,
+        "dopamine_points": 5,
         "hints": [
-          "Cắm bút chì, bút bi và bút màu vào đúng chuồng nhé!"
+          "Bút chì, bút bi, thước kẻ đều cắm vào đúng chuồng nhé!"
         ]
       },
       {
         "step_id": 2,
-        "badge": "Gom giấy nháp vào sọt",
+        "badge": "Gom rác vào sọt",
         "action_verb": "Gom_rác",
-        "atomic_instruction": "Chạm vào mẩu giấy nháp bỏ vào sọt rác dưới gầm bàn.",
-        "ui_type": "single_choice",
+        "atomic_instruction": "Nhặt sạch các mẩu giấy nháp, rác vụn trên bàn bỏ vào sọt rác dưới gầm bàn.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Mặt bàn không còn cọng rác hay mẩu giấy vụn nào con nhé!"
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Xếp sách vở thành chồng",
+        "action_verb": "Xếp_sách",
+        "atomic_instruction": "Xếp các cuốn sách vở trên bàn thành một chồng ngay ngắn ở góc bàn.",
+        "ui_type": "checkbox",
         "is_milestone": false,
         "requires_parent_check": false,
         "duration_sec": 45,
         "dopamine_points": 10,
         "hints": [
-          "Bỏ mẩu giấy nháp đã viết kín vào thùng rác nào!"
+          "Sách to ở dưới, sách nhỏ ở trên xếp thật thẳng hàng nào!"
         ]
       },
       {
-        "step_id": 3,
+        "step_id": 4,
         "badge": "Minh chứng bàn sáng bóng",
         "action_verb": "Chụp_ảnh",
-        "atomic_instruction": "Chụp 1 tấm ảnh mặt bàn học đã sạch bóng để hệ thống duyệt +30 sao ngay!",
+        "atomic_instruction": "Chụp 1 tấm ảnh mặt bàn học đã sạch bóng, ngăn nắp để nhận trọn vẹn +30 sao ngay!",
         "ui_type": "photo_proof",
         "is_milestone": true,
         "requires_parent_check": false,
         "duration_sec": 60,
         "dopamine_points": 10,
         "hints": [
-          "Bấm nút chụp để nhận trọn vẹn sao thưởng tức thì!"
+          "Giơ máy chụp toàn cảnh mặt bàn sáng tinh tươm nào!"
         ]
       }
     ]
@@ -621,48 +635,48 @@
     "reward": 25,
     "target_photo_tag": "LEO_TEETH_2100.JPG",
     "adhd_scaffolding_notes": {
-      "working_memory_pitfall": "Buổi tối năng lượng điều hành (Executive Energy) cạn kiệt, trẻ hay trì hoãn việc đánh răng vì lười đứng 2 phút.",
-      "executive_function_scaffolding": "Đồng hồ thị giác đĩa tròn 2 phút chia làm 4 cung góc (hàm trên/dưới) kết hợp bài thở 4-4-4 hạ nhiệt.",
-      "visual_or_concrete_aid": "Đĩa tròn đổi màu co lại dần theo nhịp bài hát của Milo."
+      "working_memory_pitfall": "Buổi tối năng lượng điều hành cạn kiệt, trẻ hay trì hoãn việc đánh răng.",
+      "executive_function_scaffolding": "Tạo niềm vui trước gương: Chụp ảnh nụ cười bọt trắng thơm tho kết hợp thở 4-4-4 hạ nhiệt.",
+      "visual_or_concrete_aid": "Milo cùng bé cười tươi trước gương và thở 4-4-4."
     },
     "steps": [
       {
         "step_id": 1,
-        "badge": "Bóp lượng kem hạt đậu",
-        "action_verb": "Lấy_kem",
-        "atomic_instruction": "Mở nắp tuýp kem và bóp một lượng kem đánh răng bé xíu bằng hạt đậu.",
+        "badge": "Lấy kem hạt đậu & Chải răng",
+        "action_verb": "Chải_răng",
+        "atomic_instruction": "Bóp lượng kem bằng hạt đậu và chải đều các mặt răng trong 2 phút.",
         "ui_type": "checkbox",
         "is_milestone": false,
         "requires_parent_check": false,
-        "duration_sec": 45,
+        "duration_sec": 60,
         "dopamine_points": 5,
         "hints": [
-          "Lượng kem hạt đậu là vừa đủ để răng miệng sạch thơm mát!"
+          "Chải nhẹ nhàng xoay tròn cả hàm trên và hàm dưới nhé!"
         ]
       },
       {
         "step_id": 2,
-        "badge": "Chải tròn 4 cung răng",
-        "action_verb": "Chải_răng",
-        "atomic_instruction": "Chải vòng tròn mặt ngoài và mặt nhai của cả hai hàm răng trong 2 phút.",
-        "ui_type": "single_choice",
-        "is_milestone": false,
+        "badge": "Minh chứng răng thơm trước gương",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Soi gương cười thật tươi chụp 1 tấm ảnh khoe hàm răng sạch bóng thơm tho trước khi đi ngủ!",
+        "ui_type": "photo_proof",
+        "is_milestone": true,
         "requires_parent_check": false,
-        "duration_sec": 60,
+        "duration_sec": 45,
         "dopamine_points": 10,
         "hints": [
-          "Chải xoay tròn từng góc nhỏ để vi khuẩn sâu răng biến mất!"
+          "Nụ cười rạng rỡ và hàm răng trắng bóng sạch bọt nào!"
         ]
       },
       {
         "step_id": 3,
-        "badge": "Sẵn sàng chìm vào giấc ngủ",
+        "badge": "Thở 4-4-4 cùng Milo",
         "action_verb": "Thở_ngủ",
-        "atomic_instruction": "Súc miệng sạch bọt, trùm chăn ấm và cùng Milo hít thở 4-4-4 chuẩn bị ngủ ngon!",
-        "ui_type": "photo_proof",
-        "is_milestone": true,
+        "atomic_instruction": "Lên giường trùm chăn ấm, hít thở 4-4-4 cùng Milo chuẩn bị chìm vào giấc ngủ ngon lành.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
         "requires_parent_check": false,
-        "duration_sec": 60,
+        "duration_sec": 45,
         "dopamine_points": 10,
         "hints": [
           "Hít sâu 4 giây... giữ 4 giây... thở ra 4 giây... chúc Leo ngủ ngon!"
@@ -705,7 +719,7 @@
         "step_id": 2,
         "badge": "Đọc 3 trang sách giấy",
         "action_verb": "Đọc_sách",
-        "atomic_instruction": "Nằm trên giường và đọc 3 trang truyện tranh hoặc sách yêu thích.",
+        "atomic_instruction": "Nằm trên giường và đọc một vài trang sách truyện yêu thích để thư giãn não bộ.",
         "ui_type": "single_choice",
         "is_milestone": false,
         "requires_parent_check": false,

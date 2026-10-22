@@ -444,6 +444,7 @@ Mục tiêu tối thượng: Giảm tải bộ nhớ làm việc (Working Memory
 ```
 
 ### Mẫu 8: Thói quen sinh hoạt đời thường (routine_clean_desk - Dọn bàn học 5 phút)
+> 💡 **Quy tắc phân rã nề nếp cho trẻ ADHD:** KHÔNG gán số lượng cứng nhắc (như '3 cây bút', '2 cái bát', '3 ngụm nước') vì gây bối rối khi thực tế đồ vật của trẻ khác biệt. Hãy dùng ngôn từ phân loại hành động trực quan, bao quát: 'Thu gom tất cả bút thước vào ống', 'Nhặt rác vào sọt', 'Xếp sách vở thành chồng'.
 ```json
 {
   "id": "routine_clean_desk",
@@ -456,29 +457,39 @@ Mục tiêu tối thượng: Giảm tải bộ nhớ làm việc (Working Memory
   "steps": [
     {
       "step_id": 1,
-      "badge": "Cắm bút vào ống",
+      "badge": "Thu gom bút thước",
       "action_verb": "Cắm_bút",
-      "atomic_instruction": "Chạm vào 3 cây bút bừa bộn trên bàn để cắm vào ống.",
-      "ui_type": "single_choice",
+      "atomic_instruction": "Thu gom tất cả bút, thước rải rác trên bàn cắm gọn vào ống đựng bút.",
+      "ui_type": "checkbox",
       "is_milestone": false,
       "requires_parent_check": false,
-      "dopamine_points": 10
+      "dopamine_points": 5
     },
     {
       "step_id": 2,
       "badge": "Gom rác vào sọt",
       "action_verb": "Gom_rác",
-      "atomic_instruction": "Chạm vào mẩu giấy nháp bỏ vào sọt rác gầm bàn.",
-      "ui_type": "single_choice",
+      "atomic_instruction": "Nhặt sạch các mẩu giấy nháp, rác vụn trên bàn bỏ vào sọt rác dưới gầm bàn.",
+      "ui_type": "checkbox",
+      "is_milestone": false,
+      "requires_parent_check": false,
+      "dopamine_points": 5
+    },
+    {
+      "step_id": 3,
+      "badge": "Xếp sách vở thành chồng",
+      "action_verb": "Xếp_sách",
+      "atomic_instruction": "Xếp các cuốn sách vở trên bàn thành một chồng ngay ngắn ở góc bàn.",
+      "ui_type": "checkbox",
       "is_milestone": false,
       "requires_parent_check": false,
       "dopamine_points": 10
     },
     {
-      "step_id": 3,
+      "step_id": 4,
       "badge": "Minh chứng bàn sáng bóng",
       "action_verb": "Chụp_ảnh",
-      "atomic_instruction": "Chụp 1 tấm ảnh mặt bàn học đã sạch bóng để nhận +30 sao ngay!",
+      "atomic_instruction": "Chụp 1 tấm ảnh mặt bàn học đã sạch bóng, ngăn nắp để nhận trọn vẹn +30 sao ngay!",
       "ui_type": "photo_proof",
       "is_milestone": true,
       "requires_parent_check": false,

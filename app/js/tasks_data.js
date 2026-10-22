@@ -4932,13 +4932,7 @@ window.TASKS_DB = {
         "is_final_step": true
       }
     ]
-  }
-};
-
-// ==========================================
-// DEDICATED DAILY ROUTINE DATABASE (TIMELINE LOCKED)
-// ==========================================
-window.routineDatabase = {
+  },
   "routine_morning_bed": {
     "id": "routine_morning_bed",
     "timeline_slot": "morning",
@@ -4948,16 +4942,31 @@ window.routineDatabase = {
     "catName": "Thói Quen Buổi Sáng",
     "icon": "🛏️",
     "island": "routine",
-    "reward": 20,
-    "target_photo_tag": "LEO_BED_0645.JPG",
+    "reward": 25,
+    "target_photo_tag": "LEO_BED_AFTER.JPG",
     "adhd_scaffolding_notes": {
       "working_memory_pitfall": "Mới ngủ dậy não bộ còn quán tính giấc ngủ (Sleep Inertia), dễ quên gấp chăn nếu không có quy trình cơ học.",
-      "executive_function_scaffolding": "3 cử động cơ bắp siêu đơn giản: Giũ phẳng -> Gấp đôi -> Đặt gối sát đầu giường.",
-      "visual_or_concrete_aid": "Hoạt ảnh chiếc chăn tự động gấp đôi vuông vắn trên màn hình."
+      "executive_function_scaffolding": "Chuỗi so sánh Trước - Sau (Before - After): Chụp ảnh ngái ngủ -> Giũ phẳng & Gấp vuông -> Chụp ảnh khách sạn 5 sao.",
+      "visual_or_concrete_aid": "Khung so sánh 2 ảnh: Giường lộn xộn ban đầu và Giường phẳng phiu 5 sao sau khi dọn."
     },
     "steps": [
       {
         "step_id": 1,
+        "badge": "Ảnh giường ngái ngủ",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Chụp 1 tấm ảnh hiện trạng chiếc giường lúc mới thức dậy để làm mốc so sánh nào!",
+        "ui_type": "photo_proof",
+        "target_photo_tag": "LEO_BED_BEFORE.JPG",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Giơ máy chụp chiếc giường lúc mới ngủ dậy nào!"
+        ]
+      },
+      {
+        "step_id": 2,
         "badge": "Giũ phẳng chăn",
         "action_verb": "Giũ",
         "atomic_instruction": "Cầm hai mép chăn giũ nhẹ để chăn trải phẳng trên giường.",
@@ -4971,31 +4980,244 @@ window.routineDatabase = {
         ]
       },
       {
-        "step_id": 2,
-        "badge": "Gấp đôi mép chăn",
+        "step_id": 3,
+        "badge": "Gấp đôi chăn & xếp gối",
         "action_verb": "Gấp",
-        "atomic_instruction": "Gấp đôi chăn theo chiều dọc rồi gấp lại thành hình vuông gọn gàng.",
+        "atomic_instruction": "Gấp đôi chăn theo chiều dọc rồi gấp thành hình vuông, xếp gối ngay ngắn sát đầu giường.",
         "ui_type": "checkbox",
         "is_milestone": false,
         "requires_parent_check": false,
         "duration_sec": 45,
         "dopamine_points": 5,
         "hints": [
-          "Gấp mép chăn vào giữa để tạo thành hình vuông xinh xắn."
+          "Gấp mép chăn vuông vắn và đặt gối thật ngay ngắn nhé!"
+        ]
+      },
+      {
+        "step_id": 4,
+        "badge": "Minh chứng giường 5 sao",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Chụp 1 tấm ảnh chiếc giường đã phẳng phiu như khách sạn 5 sao gửi Mẹ!",
+        "ui_type": "photo_proof",
+        "target_photo_tag": "LEO_BED_AFTER.JPG",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 60,
+        "dopamine_points": 10,
+        "hints": [
+          "Wow! Chiếc giường biến hình thật gọn gàng, bấm chụp gửi Mẹ nhé!"
+        ]
+      }
+    ]
+  },
+  "routine_afterschool_drop": {
+    "id": "routine_afterschool_drop",
+    "timeline_slot": "afternoon",
+    "slot_time": "16:30",
+    "title": "Hạ cánh tan trường: Cất giày, treo balo & bỏ bình nước",
+    "cat": "routine",
+    "catName": "Nề Nếp Tan Trường",
+    "icon": "🎒",
+    "island": "routine",
+    "reward": 25,
+    "target_photo_tag": "LEO_DROP_1645.JPG",
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Vừa về nhà trẻ muốn lao ngay vào chơi hoặc xem màn hình, vứt giày và cặp giữa sàn nhà, quên bình nước trong cặp.",
+      "executive_function_scaffolding": "Trạm dừng chân 2 phút tại cửa vào (Entryway Decompression): Cởi giày lên kệ -> Treo cặp lên móc -> Bỏ bình nước ra bồn rửa.",
+      "visual_or_concrete_aid": "Khung đổ bóng hình đôi giày, chiếc móc treo và bồn rửa định vị chính xác vị trí đồ vật."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Xếp giày lên kệ",
+        "action_verb": "Cất_giày",
+        "atomic_instruction": "Cởi đôi giày ra và đặt ngay ngắn lên tầng kệ dép của con.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Đặt mũi giày quay ra ngoài cho ngăn nắp nhé!"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Treo balo lên móc",
+        "action_verb": "Treo_cặp",
+        "atomic_instruction": "Treo quai balo học sinh vào chiếc móc treo tường quen thuộc.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Treo cặp lên móc để sàn nhà không bị vướng lối đi."
         ]
       },
       {
         "step_id": 3,
-        "badge": "Minh chứng giường phẳng",
+        "badge": "Bỏ bình nước ra bồn rửa",
+        "action_verb": "Lấy_bình",
+        "atomic_instruction": "Mở ngăn cặp, lấy bình nước mang từ trường ra đặt vào bồn rửa bát để rửa sạch.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Mở nắp bình nước ra đặt trong bồn rửa con nhé!"
+        ]
+      },
+      {
+        "step_id": 4,
+        "badge": "Minh chứng trạm hạ cánh",
         "action_verb": "Chụp_ảnh",
-        "atomic_instruction": "Chụp 1 tấm ảnh chiếc giường đã phẳng phiu để lưu vào Nhật ký của Mẹ!",
+        "atomic_instruction": "Chụp 1 tấm ảnh kệ dép, balo gọn gàng và bình nước đã đặt trong bồn rửa gửi Mẹ!",
+        "ui_type": "photo_proof",
+        "target_photo_tag": "LEO_DROP_1645.JPG",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 60,
+        "dopamine_points": 10,
+        "hints": [
+          "Chụp trạm hạ cánh ngăn nắp tinh tươm nào!"
+        ]
+      }
+    ]
+  },
+  "routine_clean_desk": {
+    "id": "routine_clean_desk",
+    "timeline_slot": "evening",
+    "slot_time": "19:00",
+    "title": "Dọn bàn học gọn gàng trong 5 phút",
+    "cat": "routine",
+    "catName": "Nề Nếp Góc Học Tập",
+    "icon": "🧹",
+    "island": "routine",
+    "reward": 30,
+    "target_photo_tag": "LEO_DESK_1915.JPG",
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Mặt bàn bừa bộn nhiều sách vở, bút thước gây quá tải thị giác (Visual Clutter Paralysis).",
+      "executive_function_scaffolding": "Phân loại hành động rõ ràng theo cụm đồ vật: Bút thước vào ống -> Rác vào sọt -> Sách vở xếp chồng -> Chụp bàn sạch.",
+      "visual_or_concrete_aid": "Hoạt ảnh góc bàn sáng bóng không còn đồ vật vương vãi."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Thu gom bút thước",
+        "action_verb": "Cắm_bút",
+        "atomic_instruction": "Thu gom tất cả bút, thước rải rác trên bàn cắm gọn vào ống đựng bút.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Bút chì, bút bi, thước kẻ đều cắm vào đúng chuồng nhé!"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Gom rác vào sọt",
+        "action_verb": "Gom_rác",
+        "atomic_instruction": "Nhặt sạch các mẩu giấy nháp, rác vụn trên bàn bỏ vào sọt rác dưới gầm bàn.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Mặt bàn không còn cọng rác hay mẩu giấy vụn nào con nhé!"
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Xếp sách vở thành chồng",
+        "action_verb": "Xếp_sách",
+        "atomic_instruction": "Xếp các cuốn sách vở trên bàn thành một chồng ngay ngắn ở góc bàn.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 10,
+        "hints": [
+          "Sách to ở dưới, sách nhỏ ở trên xếp thật thẳng hàng nào!"
+        ]
+      },
+      {
+        "step_id": 4,
+        "badge": "Minh chứng bàn sáng bóng",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Chụp 1 tấm ảnh mặt bàn học đã sạch bóng, ngăn nắp để nhận trọn vẹn +30 sao ngay!",
         "ui_type": "photo_proof",
         "is_milestone": true,
         "requires_parent_check": false,
         "duration_sec": 60,
         "dopamine_points": 10,
         "hints": [
-          "Giơ máy chụp toàn cảnh chiếc giường gọn gàng nào!"
+          "Giơ máy chụp toàn cảnh mặt bàn sáng tinh tươm nào!"
+        ]
+      }
+    ]
+  },
+  "routine_night_teeth": {
+    "id": "routine_night_teeth",
+    "timeline_slot": "night",
+    "slot_time": "21:00",
+    "title": "Đánh răng thơm tho & Thở 4-4-4 đi ngủ",
+    "cat": "routine",
+    "catName": "Thói Quen Trước Giờ Ngủ",
+    "icon": "🦷",
+    "island": "routine",
+    "reward": 25,
+    "target_photo_tag": "LEO_TEETH_2100.JPG",
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Buổi tối năng lượng điều hành cạn kiệt, trẻ hay trì hoãn việc đánh răng.",
+      "executive_function_scaffolding": "Tạo niềm vui trước gương: Chụp ảnh nụ cười bọt trắng thơm tho kết hợp thở 4-4-4 hạ nhiệt.",
+      "visual_or_concrete_aid": "Milo cùng bé cười tươi trước gương và thở 4-4-4."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Lấy kem hạt đậu & Chải răng",
+        "action_verb": "Chải_răng",
+        "atomic_instruction": "Bóp lượng kem bằng hạt đậu và chải đều các mặt răng trong 2 phút.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 60,
+        "dopamine_points": 5,
+        "hints": [
+          "Chải nhẹ nhàng xoay tròn cả hàm trên và hàm dưới nhé!"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Minh chứng răng thơm trước gương",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Soi gương cười thật tươi chụp 1 tấm ảnh khoe hàm răng sạch bóng thơm tho trước khi đi ngủ!",
+        "ui_type": "photo_proof",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 10,
+        "hints": [
+          "Nụ cười rạng rỡ và hàm răng trắng bóng sạch bọt nào!"
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Thở 4-4-4 cùng Milo",
+        "action_verb": "Thở_ngủ",
+        "atomic_instruction": "Lên giường trùm chăn ấm, hít thở 4-4-4 cùng Milo chuẩn bị chìm vào giấc ngủ ngon lành.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 10,
+        "hints": [
+          "Hít sâu 4 giây... giữ 4 giây... thở ra 4 giây... chúc Leo ngủ ngon!"
         ]
       }
     ]
@@ -5009,11 +5231,11 @@ window.routineDatabase = {
     "catName": "Thói Quen Buổi Sáng",
     "icon": "🥛",
     "island": "routine",
-    "reward": 15,
-    "target_photo_tag": "LEO_WATER_0640.JPG",
+    "reward": 20,
+    "target_photo_tag": "LEO_WATER_EMPTY.JPG",
     "adhd_scaffolding_notes": {
       "working_memory_pitfall": "Não bộ trẻ ADHD sau đêm dài thiếu nước dễ cáu kỉnh và giảm tập trung (Dehydration Fatigue).",
-      "executive_function_scaffolding": "Uống 1 cốc nước ấm 200ml giúp tăng tuần hoàn máu lên thùy trán.",
+      "executive_function_scaffolding": "Uống nước ấm 200ml giúp tăng tuần hoàn máu lên thùy trán, đối chiếu cốc đầy và cốc cạn.",
       "visual_or_concrete_aid": "Hoạt ảnh ly nước dâng lên và tim năng lượng bừng sáng."
     },
     "steps": [
@@ -5021,7 +5243,7 @@ window.routineDatabase = {
         "step_id": 1,
         "badge": "Rót nước ấm",
         "action_verb": "Rót_nước",
-        "atomic_instruction": "Rót 1 cốc nước lọc ấm vừa tay cầm (khoảng nửa cốc).",
+        "atomic_instruction": "Rót 1 cốc nước lọc ấm vừa tay cầm (khoảng nửa cốc hoặc đầy cốc).",
         "ui_type": "checkbox",
         "is_milestone": false,
         "requires_parent_check": false,
@@ -5039,7 +5261,7 @@ window.routineDatabase = {
         "ui_type": "checkbox",
         "is_milestone": false,
         "requires_parent_check": false,
-        "duration_sec": 45,
+        "duration_sec": 30,
         "dopamine_points": 5,
         "hints": [
           "Uống từng ngụm nhỏ chậm rãi thật sảng khoái nào!"
@@ -5047,14 +5269,15 @@ window.routineDatabase = {
       },
       {
         "step_id": 3,
-        "badge": "Minh chứng cốc rỗng",
+        "badge": "Minh chứng cốc cạn",
         "action_verb": "Chụp_ảnh",
-        "atomic_instruction": "Chụp 1 tấm ảnh chiếc cốc đã uống cạn gửi Mẹ xem nhé!",
+        "atomic_instruction": "Chụp 1 tấm ảnh chiếc cốc đã uống cạn sạch gửi Mẹ xem nhé!",
         "ui_type": "photo_proof",
+        "target_photo_tag": "LEO_WATER_EMPTY.JPG",
         "is_milestone": true,
         "requires_parent_check": false,
         "duration_sec": 45,
-        "dopamine_points": 5,
+        "dopamine_points": 10,
         "hints": [
           "Giơ máy chụp chiếc cốc sạch bóng nào!"
         ]
@@ -5070,33 +5293,34 @@ window.routineDatabase = {
     "catName": "Thói Quen Buổi Sáng",
     "icon": "🪥",
     "island": "routine",
-    "reward": 20,
-    "target_photo_tag": "LEO_TEETH_AM_0650.JPG",
+    "reward": 25,
+    "target_photo_tag": "LEO_TEETH_SMILE.JPG",
     "adhd_scaffolding_notes": {
       "working_memory_pitfall": "Mới ngủ dậy còn ngái ngủ, trẻ hay quên lượng kem hoặc chải qua loa.",
-      "executive_function_scaffolding": "Đồng hồ đếm ngược 30s hàm trên + 30s hàm dưới kèm chuông Ting định vị thời gian.",
-      "visual_or_concrete_aid": "Hoạt ảnh bóp kem hạt đậu, đồng hồ đếm ngược 30s và nụ cười khoe răng."
+      "executive_function_scaffolding": "Chụp ảnh kem hạt đậu kiểm tra -> Đồng hồ tự chạy 30s hàm trên + 30s hàm dưới tự động chuyển bước không cần chạm tay ướt -> Chụp nụ cười khoe răng.",
+      "visual_or_concrete_aid": "Hoạt ảnh bóp kem hạt đậu, đồng hồ đếm ngược 30s tự chuyển và nụ cười khoe răng."
     },
     "steps": [
       {
         "step_id": 1,
         "badge": "Bóp kem hạt đậu",
-        "action_verb": "Bóp_kem",
-        "atomic_instruction": "Lấy một lượng kem đánh răng nhỏ bằng hạt đậu lên đầu bàn chải.",
-        "ui_type": "checkbox",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Lấy một lượng kem nhỏ bằng hạt đậu lên đầu bàn chải và chụp 1 tấm ảnh kiểm tra nhé!",
+        "ui_type": "photo_proof",
+        "target_photo_tag": "LEO_TEETH_PASTE.JPG",
         "is_milestone": false,
         "requires_parent_check": false,
-        "duration_sec": 30,
+        "duration_sec": 45,
         "dopamine_points": 5,
         "hints": [
-          "Chỉ lấy một lượng kem nhỏ bằng hạt đậu thôi con nhé!"
+          "Chỉ lấy lượng kem bằng hạt đậu thôi con nhé! Chụp ảnh kiểm tra nào!"
         ]
       },
       {
         "step_id": 2,
         "badge": "Hàm Trên 30s",
         "action_verb": "Chải_răng",
-        "atomic_instruction": "Chải đều mặt ngoài, mặt trong và mặt nhai của hàm trên trong 30 giây cho đến khi chuông reo.",
+        "atomic_instruction": "Chải đều mặt ngoài, mặt trong và mặt nhai của hàm trên trong 30 giây (hệ thống tự chuyển bước khi chuông reo).",
         "ui_type": "timer_brush",
         "is_milestone": false,
         "requires_parent_check": false,
@@ -5110,7 +5334,7 @@ window.routineDatabase = {
         "step_id": 3,
         "badge": "Hàm Dưới 30s",
         "action_verb": "Chải_răng",
-        "atomic_instruction": "Chuyển xuống chải đều mặt ngoài, mặt trong và mặt nhai của hàm dưới trong 30 giây.",
+        "atomic_instruction": "Chuyển xuống chải đều mặt ngoài, mặt trong và mặt nhai của hàm dưới trong 30 giây (hệ thống tự chuyển bước khi chuông reo).",
         "ui_type": "timer_brush",
         "is_milestone": false,
         "requires_parent_check": false,
@@ -5126,6 +5350,593 @@ window.routineDatabase = {
         "action_verb": "Chụp_ảnh",
         "atomic_instruction": "Súc miệng thật sạch và chụp 1 tấm ảnh nụ cười khoe hàm răng trắng sạch gửi Mẹ!",
         "ui_type": "photo_proof",
+        "target_photo_tag": "LEO_TEETH_SMILE.JPG",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 10,
+        "hints": [
+          "Soi gương cười thật tươi khoe hàm răng trắng sáng thơm tho nào!"
+        ]
+      }
+    ]
+  },
+  "routine_morning_outfit": {
+    "id": "routine_morning_outfit",
+    "timeline_slot": "morning",
+    "slot_time": "07:05",
+    "title": "Tự mặc đồng phục & Đeo thẻ học sinh",
+    "cat": "routine",
+    "catName": "Thói Quen Buổi Sáng",
+    "icon": "👔",
+    "island": "routine",
+    "reward": 20,
+    "target_photo_tag": "LEO_OUTFIT_0705.JPG",
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Hay mặc ngược áo hoặc quên đeo thẻ học sinh và khăn quàng đỏ.",
+      "executive_function_scaffolding": "Checklist thị giác 3 điểm: Áo cài cúc phẳng -> Đeo thẻ học sinh -> Đi tất chân.",
+      "visual_or_concrete_aid": "Hình minh họa chiếc áo cài đủ cúc và chiếc thẻ trước ngực."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Mặc áo cài cúc",
+        "action_verb": "Mặc_áo",
+        "atomic_instruction": "Mặc áo đồng phục và cài các nút cúc thẳng hàng từ trên xuống.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 60,
+        "dopamine_points": 5,
+        "hints": [
+          "Soi gương xem cúc áo có bị cài lệch hàng không con nhé!"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Đeo thẻ học sinh",
+        "action_verb": "Đeo_thẻ",
+        "atomic_instruction": "Lấy dây thẻ học sinh đeo vào cổ ngay ngắn trước ngực.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 30,
+        "dopamine_points": 5,
+        "hints": [
+          "Chiếc thẻ mang tên con đã sẵn sàng đến trường!"
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Minh chứng chỉn chu",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Chụp 1 tấm ảnh bộ đồng phục chỉn chu gửi Mẹ xem trước khi đi học!",
+        "ui_type": "photo_proof",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 10,
+        "hints": [
+          "Trông Leo thật bảnh bao trong bộ đồng phục!"
+        ]
+      }
+    ]
+  },
+  "routine_afterschool_wash": {
+    "id": "routine_afterschool_wash",
+    "timeline_slot": "afternoon",
+    "slot_time": "16:40",
+    "title": "Rửa tay xà phòng 6 bước & Thay đồ nhà",
+    "cat": "routine",
+    "catName": "Nề Nếp Tan Trường",
+    "icon": "🧼",
+    "island": "routine",
+    "reward": 20,
+    "target_photo_tag": "LEO_WASH_1640.JPG",
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Rửa tay qua loa 3 giây dưới nước mà không dùng xà phòng diệt khuẩn sau buổi học đông người.",
+      "executive_function_scaffolding": "Bài hát đếm 30 giây xoa bọt xà phòng tạo phản xạ vệ sinh tự giác.",
+      "visual_or_concrete_aid": "Hoạt ảnh các hạt bong bóng xà phòng xua đuổi vi khuẩn."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Bơm xà phòng xoa bọt",
+        "action_verb": "Xoa_tay",
+        "atomic_instruction": "Bơm 1 nhấn xà phòng, xoa đều lòng bàn tay, mu bàn tay và các kẽ ngón trong 30 giây.",
+        "ui_type": "single_choice",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Kỳ cọ cả các đầu ngón tay và cổ tay thật kỹ nhé!"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Xả sạch & Treo đồng phục",
+        "action_verb": "Thay_đồ",
+        "atomic_instruction": "Xả sạch bọt dưới vòi nước, lau khô tay và thay bộ quần áo mặc ở nhà thoải mái.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 60,
+        "dopamine_points": 5,
+        "hints": [
+          "Treo áo đồng phục vào mắc áo hoặc bỏ vào giỏ giặt nhé!"
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Minh chứng tay sạch",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Chụp 1 tấm ảnh đôi bàn tay sạch sẽ thơm tho gửi Mẹ!",
+        "ui_type": "photo_proof",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 10,
+        "hints": [
+          "Xòe 2 bàn tay sạch thơm chụp ảnh nào!"
+        ]
+      }
+    ]
+  },
+  "routine_afterschool_snack": {
+    "id": "routine_afterschool_snack",
+    "timeline_slot": "afternoon",
+    "slot_time": "17:00",
+    "title": "Thưởng thức bữa xế nạp năng lượng chiều",
+    "cat": "routine",
+    "catName": "Nề Nếp Tan Trường",
+    "icon": "🍎",
+    "island": "routine",
+    "reward": 20,
+    "target_photo_tag": "LEO_SNACK_DONE.JPG",
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Sau giờ học đường huyết giảm gây cáu gắt, trẻ dễ ăn vặt linh tinh không rửa tay hoặc bừa bãi đĩa cốc.",
+      "executive_function_scaffolding": "Quy trình 3 bước lành mạnh: Rửa tay xà phòng -> Ăn trái cây / sữa -> Dọn đĩa vào bồn.",
+      "visual_or_concrete_aid": "Hình minh họa bàn ăn sạch sẽ và nụ cười no bụng sảng khoái."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Rửa tay xà phòng",
+        "action_verb": "Rửa_tay",
+        "atomic_instruction": "Rửa hai bàn tay thật sạch với xà phòng dưới vòi nước trước khi ăn xế.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 30,
+        "dopamine_points": 5,
+        "hints": [
+          "Xoa bọt xà phòng khắp mu và lòng bàn tay thật sạch con nhé!"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Ăn bữa phụ nhẹ nhàng",
+        "action_verb": "Ăn_xế",
+        "atomic_instruction": "Thưởng thức sữa hoặc đĩa trái cây tươi nạp lại năng lượng sau giờ học.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 60,
+        "dopamine_points": 5,
+        "hints": [
+          "Ăn ngon miệng để có sức tối nay chinh phục thử thách nhé!"
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Dọn đĩa cốc vào bồn & Chụp ảnh",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Bê đĩa cốc đã ăn xong đặt vào bồn rửa và chụp 1 tấm ảnh bàn ăn sạch sẽ gửi Mẹ!",
+        "ui_type": "photo_proof",
+        "target_photo_tag": "LEO_SNACK_DONE.JPG",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 10,
+        "hints": [
+          "Bàn ăn sạch bóng tinh tươm, Mẹ sẽ rất hài lòng!"
+        ]
+      }
+    ]
+  },
+  "routine_dinner_prep": {
+    "id": "routine_dinner_prep",
+    "timeline_slot": "evening",
+    "slot_time": "18:30",
+    "title": "Giúp mẹ dọn bàn ăn: Xếp đũa thìa bát cơm",
+    "cat": "routine",
+    "catName": "Nề Nếp Góc Học Tập & Gia Đình",
+    "icon": "🍚",
+    "island": "routine",
+    "reward": 20,
+    "target_photo_tag": "LEO_DINNER_1830.JPG",
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Trẻ hay bị phân tâm vào tivi/game lúc cả nhà chuẩn bị ăn cơm, thiếu gắn kết gia đình.",
+      "executive_function_scaffolding": "Giao nhiệm vụ cơ học có số lượng rõ ràng: Đếm đủ số người và xếp tương ứng số bát đũa.",
+      "visual_or_concrete_aid": "Hoạt ảnh từng đôi đũa đặt ngay ngắn cạnh từng chiếc bát."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Lau mặt bàn ăn",
+        "action_verb": "Lau_bàn",
+        "atomic_instruction": "Lấy khăn ẩm lau một lượt mặt bàn ăn cho sạch bụi bẩn.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Lau mặt bàn thật sạch trước khi xếp bát nhé con!"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Xếp bát đũa đủ người",
+        "action_verb": "Xếp_bát",
+        "atomic_instruction": "Xếp bát và đũa thìa ngay ngắn vào từng vị trí bàn ăn cho cả nhà.",
+        "ui_type": "single_choice",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 60,
+        "dopamine_points": 5,
+        "hints": [
+          "Xếp bát đũa thật ngay ngắn, đũa đặt bên tay phải của bát nhé con!"
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Minh chứng bàn ăn ấm cúng",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Chụp 1 tấm ảnh bàn ăn đã xếp xong bát đũa tươm tất gửi Mẹ!",
+        "ui_type": "photo_proof",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 10,
+        "hints": [
+          "Bàn ăn trông thật ấm cúng và sẵn sàng cho bữa tối!"
+        ]
+      }
+    ]
+  },
+  "routine_pack_schoolbag": {
+    "id": "routine_pack_schoolbag",
+    "timeline_slot": "evening",
+    "slot_time": "20:30",
+    "title": "Soát thời khóa biểu & Xếp sách vở ngày mai",
+    "cat": "routine",
+    "catName": "Nề Nếp Góc Học Tập & Gia Đình",
+    "icon": "📚",
+    "island": "routine",
+    "reward": 25,
+    "target_photo_tag": "LEO_BAG_2030.JPG",
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Trẻ ADHD rất hay để quên sách vở hoặc bài tập về nhà ở nhà vì buổi sáng cuống cuồng mới xếp.",
+      "executive_function_scaffolding": "Xếp cặp trước khi đi ngủ 1 tiếng (Evening Lock-in): Mở thời khóa biểu -> So khớp từng môn -> Kéo khóa cặp.",
+      "visual_or_concrete_aid": "Hoạt ảnh từng cuốn sách nhảy vào cặp khi hoàn tất."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Xem thời khóa biểu ngày mai",
+        "action_verb": "Xem_TKB",
+        "atomic_instruction": "Mở bảng thời khóa biểu trên tường và đọc to các môn học của ngày mai.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Ngày mai có những môn gì nhỉ? Toán, Tiếng Việt hay Mỹ thuật?"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Xếp sách vở & Hộp bút vào cặp",
+        "action_verb": "Xếp_sách",
+        "atomic_instruction": "Lấy đủ sách vở và hộp bút đã gọt sẵn bút chì bỏ vào ngăn cặp.",
+        "ui_type": "single_choice",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 60,
+        "dopamine_points": 10,
+        "hints": [
+          "Kiểm tra xem bút chì đã gọt nhọn và có thước kẻ chưa nhé!"
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Minh chứng cặp đã sẵn sàng",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Kéo khóa cặp lại và chụp 1 tấm ảnh chiếc cặp đã sẵn sàng cho ngày mai!",
+        "ui_type": "photo_proof",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 10,
+        "hints": [
+          "Cặp sách đã gọn gàng, ngày mai đi học thật thảnh thơi!"
+        ]
+      }
+    ]
+  },
+  "routine_bedtime_screen_off": {
+    "id": "routine_bedtime_screen_off",
+    "timeline_slot": "night",
+    "slot_time": "21:20",
+    "title": "Tắt màn hình (Digital Sunset) & Đọc truyện 5 phút",
+    "cat": "routine",
+    "catName": "Thói Quen Trước Giờ Ngủ",
+    "icon": "📖",
+    "island": "routine",
+    "reward": 20,
+    "target_photo_tag": "LEO_SCREEN_OFF_2120.JPG",
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Ánh sáng xanh từ điện thoại ức chế Melatonin làm trẻ ADHD rất khó chìm vào giấc ngủ sâu.",
+      "executive_function_scaffolding": "Nghi thức 'Mặt trời lặn kỹ thuật số' (Digital Sunset): Cất máy ra bàn mẹ -> Đọc 3 trang sách giấy thư giãn não bộ.",
+      "visual_or_concrete_aid": "Hoạt ảnh chú gấu Milo gập sách lại, tắt đèn phòng và ngáp ngủ."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Cất điện thoại ra bàn",
+        "action_verb": "Cất_máy",
+        "atomic_instruction": "Tắt màn hình máy tính bảng/điện thoại và mang ra đặt trên bàn của bố mẹ.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Để máy nghỉ ngơi để mắt con được thư giãn nào!"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Đọc 3 trang sách giấy",
+        "action_verb": "Đọc_sách",
+        "atomic_instruction": "Nằm trên giường và đọc một vài trang sách truyện yêu thích để thư giãn não bộ.",
+        "ui_type": "single_choice",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 60,
+        "dopamine_points": 5,
+        "hints": [
+          "Những trang sách êm dịu sẽ đưa con vào giấc mơ đẹp!"
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Minh chứng sách gập ngủ ngon",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Gập sách lại đặt đầu giường và chụp 1 tấm ảnh trước khi tắt đèn ngủ!",
+        "ui_type": "photo_proof",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 10,
+        "hints": [
+          "Chúc Leo ngủ một giấc thật ngon và mơ những giấc mơ đẹp!"
+        ]
+      }
+    ]
+  }
+};
+window.taskDatabase = window.TASKS_DB;
+window.routineDatabase = {
+  "routine_morning_bed": {
+    "id": "routine_morning_bed",
+    "timeline_slot": "morning",
+    "slot_time": "06:30",
+    "title": "Gấp chăn gối phẳng phiu sau khi thức dậy",
+    "cat": "routine",
+    "catName": "Thói Quen Buổi Sáng",
+    "icon": "🛏️",
+    "island": "routine",
+    "reward": 25,
+    "target_photo_tag": "LEO_BED_AFTER.JPG",
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Mới ngủ dậy não bộ còn quán tính giấc ngủ (Sleep Inertia), dễ quên gấp chăn nếu không có quy trình cơ học.",
+      "executive_function_scaffolding": "Chuỗi so sánh Trước - Sau (Before - After): Chụp ảnh ngái ngủ -> Giũ phẳng & Gấp vuông -> Chụp ảnh khách sạn 5 sao.",
+      "visual_or_concrete_aid": "Khung so sánh 2 ảnh: Giường lộn xộn ban đầu và Giường phẳng phiu 5 sao sau khi dọn."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Ảnh giường ngái ngủ",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Chụp 1 tấm ảnh hiện trạng chiếc giường lúc mới thức dậy để làm mốc so sánh nào!",
+        "ui_type": "photo_proof",
+        "target_photo_tag": "LEO_BED_BEFORE.JPG",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Giơ máy chụp chiếc giường lúc mới ngủ dậy nào!"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Giũ phẳng chăn",
+        "action_verb": "Giũ",
+        "atomic_instruction": "Cầm hai mép chăn giũ nhẹ để chăn trải phẳng trên giường.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Cầm 2 góc chăn giũ cho phẳng phiu con nhé!"
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Gấp đôi chăn & xếp gối",
+        "action_verb": "Gấp",
+        "atomic_instruction": "Gấp đôi chăn theo chiều dọc rồi gấp thành hình vuông, xếp gối ngay ngắn sát đầu giường.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Gấp mép chăn vuông vắn và đặt gối thật ngay ngắn nhé!"
+        ]
+      },
+      {
+        "step_id": 4,
+        "badge": "Minh chứng giường 5 sao",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Chụp 1 tấm ảnh chiếc giường đã phẳng phiu như khách sạn 5 sao gửi Mẹ!",
+        "ui_type": "photo_proof",
+        "target_photo_tag": "LEO_BED_AFTER.JPG",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 60,
+        "dopamine_points": 10,
+        "hints": [
+          "Wow! Chiếc giường biến hình thật gọn gàng, bấm chụp gửi Mẹ nhé!"
+        ]
+      }
+    ]
+  },
+  "routine_morning_water": {
+    "id": "routine_morning_water",
+    "timeline_slot": "morning",
+    "slot_time": "06:40",
+    "title": "Uống 1 cốc nước ấm đánh thức cơ thể",
+    "cat": "routine",
+    "catName": "Thói Quen Buổi Sáng",
+    "icon": "🥛",
+    "island": "routine",
+    "reward": 20,
+    "target_photo_tag": "LEO_WATER_EMPTY.JPG",
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Não bộ trẻ ADHD sau đêm dài thiếu nước dễ cáu kỉnh và giảm tập trung (Dehydration Fatigue).",
+      "executive_function_scaffolding": "Uống nước ấm 200ml giúp tăng tuần hoàn máu lên thùy trán, đối chiếu cốc đầy và cốc cạn.",
+      "visual_or_concrete_aid": "Hoạt ảnh ly nước dâng lên và tim năng lượng bừng sáng."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Rót nước ấm",
+        "action_verb": "Rót_nước",
+        "atomic_instruction": "Rót 1 cốc nước lọc ấm vừa tay cầm (khoảng nửa cốc hoặc đầy cốc).",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 30,
+        "dopamine_points": 5,
+        "hints": [
+          "Rót nước ấm vừa phải, cẩn thận kẻo tràn ly nhé!"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Uống từng ngụm",
+        "action_verb": "Uống_nước",
+        "atomic_instruction": "Uống từ từ từng ngụm nước ấm đánh thức các cơ quan trong cơ thể cho đến khi hết cốc.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 30,
+        "dopamine_points": 5,
+        "hints": [
+          "Uống từng ngụm nhỏ chậm rãi thật sảng khoái nào!"
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Minh chứng cốc cạn",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Chụp 1 tấm ảnh chiếc cốc đã uống cạn sạch gửi Mẹ xem nhé!",
+        "ui_type": "photo_proof",
+        "target_photo_tag": "LEO_WATER_EMPTY.JPG",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 10,
+        "hints": [
+          "Giơ máy chụp chiếc cốc sạch bóng nào!"
+        ]
+      }
+    ]
+  },
+  "routine_morning_teeth": {
+    "id": "routine_morning_teeth",
+    "timeline_slot": "morning",
+    "slot_time": "06:50",
+    "title": "Rửa mặt mát & Đánh răng thơm tho",
+    "cat": "routine",
+    "catName": "Thói Quen Buổi Sáng",
+    "icon": "🪥",
+    "island": "routine",
+    "reward": 25,
+    "target_photo_tag": "LEO_TEETH_SMILE.JPG",
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Mới ngủ dậy còn ngái ngủ, trẻ hay quên lượng kem hoặc chải qua loa.",
+      "executive_function_scaffolding": "Chụp ảnh kem hạt đậu kiểm tra -> Đồng hồ tự chạy 30s hàm trên + 30s hàm dưới tự động chuyển bước không cần chạm tay ướt -> Chụp nụ cười khoe răng.",
+      "visual_or_concrete_aid": "Hoạt ảnh bóp kem hạt đậu, đồng hồ đếm ngược 30s tự chuyển và nụ cười khoe răng."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Bóp kem hạt đậu",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Lấy một lượng kem nhỏ bằng hạt đậu lên đầu bàn chải và chụp 1 tấm ảnh kiểm tra nhé!",
+        "ui_type": "photo_proof",
+        "target_photo_tag": "LEO_TEETH_PASTE.JPG",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Chỉ lấy lượng kem bằng hạt đậu thôi con nhé! Chụp ảnh kiểm tra nào!"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Hàm Trên 30s",
+        "action_verb": "Chải_răng",
+        "atomic_instruction": "Chải đều mặt ngoài, mặt trong và mặt nhai của hàm trên trong 30 giây (hệ thống tự chuyển bước khi chuông reo).",
+        "ui_type": "timer_brush",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 30,
+        "dopamine_points": 5,
+        "hints": [
+          "Chải xoay tròn nhẹ nhàng khắp hàm trên theo nhịp đếm nhé!"
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Hàm Dưới 30s",
+        "action_verb": "Chải_răng",
+        "atomic_instruction": "Chuyển xuống chải đều mặt ngoài, mặt trong và mặt nhai của hàm dưới trong 30 giây (hệ thống tự chuyển bước khi chuông reo).",
+        "ui_type": "timer_brush",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 30,
+        "dopamine_points": 5,
+        "hints": [
+          "Chải sạch từng kẽ răng hàm dưới cho đến khi nghe tiếng Ting!"
+        ]
+      },
+      {
+        "step_id": 4,
+        "badge": "Nụ cười khoe răng sạch",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Súc miệng thật sạch và chụp 1 tấm ảnh nụ cười khoe hàm răng trắng sạch gửi Mẹ!",
+        "ui_type": "photo_proof",
+        "target_photo_tag": "LEO_TEETH_SMILE.JPG",
         "is_milestone": true,
         "requires_parent_check": false,
         "duration_sec": 45,
@@ -5201,7 +6012,7 @@ window.routineDatabase = {
     "id": "routine_afterschool_drop",
     "timeline_slot": "afternoon",
     "slot_time": "16:30",
-    "title": "Hạ cánh tan trường: Cất giày & Treo balo",
+    "title": "Hạ cánh tan trường: Cất giày, treo balo & bỏ bình nước",
     "cat": "routine",
     "catName": "Nề Nếp Tan Trường",
     "icon": "🎒",
@@ -5209,9 +6020,9 @@ window.routineDatabase = {
     "reward": 25,
     "target_photo_tag": "LEO_DROP_1645.JPG",
     "adhd_scaffolding_notes": {
-      "working_memory_pitfall": "Vừa về nhà trẻ muốn lao ngay vào chơi hoặc xem màn hình, vứt giày và cặp giữa sàn nhà.",
-      "executive_function_scaffolding": "Trạm dừng chân 2 phút tại cửa vào (Entryway Decompression): Cởi giày lên kệ -> Treo cặp lên móc.",
-      "visual_or_concrete_aid": "Khung đổ bóng hình đôi giày và chiếc móc treo định vị chính xác vị trí đồ vật."
+      "working_memory_pitfall": "Vừa về nhà trẻ muốn lao ngay vào chơi hoặc xem màn hình, vứt giày và cặp giữa sàn nhà, quên bình nước trong cặp.",
+      "executive_function_scaffolding": "Trạm dừng chân 2 phút tại cửa vào (Entryway Decompression): Cởi giày lên kệ -> Treo cặp lên móc -> Bỏ bình nước ra bồn rửa.",
+      "visual_or_concrete_aid": "Khung đổ bóng hình đôi giày, chiếc móc treo và bồn rửa định vị chính xác vị trí đồ vật."
     },
     "steps": [
       {
@@ -5244,16 +6055,31 @@ window.routineDatabase = {
       },
       {
         "step_id": 3,
+        "badge": "Bỏ bình nước ra bồn rửa",
+        "action_verb": "Lấy_bình",
+        "atomic_instruction": "Mở ngăn cặp, lấy bình nước mang từ trường ra đặt vào bồn rửa bát để rửa sạch.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Mở nắp bình nước ra đặt trong bồn rửa con nhé!"
+        ]
+      },
+      {
+        "step_id": 4,
         "badge": "Minh chứng trạm hạ cánh",
         "action_verb": "Chụp_ảnh",
-        "atomic_instruction": "Chụp 1 tấm ảnh kệ dép và chiếc balo đã treo gọn gàng gửi Mẹ xem nhé!",
+        "atomic_instruction": "Chụp 1 tấm ảnh kệ dép, balo gọn gàng và bình nước đã đặt trong bồn rửa gửi Mẹ!",
         "ui_type": "photo_proof",
+        "target_photo_tag": "LEO_DROP_1645.JPG",
         "is_milestone": true,
         "requires_parent_check": false,
         "duration_sec": 60,
-        "dopamine_points": 15,
+        "dopamine_points": 10,
         "hints": [
-          "Chụp góc cửa ra vào sạch tinh tươm nào!"
+          "Chụp trạm hạ cánh ngăn nắp tinh tươm nào!"
         ]
       }
     ]
@@ -5323,38 +6149,38 @@ window.routineDatabase = {
     "id": "routine_afterschool_snack",
     "timeline_slot": "afternoon",
     "slot_time": "17:00",
-    "title": "Ăn bữa xế & Bỏ bình nước ra bồn rửa",
+    "title": "Thưởng thức bữa xế nạp năng lượng chiều",
     "cat": "routine",
     "catName": "Nề Nếp Tan Trường",
     "icon": "🍎",
     "island": "routine",
-    "reward": 15,
-    "target_photo_tag": "LEO_SNACK_1700.JPG",
+    "reward": 20,
+    "target_photo_tag": "LEO_SNACK_DONE.JPG",
     "adhd_scaffolding_notes": {
-      "working_memory_pitfall": "Hay bỏ quên bình nước hoặc hộp thức ăn lưu cữu trong cặp nhiều ngày gây mốc mùi.",
-      "executive_function_scaffolding": "Neo thói quen (Habit Stacking): Cứ ăn bữa xế là lấy bình nước trong cặp ra bồn rửa.",
-      "visual_or_concrete_aid": "Hoạt ảnh chiếc bình nước bay từ cặp sang bồn rửa bát."
+      "working_memory_pitfall": "Sau giờ học đường huyết giảm gây cáu gắt, trẻ dễ ăn vặt linh tinh không rửa tay hoặc bừa bãi đĩa cốc.",
+      "executive_function_scaffolding": "Quy trình 3 bước lành mạnh: Rửa tay xà phòng -> Ăn trái cây / sữa -> Dọn đĩa vào bồn.",
+      "visual_or_concrete_aid": "Hình minh họa bàn ăn sạch sẽ và nụ cười no bụng sảng khoái."
     },
     "steps": [
       {
         "step_id": 1,
-        "badge": "Bỏ bình nước ra bồn",
-        "action_verb": "Lấy_bình",
-        "atomic_instruction": "Mở ngăn hông cặp, lấy bình nước mang từ trường ra đặt vào bồn rửa bát để rửa.",
+        "badge": "Rửa tay xà phòng",
+        "action_verb": "Rửa_tay",
+        "atomic_instruction": "Rửa hai bàn tay thật sạch với xà phòng dưới vòi nước trước khi ăn xế.",
         "ui_type": "checkbox",
         "is_milestone": false,
         "requires_parent_check": false,
-        "duration_sec": 45,
+        "duration_sec": 30,
         "dopamine_points": 5,
         "hints": [
-          "Mở nắp bình nước ra đặt trong bồn rửa con nhé!"
+          "Xoa bọt xà phòng khắp mu và lòng bàn tay thật sạch con nhé!"
         ]
       },
       {
         "step_id": 2,
         "badge": "Ăn bữa phụ nhẹ nhàng",
         "action_verb": "Ăn_xế",
-        "atomic_instruction": "Thưởng thức sữa hoặc đĩa trái cây nạp lại năng lượng sau giờ học.",
+        "atomic_instruction": "Thưởng thức sữa hoặc đĩa trái cây tươi nạp lại năng lượng sau giờ học.",
         "ui_type": "checkbox",
         "is_milestone": false,
         "requires_parent_check": false,
@@ -5366,16 +6192,17 @@ window.routineDatabase = {
       },
       {
         "step_id": 3,
-        "badge": "Minh chứng bồn rửa",
+        "badge": "Dọn đĩa cốc vào bồn & Chụp ảnh",
         "action_verb": "Chụp_ảnh",
-        "atomic_instruction": "Chụp 1 tấm ảnh bình nước đã nằm ngay ngắn trong bồn rửa gửi Mẹ!",
+        "atomic_instruction": "Bê đĩa cốc đã ăn xong đặt vào bồn rửa và chụp 1 tấm ảnh bàn ăn sạch sẽ gửi Mẹ!",
         "ui_type": "photo_proof",
+        "target_photo_tag": "LEO_SNACK_DONE.JPG",
         "is_milestone": true,
         "requires_parent_check": false,
         "duration_sec": 45,
-        "dopamine_points": 5,
+        "dopamine_points": 10,
         "hints": [
-          "Mẹ sẽ rất hài lòng khi thấy bình nước được lấy ra kịp thời!"
+          "Bàn ăn sạch bóng tinh tươm, Mẹ sẽ rất hài lòng!"
         ]
       }
     ]
@@ -5897,9 +6724,87 @@ window.routineDatabase = {
         ]
       }
     ]
+  },
+  "routine_breakfast": {
+    "id": "routine_breakfast",
+    "timeline_slot": "morning",
+    "slot_time": "07:00",
+    "title": "Tự chuẩn bị bữa sáng ấm nóng & Nạp năng lượng",
+    "cat": "routine",
+    "catName": "Thói Quen Buổi Sáng",
+    "icon": "🥪",
+    "island": "routine",
+    "reward": 25,
+    "target_photo_tag": "LEO_BREAKFAST_0700.JPG",
+    "flex_meal_config": {
+      "dishes": [
+        {
+          "name": "Bánh mì nướng",
+          "minutes": 2,
+          "device": "airfryer",
+          "device_name": "Nồi chiên không dầu"
+        },
+        {
+          "name": "Sữa ấm",
+          "minutes": 1,
+          "device": "microwave",
+          "device_name": "Lò vi sóng"
+        }
+      ]
+    },
+    "adhd_scaffolding_notes": {
+      "working_memory_pitfall": "Buổi sáng vội vã dễ bỏ bữa hoặc ăn qua loa gây hạ đường huyết giảm tập trung.",
+      "executive_function_scaffolding": "Làm nóng nhanh bằng nồi chiên hoặc vi sóng theo danh sách món mẹ chọn sẵn, đồng hồ du di theo lò nướng.",
+      "visual_or_concrete_aid": "Hoạt ảnh đĩa bánh mì giòn rụm và ly sữa ấm nạp năng lượng."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "badge": "Nồi chiên: Bánh mì nướng",
+        "action_verb": "Nướng_bánh",
+        "atomic_instruction": "Cho bánh mì vào nồi chiên không dầu, chỉnh 2 phút cho giòn ấm (chạy ngầm).",
+        "ui_type": "pipeline_timer",
+        "device": "airfryer",
+        "device_name": "Nồi chiên không dầu",
+        "dish_name": "Bánh mì nướng",
+        "duration_sec": 120,
+        "dopamine_points": 5,
+        "hints": [
+          "Chỉnh 2 phút để bánh mì giòn rụm thơm lừng nhé!"
+        ]
+      },
+      {
+        "step_id": 2,
+        "badge": "Rót sữa ấm",
+        "action_verb": "Rót_sữa",
+        "atomic_instruction": "Rót 1 ly sữa tươi ấm để nạp năng lượng cho ngày mới.",
+        "ui_type": "checkbox",
+        "is_milestone": false,
+        "requires_parent_check": false,
+        "duration_sec": 45,
+        "dopamine_points": 5,
+        "hints": [
+          "Cẩn thận kẻo rớt sữa ra ngoài nhé con!"
+        ]
+      },
+      {
+        "step_id": 3,
+        "badge": "Bày ra bàn & Chụp ảnh",
+        "action_verb": "Chụp_ảnh",
+        "atomic_instruction": "Gắp bánh mì ra đĩa, đặt ly sữa bên cạnh và chụp 1 tấm ảnh bữa sáng ngon lành gửi Mẹ!",
+        "ui_type": "photo_proof",
+        "target_photo_tag": "LEO_BREAKFAST_0700.JPG",
+        "is_milestone": true,
+        "requires_parent_check": false,
+        "duration_sec": 90,
+        "dopamine_points": 15,
+        "hints": [
+          "Bữa sáng thơm ngon đã sẵn sàng, chúc con ngày mới nhiều năng lượng!"
+        ]
+      }
+    ]
   }
 };
-
-if (typeof window.taskDatabase !== 'undefined') {
-  Object.assign(window.taskDatabase, window.routineDatabase);
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { TASKS_DB: window.TASKS_DB, taskDatabase: window.taskDatabase, routineDatabase: window.routineDatabase };
 }

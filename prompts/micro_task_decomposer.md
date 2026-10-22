@@ -513,9 +513,9 @@ Mục tiêu tối thượng: Giảm tải bộ nhớ làm việc (Working Memory
     {
       "step_id": 1,
       "badge": "Bóp kem hạt đậu",
-      "action_verb": "Bóp_kem",
-      "atomic_instruction": "Lấy một lượng kem đánh răng nhỏ bằng hạt đậu lên đầu bàn chải.",
-      "ui_type": "checkbox",
+      "action_verb": "Chụp_ảnh",
+      "atomic_instruction": "Lấy một lượng kem nhỏ bằng hạt đậu lên đầu bàn chải và chụp 1 tấm ảnh kiểm tra nhé!",
+      "ui_type": "photo_proof",
       "is_milestone": false,
       "dopamine_points": 5
     },

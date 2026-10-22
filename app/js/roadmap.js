@@ -83,7 +83,7 @@
       // 3. TÍNH TOÁN TỌA ĐỘ VÀ VẼ ĐƯỜNG MÒN S-CURVE NỐI CÁC ĐẢO (SVG QUEST TRAIL)
       const points = [];
       for (let r = totalIslands; r >= 1; r--) {
-        const xr = (totalIslands === 1) ? 170 : ((r % 2 === 1) ? 230 : 110);
+        const xr = (totalIslands === 1) ? 170 : ((r % 2 === 1) ? 218 : 122);
         const yr = 45 + r * 105;
         points.push({ x: xr, y: yr, rowIndex: r, islandIndex: totalIslands - r });
       }
@@ -115,11 +115,11 @@
       }
 
       const svgTrailHtml = `
-        <svg class="absolute inset-0 w-full pointer-events-none z-0" viewBox="0 0 340 ${totalHeight}" preserveAspectRatio="none" style="height: ${totalHeight}px; min-height: 100%;" fill="none">
+        <svg id="svg-quest-trail" class="absolute inset-0 w-full pointer-events-none z-0" viewBox="0 0 340 ${totalHeight}" preserveAspectRatio="none" style="height: ${totalHeight}px; min-height: 100%;" fill="none">
           <!-- Vết bước chân / đường mòn đá cuội nối toàn bộ hải trình -->
-          <path d="${fullPathD}" stroke="#CBD5E1" stroke-width="12" stroke-linecap="round" stroke-dasharray="14 14"/>
+          <path id="svg-quest-path-base" d="${fullPathD}" stroke="#CBD5E1" stroke-width="12" stroke-linecap="round" stroke-dasharray="14 14"/>
           <!-- Đường mòn ánh sao phát sáng cho các đảo đã hoàn thành -->
-          ${conqueredPathD ? `<path d="${conqueredPathD}" stroke="${isAllCompleted ? '#F59E0B' : '#10B981'}" stroke-width="6" stroke-linecap="round" stroke-dasharray="10 10" class="animate-pulse"/>` : ''}
+          ${conqueredPathD ? `<path id="svg-quest-path-conquered" d="${conqueredPathD}" stroke="${isAllCompleted ? '#F59E0B' : '#10B981'}" stroke-width="6" stroke-linecap="round" stroke-dasharray="10 10" class="animate-pulse"/>` : ''}
         </svg>
       `;
 
@@ -151,7 +151,7 @@
         if (isActive) {
           const miloAlignClass = (totalIslands === 1) ? '-left-16 -top-2' : ((r % 2 === 1) ? '-left-16 -top-2' : '-right-16 -top-2');
           islandsHtml += `
-            <div id="node-island-active" class="relative z-20 flex flex-col items-center my-2.5 ${alignClass}">
+            <div id="node-island-active" data-island-index="${i}" class="relative z-20 flex flex-col items-center my-2.5 ${alignClass}">
               <div class="absolute ${miloAlignClass} flex flex-col items-center animate-milo">
                 <div id="child-milo-speech" class="bg-white border-2 border-emerald-400 px-2 py-0.5 rounded-xl rounded-br-none shadow-md text-[9px] font-extrabold text-emerald-800 mb-0.5 max-w-[105px] text-center leading-tight">
                   Đảo ${i + 1}: ${titleSnippet} 👋
@@ -182,7 +182,7 @@
           `;
         } else if (isDone) {
           islandsHtml += `
-            <div class="relative z-10 flex flex-col items-center my-2 cursor-pointer opacity-90 hover:opacity-100 transition ${alignClass}" onclick="showToast('Đảo Đã Hoàn Thành', 'Leo đã chinh phục xuất sắc hòn đảo này! ⭐', '✅')">
+            <div data-island-index="${i}" class="relative z-10 flex flex-col items-center my-2 cursor-pointer opacity-90 hover:opacity-100 transition ${alignClass}" onclick="showToast('Đảo Đã Hoàn Thành', 'Leo đã chinh phục xuất sắc hòn đảo này! ⭐', '✅')">
               <div class="w-14 h-14 rounded-2xl bg-emerald-50 border-2 border-emerald-400 flex flex-col items-center justify-center shadow-xs">
                 <span class="text-xl">✅</span>
                 <span class="text-[8px] font-black text-emerald-800">+${t.reward || 100} ⭐</span>
@@ -194,7 +194,7 @@
           `;
         } else {
           islandsHtml += `
-            <div class="relative z-10 flex flex-col items-center my-2 opacity-65 cursor-pointer hover:opacity-85 transition ${alignClass}" onclick="selectQueuedIsland(${i})">
+            <div data-island-index="${i}" class="relative z-10 flex flex-col items-center my-2 opacity-65 cursor-pointer hover:opacity-85 transition ${alignClass}" onclick="selectQueuedIsland(${i})">
               <div class="w-14 h-14 rounded-2xl bg-slate-100 border-2 border-slate-300 flex flex-col items-center justify-center shadow-xs">
                 <span class="text-xl">${t.icon || '🔒'}</span>
                 <span class="text-[8px] font-black text-slate-600">+${t.reward || 100} ⭐</span>
@@ -227,6 +227,9 @@
             const nodeOffset = activeNode.offsetTop;
             const containerH = mapContainer.clientHeight || 450;
             mapContainer.scrollTop = Math.max(0, nodeOffset - containerH / 2 + 30);
+          }
+          if (typeof snapRoadmapTrailToDOM === 'function') {
+            snapRoadmapTrailToDOM(mapContainer, false);
           }
         }, 50);
       }
@@ -262,6 +265,14 @@
     }
 
     function startChildQuest() {
+      // Khóa không cho bỏ chạy sang học bài khi bếp/nồi đang nấu thức ăn dở
+      const runningTimer = (window.miloActiveTimers || []).find(t => !t.isCompleted && t.endTime > Date.now());
+      if (runningTimer && runningTimer.taskId) {
+        if (typeof showToast === 'function') {
+          showToast("Bếp Đang Nấu! ♨️", `Lò đang hâm nóng món [${runningTimer.dishName}] nè Leo! Con hoàn thành nốt Bữa sáng rồi hẵng sang học bài nhé!`, "⏳");
+        }
+        return;
+      }
       playSfx('tap');
       appState.currentStepIndex = 0;
       appState.selectedClues.clear();
@@ -507,6 +518,13 @@
       }
 
       appState.childRoutineRoadmap = [];
+      appState.routineCleared = true;
+      try { if (typeof localStorage !== 'undefined') localStorage.setItem('milo_routine_cleared', 'true'); } catch(_) {}
+
+      if (appState.activeTask && appState.activeTask.cat === 'routine') {
+        appState.activeTask = null;
+      }
+
       if (appState.selectedRoutineIds) {
         appState.selectedRoutineIds.clear();
         if (typeof updateRoutineSelectedMeta === 'function') updateRoutineSelectedMeta();
@@ -526,6 +544,13 @@
 
       if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
         window.renderChildRoutineRoadmapFromTasks([]);
+      }
+
+      const counter = document.getElementById('child-roadmap-counter');
+      const routineBtn = document.getElementById('child-tab-routine-btn');
+      const isRoutineTab = routineBtn && routineBtn.classList.contains('bg-amber-400');
+      if (counter && isRoutineTab) {
+        counter.innerHTML = `<span class="text-slate-500 font-bold">Đảo thói quen trống (0 nề nếp)</span>`;
       }
 
       renderParentActiveRoadmapList();
@@ -549,6 +574,9 @@
         }
 
         appState.childRoadmap = [];
+        appState.roadmapCleared = true;
+        try { if (typeof localStorage !== 'undefined') localStorage.setItem('milo_roadmap_cleared', 'true'); } catch(_) {}
+
         appState.currentRoadmapIndex = 0;
         appState.activeTask = null;
         appState.currentStepIndex = 0;
@@ -564,6 +592,78 @@
         renderParentActiveRoadmapList();
         renderChildIslandRoadmap();
         showToast("Đã Làm Mới Hải Trình", "Toàn bộ đảo đã được xóa sạch! Hãy giao bài mới cho bé nhé.", "✨");
+      }
+    }
+
+    function snapRoadmapTrailToDOM(container, isRoutine) {
+      if (!container) return;
+      const canvas = container.querySelector('.roadmap-canvas');
+      if (!canvas) return;
+
+      const canvasRect = canvas.getBoundingClientRect();
+      if (!canvasRect || canvasRect.width === 0 || canvasRect.height === 0) return;
+
+      const treasureEl = container.querySelector(isRoutine ? '#node-routine-treasure' : '#node-treasure-island');
+      if (!treasureEl) return;
+      const treasureBtn = treasureEl.querySelector('.w-16, div') || treasureEl;
+      const tRect = treasureBtn.getBoundingClientRect();
+
+      // Lấy toàn bộ các nốt đảo theo thuộc tính data (từ index 0 là đảo sớm nhất ở đáy)
+      const indexAttr = isRoutine ? 'data-routine-index' : 'data-island-index';
+      const islandEls = container.querySelectorAll(`[${indexAttr}]`);
+      if (!islandEls || islandEls.length === 0) return;
+
+      const points = [];
+      const total = islandEls.length;
+      for (let i = 0; i < total; i++) {
+        const el = container.querySelector(`[${indexAttr}="${i}"]`);
+        if (el) {
+          // Canh chính xác vào tâm điểm của nút bấm 3D hình tròn/bo góc
+          const btn = el.querySelector('#child-island-btn, #node-routine-btn-active, .w-20, .w-14') || el;
+          const bRect = btn.getBoundingClientRect();
+          const x = Math.round(bRect.left - canvasRect.left + bRect.width / 2);
+          const y = Math.round(bRect.top - canvasRect.top + bRect.height / 2);
+          points.push({ x, y, islandIndex: i });
+        }
+      }
+
+      if (points.length === 0) return;
+
+      // Đỉnh: Tâm điểm rương báu cúp vàng
+      const tx = Math.round(tRect.left - canvasRect.left + tRect.width / 2);
+      const ty = Math.round(tRect.top - canvasRect.top + tRect.height / 2);
+      points.push({ x: tx, y: ty, isTreasure: true });
+
+      // Xây dựng đường cong Bézier toàn trình đi xuyên qua tâm mọi đảo
+      let fullD = `M ${points[0].x} ${points[0].y}`;
+      for (let k = 0; k < points.length - 1; k++) {
+        const p1 = points[k];
+        const p2 = points[k + 1];
+        const midY = Math.round((p1.y + p2.y) / 2);
+        fullD += ` C ${p1.x} ${midY}, ${p2.x} ${midY}, ${p2.x} ${p2.y}`;
+      }
+
+      const basePath = container.querySelector(isRoutine ? '#svg-routine-path-base' : '#svg-quest-path-base') || container.querySelector('svg path');
+      if (basePath) {
+        basePath.setAttribute('d', fullD);
+      }
+
+      // Xây dựng đường cong conquered nếu có
+      const curIdx = isRoutine ? (appState.currentRoutineIndex || 0) : (appState.currentRoadmapIndex || 0);
+      const isAllDone = isRoutine ? ((appState.currentRoutineIndex || 0) >= total) : (appState.currentRoadmapIndex >= total);
+      const maxConqueredPointIdx = isAllDone ? (points.length - 1) : curIdx;
+      if (maxConqueredPointIdx > 0) {
+        let conqD = `M ${points[0].x} ${points[0].y}`;
+        for (let k = 0; k < maxConqueredPointIdx; k++) {
+          const p1 = points[k];
+          const p2 = points[k + 1];
+          const midY = Math.round((p1.y + p2.y) / 2);
+          conqD += ` C ${p1.x} ${midY}, ${p2.x} ${midY}, ${p2.x} ${p2.y}`;
+        }
+        const conqPath = container.querySelector(isRoutine ? '#svg-routine-path-conquered' : '#svg-quest-path-conquered');
+        if (conqPath) {
+          conqPath.setAttribute('d', conqD);
+        }
       }
     }
 
@@ -659,6 +759,22 @@
       window.parentClearChildRoadmap = parentClearChildRoadmap;
       window.renderParentActiveRoadmapList = renderParentActiveRoadmapList;
       window.initRoadmapDragScroll = initRoadmapDragScroll;
+      window.snapRoadmapTrailToDOM = snapRoadmapTrailToDOM;
+
+      let resizeTimer = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          const mc = document.getElementById('child-island-map-container');
+          if (mc && mc.style.display !== 'none' && !mc.classList.contains('hidden')) {
+            snapRoadmapTrailToDOM(mc, false);
+          }
+          const rc = document.getElementById('child-routine-map-container');
+          if (rc && rc.style.display !== 'none' && !rc.classList.contains('hidden')) {
+            snapRoadmapTrailToDOM(rc, true);
+          }
+        }, 120);
+      });
     }
 
 
@@ -688,8 +804,21 @@
         counter.innerText = totalIslands > 0 ? `Đảo Thói Quen (${totalIslands} nề nếp)` : "Đảo thói quen trống (0 nề nếp)";
       }
 
+      // Đồng bộ nút CTA đáy máy con khi ở tab thói quen
+      const startQuestBtn = document.getElementById('child-btn-start-quest');
+      const routineTabBtn = document.getElementById('child-tab-routine-btn');
+      const isRoutineTab = routineTabBtn && routineTabBtn.classList.contains('bg-amber-400');
+
       // 1. EMPTY STATE
       if (totalIslands === 0) {
+        if (startQuestBtn && isRoutineTab) {
+          startQuestBtn.disabled = true;
+          startQuestBtn.className = "w-full bg-slate-200 text-slate-500 font-bold text-sm py-3.5 rounded-2xl cursor-not-allowed flex items-center justify-center gap-2 border border-slate-300";
+          startQuestBtn.innerHTML = `<span>CHỜ BA MẸ GIAO NỀ NẾP... ⏳</span>`;
+          startQuestBtn.onclick = function() {
+            if (typeof showToast === 'function') showToast('Đảo Thói Quen Trống', 'Hãy nhờ ba mẹ tick chọn nề nếp bên Trạm Thấu Hiểu để bắt đầu nhé!', '🌟');
+          };
+        }
         container.innerHTML = `
           <div class="flex-1 relative flex flex-col items-center justify-center p-6 text-center min-h-[360px] my-auto">
             <div class="w-20 h-20 rounded-3xl bg-amber-50 border-2 border-amber-200 flex items-center justify-center text-4xl shadow-inner mb-3 animate-float">
@@ -708,14 +837,29 @@
         return;
       }
 
-      // 2. DYNAMIC POINTS & S-CURVE BÉZIER TRAIL (CANH CHÍNH XÁC VÀO CÚP VÀNG)
+      // 2. TÍNH TOÁN TIẾN ĐỘ THÓI QUEN & TRẠNG THÁI ACTIVE
+      const isAllCompleted = (totalIslands > 0 && (appState.currentRoutineIndex || 0) >= totalIslands);
+      const curIdx = isAllCompleted ? (totalIslands - 1) : Math.max(0, Math.min(appState.currentRoutineIndex || 0, Math.max(0, totalIslands - 1)));
+
+      if (startQuestBtn && isRoutineTab && validRoutines.length > 0) {
+        startQuestBtn.disabled = false;
+        startQuestBtn.className = "w-full btn-3d-yellow text-slate-900 font-black text-base py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer";
+        startQuestBtn.innerHTML = `<span>BẮT ĐẦU NỀ NẾP SINH HOẠT!</span> <span class="text-xl">🌟</span>`;
+        const activeRoutineId = validRoutines[curIdx] ? validRoutines[curIdx].id : validRoutines[0].id;
+        startQuestBtn.onclick = function(e) {
+          if (e) { e.preventDefault(); e.stopPropagation(); }
+          if (typeof startChildRoutineTask === 'function') startChildRoutineTask(activeRoutineId);
+        };
+      }
+
+      // 3. DYNAMIC POINTS & S-CURVE BÉZIER TRAIL (CANH CHÍNH XÁC VÀO CÚP VÀNG)
       const points = [];
       for (let r = totalIslands; r >= 1; r--) {
         const xr = (totalIslands === 1) ? 170 : ((r % 2 === 1) ? 218 : 122);
         const yr = 45 + r * 105;
         points.push({ x: xr, y: yr, rowIndex: r, islandIndex: totalIslands - r });
       }
-      // Điểm đỉnh: Rương báu cúp vàng tại tọa độ (170, 45) - Không bao giờ vọt lên đầu cúp
+      // Điểm đỉnh: Rương báu cúp vàng tại tọa độ (170, 45)
       points.push({ x: 170, y: 45, rowIndex: 0, isTreasure: true });
 
       const totalHeight = 45 + totalIslands * 105 + 55;
@@ -729,23 +873,37 @@
         fullPathD += ` C ${p1.x} ${midY}, ${p2.x} ${midY}, ${p2.x} ${p2.y}`;
       }
 
+      // Xây dựng đường cong đã chinh phục (Conquered trail)
+      const maxConqueredPointIdx = isAllCompleted ? (points.length - 1) : curIdx;
+      let conqueredPathD = "";
+      if (maxConqueredPointIdx > 0) {
+        conqueredPathD = `M ${points[0].x} ${points[0].y}`;
+        for (let k = 0; k < maxConqueredPointIdx; k++) {
+          const p1 = points[k];
+          const p2 = points[k + 1];
+          const midY = (p1.y + p2.y) / 2;
+          conqueredPathD += ` C ${p1.x} ${midY}, ${p2.x} ${midY}, ${p2.x} ${p2.y}`;
+        }
+      }
+
       const svgTrailHtml = `
-        <svg class="absolute inset-0 w-full pointer-events-none z-0" viewBox="0 0 340 ${totalHeight}" preserveAspectRatio="none" style="height: ${totalHeight}px; min-height: 100%;" fill="none">
-          <path d="${fullPathD}" stroke="#FDE68A" stroke-width="12" stroke-linecap="round" stroke-dasharray="14 14"/>
+        <svg id="svg-routine-trail" class="absolute inset-0 w-full pointer-events-none z-0" viewBox="0 0 340 ${totalHeight}" preserveAspectRatio="none" style="height: ${totalHeight}px; min-height: 100%;" fill="none">
+          <path id="svg-routine-path-base" d="${fullPathD}" stroke="#FDE68A" stroke-width="12" stroke-linecap="round" stroke-dasharray="14 14"/>
+          ${conqueredPathD ? `<path id="svg-routine-path-conquered" d="${conqueredPathD}" stroke="#F59E0B" stroke-width="6" stroke-linecap="round" stroke-dasharray="10 10" class="animate-pulse"/>` : ''}
         </svg>
       `;
 
-      // 3. RENDER CÁC NỐT HÒN ĐẢO (TỪ TRÊN XUỐNG: CÚP VÀNG -> ĐẢO N-1 -> ĐẢO 0)
+      // 4. RENDER CÁC NỐT HÒN ĐẢO THEO PHÂN TẦNG THỊ GIÁC (VISUAL HIERARCHY)
       let islandsHtml = '';
 
       // Đỉnh: Cúp Vàng Rương Hoàng Kim (Căn chuẩn tâm điểm nối đường trail)
       islandsHtml += `
         <div id="node-routine-treasure" onclick="alertTreasureStatus()" class="relative z-10 flex flex-col items-center cursor-pointer transition hover:scale-105 my-2">
-          <div class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-amber-300 to-yellow-400 border-b-4 border-amber-600 flex items-center justify-center text-3xl shadow-lg animate-pulse-glow">
-            🏆
+          <div class="w-16 h-16 rounded-3xl ${isAllCompleted ? 'bg-gradient-to-tr from-yellow-300 via-amber-400 to-yellow-500 border-4 border-yellow-200 text-4xl animate-bounce shadow-2xl' : 'bg-gradient-to-tr from-amber-300 to-yellow-400 border-b-4 border-amber-600 text-3xl shadow-lg animate-pulse-glow'} flex items-center justify-center">
+            ${isAllCompleted ? '✨🏆' : '🏆'}
           </div>
-          <span class="text-[10px] font-black text-amber-900 mt-1 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-full shadow-xs">
-            RƯƠNG HOÀNG KIM 🔒
+          <span class="text-[10px] font-black ${isAllCompleted ? 'text-amber-950 bg-yellow-300 border-amber-500 ring-2 ring-yellow-200' : 'text-amber-900 bg-amber-100 border-amber-300'} mt-1 border px-2.5 py-0.5 rounded-full shadow-xs">
+            ${isAllCompleted ? 'RƯƠNG HOÀNG KIM MỞ BUNG! 👑' : 'RƯƠNG HOÀNG KIM 🔒'}
           </span>
         </div>
       `;
@@ -753,26 +911,74 @@
       for (let r = 1; r <= totalIslands; r++) {
         const i = totalIslands - r;
         const rt = validRoutines[i] || {};
+        const isDone = isAllCompleted || i < curIdx;
+        const isActive = !isAllCompleted && i === curIdx;
+        const titleSnippet = (rt.title && rt.title.length > 20) ? (rt.title.slice(0, 18) + '...') : (rt.title || 'Nề nếp');
         const alignClass = (totalIslands === 1) ? 'translate-x-0' : ((r % 2 === 1) ? 'translate-x-12' : '-translate-x-12');
 
-        islandsHtml += `
-          <div id="node-routine-island-${i + 1}" class="relative z-20 flex flex-col items-center my-2.5 ${alignClass}">
-            <div onclick="startChildRoutineTask('${rt.id}')" class="w-20 h-20 rounded-[28px] btn-3d-yellow island-active-glow flex flex-col items-center justify-center text-slate-900 shadow-xl ring-4 ring-amber-300 cursor-pointer hover:scale-105 active:scale-95 transition">
-              <span class="text-3xl mb-0.5">${rt.icon || '🌟'}</span>
-              <span class="text-[9px] font-black uppercase tracking-wider bg-black/15 text-amber-950 px-2 py-0.5 rounded-full">+${rt.reward || 25} ⭐</span>
-            </div>
+        if (isActive) {
+          const miloAlignClass = (totalIslands === 1) ? '-left-16 -top-2' : ((r % 2 === 1) ? '-left-16 -top-2' : '-right-16 -top-2');
+          const runningTimerForThis = (window.miloActiveTimers || []).find(t => t.taskId === rt.id && !t.isCompleted && t.endTime > Date.now());
+          const isCookingNow = !!runningTimerForThis;
+          const statusBadgeText = isCookingNow ? `♨️ ĐANG NẤU: ${runningTimerForThis.dishName}` : `${rt.slot_time || '07:00'} • SẴN SÀNG 🚀`;
+          const statusSubText = isCookingNow ? `⏳ Bếp đang chạy ngầm • Bấm để xem tiếp!` : `📸 Có chụp ảnh minh chứng • Milo đồng hành`;
+          const bubbleText = isCookingNow ? `♨️ Món ăn đang nấu nè! Bấm để vào bếp 👋` : `Nề nếp ${i + 1}: ${titleSnippet} 👋`;
 
-            <div class="mt-1.5 text-center max-w-[200px]">
-              <span class="bg-amber-400 text-amber-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow-xs">
-                ${rt.slot_time || '07:00'} • SẴN SÀNG 🚀
-              </span>
-              <h4 class="font-black text-xs text-slate-900 mt-0.5 truncate px-1">${rt.title}</h4>
-              <span class="text-[9px] font-extrabold text-orange-600 bg-orange-100 px-1.5 py-0.2 rounded-md inline-block mt-0.5">
-                📸 Có chụp ảnh minh chứng
+          islandsHtml += `
+            <div id="node-routine-island-active" data-routine-index="${i}" class="relative z-20 flex flex-col items-center my-2.5 ${alignClass}">
+              <div class="absolute ${miloAlignClass} flex flex-col items-center animate-milo">
+                <div class="bg-white border-2 border-amber-400 px-2 py-0.5 rounded-xl rounded-br-none shadow-md text-[9px] font-extrabold text-amber-900 mb-0.5 max-w-[105px] text-center leading-tight">
+                  ${bubbleText}
+                </div>
+                <div class="w-10 h-10 rounded-2xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-2xl shadow-md">
+                  🦁
+                </div>
+              </div>
+
+              <div id="node-routine-btn-active" onclick="startChildRoutineTask('${rt.id}')" class="w-20 h-20 rounded-[28px] btn-3d-yellow island-active-glow flex flex-col items-center justify-center text-slate-900 shadow-xl ring-8 ring-amber-200/80 cursor-pointer hover:scale-105 active:scale-95 transition">
+                <span class="text-3xl mb-0.5">${rt.icon || '🌟'}</span>
+                <span class="text-[9px] font-black uppercase tracking-wider bg-black/15 text-amber-950 px-2 py-0.5 rounded-full">+${rt.reward || 25} ⭐</span>
+              </div>
+
+              <div class="mt-1.5 text-center max-w-[200px]">
+                <div class="flex items-center justify-center gap-1 mb-0.5 flex-wrap">
+                  <span class="text-[9px] font-black px-2 py-0.2 rounded-full border bg-amber-100 text-amber-900 border-amber-300">
+                    ĐẢO SINH HOẠT 🌿
+                  </span>
+                  <span class="text-[9px] font-black px-2 py-0.2 rounded-full uppercase border ${isCookingNow ? 'bg-amber-300 text-amber-950 border-amber-500 animate-pulse' : 'bg-amber-200 text-amber-950 border-amber-400'}">
+                    ${statusBadgeText}
+                  </span>
+                </div>
+                <h2 class="text-xs font-black text-slate-900 leading-snug truncate px-1">${rt.title}</h2>
+                <p class="text-[10px] font-bold text-amber-700">${statusSubText}</p>
+              </div>
+            </div>
+          `;
+        } else if (isDone) {
+          islandsHtml += `
+            <div data-routine-index="${i}" class="relative z-10 flex flex-col items-center my-2 cursor-pointer opacity-90 hover:opacity-100 transition ${alignClass}" onclick="showToast('Thói Quen Hoàn Thành', 'Leo đã hoàn thành xuất sắc nề nếp này! ⭐', '✅')">
+              <div class="w-14 h-14 rounded-2xl bg-amber-100 border-2 border-amber-400 flex flex-col items-center justify-center shadow-xs">
+                <span class="text-xl">✅</span>
+                <span class="text-[8px] font-black text-amber-800">+${rt.reward || 25} ⭐</span>
+              </div>
+              <span class="text-[9px] font-extrabold text-amber-900 mt-1 bg-white border border-amber-200 px-2 py-0.2 rounded-full shadow-xs max-w-[140px] truncate text-center">
+                ${rt.slot_time ? rt.slot_time + ' ' : ''}${rt.title}
               </span>
             </div>
-          </div>
-        `;
+          `;
+        } else {
+          islandsHtml += `
+            <div data-routine-index="${i}" class="relative z-10 flex flex-col items-center my-2 opacity-75 cursor-pointer hover:opacity-95 transition ${alignClass}" onclick="startChildRoutineTask('${rt.id}')">
+              <div class="w-14 h-14 rounded-2xl bg-amber-50/80 border-2 border-amber-200 flex flex-col items-center justify-center shadow-xs">
+                <span class="text-xl">${rt.icon || '🌟'}</span>
+                <span class="text-[8px] font-black text-amber-700">+${rt.reward || 25} ⭐</span>
+              </div>
+              <span class="text-[9px] font-extrabold text-amber-800 mt-1 bg-white/95 border border-amber-200 px-2 py-0.2 rounded-full shadow-xs max-w-[140px] truncate text-center">
+                ${rt.slot_time ? rt.slot_time + ' ' : ''}${rt.title}
+              </span>
+            </div>
+          `;
+        }
       }
 
       container.innerHTML = `
@@ -782,6 +988,24 @@
         </div>
       `;
       initRoadmapDragScroll(container);
+
+      // Tự động cuộn đến nốt đảo thói quen active & Snap đường trail Bézier chuẩn xác
+      setTimeout(() => {
+        const screenContainer = document.getElementById('child-screen-container');
+        if (screenContainer) screenContainer.scrollTop = 0;
+        const homeScreen = document.getElementById('child-screen-home');
+        if (homeScreen) homeScreen.scrollTop = 0;
+
+        const activeNode = document.getElementById('node-routine-island-active');
+        if (activeNode && container) {
+          const nodeOffset = activeNode.offsetTop;
+          const containerH = container.clientHeight || 450;
+          container.scrollTop = Math.max(0, nodeOffset - containerH / 2 + 30);
+        }
+        if (typeof snapRoadmapTrailToDOM === 'function') {
+          snapRoadmapTrailToDOM(container, true);
+        }
+      }, 50);
     }
 
     window.renderChildRoutineRoadmapFromTasks = renderChildRoutineRoadmapFromTasks;

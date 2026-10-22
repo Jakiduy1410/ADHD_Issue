@@ -327,7 +327,9 @@
             totalSessionSeconds: stateSnapshot.totalSessionSeconds || 0,
             selectedCatalogIds: Array.from(stateSnapshot.selectedCatalogIds || []),
             childRoutineRoadmap: stateSnapshot.childRoutineRoadmap || [],
-            selectedRoutineIds: stateSnapshot.selectedRoutineIds ? Array.from(stateSnapshot.selectedRoutineIds) : []
+            selectedRoutineIds: stateSnapshot.selectedRoutineIds ? Array.from(stateSnapshot.selectedRoutineIds) : [],
+            roadmapCleared: !!stateSnapshot.roadmapCleared,
+            routineCleared: !!stateSnapshot.routineCleared
           });
           localStorage.setItem(this.storageStateKey, serialized);
           localStorage.setItem(this.storageStateBackupKey, serialized);
@@ -618,9 +620,39 @@
       bus.subscribe('ROUTINE_ASSIGN_BATCH', (payload) => {
         if (payload && Array.isArray(payload.routines)) {
           appState.childRoutineRoadmap = payload.routines;
+          appState.routineCleared = (payload.routines.length === 0);
+          if (payload.routines.length > 0) {
+            try { if (typeof localStorage !== 'undefined') localStorage.removeItem('milo_routine_cleared'); } catch(_) {}
+          }
+
           if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
             window.renderChildRoutineRoadmapFromTasks(payload.routines);
           }
+
+          // Đồng bộ nút CTA đáy máy con nếu máy con đang ở tab thói quen
+          const startQuestBtn = document.getElementById('child-btn-start-quest');
+          const routineTabBtn = document.getElementById('child-tab-routine-btn');
+          const isRoutineTab = routineTabBtn && routineTabBtn.classList.contains('bg-amber-400');
+          if (startQuestBtn && isRoutineTab) {
+            if (payload.routines.length > 0) {
+              startQuestBtn.disabled = false;
+              startQuestBtn.className = "w-full btn-3d-yellow text-slate-900 font-black text-base py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer";
+              startQuestBtn.innerHTML = `<span>BẮT ĐẦU NỀ NẾP SINH HOẠT!</span> <span class="text-xl">🌟</span>`;
+              const firstRoutineId = typeof payload.routines[0] === 'string' ? payload.routines[0] : (payload.routines[0].id || 'routine_morning_bed');
+              startQuestBtn.onclick = function(e) {
+                if (e) { e.preventDefault(); e.stopPropagation(); }
+                if (typeof startChildRoutineTask === 'function') startChildRoutineTask(firstRoutineId);
+              };
+            } else {
+              startQuestBtn.disabled = true;
+              startQuestBtn.className = "w-full bg-slate-200 text-slate-500 font-bold text-sm py-3.5 rounded-2xl cursor-not-allowed flex items-center justify-center gap-2 border border-slate-300";
+              startQuestBtn.innerHTML = `<span>CHỜ BA MẸ GIAO NỀ NẾP... ⏳</span>`;
+              startQuestBtn.onclick = function() {
+                if (typeof showToast === 'function') showToast('Đảo Thói Quen Trống', 'Hãy nhờ ba mẹ tick chọn nề nếp bên Trạm Thấu Hiểu để bắt đầu nhé!', '🌟');
+              };
+            }
+          }
+
           if (typeof bus.savePersistedState === 'function') {
             bus.savePersistedState(appState);
           }

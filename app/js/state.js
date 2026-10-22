@@ -11,6 +11,11 @@
       ? taskDatabase
       : ((typeof window !== 'undefined' && window.taskDatabase) || (typeof global !== 'undefined' && global.taskDatabase) || {});
 
+    var routineDatabase = (typeof routineDatabase !== 'undefined' && routineDatabase && Object.keys(routineDatabase).length > 0)
+      ? routineDatabase
+      : ((typeof window !== 'undefined' && window.routineDatabase) || (typeof global !== 'undefined' && global.routineDatabase) || {});
+    if (typeof window !== 'undefined') window.routineDatabase = routineDatabase;
+
     async function syncTasksFromApi() {
       if (typeof fetch === 'undefined') return;
       try {
@@ -42,6 +47,52 @@
       }
     }
     syncTasksFromApi();
+
+    async function syncRoutinesFromApi() {
+      if (typeof fetch === 'undefined') return;
+      try {
+        let res = await fetch('/api/routines');
+        if (!res.ok) {
+          res = await fetch('/data/curriculum/routines_db.json');
+        }
+        if (res.ok) {
+          const data = await res.json();
+          const items = Array.isArray(data) 
+            ? data 
+            : (data.routines || (data && typeof data === 'object' ? Object.values(data) : []));
+          if (items.length > 0) {
+            items.forEach(r => {
+              if (r && r.id && r.title) {
+                routineDatabase[r.id] = r;
+              }
+            });
+
+            // Nếu người dùng chưa từng chủ động bấm nút xóa sạch hải trình
+            const isCleared = (typeof appState !== 'undefined' && appState.routineCleared) || (typeof localStorage !== 'undefined' && localStorage.getItem('milo_routine_cleared') === 'true');
+            if (!isCleared && typeof appState !== 'undefined' && (!Array.isArray(appState.childRoutineRoadmap) || appState.childRoutineRoadmap.length === 0)) {
+              const defaultRoutineIds = ['routine_morning_bed', 'routine_afterschool_drop', 'routine_clean_desk', 'routine_night_teeth'];
+              const initialRoutines = defaultRoutineIds.map(id => routineDatabase[id]).filter(Boolean);
+              if (initialRoutines.length > 0) {
+                appState.childRoutineRoadmap = initialRoutines;
+              }
+            }
+
+            if (typeof renderChildRoutineRoadmapFromTasks === 'function') {
+              renderChildRoutineRoadmapFromTasks(appState.childRoutineRoadmap);
+            }
+            if (typeof renderParentRoutinesCatalog === 'function') {
+              renderParentRoutinesCatalog();
+            }
+            if (typeof renderParentActiveRoadmapList === 'function') {
+              renderParentActiveRoadmapList();
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Routines API sync unavailable, using loaded routineDatabase:', err);
+      }
+    }
+    syncRoutinesFromApi();
 
 
 
@@ -108,7 +159,18 @@
       catalogFilter: 'all',
       gradeFilter: 'all',
       modalTaskKey: 'G1_MATH_01',
-      pendingTicket: null
+      pendingTicket: null,
+
+      // Lộ Trình Đảo Nhiệm Vụ Sinh Hoạt của Bé (Dedicated Daily Routines)
+      childRoutineRoadmap: (function() {
+        const isCleared = typeof localStorage !== 'undefined' && localStorage.getItem('milo_routine_cleared') === 'true';
+        if (isCleared) return [];
+        const ids = ['routine_morning_bed', 'routine_afterschool_drop', 'routine_clean_desk', 'routine_night_teeth'];
+        return ids.map(id => routineDatabase[id]).filter(Boolean);
+      })(),
+      selectedRoutineIds: new Set(['routine_morning_bed', 'routine_afterschool_drop', 'routine_clean_desk', 'routine_night_teeth']),
+      routineCleared: typeof localStorage !== 'undefined' && localStorage.getItem('milo_routine_cleared') === 'true',
+      roadmapCleared: typeof localStorage !== 'undefined' && localStorage.getItem('milo_roadmap_cleared') === 'true'
     };
 
     // TIMER ENGINE (ĐỒNG HỒ THỊ GIÁC VISUAL TIMER)

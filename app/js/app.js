@@ -19,7 +19,15 @@ window.addEventListener('DOMContentLoaded', () => {
       appState.stars = saved.stars;
       updateStarsEverywhere(saved.stars);
     }
-    if (saved.childRoadmap && Array.isArray(saved.childRoadmap)) {
+
+    // Kiểm tra cờ người dùng đã chủ động xóa sạch bài tập GDPT
+    const isRoadmapCleared = saved.roadmapCleared || (typeof localStorage !== 'undefined' && localStorage.getItem('milo_roadmap_cleared') === 'true');
+    appState.roadmapCleared = isRoadmapCleared;
+    if (isRoadmapCleared) {
+      appState.childRoadmap = [];
+      appState.currentRoadmapIndex = 0;
+      appState.activeTask = null;
+    } else if (saved.childRoadmap && Array.isArray(saved.childRoadmap)) {
       const validTasks = saved.childRoadmap.filter(t => (
         t &&
         typeof t === 'object' &&
@@ -35,17 +43,17 @@ window.addEventListener('DOMContentLoaded', () => {
       if (validTasks.length > 0) {
         appState.childRoadmap = validTasks;
       }
-    }
-    if (saved.currentRoadmapIndex !== undefined && saved.currentRoadmapIndex >= 0 && saved.currentRoadmapIndex < appState.childRoadmap.length) {
-      appState.currentRoadmapIndex = saved.currentRoadmapIndex;
-    } else {
-      appState.currentRoadmapIndex = 0;
-    }
-    appState.activeTask = (appState.childRoadmap && appState.childRoadmap.length > 0)
-      ? (appState.childRoadmap[appState.currentRoadmapIndex] || appState.childRoadmap[0])
-      : null;
-    if (appState.activeTask && taskDatabase && taskDatabase[appState.activeTask.id]) {
-      appState.activeTask = taskDatabase[appState.activeTask.id];
+      if (saved.currentRoadmapIndex !== undefined && saved.currentRoadmapIndex >= 0 && saved.currentRoadmapIndex < appState.childRoadmap.length) {
+        appState.currentRoadmapIndex = saved.currentRoadmapIndex;
+      } else {
+        appState.currentRoadmapIndex = 0;
+      }
+      appState.activeTask = (appState.childRoadmap && appState.childRoadmap.length > 0)
+        ? (appState.childRoadmap[appState.currentRoadmapIndex] || appState.childRoadmap[0])
+        : null;
+      if (appState.activeTask && taskDatabase && taskDatabase[appState.activeTask.id]) {
+        appState.activeTask = taskDatabase[appState.activeTask.id];
+      }
     }
 
     if (saved.currentStepIndex !== undefined && appState.activeTask && Array.isArray(appState.activeTask.steps) && saved.currentStepIndex >= 0 && saved.currentStepIndex < appState.activeTask.steps.length) {
@@ -65,9 +73,16 @@ window.addEventListener('DOMContentLoaded', () => {
         appState.selectedCatalogIds = new Set(validIds);
       }
     }
-    if (saved.childRoutineRoadmap !== undefined && Array.isArray(saved.childRoutineRoadmap)) {
+
+    // Kiểm tra cờ người dùng đã chủ động xóa sạch thói quen sinh hoạt
+    const isRoutineCleared = saved.routineCleared || (typeof localStorage !== 'undefined' && localStorage.getItem('milo_routine_cleared') === 'true');
+    appState.routineCleared = isRoutineCleared;
+    if (isRoutineCleared) {
+      appState.childRoutineRoadmap = [];
+    } else if (saved.childRoutineRoadmap !== undefined && Array.isArray(saved.childRoutineRoadmap)) {
       appState.childRoutineRoadmap = saved.childRoutineRoadmap;
     }
+
     if (saved.selectedRoutineIds !== undefined && Array.isArray(saved.selectedRoutineIds)) {
       appState.selectedRoutineIds = new Set(saved.selectedRoutineIds);
     }

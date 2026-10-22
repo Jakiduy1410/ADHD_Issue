@@ -937,13 +937,12 @@
                 <!-- ============================================== -->
                 <div id="p-view-catalog" class="space-y-2.5">
                   
-                  <!-- Filter Pills: Tất cả, Toán, Tiếng Việt, Tiếng Anh, Sinh Hoạt -->
+                  <!-- Filter Pills: Tất cả, Toán, Tiếng Việt, Tiếng Anh (GDPT thuần túy) -->
                   <div class="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5 text-[10px] font-bold">
-                    <button onclick="parentFilterCatalog('all')" id="p-cat-all" class="px-2.5 py-1 rounded-xl bg-teal-600 text-white shrink-0">Tất cả (29)</button>
+                    <button onclick="parentFilterCatalog('all')" id="p-cat-all" class="px-2.5 py-1 rounded-xl bg-teal-600 text-white shrink-0">Tất cả (25)</button>
                     <button onclick="parentFilterCatalog('math')" id="p-cat-math" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0">📐 Toán GDPT (15)</button>
                     <button onclick="parentFilterCatalog('viet')" id="p-cat-viet" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0">📖 Tiếng Việt (5)</button>
                     <button onclick="parentFilterCatalog('eng')" id="p-cat-eng" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0">🇬🇧 Tiếng Anh (5)</button>
-                    <button onclick="parentFilterCatalog('chore')" id="p-cat-chore" class="px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 shrink-0">🧹 Sinh Hoạt (4)</button>
                   </div>
 
                   <!-- Grade Filters: Lớp 1 -> 5 -->
@@ -1553,6 +1552,7 @@
       const studyContainer = document.getElementById('child-island-map-container');
       const routineContainer = document.getElementById('child-routine-map-container');
       const alertBadge = document.getElementById('badge-routine-alert');
+      const startQuestBtn = document.getElementById('child-btn-start-quest');
 
       if (mode === 'routine') {
         if (btnRoutine) {
@@ -1567,17 +1567,49 @@
         }
         if (routineContainer) {
           routineContainer.classList.remove('hidden');
-          routineContainer.style.display = 'block';
+          routineContainer.style.display = 'flex';
+          routineContainer.classList.add('flex-col');
         }
         if (alertBadge) alertBadge.classList.add('hidden');
         const count = Array.isArray(appState.childRoutineRoadmap) ? appState.childRoutineRoadmap.length : 0;
         const counter = document.getElementById('child-roadmap-counter');
         if (counter) counter.innerText = count > 0 ? `Đảo Thói Quen (${count} nề nếp)` : "Đảo thói quen trống (0 nề nếp)";
         const badge = document.getElementById('child-roadmap-badge');
-        if (badge) badge.innerText = "NỀ NẾP SINH HOẠT";
+        if (badge) {
+          badge.className = "bg-amber-500 text-amber-950 text-[10px] font-black px-2 py-0.5 rounded-full";
+          badge.innerText = "NỀ NẾP SINH HOẠT";
+        }
         if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
           window.renderChildRoutineRoadmapFromTasks();
         }
+        setTimeout(() => {
+          if (typeof snapRoadmapTrailToDOM === 'function' && routineContainer) {
+            snapRoadmapTrailToDOM(routineContainer, true);
+          }
+        }, 60);
+
+        // Cập nhật nút CTA đáy máy con theo ngữ cảnh Thói Quen Sinh Hoạt
+        if (startQuestBtn) {
+          const routines = Array.isArray(appState.childRoutineRoadmap) ? appState.childRoutineRoadmap : [];
+          if (routines.length > 0) {
+            startQuestBtn.disabled = false;
+            startQuestBtn.className = "w-full btn-3d-yellow text-slate-900 font-black text-base py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer";
+            startQuestBtn.innerHTML = `<span>BẮT ĐẦU NỀ NẾP SINH HOẠT!</span> <span class="text-xl">🌟</span>`;
+            const firstId = typeof routines[0] === 'string' ? routines[0] : (routines[0].id || 'routine_morning_bed');
+            startQuestBtn.onclick = function(e) {
+              if (e) { e.preventDefault(); e.stopPropagation(); }
+              if (typeof startChildRoutineTask === 'function') startChildRoutineTask(firstId);
+            };
+          } else {
+            startQuestBtn.disabled = true;
+            startQuestBtn.className = "w-full bg-slate-200 text-slate-500 font-bold text-sm py-3.5 rounded-2xl cursor-not-allowed flex items-center justify-center gap-2 border border-slate-300";
+            startQuestBtn.innerHTML = `<span>CHỜ BA MẸ GIAO NỀ NẾP... ⏳</span>`;
+            startQuestBtn.onclick = function() {
+              if (typeof showToast === 'function') showToast('Đảo Thói Quen Trống', 'Hãy nhờ ba mẹ tick chọn nề nếp bên Trạm Thấu Hiểu để bắt đầu nhé!', '🌟');
+            };
+          }
+        }
+
         if (typeof playSfx === 'function') playSfx('tap');
       } else {
         if (btnStudy) {
@@ -1592,11 +1624,22 @@
         }
         if (studyContainer) {
           studyContainer.classList.remove('hidden');
-          studyContainer.style.display = 'block';
+          studyContainer.style.display = 'flex';
+          studyContainer.classList.add('flex-col');
+        }
+        const badge = document.getElementById('child-roadmap-badge');
+        if (badge) {
+          badge.className = "bg-emerald-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full";
+          badge.innerText = "MỤC TIÊU TỐI NAY";
         }
         if (typeof renderChildIslandRoadmap === 'function') {
           renderChildIslandRoadmap();
         }
+        setTimeout(() => {
+          if (typeof snapRoadmapTrailToDOM === 'function' && studyContainer) {
+            snapRoadmapTrailToDOM(studyContainer, false);
+          }
+        }, 60);
         if (typeof playSfx === 'function') playSfx('tap');
       }
     };
@@ -1604,6 +1647,26 @@
     window.startChildRoutineTask = function(routineId) {
       const task = (typeof routineDatabase !== 'undefined' && routineDatabase[routineId]) || (typeof taskDatabase !== 'undefined' && taskDatabase[routineId]);
       if (!task) return;
+
+      // Bảo vệ đa nhiệm: Khóa không cho chuyển sang đảo khác khi bếp/thiết bị đang nấu dở cho nhiệm vụ hiện tại!
+      const runningTimer = (window.miloActiveTimers || []).find(t => !t.isCompleted && t.endTime > Date.now());
+      if (runningTimer && runningTimer.taskId && runningTimer.taskId !== routineId) {
+        if (typeof showToast === 'function') {
+          showToast("Bếp Đang Nấu! ♨️", `Lò đang hâm nóng món [${runningTimer.dishName}] nè Leo! Con hoàn thành nốt Bữa sáng rồi hẵng sang đảo mới nhé!`, "⏳");
+        }
+        return;
+      }
+
+      // Khôi phục tiếp tục bước đang dở nếu quay lại đúng nhiệm vụ đang thực hiện
+      if (appState.activeTask && appState.activeTask.id === routineId && appState.currentStepIndex > 0) {
+        if (typeof playSfx === 'function') playSfx('tap');
+        childSwitchScreen('workspace');
+        if (typeof renderChildWorkspaceStep === 'function') {
+          renderChildWorkspaceStep();
+        }
+        return;
+      }
+
       appState.childRoadmap = [task];
       appState.currentRoadmapIndex = 0;
       appState.activeTask = task;

@@ -253,6 +253,8 @@
 
     function dispatchSelectedRoutines() {
       playSfx('bell');
+      appState.routineCleared = false;
+      try { if (typeof localStorage !== 'undefined') localStorage.removeItem('milo_routine_cleared'); } catch(_) {}
       if (!appState.selectedRoutineIds || appState.selectedRoutineIds.size === 0) {
         alert("Vui lòng tick chọn ít nhất 1 thói quen để giao cho con!");
         return;
@@ -408,6 +410,7 @@
       const tasks = Array.from(taskMap.values());
 
       tasks.forEach(t => {
+        if (t.cat === 'chore' || t.cat === 'routine') return;
         if (catFilter !== 'all' && t.cat !== catFilter) return;
         if (gradeFilter !== 'all' && t.grade !== gradeFilter) return;
 
@@ -477,7 +480,7 @@
     function parentFilterCatalog(cat) {
       playSfx('tap');
       appState.catalogFilter = cat;
-      ['all', 'math', 'viet', 'eng', 'chore'].forEach(c => {
+      ['all', 'math', 'viet', 'eng'].forEach(c => {
         const btn = document.getElementById(`p-cat-${c}`);
         if (c === cat) {
           btn.className = "px-2.5 py-1 rounded-xl bg-teal-600 text-white shrink-0";
@@ -523,6 +526,8 @@
     // BẮN LÔ BÀI TẬP ĐÃ CHỌN SANG MÁY CON TẠO LỘ TRÌNH ĐẢO
     function dispatchSelectedCatalogTasks() {
       playSfx('bell');
+      appState.roadmapCleared = false;
+      try { if (typeof localStorage !== 'undefined') localStorage.removeItem('milo_roadmap_cleared'); } catch(_) {}
       const selectedTasks = Array.from(appState.selectedCatalogIds).map(id => taskDatabase[id]).filter(Boolean);
       if (selectedTasks.length === 0) {
         alert("Vui lòng tick chọn ít nhất 1 bài tập!");

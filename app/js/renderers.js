@@ -57,15 +57,25 @@
       isTimerPaused = false;
       updateTimerUI();
 
+      let overtimeSec = 0;
+      const isRoutine = appState.activeTask && (appState.activeTask.cat === 'routine' || appState.activeTask.cat === 'chore');
+
       stepTimerInterval = setInterval(() => {
         if (!isTimerPaused) {
           if (stepRemainingSeconds > 0) {
             stepRemainingSeconds--;
             updateTimerUI();
           } else {
-            // Hết năng lượng bước: Nhẹ nhàng mở Milo Soft Pause
-            stopStepTimer();
-            toggleSoftPause(true);
+            if (isRoutine) {
+              // DU DI THỜI GIAN CHO NỀ NẾP SINH HOẠT:
+              // Giữ vòng chạy để định lượng thời gian nhưng TUYỆT ĐỐI không cắt ngang hay bật modal thở Soft Pause!
+              overtimeSec++;
+              updateRoutineOvertimeUI(overtimeSec);
+            } else {
+              // Hết năng lượng bài học GDPT: Nhẹ nhàng mở Milo Soft Pause (CBT)
+              stopStepTimer();
+              toggleSoftPause(true);
+            }
           }
         }
       }, 1000);
@@ -93,6 +103,20 @@
         }, 1000);
       }
     }
+
+    function updateRoutineOvertimeUI(overtimeSec) {
+      const ring = document.getElementById('child-ring-timer');
+      const pill = document.getElementById('child-timer-pill');
+      if (!ring || !pill) return;
+
+      ring.style.setProperty('--progress', '100%');
+      ring.classList.remove('ring-timer-warning');
+
+      const formatted = formatTime(overtimeSec);
+      pill.className = "px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-900 border border-amber-300 shadow-xs inline-flex items-center gap-1";
+      pill.innerHTML = `<span>✨</span> <span>Thong thả hoàn thành (+${formatted})</span>`;
+    }
+
 
     function stopStepTimer() {
       if (stepTimerInterval) {
@@ -226,8 +250,15 @@
       renderSegmentedTrackbar(totalSteps, stepIdx);
       renderParentTelemetryProgress(totalSteps, stepIdx + 1);
 
-      // 2. Chạy đồng hồ thị giác
-      startStepTimer(task.stepSeconds || 60);
+      // 2. Chạy đồng hồ thị giác linh hoạt & du di thời gian
+      let stepSec = stepData.duration_sec || task.stepSeconds || 60;
+      const currentTaskId = task ? task.id : null;
+      const activeApplianceForStep = (window.miloActiveTimers || []).find(t => t.taskId === currentTaskId && !t.isCompleted && t.endTime > Date.now());
+      if (activeApplianceForStep && (stepData.ui_type === 'photo_proof' || stepData.type === 'photo_proof')) {
+        const remainSec = Math.ceil((activeApplianceForStep.endTime - Date.now()) / 1000);
+        stepSec = Math.max(stepSec, remainSec + 90);
+      }
+      startStepTimer(stepSec);
 
       // 3. Header Text (Duy nhất 1 tiêu đề to rõ, badge bước gọn gàng)
       document.getElementById('child-step-badge').innerText = `Bước ${stepIdx + 1} / ${totalSteps}`;
@@ -929,41 +960,86 @@
 
       } else if (stepData.ui_type === 'photo_proof' || stepData.type === 'photo_proof') {
         // Routine Milestone: Instant Auto-approval Photo Proof
-        // Khi đến bước chụp ảnh thì mới hiện camera preview & nút chụp ảnh
         if (btnNext) {
           btnNext.style.display = 'none';
         }
-        stage.innerHTML = `
-          <div class="space-y-3 p-1">
-            <div class="text-center">
-              <span class="text-xs font-black text-slate-800 block uppercase tracking-wider">⭐ Bước Then Chốt: Minh Chứng Thị Giác</span>
-              <span class="text-[11px] text-teal-700 font-extrabold">Bấm 1-chạm chụp ảnh • Hệ thống tự động duyệt ngay!</span>
+        const currentTaskId = appState.activeTask ? appState.activeTask.id : null;
+        const activeAppliance = (window.miloActiveTimers || []).find(t => t.taskId === currentTaskId && !t.isCompleted && t.endTime > Date.now());
+        let applianceHtml = '';
+        if (activeAppliance) {
+          const remainSec = Math.max(0, Math.ceil((activeAppliance.endTime - Date.now()) / 1000));
+          applianceHtml = `
+            <div id="live-appliance-card" class="w-full max-w-[280px] mx-auto mb-2 bg-amber-100 border-2 border-amber-300 rounded-2xl p-2.5 flex items-center justify-between shadow-xs">
+              <div class="flex items-center gap-2">
+                <span class="text-xl animate-bounce">♨️</span>
+                <div class="text-left">
+                  <div class="text-[9px] font-extrabold text-amber-800 uppercase tracking-wider">${activeAppliance.dishName}</div>
+                  <div id="live-appliance-timer-text" class="text-[11px] font-black text-amber-950">Lò còn: <span class="font-mono text-xs text-amber-900">${formatTime(remainSec)}</span></div>
+                </div>
+              </div>
+              <button onclick="finishPipelineTimerEarly('${activeAppliance.id}')" class="px-2 py-1 bg-amber-400 hover:bg-amber-500 active:scale-95 text-amber-950 font-black text-[9px] rounded-lg shadow-xs transition cursor-pointer">
+                ⚡ Lấy ra đĩa
+              </button>
             </div>
+          `;
+        }
 
+        // Tinh gọn thị giác tối đa cho trẻ ADHD: Icon trực quan nhận diện theo nhiệm vụ, bỏ hết chữ rườm rà
+        let previewEmoji = '📸';
+        if (task) {
+          if (task.id === 'routine_morning_bed') previewEmoji = '🛏️';
+          else if (task.id === 'routine_morning_water') previewEmoji = '🥛';
+          else if (task.id === 'routine_morning_teeth' || task.id === 'routine_night_teeth') previewEmoji = '🪥';
+          else if (task.id === 'routine_breakfast' || task.id === 'routine_morning_breakfast') previewEmoji = '🥪';
+          else if (task.id === 'routine_afterschool_drop') previewEmoji = '👟';
+          else if (task.id === 'routine_afterschool_snack') previewEmoji = '🍎';
+          else if (task.id === 'routine_clean_desk') previewEmoji = '📚';
+          else if (task.icon) previewEmoji = task.icon;
+        }
+
+        stage.innerHTML = `
+          <div class="space-y-4 p-1">
+            ${applianceHtml}
+
+            <!-- Khung ngắm Camera tối giản: Tâm điểm trực quan, không chữ nhỏ phân tán -->
             <div class="relative bg-slate-900 rounded-3xl overflow-hidden border-4 border-amber-400 shadow-lg aspect-4/3 flex items-center justify-center">
               <div id="camera-preview-box" class="w-full h-full relative flex items-center justify-center bg-gradient-to-tr from-amber-100 via-orange-50 to-teal-50">
-                <div class="text-center p-3 space-y-1">
-                  <div class="text-5xl">✨🪑📚✨</div>
-                  <div class="text-[11px] font-black text-teal-900">${stepData.text || stepData.atomic_instruction}</div>
-                  <div class="text-[9px] font-bold text-slate-500">Chụp góc bàn/phòng gọn gàng để khoe với Mẹ</div>
+                <div class="text-center p-3 select-none">
+                  <div class="text-7xl drop-shadow-md animate-pulse">${previewEmoji}</div>
                 </div>
-                <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-amber-500"></div>
-                <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-amber-500"></div>
-                <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-amber-500"></div>
-                <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-amber-500"></div>
-                <span class="absolute top-2 left-1/2 -translate-x-1/2 bg-black/60 text-white font-mono text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span> CAMERA READY
-                </span>
+                <div class="absolute top-3 left-3 w-5 h-5 border-t-4 border-l-4 border-amber-500 rounded-tl-lg"></div>
+                <div class="absolute top-3 right-3 w-5 h-5 border-t-4 border-r-4 border-amber-500 rounded-tr-lg"></div>
+                <div class="absolute bottom-3 left-3 w-5 h-5 border-b-4 border-l-4 border-amber-500 rounded-bl-lg"></div>
+                <div class="absolute bottom-3 right-3 w-5 h-5 border-b-4 border-r-4 border-amber-500 rounded-br-lg"></div>
               </div>
             </div>
 
-            <button onclick="takeRoutinePhotoAndComplete(this)" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-sm rounded-2xl shadow-lg shadow-teal-500/20 active:scale-95 transition flex items-center justify-center gap-2 cursor-pointer">
-              <span class="text-xl">📸</span>
-              <span>BẤM CHỤP &amp; NHẬN +${stepData.dopamine_points || 30}⭐ NGAY!</span>
+            <!-- Nút bấm chụp to rõ, nổi bật duy nhất -->
+            <button onclick="takeRoutinePhotoAndComplete(this)" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-base rounded-2xl shadow-lg shadow-teal-500/25 active:scale-95 transition flex items-center justify-center gap-2.5 cursor-pointer">
+              <span class="text-2xl">📸</span>
+              <span>BẤM CHỤP (+${stepData.dopamine_points || 20} ⭐)</span>
             </button>
-            <p class="text-[10px] text-center text-slate-400 font-bold">1 chạm tự động duyệt ngay • Con không cần chờ đợi</p>
           </div>
         `;
+
+        if (activeAppliance) {
+          const tickAppliance = setInterval(() => {
+            const card = document.getElementById('live-appliance-card');
+            const txt = document.getElementById('live-appliance-timer-text');
+            if (!card || !txt) {
+              clearInterval(tickAppliance);
+              return;
+            }
+            const rem = Math.max(0, Math.ceil((activeAppliance.endTime - Date.now()) / 1000));
+            if (rem <= 0 || activeAppliance.isCompleted) {
+              clearInterval(tickAppliance);
+              txt.innerHTML = `<span class="text-emerald-700 font-black">🔔 Đã chín thơm phức! Gắp ra đĩa nào!</span>`;
+              card.className = "w-full max-w-[280px] mx-auto mb-2 bg-emerald-100 border-2 border-emerald-300 rounded-2xl p-2.5 flex items-center justify-between shadow-xs animate-bounce";
+            } else {
+              txt.innerHTML = `Lò còn: <span class="font-mono text-xs text-amber-900">${formatTime(rem)}</span>`;
+            }
+          }, 1000);
+        }
       } else if (stepData.ui_type === 'timer_brush' || stepData.type === 'timer_brush') {
         // ĐÁNH RĂNG KHOA HỌC: ĐẾM NGƯỢC 30S HÀM TRÊN / HÀM DƯỚI + CHUÔNG TING
         const secTotal = stepData.duration_sec || 30;
@@ -990,6 +1066,9 @@
             <button id="btn-start-brush-timer" onclick="startBrushCountdown(this, ${secTotal})" class="w-full max-w-[240px] py-3.5 btn-3d-green text-white font-black text-xs rounded-2xl shadow-md active:scale-95 transition flex items-center justify-center gap-2 cursor-pointer">
               <span>🪥</span>
               <span>BẮT ĐẦU CHẢI (${secTotal}S)</span>
+            </button>
+            <button id="btn-brush-early" onclick="finishBrushEarly()" class="hidden text-[11px] font-extrabold text-teal-700 bg-teal-100/90 hover:bg-teal-200 px-3.5 py-1.5 rounded-full transition active:scale-95 cursor-pointer">
+              ⚡ Con đã chải xong rồi (Xong sớm)
             </button>
           </div>
         `;
@@ -3132,6 +3211,9 @@ function setupMultiRightToLeftListeners(expectedStr, onDone) {
         btn.innerHTML = `<span>⏳</span> <span>ĐANG ĐẾM NHỊP CHẢI RĂNG...</span>`;
       }
 
+      const earlyBtn = document.getElementById('btn-brush-early');
+      if (earlyBtn) earlyBtn.classList.remove('hidden');
+
       let secLeft = durationSec || 30;
       const secEl = document.getElementById('brush-timer-sec');
       const circleEl = document.getElementById('brush-timer-circle');
@@ -3142,7 +3224,9 @@ function setupMultiRightToLeftListeners(expectedStr, onDone) {
         statusEl.innerHTML = `<span class="text-teal-700 font-extrabold animate-pulse">✨ Chải xoay tròn từng mặt răng đều đặn nhé...</span>`;
       }
 
-      const timerId = setInterval(() => {
+      if (window.brushTimerId) clearInterval(window.brushTimerId);
+
+      window.brushTimerId = setInterval(() => {
         secLeft--;
         if (secEl) secEl.innerText = secLeft;
 
@@ -3152,7 +3236,8 @@ function setupMultiRightToLeftListeners(expectedStr, onDone) {
         }
 
         if (secLeft <= 0) {
-          clearInterval(timerId);
+          clearInterval(window.brushTimerId);
+          window.brushTimerId = null;
           if (typeof playSfx === 'function') {
             playSfx('star');
             try { playSfx('bell'); } catch(e){}
@@ -3161,30 +3246,71 @@ function setupMultiRightToLeftListeners(expectedStr, onDone) {
 
           if (secEl) secEl.innerText = "0";
           if (statusEl) {
-            statusEl.innerHTML = `<span class="text-emerald-700 font-black text-sm">🔔 TING TING! Xong ${durationSec}s rồi! Bé giỏi quá!</span>`;
+            statusEl.innerHTML = `<span class="text-emerald-700 font-black text-sm">🔔 TING TING! Xong ${durationSec}s rồi! Đang tự chuyển bước... ✨</span>`;
           }
 
           if (btn) {
             btn.className = "w-full max-w-[240px] py-3.5 bg-emerald-100 text-emerald-800 font-black text-xs rounded-2xl flex items-center justify-center gap-2";
             btn.innerHTML = `<span>✅</span> <span>ĐÃ HOÀN THÀNH BƯỚC NÀY!</span>`;
           }
+          if (earlyBtn) earlyBtn.classList.add('hidden');
 
-          const btnNext = document.getElementById('child-btn-next-step');
-          if (btnNext) {
-            btnNext.disabled = false;
-            btnNext.classList.remove('btn-disabled');
-            btnNext.classList.add('animate-bounce');
-            btnNext.innerHTML = `<span>✅ TIẾP TỤC BƯỚC SAU</span> <span class="text-xs">➔</span>`;
-          }
+          // Tự động chuyển bước sau 1.5s, con không cần chạm tay ướt bọt vào màn hình!
+          setTimeout(() => {
+            if (typeof completeChildStep === 'function') {
+              completeChildStep();
+            }
+          }, 1500);
         }
       }, 1000);
     }
 
+    window.finishBrushEarly = function() {
+      if (typeof playSfx === 'function') playSfx('star');
+      if (typeof spawnStars === 'function') spawnStars();
+      if (window.brushTimerId) {
+        clearInterval(window.brushTimerId);
+        window.brushTimerId = null;
+      }
+      const statusEl = document.getElementById('brush-status-text');
+      if (statusEl) {
+        statusEl.innerHTML = `<span class="text-emerald-700 font-black text-sm">✨ Bé chải răng rất sạch! Đang tự chuyển bước...</span>`;
+      }
+      const earlyBtn = document.getElementById('btn-brush-early');
+      if (earlyBtn) earlyBtn.classList.add('hidden');
+
+      setTimeout(() => {
+        if (typeof completeChildStep === 'function') {
+          completeChildStep();
+        }
+      }, 800);
+    };
+
+    window.finishPipelineTimerEarly = function(timerId) {
+      const t = (window.miloActiveTimers || []).find(item => item.id === timerId);
+      if (t) {
+        t.isCompleted = true;
+        t.endTime = Date.now();
+      }
+      if (typeof playSfx === 'function') playSfx('bell');
+      if (typeof showToast === 'function') showToast("Đã Lấy Món Ra", "Món ăn đã được gắp ra đĩa sẵn sàng!", "🍲");
+      const card = document.getElementById('live-appliance-card');
+      const txt = document.getElementById('live-appliance-timer-text');
+      if (txt) {
+        txt.innerHTML = `<span class="text-emerald-700 font-black">🔔 Đã lấy ra đĩa sẵn sàng!</span>`;
+      }
+      if (card) {
+        card.className = "w-full max-w-[280px] mx-auto mb-2 bg-emerald-100 border-2 border-emerald-300 rounded-2xl p-2.5 flex items-center justify-between shadow-xs";
+      }
+    };
+
     function startPipelineTimerAndNext(btn, device, dishName, durationSec) {
       if (typeof playSfx === 'function') playSfx('tap');
 
+      const currentTaskId = appState.activeTask ? appState.activeTask.id : null;
       const timerItem = {
         id: 'timer_' + Date.now(),
+        taskId: currentTaskId,
         device: device,
         dishName: dishName,
         durationSec: durationSec,

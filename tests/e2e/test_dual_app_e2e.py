@@ -482,12 +482,12 @@ class TestTier1FeatureCoverage(unittest.TestCase):
         self.assertTrue(self.dom.has_element_id("catalog-tasks-list"))
 
     def test_tier1_f06_02_filter_buttons_all_categories(self):
-        """F6.2: Subject and category filter buttons exist in parent view."""
+        """F6.2: Subject and category filter buttons exist in parent view (clean GDPT subjects & routine mode)."""
         self.assertTrue(self.dom.has_element_id("p-cat-all"))
         self.assertTrue(self.dom.has_element_id("p-cat-math"))
         self.assertTrue(self.dom.has_element_id("p-cat-viet"))
         self.assertTrue(self.dom.has_element_id("p-cat-eng"))
-        self.assertTrue(self.dom.has_element_id("p-cat-chore"))
+        self.assertTrue(self.dom.has_element_id("p-mode-btn-routines"))
 
     def test_tier1_f06_03_batch_selected_counter(self):
         """F6.3: Batch selected counters (#batch-selected-count and #batch-selected-meta) present."""

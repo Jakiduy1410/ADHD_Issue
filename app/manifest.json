@@ -1,0 +1,46 @@
+{
+  "name": "Milo Quest x Trạm Thấu Hiểu",
+  "short_name": "Milo Quest",
+  "description": "Nền tảng hỗ trợ học tập và nề nếp sinh hoạt cho trẻ ADHD",
+  "start_url": "./?standalone=1",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "background_color": "#0F172A",
+  "theme_color": "#0D9488",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Bé Leo (Máy Con)",
+      "short_name": "Bé Leo",
+      "description": "Vào thẳng màn hình Bé Leo",
+      "url": "./?role=child&standalone=1",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦁</text></svg>",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Mẹ Lan (Trạm Thấu Hiểu)",
+      "short_name": "Mẹ Lan",
+      "description": "Vào thẳng màn hình Phụ Huynh",
+      "url": "./?role=parent&standalone=1",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👩</text></svg>",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}

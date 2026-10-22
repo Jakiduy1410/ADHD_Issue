@@ -225,6 +225,10 @@
 
     function setViewMode(mode) {
       appState.role = mode;
+      try {
+        localStorage.setItem('milo_preferred_role', mode);
+      } catch (e) {}
+
       const childCol = document.getElementById('col-child');
       const parentCol = document.getElementById('col-parent');
       const btnDual = document.getElementById('view-dual');
@@ -234,28 +238,45 @@
       const roleIcon = document.getElementById('header-role-icon');
       const roleText = document.getElementById('header-role-text');
 
-      [btnDual, btnChild, btnParent].forEach(b => {
-        b.className = "px-3 py-1.5 rounded-xl text-slate-400 hover:text-white transition flex items-center gap-1.5";
-      });
+      if (btnDual && btnChild && btnParent) {
+        [btnDual, btnChild, btnParent].forEach(b => {
+          b.className = "px-3 py-1.5 rounded-xl text-slate-400 hover:text-white transition flex items-center gap-1.5";
+        });
+      }
+
+      const isMobileOrStandalone = window.innerWidth <= 900 || 
+        (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+        (new URLSearchParams(window.location.search).get('standalone') === '1');
 
       if (mode === 'dual') {
-        childCol.classList.remove('hidden');
-        parentCol.classList.remove('hidden');
-        btnDual.className = "px-3 py-1.5 rounded-xl bg-teal-600 text-white shadow-sm transition flex items-center gap-1.5";
-        roleIcon.innerText = "📱📱";
-        roleText.innerText = "Hồ sơ: Song Song (Dual)";
+        if (childCol) childCol.classList.remove('hidden');
+        if (parentCol) parentCol.classList.remove('hidden');
+        if (btnDual) btnDual.className = "px-3 py-1.5 rounded-xl bg-teal-600 text-white shadow-sm transition flex items-center gap-1.5";
+        if (roleIcon) roleIcon.innerText = "📱📱";
+        if (roleText) roleText.innerText = "Hồ sơ: Song Song (Dual)";
+        document.body.classList.remove('mobile-standalone-view');
       } else if (mode === 'child') {
-        childCol.classList.remove('hidden');
-        parentCol.classList.add('hidden');
-        btnChild.className = "px-3 py-1.5 rounded-xl bg-emerald-600 text-white shadow-sm transition flex items-center gap-1.5";
-        roleIcon.innerText = "👦";
-        roleText.innerText = "Hồ sơ: Bé Leo (Máy Con)";
+        if (childCol) childCol.classList.remove('hidden');
+        if (parentCol) parentCol.classList.add('hidden');
+        if (btnChild) btnChild.className = "px-3 py-1.5 rounded-xl bg-emerald-600 text-white shadow-sm transition flex items-center gap-1.5";
+        if (roleIcon) roleIcon.innerText = "👦";
+        if (roleText) roleText.innerText = "Hồ sơ: Bé Leo (Máy Con)";
+        if (isMobileOrStandalone) {
+          document.body.classList.add('mobile-standalone-view');
+        }
       } else if (mode === 'parent') {
-        childCol.classList.add('hidden');
-        parentCol.classList.remove('hidden');
-        btnParent.className = "px-3 py-1.5 rounded-xl bg-teal-600 text-white shadow-sm transition flex items-center gap-1.5";
-        roleIcon.innerText = "👩";
-        roleText.innerText = "Hồ sơ: Mẹ Lan (Máy Mẹ)";
+        if (childCol) childCol.classList.add('hidden');
+        if (parentCol) parentCol.classList.remove('hidden');
+        if (btnParent) btnParent.className = "px-3 py-1.5 rounded-xl bg-teal-600 text-white shadow-sm transition flex items-center gap-1.5";
+        if (roleIcon) roleIcon.innerText = "👩";
+        if (roleText) roleText.innerText = "Hồ sơ: Mẹ Lan (Máy Mẹ)";
+        if (isMobileOrStandalone) {
+          document.body.classList.add('mobile-standalone-view');
+        }
+      }
+
+      if (window.miloBus) {
+        window.miloBus.role = (mode === 'parent' ? 'parent' : 'child');
       }
     }
 

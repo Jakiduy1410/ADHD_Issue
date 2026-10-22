@@ -357,8 +357,8 @@
           card.onclick = () => parentOpenPhotoModal(rt.id);
           card.innerHTML = `
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shrink-0">
-                ${rt.icon || '🛏️'}
+              <div class="w-10 h-10 rounded-xl ${proof && proof.photo_data ? 'overflow-hidden border-2 border-emerald-400 shadow-2xs' : 'bg-emerald-50 text-emerald-600'} flex items-center justify-center text-xl shrink-0">
+                ${proof && proof.photo_data ? `<img src="${proof.photo_data}" class="w-full h-full object-cover" alt="Thumb">` : (rt.icon || '🛏️')}
               </div>
               <div>
                 <div class="flex items-center gap-1.5">

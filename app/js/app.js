@@ -108,10 +108,18 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // 4. URL Parameter role auto-switch (?role=child, ?role=parent, ?role=dual)
   const urlParams = new URLSearchParams(window.location.search);
-  const paramRole = urlParams.get('role');
-  if (paramRole === 'child' || paramRole === 'parent' || paramRole === 'dual') {
-    setViewMode(paramRole);
-    window.miloBus.role = paramRole;
+  let targetRole = urlParams.get('role');
+  const isMobileOrStandalone = window.innerWidth <= 900 || 
+    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+    urlParams.get('standalone') === '1';
+
+  if (!targetRole && isMobileOrStandalone) {
+    targetRole = localStorage.getItem('milo_preferred_role') || 'child';
+  }
+
+  if (targetRole === 'child' || targetRole === 'parent' || targetRole === 'dual') {
+    setViewMode(targetRole);
+    if (window.miloBus) window.miloBus.role = (targetRole === 'parent' ? 'parent' : 'child');
   }
 
   // 4.1 URL Parameter task auto-load (?task=G5_DEMO_DECIMAL or ?demo=1)

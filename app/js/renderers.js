@@ -1001,21 +1001,26 @@
           <div class="space-y-4 p-1">
             ${applianceHtml}
 
-            <!-- Khung ngắm Camera tối giản: Tâm điểm trực quan, không chữ nhỏ phân tán -->
+            <!-- Khung ngắm Camera: Hỗ trợ cả Camera thật và giả lập -->
             <div class="relative bg-slate-900 rounded-3xl overflow-hidden border-4 border-amber-400 shadow-lg aspect-4/3 flex items-center justify-center">
               <div id="camera-preview-box" class="w-full h-full relative flex items-center justify-center bg-gradient-to-tr from-amber-100 via-orange-50 to-teal-50">
-                <div class="text-center p-3 select-none">
+                <img id="child-camera-real-photo" class="absolute inset-0 w-full h-full object-cover hidden z-10" alt="Ảnh chụp thực tế">
+                <div id="child-camera-placeholder" class="text-center p-3 select-none">
                   <div class="text-7xl drop-shadow-md animate-pulse">${previewEmoji}</div>
+                  <div class="text-[10px] font-extrabold text-amber-800 mt-2 bg-amber-200/80 px-2 py-0.5 rounded-full">Chạm nút dưới để mở Camera thật</div>
                 </div>
-                <div class="absolute top-3 left-3 w-5 h-5 border-t-4 border-l-4 border-amber-500 rounded-tl-lg"></div>
-                <div class="absolute top-3 right-3 w-5 h-5 border-t-4 border-r-4 border-amber-500 rounded-tr-lg"></div>
-                <div class="absolute bottom-3 left-3 w-5 h-5 border-b-4 border-l-4 border-amber-500 rounded-bl-lg"></div>
-                <div class="absolute bottom-3 right-3 w-5 h-5 border-b-4 border-r-4 border-amber-500 rounded-br-lg"></div>
+                <div class="absolute top-3 left-3 w-5 h-5 border-t-4 border-l-4 border-amber-500 rounded-tl-lg pointer-events-none z-20"></div>
+                <div class="absolute top-3 right-3 w-5 h-5 border-t-4 border-r-4 border-amber-500 rounded-tr-lg pointer-events-none z-20"></div>
+                <div class="absolute bottom-3 left-3 w-5 h-5 border-b-4 border-l-4 border-amber-500 rounded-bl-lg pointer-events-none z-20"></div>
+                <div class="absolute bottom-3 right-3 w-5 h-5 border-b-4 border-r-4 border-amber-500 rounded-br-lg pointer-events-none z-20"></div>
               </div>
             </div>
 
+            <!-- Input Camera Native Phần Cứng (Hidden) -->
+            <input type="file" id="step-camera-input" accept="image/*" capture="environment" class="hidden" style="display:none;" onchange="handleStepCameraCapture(event)">
+
             <!-- Nút bấm chụp to rõ, nổi bật duy nhất -->
-            <button onclick="takeRoutinePhotoAndComplete(this)" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-base rounded-2xl shadow-lg shadow-teal-500/25 active:scale-95 transition flex items-center justify-center gap-2.5 cursor-pointer">
+            <button id="btn-take-photo-action" onclick="triggerStepCameraCapture(this)" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-base rounded-2xl shadow-lg shadow-teal-500/25 active:scale-95 transition flex items-center justify-center gap-2.5 cursor-pointer">
               <span class="text-2xl">📸</span>
               <span>BẤM CHỤP (+${stepData.dopamine_points || 20} ⭐)</span>
             </button>
@@ -1782,7 +1787,72 @@
       }
     }
 
-    function takeRoutinePhotoAndComplete(btn) {
+    let currentPendingCaptureBtn = null;
+
+    function triggerStepCameraCapture(btn) {
+      currentPendingCaptureBtn = btn;
+      const input = document.getElementById('step-camera-input');
+      if (input) {
+        input.value = '';
+        input.click();
+      } else {
+        takeRoutinePhotoAndComplete(btn, null);
+      }
+    }
+
+    function handleStepCameraCapture(event) {
+      const file = event.target.files && event.target.files[0];
+      const btn = currentPendingCaptureBtn || document.getElementById('btn-take-photo-action');
+      if (!file) {
+        takeRoutinePhotoAndComplete(btn, null);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const maxDim = 800;
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.72);
+
+          const previewImg = document.getElementById('child-camera-real-photo');
+          const placeholder = document.getElementById('child-camera-placeholder');
+          if (previewImg) {
+            previewImg.src = compressedDataUrl;
+            previewImg.classList.remove('hidden');
+          }
+          if (placeholder) placeholder.classList.add('hidden');
+
+          takeRoutinePhotoAndComplete(btn, compressedDataUrl);
+        };
+        img.onerror = function() {
+          takeRoutinePhotoAndComplete(btn, null);
+        };
+        img.src = e.target.result;
+      };
+      reader.onerror = function() {
+        takeRoutinePhotoAndComplete(btn, null);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function takeRoutinePhotoAndComplete(btn, realPhotoData) {
       if (typeof playSfx === 'function') playSfx('camera');
       if (typeof spawnStars === 'function') spawnStars();
 
@@ -1818,6 +1888,7 @@
         routine_id: routineId,
         routine_title: routineTitle,
         photo_tag: (task && task.target_photo_tag) || 'PHOTO.JPG',
+        photo_data: realPhotoData || null,
         timestamp: timeStr,
         icon: (task && task.icon) || '📸',
         reward: reward
@@ -1830,6 +1901,7 @@
           routine_id: routineId,
           routine_title: routineTitle,
           photo_tag: (task && task.target_photo_tag) || 'PHOTO.JPG',
+          photo_data: realPhotoData || null,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         });
       }
@@ -2164,6 +2236,8 @@ if (typeof window !== 'undefined') {
   window.exitChildWorkspace = exitChildWorkspace;
   window.renderChildWorkspaceStep = renderChildWorkspaceStep;
   window.takeRoutinePhotoAndComplete = takeRoutinePhotoAndComplete;
+  window.triggerStepCameraCapture = triggerStepCameraCapture;
+  window.handleStepCameraCapture = handleStepCameraCapture;
   window.renderProgressiveCalculationStage = renderProgressiveCalculationStage;
   window.autoDetectProgressivePhases = autoDetectProgressivePhases;
 

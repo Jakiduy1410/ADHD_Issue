@@ -2,7 +2,13 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Milo Quest" />
+  <meta name="theme-color" content="#0D9488" />
+  <link rel="manifest" href="manifest.json" />
   <title>Milo Quest x Trạm Thấu Hiểu - ADHD Platform Live Presentation</title>
   
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -52,7 +58,7 @@
   <!-- ============================================================== -->
   <!-- 1. TOP PRESENTATION BAR (DÀNH CHO NGƯỜI THUYẾT TRÌNH & GIÁM KHẢO) -->
   <!-- ============================================================== -->
-  <header class="w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 md:px-8 py-2.5 shrink-0 z-50 sticky top-0">
+  <header id="presentation-header" class="w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 md:px-8 py-2.5 shrink-0 z-50 sticky top-0">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
       
       <!-- Brand & Project Title -->
@@ -247,7 +253,7 @@
       <!-- ==================================================== -->
       <div id="col-child" class="flex flex-col items-center">
         <!-- Label trên máy -->
-        <div class="mb-3 flex items-center justify-between w-full max-w-[390px] px-2 text-xs">
+        <div class="phone-label-bar mb-3 flex items-center justify-between w-full max-w-[390px] px-2 text-xs">
           <div class="flex items-center gap-2">
             <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
             <span class="font-bold uppercase tracking-wider text-emerald-400 font-mono">CLIENT 01 • MÁY BÉ LEO</span>
@@ -738,7 +744,7 @@
       <!-- ==================================================== -->
       <div id="col-parent" class="flex flex-col items-center">
         <!-- Label trên máy -->
-        <div class="mb-3 flex items-center justify-between w-full max-w-[390px] px-2 text-xs">
+        <div class="phone-label-bar mb-3 flex items-center justify-between w-full max-w-[390px] px-2 text-xs">
           <div class="flex items-center gap-2">
             <span class="w-3 h-3 rounded-full bg-teal-400 animate-pulse"></span>
             <span class="font-bold uppercase tracking-wider text-teal-400 font-mono">CLIENT 02 • MÁY PHỤ HUYNH</span>
@@ -1438,7 +1444,8 @@
                 </div>
 
                 <div class="rounded-2xl overflow-hidden border-2 border-teal-200 aspect-4/3 relative bg-gradient-to-tr from-amber-100 via-orange-50 to-teal-50 flex items-center justify-center shadow-inner">
-                  <div class="text-center p-2 space-y-1">
+                  <img id="p-modal-real-photo" class="absolute inset-0 w-full h-full object-cover hidden" alt="Minh chứng ảnh thật">
+                  <div class="text-center p-2 space-y-1 relative z-10" id="p-modal-emoji-box">
                     <div class="text-4xl" id="p-modal-photo-emoji">✨🪑📚✨</div>
                     <div class="text-xs font-black text-teal-900" id="p-modal-photo-caption">Mặt bàn học đã sạch bóng</div>
                     <div class="text-[9px] text-slate-500 font-bold" id="p-modal-photo-sub">Chụp bởi Bé Leo • 19:15</div>
@@ -1777,12 +1784,28 @@
       const proof = (appState.routinePhotoProofs && appState.routinePhotoProofs[key]) || null;
       const rt = routines[key] || (key === 'bed' ? routines['routine_morning_bed'] : key === 'drop' ? routines['routine_afterschool_drop'] : routines['routine_clean_desk']);
 
-      if (proof) {
+      const realImg = document.getElementById('p-modal-real-photo');
+      const emojiBox = document.getElementById('p-modal-emoji-box');
+
+      if (proof && proof.photo_data) {
+        if (realImg) {
+          realImg.src = proof.photo_data;
+          realImg.classList.remove('hidden');
+        }
+        if (emojiBox) emojiBox.classList.add('hidden');
+        caption.innerText = `${proof.routine_title || (rt && rt.title)} đã hoàn thành!`;
+        sub.innerText = `Chụp bởi Bé Leo • Hoàn thành lúc ${proof.timestamp || 'hôm nay'}`;
+        praise.innerText = `Leo đã tự tay chụp ảnh thực tế và gửi cho mẹ, mẹ rất tự hào về con!`;
+      } else if (proof) {
+        if (realImg) realImg.classList.add('hidden');
+        if (emojiBox) emojiBox.classList.remove('hidden');
         emoji.innerText = `${proof.icon || (rt && rt.icon) || '📸'}✨`;
         caption.innerText = `${proof.routine_title || (rt && rt.title)} đã hoàn thành!`;
         sub.innerText = `Chụp bởi Bé Leo • Hoàn thành lúc ${proof.timestamp || (rt && rt.slot_time) || 'hôm nay'}`;
         praise.innerText = `Leo đã tự giác hoàn thành [${proof.routine_title || (rt && rt.title)}], mẹ rất tự hào về sự tiến bộ của con!`;
       } else if (rt) {
+        if (realImg) realImg.classList.add('hidden');
+        if (emojiBox) emojiBox.classList.remove('hidden');
         emoji.innerText = `${rt.icon || '📸'}✨`;
         caption.innerText = `${rt.title} đã hoàn thành!`;
         sub.innerText = `Chụp bởi Bé Leo • Hoàn thành lúc ${rt.slot_time || '19:00'}`;

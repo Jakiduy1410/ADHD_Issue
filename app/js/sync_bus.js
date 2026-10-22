@@ -325,7 +325,9 @@
             pendingTicket: stateSnapshot.pendingTicket || null,
             pauseCount: stateSnapshot.pauseCount || 0,
             totalSessionSeconds: stateSnapshot.totalSessionSeconds || 0,
-            selectedCatalogIds: Array.from(stateSnapshot.selectedCatalogIds || [])
+            selectedCatalogIds: Array.from(stateSnapshot.selectedCatalogIds || []),
+            childRoutineRoadmap: stateSnapshot.childRoutineRoadmap || [],
+            selectedRoutineIds: stateSnapshot.selectedRoutineIds ? Array.from(stateSnapshot.selectedRoutineIds) : []
           });
           localStorage.setItem(this.storageStateKey, serialized);
           localStorage.setItem(this.storageStateBackupKey, serialized);
@@ -618,6 +620,9 @@
           appState.childRoutineRoadmap = payload.routines;
           if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
             window.renderChildRoutineRoadmapFromTasks(payload.routines);
+          }
+          if (typeof bus.savePersistedState === 'function') {
+            bus.savePersistedState(appState);
           }
           if (typeof showToast === 'function') {
             if (payload.routines.length > 0) {

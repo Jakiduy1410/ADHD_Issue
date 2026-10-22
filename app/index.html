@@ -299,101 +299,9 @@
                 </div>
               </div>
 
-              <!-- TẦNG 2B: BẢN ĐỒ ĐẢO THÓI QUEN S-CURVE (TIMELINE LOCKED) -->
-              <div id="child-routine-map-container" class="hidden flex-1 min-h-0 w-full relative overflow-y-auto no-scrollbar px-4 py-4 space-y-6 pb-28">
-                <!-- SVG S-Curve Path kết nối các đảo thói quen -->
-                <svg class="absolute inset-0 w-full h-[620px] pointer-events-none" viewBox="0 0 350 620" fill="none">
-                  <path d="M 175 580 C 80 500, 80 430, 175 370 C 270 310, 270 230, 175 160 C 90 90, 260 40, 175 25" stroke="#FDE68A" stroke-width="12" stroke-linecap="round" stroke-dasharray="14 14"/>
-                </svg>
-
-                <!-- ĐẢO 5: RƯƠNG BÁU HOÀNG KIM -->
-                <div onclick="openRoutineIslandDetail('treasure')" class="relative z-10 flex flex-col items-center cursor-pointer transition hover:scale-105 pt-2">
-                  <div class="w-16 h-16 rounded-3xl bg-gradient-to-tr from-amber-300 to-yellow-400 border-b-4 border-amber-600 flex items-center justify-center text-3xl shadow-lg animate-pulse-glow">
-                    🏆
-                  </div>
-                  <span class="text-[10px] font-black text-amber-900 mt-1 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-full shadow-xs">
-                    RƯƠNG HOÀNG KIM 🔒
-                  </span>
-                </div>
-
-                <!-- ĐẢO 4 (21:00): ĐÁNH RĂNG TỐI (ĐÃ MỞ KHÓA TOÀN BỘ ĐỂ TEST FULL) -->
-                <div id="node-routine-island-4" onclick="startChildRoutineTask('routine_night_teeth')" class="relative z-10 flex flex-col items-center translate-x-12 cursor-pointer transition hover:scale-105">
-                  <div id="routine-island-4-icon-box" class="w-20 h-20 rounded-[28px] btn-3d-yellow island-active-glow ring-4 ring-amber-300 flex flex-col items-center justify-center shadow-lg relative p-2">
-                    <span class="text-3xl">🦷</span>
-                    <span class="text-[9px] font-black uppercase tracking-wider bg-black/15 text-amber-950 px-2 py-0.5 rounded-full mt-0.5">+25 ⭐</span>
-                  </div>
-                  <div class="text-center mt-1">
-                    <span class="bg-amber-400 text-amber-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow-xs">
-                      21:00 • SẴN SÀNG 🚀
-                    </span>
-                    <h4 class="font-black text-xs text-slate-900 mt-0.5">Đánh Răng Thơm Tho</h4>
-                    <span class="text-[9px] font-extrabold text-orange-600 bg-orange-100 px-1.5 py-0.2 rounded-md inline-block mt-0.5">
-                      📸 Chụp ảnh trước gương
-                    </span>
-                  </div>
-                </div>
-
-                <!-- ĐẢO 3 (19:00): DỌN BÀN HỌC -->
-                <div id="node-routine-island-3" class="relative z-20 flex flex-col items-center -translate-x-10">
-                  <div class="absolute -left-16 -top-5 flex flex-col items-center animate-milo">
-                    <div class="bg-white border-2 border-amber-400 px-2.5 py-1 rounded-2xl rounded-br-none shadow-md text-[10px] font-extrabold text-amber-900 mb-1 max-w-[120px] text-center leading-tight">
-                      Cùng dọn bàn nhận 30 sao nào! ✨
-                    </div>
-                    <div class="w-11 h-11 rounded-2xl bg-amber-400 text-amber-950 flex items-center justify-center text-2xl shadow-md">
-                      🦁
-                    </div>
-                  </div>
-
-                  <div onclick="startChildRoutineTask('routine_clean_desk')" class="w-22 h-22 rounded-[32px] btn-3d-yellow island-active-glow flex flex-col items-center justify-center text-slate-900 shadow-xl ring-6 ring-amber-200 cursor-pointer hover:scale-105 active:scale-95 transition">
-                    <span class="text-3xl mb-0.5">🧹</span>
-                    <span class="text-[9px] font-black uppercase tracking-wider bg-black/15 text-amber-950 px-2 py-0.5 rounded-full">+30 ⭐</span>
-                  </div>
-
-                  <div class="mt-1.5 text-center max-w-[200px]">
-                    <span id="routine-island-3-status" class="bg-amber-500 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow-xs">
-                      19:00 • ĐANG MỞ CỬA 🚀
-                    </span>
-                    <h4 class="font-black text-xs text-slate-900 mt-0.5">Dọn Bàn Học Gọn Gàng</h4>
-                    <span class="text-[9px] font-extrabold text-orange-600 bg-orange-100 px-1.5 py-0.2 rounded-md inline-block mt-0.5">
-                      📸 Chụp ảnh bàn sạch
-                    </span>
-                  </div>
-                </div>
-
-                <!-- ĐẢO 2 (16:30): CẤT GIÀY & BALO -->
-                <div onclick="startChildRoutineTask('routine_afterschool_drop')" class="relative z-10 flex flex-col items-center translate-x-12 cursor-pointer transition hover:scale-105">
-                  <div class="w-20 h-20 rounded-[28px] btn-3d-yellow island-active-glow ring-4 ring-amber-300 flex flex-col items-center justify-center shadow-md relative">
-                    <span class="text-3xl">🎒</span>
-                    <span class="text-[9px] font-black uppercase tracking-wider bg-black/15 text-amber-950 px-2 py-0.5 rounded-full mt-0.5">+25 ⭐</span>
-                  </div>
-                  <div class="text-center mt-1">
-                    <span class="bg-amber-400 text-amber-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow-xs">
-                      16:30 • SẴN SÀNG 🚀
-                    </span>
-                    <h4 class="font-black text-xs text-slate-900 mt-0.5">Cất Giày &amp; Balo</h4>
-                    <span class="text-[9px] font-extrabold text-orange-600 bg-orange-100 px-1.5 py-0.2 rounded-md inline-block mt-0.5">
-                      📸 Chụp ảnh kệ dép
-                    </span>
-                  </div>
-                </div>
-
-                <!-- ĐẢO 1 (06:30): GẤP CHĂN GỐI -->
-                <div onclick="startChildRoutineTask('routine_morning_bed')" class="relative z-10 flex flex-col items-center -translate-x-10 cursor-pointer transition hover:scale-105 pb-4">
-                  <div class="w-20 h-20 rounded-[28px] btn-3d-yellow island-active-glow ring-4 ring-amber-300 flex flex-col items-center justify-center shadow-md relative">
-                    <span class="text-3xl">🛏️</span>
-                    <span class="text-[9px] font-black uppercase tracking-wider bg-black/15 text-amber-950 px-2 py-0.5 rounded-full mt-0.5">+20 ⭐</span>
-                  </div>
-                  <div class="text-center mt-1">
-                    <span class="bg-amber-400 text-amber-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase shadow-xs">
-                      06:30 • SẴN SÀNG 🚀
-                    </span>
-                    <h4 class="font-black text-xs text-slate-900 mt-0.5">Gấp Chăn Gối Sáng</h4>
-                    <span class="text-[9px] font-extrabold text-orange-600 bg-orange-100 px-1.5 py-0.2 rounded-md inline-block mt-0.5">
-                      📸 Chụp ảnh giường ngủ
-                    </span>
-                  </div>
-                </div>
-
+              <!-- TẦNG 2B: BẢN ĐỒ ĐẢO THÓI QUEN S-CURVE (TIMELINE LOCKED - DYNAMIC HYDRATION) -->
+              <div id="child-routine-map-container" class="hidden flex-1 min-h-0 w-full relative overflow-y-auto no-scrollbar select-none cursor-grab active:cursor-grabbing px-4 pb-28">
+                <!-- Nội dung được render 100% động bởi renderChildRoutineRoadmapFromTasks() -->
               </div>
 
               <!-- TẦNG 2: S-CURVE ARCHIPELAGO MAP (CUỘN ĐỘC LẬP & KÉO THẢ MƯỢT MÀ) -->
@@ -1104,11 +1012,15 @@
 
                   <!-- Batch Selection Controls -->
                   <div class="flex items-center justify-between bg-amber-50/70 border border-amber-200/60 px-3 py-1.5 rounded-xl text-[10px] font-bold">
-                    <span class="text-amber-900">Chọn thói quen để giao sang Đảo Thói Quen:</span>
-                    <div class="flex items-center gap-2">
-                      <button onclick="selectAllRoutines(true)" class="text-amber-700 hover:underline cursor-pointer">Chọn tất cả</button>
+                    <span class="text-amber-900">Chọn thói quen để giao:</span>
+                    <div class="flex items-center gap-1.5">
+                      <button onclick="selectAllRoutines(true)" class="text-amber-700 hover:underline cursor-pointer">Tất cả</button>
                       <span class="text-amber-300">|</span>
                       <button onclick="selectAllRoutines(false)" class="text-slate-500 hover:underline cursor-pointer">Bỏ chọn</button>
+                      <span class="text-amber-300">|</span>
+                      <button onclick="parentClearRoutinesOnly()" title="Xóa sạch thói quen trên Đảo con" class="text-rose-600 hover:text-rose-700 font-black cursor-pointer flex items-center gap-0.5">
+                        <span>🗑️</span> <span>Xóa sạch đảo</span>
+                      </button>
                     </div>
                   </div>
 
@@ -1125,9 +1037,14 @@
                         4 thói quen • +95 ⭐ tổng thưởng
                       </span>
                     </div>
-                    <button onclick="dispatchSelectedRoutines()" class="w-full py-2.5 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 hover:from-amber-500 hover:to-orange-500 text-amber-950 font-black text-xs rounded-xl shadow-md transition active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer">
-                      <span>🚀 GIAO THÓI QUEN SANG ĐẢO CỦA LEO NGAY!</span>
-                    </button>
+                    <div class="flex items-center gap-2">
+                      <button onclick="dispatchSelectedRoutines()" class="flex-1 py-2.5 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 hover:from-amber-500 hover:to-orange-500 text-amber-950 font-black text-xs rounded-xl shadow-md transition active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer">
+                        <span>🚀 GIAO THÓI QUEN SANG MÁY CON!</span>
+                      </button>
+                      <button onclick="parentClearRoutinesOnly()" title="Xóa sạch toàn bộ thói quen trên máy con để giao lại từ đầu" class="px-3 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 font-extrabold text-xs rounded-xl shadow-xs transition active:scale-95 flex items-center gap-1 cursor-pointer shrink-0">
+                        <span>🗑️</span> <span>Xóa sạch</span>
+                      </button>
+                    </div>
                   </div>
 
                 </div>
@@ -1653,8 +1570,9 @@
           routineContainer.style.display = 'block';
         }
         if (alertBadge) alertBadge.classList.add('hidden');
+        const count = Array.isArray(appState.childRoutineRoadmap) ? appState.childRoutineRoadmap.length : 0;
         const counter = document.getElementById('child-roadmap-counter');
-        if (counter) counter.innerText = "Đảo 3 / 4: Bàn Học Tối";
+        if (counter) counter.innerText = count > 0 ? `Đảo Thói Quen (${count} nề nếp)` : "Đảo thói quen trống (0 nề nếp)";
         const badge = document.getElementById('child-roadmap-badge');
         if (badge) badge.innerText = "NỀ NẾP SINH HOẠT";
         if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {

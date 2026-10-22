@@ -65,6 +65,12 @@ window.addEventListener('DOMContentLoaded', () => {
         appState.selectedCatalogIds = new Set(validIds);
       }
     }
+    if (saved.childRoutineRoadmap !== undefined && Array.isArray(saved.childRoutineRoadmap)) {
+      appState.childRoutineRoadmap = saved.childRoutineRoadmap;
+    }
+    if (saved.selectedRoutineIds !== undefined && Array.isArray(saved.selectedRoutineIds)) {
+      appState.selectedRoutineIds = new Set(saved.selectedRoutineIds);
+    }
     if (saved.pendingTicket) {
       appState.pendingTicket = saved.pendingTicket;
       const banner = document.getElementById('parent-golden-ticket-banner');
@@ -102,6 +108,15 @@ window.addEventListener('DOMContentLoaded', () => {
   // 5. Khởi tạo giao diện ban đầu (Sẽ tự động cập nhật khi nhận WebSocket snapshot)
   renderParentCatalogList();
   renderChildIslandRoadmap();
+  if (typeof renderChildRoutineRoadmapFromTasks === 'function') {
+    renderChildRoutineRoadmapFromTasks(appState.childRoutineRoadmap);
+  }
+  if (typeof renderParentActiveRoadmapList === 'function') {
+    renderParentActiveRoadmapList();
+  }
+  if (typeof renderParentRoutinesCatalog === 'function') {
+    renderParentRoutinesCatalog();
+  }
   updateCognitiveProfileUI(appState.cognitiveProfile);
 });
 

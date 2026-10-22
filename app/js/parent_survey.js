@@ -274,6 +274,12 @@
           timestamp: Date.now()
         });
       }
+      if (bus && typeof bus.savePersistedState === 'function') {
+        bus.savePersistedState(appState);
+      }
+      if (typeof saveRoutineCustomizations === 'function') {
+        saveRoutineCustomizations();
+      }
 
       if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
         window.renderChildRoutineRoadmapFromTasks(selected);
@@ -1132,13 +1138,77 @@ window.parentJumpToAssignRoutines = parentJumpToAssignRoutines;
     /* ============================================================
        FLEX-TIME & FLEX-MEAL PARENT CONFIGURATION HANDLERS
        ============================================================ */
+    function saveRoutineCustomizations() {
+      try {
+        const routines = window.routineDatabase || {};
+        const customs = {};
+        Object.keys(routines).forEach(id => {
+          const rt = routines[id];
+          if (rt && (rt.slot_time || rt.flex_meal_config)) {
+            customs[id] = {
+              slot_time: rt.slot_time,
+              flex_meal_config: rt.flex_meal_config,
+              steps: rt.steps
+            };
+          }
+        });
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('milo_routine_customizations', JSON.stringify(customs));
+        }
+      } catch (e) {}
+    }
+
+    function loadRoutineCustomizations() {
+      try {
+        if (typeof localStorage === 'undefined') return;
+        const raw = localStorage.getItem('milo_routine_customizations');
+        if (!raw) return;
+        const customs = JSON.parse(raw);
+        const routines = window.routineDatabase || {};
+        Object.keys(customs).forEach(id => {
+          if (routines[id] && customs[id]) {
+            if (customs[id].slot_time) routines[id].slot_time = customs[id].slot_time;
+            if (customs[id].flex_meal_config) routines[id].flex_meal_config = customs[id].flex_meal_config;
+            if (customs[id].steps) routines[id].steps = customs[id].steps;
+          }
+        });
+      } catch (e) {}
+    }
+
+    // Tự động phục hồi tùy chỉnh giờ & món ăn ngay khi nạp script
+    loadRoutineCustomizations();
+
     function parentUpdateRoutineSlotTime(routineId, newTime) {
       if (!newTime) return;
       const routines = window.routineDatabase || {};
       if (routines[routineId]) {
         routines[routineId].slot_time = newTime;
+
+        // 1. Cập nhật nhãn giờ trên thẻ UI ngay lập tức
+        const label = document.getElementById(`label-time-${routineId}`);
+        if (label) label.innerText = newTime;
+
+        // 2. Cập nhật trong lộ trình thói quen con nếu đang được giao
+        if (Array.isArray(appState.childRoutineRoadmap)) {
+          const targetInRoadmap = appState.childRoutineRoadmap.find(r => r && (r.id === routineId));
+          if (targetInRoadmap) {
+            targetInRoadmap.slot_time = newTime;
+            if (typeof renderParentActiveRoadmapList === 'function') renderParentActiveRoadmapList();
+            if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
+              window.renderChildRoutineRoadmapFromTasks(appState.childRoutineRoadmap);
+            }
+          }
+        }
+
+        // 3. Lưu bền vững vào localStorage & broadcast sync
+        saveRoutineCustomizations();
+        const bus = window.miloBus || window.syncBus;
+        if (bus && typeof bus.savePersistedState === 'function') {
+          bus.savePersistedState(appState);
+        }
+
         if (typeof showToast === 'function') {
-          showToast("Đã Đổi Giờ Nhắc", `Thói quen [${routines[routineId].title}] sẽ nhắc con vào lúc ${newTime}!`, "⏱️");
+          showToast("Đã Đổi & Giữ Giờ Nhắc", `Thói quen [${routines[routineId].title}] sẽ nhắc con vào lúc ${newTime}!`, "⏱️");
         }
       }
     }
@@ -1238,8 +1308,27 @@ window.parentJumpToAssignRoutines = parentJumpToAssignRoutines;
         rt.flex_meal_config = { dishes: parsedDishes };
         rt.steps = newSteps;
 
+        // Cập nhật trong lộ trình con nếu đang có
+        if (Array.isArray(appState.childRoutineRoadmap)) {
+          const targetInRoadmap = appState.childRoutineRoadmap.find(r => r && (r.id === routineId));
+          if (targetInRoadmap) {
+            targetInRoadmap.flex_meal_config = rt.flex_meal_config;
+            targetInRoadmap.steps = rt.steps;
+            if (typeof renderParentActiveRoadmapList === 'function') renderParentActiveRoadmapList();
+            if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
+              window.renderChildRoutineRoadmapFromTasks(appState.childRoutineRoadmap);
+            }
+          }
+        }
+
+        saveRoutineCustomizations();
+        const bus = window.miloBus || window.syncBus;
+        if (bus && typeof bus.savePersistedState === 'function') {
+          bus.savePersistedState(appState);
+        }
+
         if (typeof showToast === 'function') {
-          showToast("Đã Lưu Thực Đơn", `Mẹ vừa cập nhật ${parsedDishes.length} món hâm nóng cho bữa cơm của Leo!`, "🍲");
+          showToast("Đã Lưu & Giữ Thực Đơn", `Mẹ vừa cập nhật ${parsedDishes.length} món hâm nóng cho bữa cơm của Leo!`, "🍲");
         }
         renderParentRoutinesCatalog();
       }
@@ -1261,3 +1350,7 @@ window.parentJumpToAssignRoutines = parentJumpToAssignRoutines;
       }
     }
     window.toggleRoutineDrawer = toggleRoutineDrawer;
+    window.saveRoutineCustomizations = saveRoutineCustomizations;
+    window.loadRoutineCustomizations = loadRoutineCustomizations;
+    window.parentUpdateRoutineSlotTime = parentUpdateRoutineSlotTime;
+    window.parentOpenFlexMealConfig = parentOpenFlexMealConfig;

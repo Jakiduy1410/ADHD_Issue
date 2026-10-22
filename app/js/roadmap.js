@@ -488,6 +488,9 @@
           timestamp: Date.now()
         });
       }
+      if (bus && typeof bus.savePersistedState === 'function') {
+        bus.savePersistedState(appState);
+      }
 
       if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
         window.renderChildRoutineRoadmapFromTasks(appState.childRoutineRoadmap);
@@ -497,42 +500,44 @@
       showToast("Đã Xóa Thói Quen", `Đã gỡ [${removed ? removed.title : 'Thói quen'}] khỏi Đảo Thói Quen của Leo!`, "🗑️");
     }
 
+    function parentClearRoutinesOnly() {
+      playSfx('tap');
+      if (!confirm("Ba mẹ có chắc muốn xóa sạch toàn bộ các thói quen trên Đảo Thói Quen của con để giao lại từ đầu không?")) {
+        return;
+      }
+
+      appState.childRoutineRoadmap = [];
+      if (appState.selectedRoutineIds) {
+        appState.selectedRoutineIds.clear();
+        if (typeof updateRoutineSelectedMeta === 'function') updateRoutineSelectedMeta();
+        if (typeof renderParentRoutinesCatalog === 'function') renderParentRoutinesCatalog();
+      }
+
+      const bus = window.miloBus || window.syncBus;
+      if (bus && typeof bus.broadcast === 'function') {
+        bus.broadcast('ROUTINE_ASSIGN_BATCH', {
+          routines: [],
+          timestamp: Date.now()
+        });
+      }
+      if (bus && typeof bus.savePersistedState === 'function') {
+        bus.savePersistedState(appState);
+      }
+
+      if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
+        window.renderChildRoutineRoadmapFromTasks([]);
+      }
+
+      renderParentActiveRoadmapList();
+      showToast("Đã Xóa Sạch Thói Quen", "Toàn bộ thói quen đã được xóa sạch trên cả hai máy! Hãy giao nề nếp mới cho bé nhé.", "🗑️");
+    }
+
     function parentClearChildRoadmap() {
       playSfx('tap');
       const mode = appState.assignMode || 'catalog';
 
       if (mode === 'routines') {
-        if (!Array.isArray(appState.childRoutineRoadmap) || appState.childRoutineRoadmap.length === 0) {
-          showToast("Đảo Thói Quen Trống", "Lộ trình thói quen của con hiện đang trống!", "ℹ️");
-          return;
-        }
-
-        if (!confirm("Ba mẹ có chắc muốn xóa sạch toàn bộ các thói quen trên Đảo Thói Quen của con để giao lại từ đầu không?")) {
-          return;
-        }
-
-        appState.childRoutineRoadmap = [];
-        if (appState.selectedRoutineIds) {
-          appState.selectedRoutineIds.clear();
-          if (typeof updateRoutineSelectedMeta === 'function') updateRoutineSelectedMeta();
-          if (typeof renderParentRoutinesCatalog === 'function') renderParentRoutinesCatalog();
-        }
-
-        const bus = window.miloBus || window.syncBus;
-        if (bus && typeof bus.broadcast === 'function') {
-          bus.broadcast('ROUTINE_ASSIGN_BATCH', {
-            routines: [],
-            timestamp: Date.now()
-          });
-        }
-
-        if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
-          window.renderChildRoutineRoadmapFromTasks([]);
-        }
-
-        renderParentActiveRoadmapList();
-        showToast("Đã Xóa Sạch Thói Quen", "Toàn bộ thói quen đã được xóa sạch trên cả hai máy! Hãy giao nề nếp mới cho bé nhé.", "🗑️");
-
+        parentClearRoutinesOnly();
       } else {
         if (!Array.isArray(appState.childRoadmap) || appState.childRoadmap.length === 0) {
           showToast("Hải Trình Trống", "Hải trình của con hiện đang trống!", "ℹ️");
@@ -650,6 +655,7 @@
       window.alertTreasureStatus = alertTreasureStatus;
       window.parentRemoveRoadmapTask = parentRemoveRoadmapTask;
       window.parentRemoveRoutineTask = parentRemoveRoutineTask;
+      window.parentClearRoutinesOnly = parentClearRoutinesOnly;
       window.parentClearChildRoadmap = parentClearChildRoadmap;
       window.renderParentActiveRoadmapList = renderParentActiveRoadmapList;
       window.initRoadmapDragScroll = initRoadmapDragScroll;
@@ -675,6 +681,13 @@
       const validRoutines = routines.map(r => (typeof r === 'string' ? routinesDb[r] : r)).filter(Boolean);
       const totalIslands = validRoutines.length;
 
+      const counter = document.getElementById('child-roadmap-counter');
+      const routineBtn = document.getElementById('child-tab-routine-btn');
+      const isRoutineActive = routineBtn && routineBtn.classList.contains('bg-amber-400');
+      if (counter && isRoutineActive) {
+        counter.innerText = totalIslands > 0 ? `Đảo Thói Quen (${totalIslands} nề nếp)` : "Đảo thói quen trống (0 nề nếp)";
+      }
+
       // 1. EMPTY STATE
       if (totalIslands === 0) {
         container.innerHTML = `
@@ -698,11 +711,11 @@
       // 2. DYNAMIC POINTS & S-CURVE BÉZIER TRAIL (CANH CHÍNH XÁC VÀO CÚP VÀNG)
       const points = [];
       for (let r = totalIslands; r >= 1; r--) {
-        const xr = (totalIslands === 1) ? 170 : ((r % 2 === 1) ? 230 : 110);
+        const xr = (totalIslands === 1) ? 170 : ((r % 2 === 1) ? 218 : 122);
         const yr = 45 + r * 105;
         points.push({ x: xr, y: yr, rowIndex: r, islandIndex: totalIslands - r });
       }
-      // Điểm đỉnh: Rương báu cúp vàng tại tọa độ (170, 45)
+      // Điểm đỉnh: Rương báu cúp vàng tại tọa độ (170, 45) - Không bao giờ vọt lên đầu cúp
       points.push({ x: 170, y: 45, rowIndex: 0, isTreasure: true });
 
       const totalHeight = 45 + totalIslands * 105 + 55;

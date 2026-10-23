@@ -5,3 +5,5 @@ venv/
 .venv/
 benchmark_report.json
 docs/reports/benchmark_report.json
+*.db-shm
+*.db-wal

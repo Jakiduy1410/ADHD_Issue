@@ -8,6 +8,8 @@
       constructor(options = {}) {
         this.roomId = options.roomId || this._getUrlParam('room') || 'family_room_milo_01';
         this.role = options.role || this._getUrlParam('role') || 'dual'; // 'dual', 'child', 'parent'
+        const savedKid = (typeof localStorage !== 'undefined' && (localStorage.getItem('milo_child_device_kid_id') || localStorage.getItem('milo_active_kid_id'))) || 'kid_leo_01';
+        this.kidId = options.kidId || this._getUrlParam('kid_id') || savedKid;
         this.clientId = 'client_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
 
         this.channelName = 'milo_quest_sync';
@@ -133,7 +135,10 @@
         }
         const wsProto = isHttps ? 'wss://' : 'ws://';
         const wsRole = this.role === 'child' ? 'kid' : (this.role === 'parent' ? 'parent' : 'kid');
-        const wsUrl = `${wsProto}${host}${portPart}/ws/sync?room_id=${encodeURIComponent(this.roomId)}&role=${encodeURIComponent(wsRole)}&client_id=${encodeURIComponent(this.clientId)}`;
+        const effectiveKidId = (typeof appState !== 'undefined' && appState.childDeviceKidId && wsRole === 'kid')
+          ? appState.childDeviceKidId
+          : (this.kidId || 'kid_leo_01');
+        const wsUrl = `${wsProto}${host}${portPart}/ws/sync?room_id=${encodeURIComponent(this.roomId)}&role=${encodeURIComponent(wsRole)}&client_id=${encodeURIComponent(this.clientId)}&kid_id=${encodeURIComponent(effectiveKidId)}`;
 
         try {
           this.ws = new WebSocket(wsUrl);
@@ -189,6 +194,18 @@
         }
       }
 
+      reconnectWithKid(newKidId) {
+        if (!newKidId) return;
+        this.kidId = newKidId;
+        if (this.ws) {
+          try {
+            this.ws.onclose = null;
+            this.ws.close();
+          } catch (_) {}
+        }
+        this._initWebSocket();
+      }
+
       _scheduleReconnect() {
         if (this.reconnectTimer) return;
         const backoff = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 16000);
@@ -214,8 +231,66 @@
 
         if (data.sender && data.sender === this.clientId) return;
 
-        // Server translated event: Kid step done -> Parent notification
+        // Handle Children List Update
+        if (data.event_type === "CHILDREN_LIST_UPDATED") {
+          if (typeof fetchChildrenList === 'function') {
+            fetchChildrenList();
+          }
+          return;
+        }
+
+        // Handle Dispatch Route with strict kid_id isolation
+        if (data.event_type === "NEW_DISPATCH_ROUTE") {
+          const targetKid = data.kid_id || (data.data && data.data.kid_id);
+          
+          // Phía Mẹ: Cập nhật lộ trình Mẹ xem NẾU Mẹ đang xem đúng bé này
+          if (typeof appState !== 'undefined' && targetKid === appState.parentSelectedKidId) {
+            const roadmapData = (Array.isArray(data.roadmap) && data.roadmap.length > 0)
+              ? data.roadmap
+              : (data.data && Array.isArray(data.data.stations) ? data.data.stations : []);
+            if (roadmapData.length > 0) {
+              appState.parentChildRoadmap = roadmapData;
+              appState.parentCurrentRoadmapIndex = 0;
+            }
+            if (typeof renderParentActiveRoadmapList === 'function') {
+              renderParentActiveRoadmapList();
+            }
+          }
+
+          // Phía Con: CHỈ KHI NÀO điện thoại máy con này đang đăng nhập đúng bé targetKid
+          // Nếu máy con đang là bé khác -> Chạy ngầm trong SQLite, KHÔNG ĐƯỢC làm nhảy đảo máy con!
+          const isForChildDevice = (typeof appState !== 'undefined' && targetKid === appState.childDeviceKidId);
+          if (isForChildDevice) {
+            if (Array.isArray(data.roadmap) && data.roadmap.length > 0) {
+              appState.childRoadmap = data.roadmap;
+            } else if (data.data && Array.isArray(data.data.stations)) {
+              appState.childRoadmap = data.data.stations;
+            }
+            appState.currentRoadmapIndex = 0;
+            appState.currentStepIndex = 0;
+            appState.activeTask = (appState.childRoadmap && appState.childRoadmap[0]) || null;
+            if (appState.selectedClues && typeof appState.selectedClues.clear === 'function') appState.selectedClues.clear();
+            if (appState.cleanedItems && typeof appState.cleanedItems.clear === 'function') appState.cleanedItems.clear();
+            
+            if (typeof renderChildIslandRoadmap === 'function') renderChildIslandRoadmap();
+            if (data.alert_message && typeof showToast === 'function') {
+              showToast("Bản Đồ Mới", data.alert_message, "🗺️");
+            }
+          }
+          return;
+        }
+
+        // Server translated event: Kid step done -> Parent notification (with cross-child toast)
         if (data.event_type === "PARENT_NOTIFICATION_STEP_DONE") {
+          const evKidId = data.kid_id;
+          if (evKidId && typeof appState !== 'undefined' && appState.activeChildId && evKidId !== appState.activeChildId) {
+            const otherKid = (appState.childrenList || []).find(c => c.kid_id === evKidId);
+            const otherName = otherKid ? otherKid.name : "Con";
+            if (typeof showToast === 'function') {
+              showToast(`🎉 ${otherName} vừa hoàn thành bước!`, data.message || `+${data.points_earned || 25} ⭐`, "🦁");
+            }
+            return;
+          }
           this._dispatchLocal("STEP_COMPLETED", {
             stepIndex: data.step_id ? data.step_id - 1 : 0,
             starsEarned: data.points_earned || 40,
@@ -253,12 +328,17 @@
 
       /* ---------------- Unified Broadcast Dispatch ---------------- */
       broadcast(eventType, payload = {}) {
+        const senderKidId = (typeof appState !== 'undefined' && (this.role === 'child' ? appState.childDeviceKidId : appState.parentSelectedKidId)) || this.kidId || 'kid_leo_01';
+        const targetKidId = (payload && (payload.target_kid_id || payload.kid_id)) || senderKidId;
         const envelope = {
           event_type: eventType,
           event_id: 'evt_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now(),
           sender_id: this.clientId,
           sender_role: this.role,
           room_id: this.roomId,
+          kid_id: targetKidId,
+          target_kid_id: targetKidId,
+          sender_kid_id: senderKidId,
           timestamp: Date.now(),
           payload: payload
         };
@@ -295,6 +375,8 @@
                 event_type: "KID_STEP_COMPLETED",
                 step_id: (payload.stepIndex !== undefined ? payload.stepIndex + 1 : 1),
                 dopamine_points: payload.starsEarned || 40,
+                kid_id: senderKidId,
+                target_kid_id: senderKidId,
                 payload: payload
               }));
             } else if (eventType === "PARENT_CHEER_SEND" && this.role === 'parent') {
@@ -304,6 +386,8 @@
                 cheer_text: cheerMsg,
                 message: cheerMsg,
                 sticker: (payload && payload.sticker) || "milo_thumbs_up",
+                kid_id: targetKidId,
+                target_kid_id: targetKidId,
                 payload: payload
               }));
             } else {
@@ -322,8 +406,10 @@
       /* ---------------- State Persistence API ---------------- */
       savePersistedState(stateSnapshot) {
         try {
+          const kidKey = (stateSnapshot && (stateSnapshot.childDeviceKidId || stateSnapshot.activeChildId)) || this.kidId || 'kid_leo_01';
           const serialized = JSON.stringify({
             version: 1,
+            kid_id: kidKey,
             last_updated: Date.now(),
             stars: stateSnapshot.stars,
             childRoadmap: stateSnapshot.childRoadmap,
@@ -342,16 +428,22 @@
             roadmapCleared: !!stateSnapshot.roadmapCleared,
             routineCleared: !!stateSnapshot.routineCleared
           });
+          localStorage.setItem(`${this.storageStateKey}_${kidKey}`, serialized);
           localStorage.setItem(this.storageStateKey, serialized);
           localStorage.setItem(this.storageStateBackupKey, serialized);
         } catch (err) {}
       }
 
-      loadPersistedState() {
+      loadPersistedState(targetKidId) {
         try {
-          const data = localStorage.getItem(this.storageStateKey) || localStorage.getItem(this.storageStateBackupKey);
+          const kidKey = targetKidId || (typeof appState !== 'undefined' && appState.childDeviceKidId) || this.kidId || 'kid_leo_01';
+          const data = localStorage.getItem(`${this.storageStateKey}_${kidKey}`) || localStorage.getItem(this.storageStateKey) || localStorage.getItem(this.storageStateBackupKey);
           if (!data) return null;
-          return JSON.parse(data);
+          const parsed = JSON.parse(data);
+          if (parsed && parsed.kid_id && parsed.kid_id !== kidKey) {
+            return null;
+          }
+          return parsed;
         } catch (err) {
           return null;
         }
@@ -372,79 +464,109 @@
       if (!state || typeof state !== 'object') return;
       if (typeof appState === 'undefined') return;
 
-      if (state.stars !== undefined && typeof updateStarsEverywhere === 'function') {
-        appState.stars = state.stars;
-        updateStarsEverywhere(state.stars);
+      const stateKidId = state.kid_id;
+
+      // Update background cache
+      if (stateKidId && appState.childrenStates) {
+        appState.childrenStates[stateKidId] = {
+          ...(appState.childrenStates[stateKidId] || {}),
+          ...state
+        };
       }
 
-      if (Array.isArray(state.child_roadmap)) {
-        if (state.child_roadmap.length === 0 || state.roadmap_cleared) {
-          appState.childRoadmap = [];
-          appState.activeTask = null;
-          appState.currentRoadmapIndex = 0;
-          appState.roadmapCleared = true;
-          try { if (typeof localStorage !== 'undefined') localStorage.setItem('milo_roadmap_cleared', 'true'); } catch(_) {}
-        } else {
-          const validTasks = state.child_roadmap.filter(t => (
-            t && typeof t === 'object' && t.id && Array.isArray(t.steps) && t.steps.length > 0
-          ));
-          if (validTasks.length > 0) {
-            appState.childRoadmap = validTasks;
-            appState.roadmapCleared = false;
-            try { if (typeof localStorage !== 'undefined') localStorage.removeItem('milo_roadmap_cleared'); } catch(_) {}
+      // 1. Phía Máy Con: CHỈ áp dụng nếu state này của đúng bé đang đăng nhập trên máy con
+      const isForActiveChild = !stateKidId || (stateKidId === appState.childDeviceKidId);
+      if (isForActiveChild) {
+        if (state.stars !== undefined && typeof updateStarsEverywhere === 'function') {
+          appState.stars = state.stars;
+          updateStarsEverywhere(state.stars);
+        }
+
+        if (Array.isArray(state.child_roadmap)) {
+          if (state.child_roadmap.length === 0 || state.roadmap_cleared) {
+            appState.childRoadmap = [];
+            appState.activeTask = null;
+            appState.currentRoadmapIndex = 0;
+            appState.roadmapCleared = true;
+            try { if (typeof localStorage !== 'undefined') localStorage.setItem('milo_roadmap_cleared', 'true'); } catch(_) {}
+          } else {
+            const validTasks = state.child_roadmap.filter(t => (
+              t && typeof t === 'object' && t.id && Array.isArray(t.steps) && t.steps.length > 0
+            ));
+            if (validTasks.length > 0) {
+              appState.childRoadmap = validTasks;
+              appState.roadmapCleared = false;
+              try { if (typeof localStorage !== 'undefined') localStorage.removeItem('milo_roadmap_cleared'); } catch(_) {}
+            }
           }
         }
-      }
 
-      if (Array.isArray(state.child_routine_roadmap)) {
-        if (state.child_routine_roadmap.length === 0 || state.routine_cleared) {
-          appState.childRoutineRoadmap = [];
-          appState.routineCleared = true;
-          try { if (typeof localStorage !== 'undefined') localStorage.setItem('milo_routine_cleared', 'true'); } catch(_) {}
+        if (Array.isArray(state.child_routine_roadmap)) {
+          if (state.child_routine_roadmap.length === 0 || state.routine_cleared) {
+            appState.childRoutineRoadmap = [];
+            appState.routineCleared = true;
+            try { if (typeof localStorage !== 'undefined') localStorage.setItem('milo_routine_cleared', 'true'); } catch(_) {}
+          } else {
+            appState.childRoutineRoadmap = state.child_routine_roadmap;
+            appState.routineCleared = false;
+            try { if (typeof localStorage !== 'undefined') localStorage.removeItem('milo_routine_cleared'); } catch(_) {}
+          }
+          if (typeof renderChildRoutineRoadmapFromTasks === 'function') {
+            renderChildRoutineRoadmapFromTasks(appState.childRoutineRoadmap);
+          }
+        }
+
+        if (state.current_roadmap_index !== undefined && state.current_roadmap_index >= 0) {
+          const maxIdx = Math.max(0, (appState.childRoadmap || []).length - 1);
+          appState.currentRoadmapIndex = Math.min(state.current_roadmap_index, maxIdx);
+        }
+
+        if (appState.childRoadmap && appState.childRoadmap.length > 0) {
+          appState.activeTask = appState.childRoadmap[appState.currentRoadmapIndex] || appState.childRoadmap[0];
+        }
+
+        if (state.current_step_index !== undefined && state.current_step_index >= 0) {
+          appState.currentStepIndex = state.current_step_index;
+        }
+
+        if (state.pending_ticket) {
+          appState.pendingTicket = state.pending_ticket;
+          const banner = document.getElementById('parent-golden-ticket-banner');
+          const redDot = document.getElementById('p-reward-dot');
+          const desc = document.getElementById('parent-ticket-desc');
+          if (banner) banner.classList.remove('hidden');
+          if (redDot) redDot.classList.remove('hidden');
+          const kidName = (appState.childrenList || []).find(c => c.kid_id === stateKidId)?.name || "Bé";
+          if (desc) desc.innerText = `🎉 ${kidName} vừa dùng ${state.pending_ticket.cost || 500} ⭐ để đổi [Vé Vàng: ${state.pending_ticket.title}]!`;
         } else {
-          appState.childRoutineRoadmap = state.child_routine_roadmap;
-          appState.routineCleared = false;
-          try { if (typeof localStorage !== 'undefined') localStorage.removeItem('milo_routine_cleared'); } catch(_) {}
+          appState.pendingTicket = null;
+          const banner = document.getElementById('parent-golden-ticket-banner');
+          const redDot = document.getElementById('p-reward-dot');
+          if (banner) banner.classList.add('hidden');
+          if (redDot) redDot.classList.add('hidden');
         }
-        if (typeof renderChildRoutineRoadmapFromTasks === 'function') {
-          renderChildRoutineRoadmapFromTasks(appState.childRoutineRoadmap);
+
+        if (typeof renderChildIslandRoadmap === 'function') {
+          renderChildIslandRoadmap();
         }
       }
 
-      if (state.current_roadmap_index !== undefined && state.current_roadmap_index >= 0) {
-        const maxIdx = Math.max(0, (appState.childRoadmap || []).length - 1);
-        appState.currentRoadmapIndex = Math.min(state.current_roadmap_index, maxIdx);
-      }
-
-      if (appState.childRoadmap && appState.childRoadmap.length > 0) {
-        appState.activeTask = appState.childRoadmap[appState.currentRoadmapIndex] || appState.childRoadmap[0];
-      }
-
-      if (state.current_step_index !== undefined && state.current_step_index >= 0) {
-        appState.currentStepIndex = state.current_step_index;
-      }
-
-      if (state.pending_ticket) {
-        appState.pendingTicket = state.pending_ticket;
-        const banner = document.getElementById('parent-golden-ticket-banner');
-        const redDot = document.getElementById('p-reward-dot');
-        const desc = document.getElementById('parent-ticket-desc');
-        if (banner) banner.classList.remove('hidden');
-        if (redDot) redDot.classList.remove('hidden');
-        if (desc) desc.innerText = `🎉 Leo vừa dùng ${state.pending_ticket.cost || 500} ⭐ để đổi [Vé Vàng: ${state.pending_ticket.title}]!`;
-      } else {
-        appState.pendingTicket = null;
-        const banner = document.getElementById('parent-golden-ticket-banner');
-        const redDot = document.getElementById('p-reward-dot');
-        if (banner) banner.classList.add('hidden');
-        if (redDot) redDot.classList.add('hidden');
-      }
-
-      if (typeof renderChildIslandRoadmap === 'function') {
-        renderChildIslandRoadmap();
-      }
-      if (typeof renderParentActiveRoadmapList === 'function') {
-        renderParentActiveRoadmapList();
+      // 2. Phía Mẹ: CHỈ áp dụng nếu state này của đúng bé mẹ đang chọn xem
+      const isForParentActive = !stateKidId || (stateKidId === appState.parentSelectedKidId);
+      if (isForParentActive) {
+        if (Array.isArray(state.child_roadmap)) {
+          appState.parentChildRoadmap = state.child_roadmap;
+          appState.parentCurrentRoadmapIndex = state.current_roadmap_index || 0;
+          if (typeof renderParentActiveRoadmapList === 'function') {
+            renderParentActiveRoadmapList();
+          }
+        }
+        if (Array.isArray(state.child_routine_roadmap)) {
+          appState.parentChildRoutineRoadmap = state.child_routine_roadmap;
+          if (typeof renderParentRoutineAudit === 'function') {
+            renderParentRoutineAudit();
+          }
+        }
       }
     }
     if (typeof window !== 'undefined') { window.applyServerRoomState = applyServerRoomState; }
@@ -478,31 +600,52 @@
     }
 
     function registerMiloSyncSubscribers(bus) {
-      // 0. ROADMAP_UPDATED: Parent deletes/clears islands -> Child updates immediately
-      bus.subscribe('ROADMAP_UPDATED', (payload) => {
+      // 0. ROADMAP_UPDATED: Parent deletes/clears islands -> Child updates immediately if matches kid
+      bus.subscribe('ROADMAP_UPDATED', (payload, envelope) => {
         if (!payload) return;
+        const targetKid = payload.target_kid_id || payload.kid_id || (envelope && (envelope.target_kid_id || envelope.kid_id));
         const newRoadmap = Array.isArray(payload.roadmap) ? payload.roadmap : [];
-        appState.childRoadmap = newRoadmap;
-        appState.currentRoadmapIndex = (typeof payload.currentIdx === 'number') ? payload.currentIdx : 0;
-        appState.activeTask = appState.childRoadmap[appState.currentRoadmapIndex] || null;
-        appState.currentStepIndex = 0;
-        appState.roadmapCleared = (newRoadmap.length === 0);
-        if (appState.roadmapCleared) {
-          try { if (typeof localStorage !== 'undefined') localStorage.setItem('milo_roadmap_cleared', 'true'); } catch(_) {}
-        } else {
-          try { if (typeof localStorage !== 'undefined') localStorage.removeItem('milo_roadmap_cleared'); } catch(_) {}
+        const currentIdx = (typeof payload.currentIdx === 'number') ? payload.currentIdx : 0;
+
+        // Background cache update
+        if (targetKid && typeof appState !== 'undefined') {
+          if (!appState.childrenStates) appState.childrenStates = {};
+          if (!appState.childrenStates[targetKid]) appState.childrenStates[targetKid] = {};
+          appState.childrenStates[targetKid].child_roadmap = newRoadmap;
+          appState.childrenStates[targetKid].current_roadmap_index = currentIdx;
         }
-        if (typeof renderChildIslandRoadmap === 'function') {
-          renderChildIslandRoadmap();
+
+        // Parent View update
+        if (typeof appState !== 'undefined' && (!targetKid || targetKid === appState.parentSelectedKidId)) {
+          appState.parentChildRoadmap = newRoadmap;
+          appState.parentCurrentRoadmapIndex = currentIdx;
+          if (typeof renderParentActiveRoadmapList === 'function') {
+            renderParentActiveRoadmapList();
+          }
         }
-        if (typeof renderParentActiveRoadmapList === 'function') {
-          renderParentActiveRoadmapList();
+
+        // Child View update: ONLY IF this child device is logged into targetKid
+        const isForThisChild = typeof appState !== 'undefined' && (!targetKid || targetKid === appState.childDeviceKidId);
+        if (isForThisChild) {
+          appState.childRoadmap = newRoadmap;
+          appState.currentRoadmapIndex = currentIdx;
+          appState.activeTask = appState.childRoadmap[appState.currentRoadmapIndex] || null;
+          appState.currentStepIndex = 0;
+          appState.roadmapCleared = (newRoadmap.length === 0);
+          if (appState.roadmapCleared) {
+            try { if (typeof localStorage !== 'undefined') localStorage.setItem('milo_roadmap_cleared', 'true'); } catch(_) {}
+          } else {
+            try { if (typeof localStorage !== 'undefined') localStorage.removeItem('milo_roadmap_cleared'); } catch(_) {}
+          }
+          if (typeof renderChildIslandRoadmap === 'function') {
+            renderChildIslandRoadmap();
+          }
+          bus.savePersistedState(appState);
         }
-        bus.savePersistedState(appState);
       });
 
       // 1. TASK_ASSIGN_BATCH: Parent dispatches -> Child renders Island Roadmap
-      bus.subscribe('TASK_ASSIGN_BATCH', (payload) => {
+      bus.subscribe('TASK_ASSIGN_BATCH', (payload, envelope) => {
         if (!payload || !payload.tasks || !Array.isArray(payload.tasks) || payload.tasks.length === 0) return;
         const validBatch = payload.tasks.filter(t => (
           t &&
@@ -513,20 +656,60 @@
         ));
         if (validBatch.length === 0) return;
 
-        appState.childRoadmap = validBatch;
-        appState.currentRoadmapIndex = 0;
-        appState.activeTask = validBatch[0];
-        appState.currentStepIndex = 0;
+        const targetKid = payload.target_kid_id || payload.kid_id || (envelope && (envelope.target_kid_id || envelope.kid_id));
 
-        renderChildIslandRoadmap();
-        renderParentActiveRoadmapList();
-        childSwitchScreen('home');
-        bus.savePersistedState(appState);
-        showToast("Hải Trình Mới Sẵn Sàng!", `Mẹ vừa giao ${validBatch.length} đảo thử thách!`, "🏝️");
+        // Background cache update
+        if (targetKid && typeof appState !== 'undefined') {
+          if (!appState.childrenStates) appState.childrenStates = {};
+          if (!appState.childrenStates[targetKid]) appState.childrenStates[targetKid] = {};
+          appState.childrenStates[targetKid].child_roadmap = validBatch;
+          appState.childrenStates[targetKid].current_roadmap_index = 0;
+          appState.childrenStates[targetKid].current_step_index = 0;
+        }
+
+        // Parent View update
+        if (typeof appState !== 'undefined' && (!targetKid || targetKid === appState.parentSelectedKidId)) {
+          appState.parentChildRoadmap = validBatch;
+          appState.parentCurrentRoadmapIndex = 0;
+          if (typeof renderParentActiveRoadmapList === 'function') {
+            renderParentActiveRoadmapList();
+          }
+        }
+
+        // Child View update: ONLY IF this child device is logged into targetKid
+        const isForThisChild = typeof appState !== 'undefined' && (!targetKid || targetKid === appState.childDeviceKidId);
+        if (isForThisChild) {
+          appState.childRoadmap = validBatch;
+          appState.currentRoadmapIndex = 0;
+          appState.activeTask = validBatch[0];
+          appState.currentStepIndex = 0;
+          appState.roadmapCleared = false;
+          try { if (typeof localStorage !== 'undefined') localStorage.removeItem('milo_roadmap_cleared'); } catch(_) {}
+
+          if (typeof renderChildIslandRoadmap === 'function') {
+            renderChildIslandRoadmap();
+          }
+          if (typeof childSwitchScreen === 'function') {
+            childSwitchScreen('home');
+          }
+          bus.savePersistedState(appState);
+          if (typeof showToast === 'function') {
+            showToast("Hải Trình Mới Sẵn Sàng!", `Mẹ vừa giao ${validBatch.length} đảo thử thách!`, "🏝️");
+          }
+        }
       });
 
       // 2. STEP_TELEMETRY_UPDATE: Child updates step -> Parent telemetry bar updates
-      bus.subscribe('STEP_TELEMETRY_UPDATE', (payload) => {
+      bus.subscribe('STEP_TELEMETRY_UPDATE', (payload, envelope) => {
+        const sourceKid = (envelope && (envelope.sender_kid_id || envelope.kid_id)) || (payload && payload.kid_id);
+        if (typeof appState !== 'undefined' && appState.role === 'child' && sourceKid && sourceKid !== appState.childDeviceKidId) {
+          return;
+        }
+        if (typeof appState !== 'undefined' && (appState.role === 'parent' || appState.role === 'dual')) {
+          if (sourceKid && appState.parentSelectedKidId && sourceKid !== appState.parentSelectedKidId) {
+            return;
+          }
+        }
         const total = payload.totalSteps || (appState.activeTask ? appState.activeTask.steps.length : 3);
         const activeNum = (payload.stepIndex !== undefined ? payload.stepIndex + 1 : 1);
         renderParentTelemetryProgress(total, activeNum);
@@ -540,7 +723,26 @@
       });
 
       // 3. STEP_COMPLETED: Child finishes micro-step -> Parent progress updates
-      bus.subscribe('STEP_COMPLETED', (payload) => {
+      bus.subscribe('STEP_COMPLETED', (payload, envelope) => {
+        const sourceKid = (envelope && (envelope.sender_kid_id || envelope.kid_id)) || (payload && payload.kid_id);
+        
+        // On Child Device: Ignore other kids' completions
+        if (typeof appState !== 'undefined' && appState.role === 'child' && sourceKid && sourceKid !== appState.childDeviceKidId) {
+          return;
+        }
+
+        // On Parent Device:
+        if (typeof appState !== 'undefined' && (appState.role === 'parent' || appState.role === 'dual')) {
+          if (sourceKid && appState.parentSelectedKidId && sourceKid !== appState.parentSelectedKidId) {
+            const otherKid = (appState.childrenList || []).find(c => c.kid_id === sourceKid);
+            const otherName = otherKid ? otherKid.name : "Con";
+            if (typeof showToast === 'function') {
+              showToast(`⭐ ${otherName} hoàn thành bước!`, `+${payload.starsEarned || 40} ⭐`, "🦁");
+            }
+            return;
+          }
+        }
+
         if (payload.totalStarsNow !== undefined) {
           updateStarsEverywhere(payload.totalStarsNow);
         }
@@ -553,12 +755,20 @@
           badge.innerHTML = `⭐ Bước ${payload.stepIndex + 1} hoàn thành!`;
           badge.className = "inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full text-[10px] font-bold";
         }
-        if (appState.role === "parent" || appState.role === "dual") { showToast("Tiến Độ Cập Nhật", `Leo vừa hoàn thành bước ${payload.stepIndex + 1}! (+${payload.starsEarned || 40} ⭐)`, "⭐"); }
+        if (appState.role === "parent" || appState.role === "dual") {
+          const kidName = (appState.parentSelectedKidProfile && appState.parentSelectedKidProfile.name) || "Leo";
+          showToast("Tiến Độ Cập Nhật", `${kidName} vừa hoàn thành bước ${payload.stepIndex + 1}! (+${payload.starsEarned || 40} ⭐)`, "⭐");
+        }
       });
 
       // 4. ISLAND_COMPLETED: Whole island cleared
-      bus.subscribe('ISLAND_COMPLETED', (payload) => {
-        showToast("Đảo Đã Chinh Phục!", `Leo đã hoàn thành đảo: ${payload.islandTitle || 'Thành công'}!`, "🎉");
+      bus.subscribe('ISLAND_COMPLETED', (payload, envelope) => {
+        const sourceKid = (envelope && (envelope.sender_kid_id || envelope.kid_id)) || (payload && payload.kid_id);
+        if (typeof appState !== 'undefined' && appState.role === 'child' && sourceKid && sourceKid !== appState.childDeviceKidId) {
+          return;
+        }
+        const kidName = (sourceKid && (appState.childrenList || []).find(c => c.kid_id === sourceKid)?.name) || "Leo";
+        showToast("Đảo Đã Chinh Phục!", `${kidName} đã hoàn thành đảo: ${payload.islandTitle || 'Thành công'}!`, "🎉");
         const badge = document.getElementById('telemetry-status-badge');
         if (badge) {
           badge.innerHTML = "🎉 Vừa hoàn thành đảo!";
@@ -567,12 +777,20 @@
       });
 
       // 5. TREASURE_UNLOCKED: All islands completed
-      bus.subscribe('TREASURE_UNLOCKED', (payload) => {
+      bus.subscribe('TREASURE_UNLOCKED', (payload, envelope) => {
+        const sourceKid = (envelope && (envelope.sender_kid_id || envelope.kid_id)) || (payload && payload.kid_id);
+        if (typeof appState !== 'undefined' && appState.role === 'child' && sourceKid && sourceKid !== appState.childDeviceKidId) {
+          return;
+        }
         showToast("Rương Báu Hoàng Kim!", "Tất cả các đảo đã hoàn thành. Rương báu đã mở!", "👑");
       });
 
       // 6. TICKET_REDEEM_REQUEST: Child redeems ticket -> Parent banner alerts
-      bus.subscribe('TICKET_REDEEM_REQUEST', (payload) => {
+      bus.subscribe('TICKET_REDEEM_REQUEST', (payload, envelope) => {
+        const sourceKid = (envelope && (envelope.sender_kid_id || envelope.kid_id)) || (payload && payload.kid_id);
+        if (typeof appState !== 'undefined' && appState.role === 'child' && sourceKid && sourceKid !== appState.childDeviceKidId) {
+          return;
+        }
         appState.pendingTicket = payload;
         bus.savePersistedState(appState);
 
@@ -581,17 +799,22 @@
         const redDot = document.getElementById('p-reward-dot');
         const desc = document.getElementById('parent-ticket-desc');
 
+        const kidName = (sourceKid && (appState.childrenList || []).find(c => c.kid_id === sourceKid)?.name) || "Bé";
         if (banner) banner.classList.remove('hidden');
         if (doneBanner) doneBanner.classList.add('hidden');
         if (redDot) redDot.classList.remove('hidden');
-        if (desc) desc.innerText = `🎉 Leo vừa dùng ${payload.cost} ⭐ để đổi [Vé Vàng: ${payload.title}]!`;
+        if (desc) desc.innerText = `🎉 ${kidName} vừa dùng ${payload.cost} ⭐ để đổi [Vé Vàng: ${payload.title}]!`;
 
         playSfx('bell');
-        showToast("Yêu Cầu Vé Vàng", `Leo muốn đổi: ${payload.title} (${payload.cost} ⭐)`, "🎟️");
+        showToast("Yêu Cầu Vé Vàng", `${kidName} muốn đổi: ${payload.title} (${payload.cost} ⭐)`, "🎟️");
       });
 
       // 7. TICKET_APPROVAL_RESPONSE: Parent approves -> Child celebration modal fires!
-      bus.subscribe('TICKET_APPROVAL_RESPONSE', (payload) => {
+      bus.subscribe('TICKET_APPROVAL_RESPONSE', (payload, envelope) => {
+        const targetKid = payload.target_kid_id || payload.kid_id || (envelope && (envelope.target_kid_id || envelope.kid_id));
+        if (targetKid && typeof appState !== 'undefined' && targetKid !== appState.childDeviceKidId) {
+          return;
+        }
         if (payload.approved) {
           showChildTicketApprovedModal(payload.title, payload.praiseMessage);
           appState.pendingTicket = null;
@@ -600,7 +823,11 @@
       });
 
       // 8. MILO_RESCUE_TRIGGER: Child activates CBT breathing -> Parent coach updates
-      bus.subscribe('MILO_RESCUE_TRIGGER', (payload) => {
+      bus.subscribe('MILO_RESCUE_TRIGGER', (payload, envelope) => {
+        const sourceKid = (envelope && (envelope.sender_kid_id || envelope.kid_id)) || (payload && payload.kid_id);
+        if (typeof appState !== 'undefined' && appState.role === 'child' && sourceKid && sourceKid !== appState.childDeviceKidId) {
+          return;
+        }
         appState.pauseCount = payload.pauseCount || (appState.pauseCount + 1);
         const pCountEl = document.getElementById('telemetry-pause-count');
         if (pCountEl) {
@@ -610,11 +837,16 @@
         if (badge) {
           badge.innerHTML = "🔋 Tự giác Pause (CBT)";
         }
-        showToast("Milo Hỗ Trợ Cảm Xúc", "Bé Leo đang thực hiện bài tập thở bụng 4-4-4 cùng Milo.", "🌿");
+        const kidName = (sourceKid && (appState.childrenList || []).find(c => c.kid_id === sourceKid)?.name) || "Bé";
+        showToast("Milo Hỗ Trợ Cảm Xúc", `${kidName} đang thực hiện bài tập thở bụng 4-4-4 cùng Milo.`, "🌿");
       });
 
       // 9. PARENT_CHEER_SEND: Parent sends cheer -> Milo animation & bubble on Child screen
-      bus.subscribe('PARENT_CHEER_SEND', (payload) => {
+      bus.subscribe('PARENT_CHEER_SEND', (payload, envelope) => {
+        const targetKid = (payload && (payload.target_kid_id || payload.kid_id)) || (envelope && (envelope.target_kid_id || envelope.kid_id));
+        if (targetKid && typeof appState !== 'undefined' && targetKid !== appState.childDeviceKidId) {
+          return;
+        }
         playSfx('bell');
         const cheerMsg = (typeof payload === 'string' ? payload : (payload && (payload.cheerText || payload.message))) || "Mẹ rất tự hào về con!";
         const speechEl = document.getElementById('child-milo-speech');
@@ -631,17 +863,50 @@
       });
 
       // 10. STARS_SYNC: Bidirectional star balance synchronizer
-      bus.subscribe('STARS_SYNC', (payload) => {
-        if (payload.totalStars !== undefined && payload.totalStars !== appState.stars) {
-          appState.stars = payload.totalStars;
-          document.querySelectorAll('.sync-star-val').forEach(el => el.innerText = payload.totalStars);
-          bus.savePersistedState(appState);
+      bus.subscribe('STARS_SYNC', (payload, envelope) => {
+        if (!payload || payload.totalStars === undefined) return;
+        const targetKid = payload.target_kid_id || payload.kid_id || (envelope && (envelope.target_kid_id || envelope.kid_id));
+
+        if (targetKid && typeof appState !== 'undefined') {
+          if (!appState.childrenStates) appState.childrenStates = {};
+          if (!appState.childrenStates[targetKid]) appState.childrenStates[targetKid] = {};
+          appState.childrenStates[targetKid].stars = payload.totalStars;
+          if (appState.childrenData && appState.childrenData[targetKid]) {
+            appState.childrenData[targetKid].stars = payload.totalStars;
+          }
+        }
+
+        const isForThisChild = typeof appState !== 'undefined' && (!targetKid || targetKid === appState.childDeviceKidId);
+        if (isForThisChild) {
+          if (payload.totalStars !== appState.stars) {
+            appState.stars = payload.totalStars;
+            if (typeof updateStarsEverywhere === 'function') {
+              updateStarsEverywhere(payload.totalStars);
+            } else {
+              document.querySelectorAll('.sync-star-val').forEach(el => el.innerText = payload.totalStars);
+            }
+            bus.savePersistedState(appState);
+          }
+        }
+
+        if (typeof appState !== 'undefined' && (!targetKid || targetKid === appState.parentSelectedKidId)) {
+          if (appState.parentSelectedKidProfile) {
+            appState.parentSelectedKidProfile.stars = payload.totalStars;
+          }
+          if (typeof renderParentProfileCards === 'function') {
+            renderParentProfileCards();
+          }
         }
       });
 
       // 11. ROUTINE_PHOTO_SUBMITTED: Child completes photo proof -> Parent notification & gallery update
-      bus.subscribe('ROUTINE_PHOTO_SUBMITTED', (payload) => {
+      bus.subscribe('ROUTINE_PHOTO_SUBMITTED', (payload, envelope) => {
         if (!payload) return;
+        const sourceKid = (envelope && (envelope.sender_kid_id || envelope.kid_id)) || (payload && payload.kid_id);
+        if (typeof appState !== 'undefined' && appState.role === 'child' && sourceKid && sourceKid !== appState.childDeviceKidId) {
+          return;
+        }
+
         if (payload.routine_id) {
           if (!appState.completedRoutineIds) appState.completedRoutineIds = new Set();
           appState.completedRoutineIds.add(payload.routine_id);
@@ -649,8 +914,9 @@
           appState.routinePhotoProofs[payload.routine_id] = payload;
         }
 
+        const kidName = (sourceKid && (appState.childrenList || []).find(c => c.kid_id === sourceKid)?.name) || "Leo";
         if (typeof showToast === 'function') {
-          showToast("Minh Chứng Thói Quen", `Leo vừa hoàn thành [${payload.routine_title || 'Dọn dẹp'}] và lưu ảnh vào Nhật ký!`, "📷");
+          showToast("Minh Chứng Thói Quen", `${kidName} vừa hoàn thành [${payload.routine_title || 'Dọn dẹp'}] và lưu ảnh vào Nhật ký!`, "📷");
         }
         const dot = document.getElementById('p-routine-nav-dot');
         if (dot) dot.classList.remove('hidden');
@@ -667,15 +933,39 @@
       });
 
       // 12. ROUTINE_HEART_RECEIVED: Parent sends heart -> Child celebration
-      bus.subscribe('ROUTINE_HEART_RECEIVED', (payload) => {
+      bus.subscribe('ROUTINE_HEART_RECEIVED', (payload, envelope) => {
+        const targetKid = payload.target_kid_id || payload.kid_id || (envelope && (envelope.target_kid_id || envelope.kid_id));
+        if (targetKid && typeof appState !== 'undefined' && targetKid !== appState.childDeviceKidId) {
+          return;
+        }
         if (typeof triggerRoutineHeartCelebration === 'function') {
           triggerRoutineHeartCelebration(payload.praise_message || "Mẹ rất thích sự tự giác của con! Thưởng thêm +5⭐!");
         }
       });
 
       // 13. ROUTINE_ASSIGN_BATCH: Parent assigns routines -> Child routine island updates
-      bus.subscribe('ROUTINE_ASSIGN_BATCH', (payload) => {
-        if (payload && Array.isArray(payload.routines)) {
+      bus.subscribe('ROUTINE_ASSIGN_BATCH', (payload, envelope) => {
+        if (!payload || !Array.isArray(payload.routines)) return;
+        const targetKid = payload.target_kid_id || payload.kid_id || (envelope && (envelope.target_kid_id || envelope.kid_id));
+
+        // Background cache update
+        if (targetKid && typeof appState !== 'undefined') {
+          if (!appState.childrenStates) appState.childrenStates = {};
+          if (!appState.childrenStates[targetKid]) appState.childrenStates[targetKid] = {};
+          appState.childrenStates[targetKid].child_routine_roadmap = payload.routines;
+        }
+
+        // Parent View update
+        if (typeof appState !== 'undefined' && (!targetKid || targetKid === appState.parentSelectedKidId)) {
+          appState.parentChildRoutineRoadmap = payload.routines;
+          appState.selectedRoutineIds = new Set(payload.routines.map(r => r.id).filter(Boolean));
+          if (typeof renderParentRoutineAudit === 'function') renderParentRoutineAudit();
+          if (typeof renderParentRoutinesCatalog === 'function') renderParentRoutinesCatalog();
+        }
+
+        // Child View update: ONLY IF this child device is logged into targetKid
+        const isForThisChild = typeof appState !== 'undefined' && (!targetKid || targetKid === appState.childDeviceKidId);
+        if (isForThisChild) {
           appState.childRoutineRoadmap = payload.routines;
           appState.routineCleared = (payload.routines.length === 0);
           if (payload.routines.length > 0) {
@@ -699,8 +989,6 @@
           if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
             window.renderChildRoutineRoadmapFromTasks(payload.routines);
           }
-
-          // Nút CTA đáy được renderChildRoutineRoadmapFromTasks quản lý động chính xác
 
           if (typeof bus.savePersistedState === 'function') {
             bus.savePersistedState(appState);

@@ -3,7 +3,7 @@ window.UNLOCK_ALL_ROUTINES = false;
    MODULE: ISLAND QUEST ROADMAP & S-CURVE BÉZIER TRAIL
    ============================================================ */
     function renderChildIslandRoadmap() {
-      const rawRoadmap = Array.isArray(appState.childRoadmap) ? appState.childRoadmap : [];
+      const rawRoadmap = (appState.parentChildRoadmap && appState.parentChildRoadmap.length > 0) ? appState.parentChildRoadmap : (Array.isArray(appState.childRoadmap) ? appState.childRoadmap : []);
       const roadmap = rawRoadmap.filter(t => t && typeof t === 'object' && t.id && Array.isArray(t.steps) && t.steps.length > 0);
       const totalIslands = roadmap.length;
       const isAllCompleted = (totalIslands > 0 && appState.currentRoadmapIndex >= totalIslands);
@@ -306,7 +306,7 @@ window.UNLOCK_ALL_ROUTINES = false;
       appState.cleanedItems.clear();
       appState.numpadValue = "";
 
-      const rawRoadmap = Array.isArray(appState.childRoadmap) ? appState.childRoadmap : [];
+      const rawRoadmap = (appState.parentChildRoadmap && appState.parentChildRoadmap.length > 0) ? appState.parentChildRoadmap : (Array.isArray(appState.childRoadmap) ? appState.childRoadmap : []);
       const curIdx = Math.max(0, Math.min(appState.currentRoadmapIndex || 0, Math.max(0, rawRoadmap.length - 1)));
       const task = appState.activeTask || rawRoadmap[curIdx] || taskDatabase['G1_MATH_01'];
       appState.activeTask = task;
@@ -350,11 +350,12 @@ window.UNLOCK_ALL_ROUTINES = false;
       if (mode === 'routines') {
         // --- CHẾ ĐỘ SINH HOẠT (ROUTINES) ---
         if (titleEl) titleEl.innerText = "Lộ Trình Thói Quen Đang Chinh Phục";
-        if (subEl) subEl.innerText = "Các nề nếp sinh hoạt đang hiển thị trên Đảo Thói Quen của Leo";
+        const currentKidName = (appState.parentSelectedKidProfile && appState.parentSelectedKidProfile.name) || 'bé';
+        if (subEl) subEl.innerText = `Các nề nếp sinh hoạt đang hiển thị trên Đảo Thói Quen của ${currentKidName}`;
         if (iconEl) iconEl.innerText = "🌟";
 
         const routinesDb = window.routineDatabase || {};
-        let routineList = appState.childRoutineRoadmap;
+        let routineList = (appState.parentChildRoutineRoadmap && appState.parentChildRoutineRoadmap.length > 0) ? appState.parentChildRoutineRoadmap : appState.childRoutineRoadmap;
         if (routineList === undefined || routineList === null) {
           routineList = [
             routinesDb['routine_morning_bed'],
@@ -433,10 +434,11 @@ window.UNLOCK_ALL_ROUTINES = false;
       } else {
         // --- CHẾ ĐỘ BÀI TẬP GDPT (CATALOG / CUSTOM) ---
         if (titleEl) titleEl.innerText = "Hải Trình Đang Chinh Phục";
-        if (subEl) subEl.innerText = "Các hòn đảo bài tập đang hiển thị trên Đảo Học Tập của Leo";
+        const currentKidName = (appState.parentSelectedKidProfile && appState.parentSelectedKidProfile.name) || 'bé';
+        if (subEl) subEl.innerText = `Các hòn đảo bài tập đang hiển thị trên Đảo Học Tập của ${currentKidName}`;
         if (iconEl) iconEl.innerText = "🏝️";
 
-        const rawRoadmap = Array.isArray(appState.childRoadmap) ? appState.childRoadmap : [];
+        const rawRoadmap = (appState.parentChildRoadmap && appState.parentChildRoadmap.length > 0) ? appState.parentChildRoadmap : (Array.isArray(appState.childRoadmap) ? appState.childRoadmap : []);
         const roadmap = rawRoadmap.filter(t => t && typeof t === 'object' && t.id);
         if (badge) {
           badge.innerText = `${roadmap.length} đảo`;
@@ -493,36 +495,62 @@ window.UNLOCK_ALL_ROUTINES = false;
 
     function parentRemoveRoadmapTask(index) {
       playSfx('tap');
-      if (!Array.isArray(appState.childRoadmap) || index < 0 || index >= appState.childRoadmap.length) return;
-      const removed = appState.childRoadmap.splice(index, 1)[0];
+      const kidId = appState.parentSelectedKidId || 'kid_leo_01';
+      const currentKid = appState.parentSelectedKidProfile || { name: 'Bé' };
+      
+      const roadmapToEdit = Array.isArray(appState.parentChildRoadmap) ? appState.parentChildRoadmap : appState.childRoadmap;
+      if (!Array.isArray(roadmapToEdit) || index < 0 || index >= roadmapToEdit.length) return;
+      const removed = roadmapToEdit.splice(index, 1)[0];
 
-      if (appState.childRoadmap.length === 0) {
-        appState.currentRoadmapIndex = 0;
-        appState.activeTask = null;
-      } else {
-        if (appState.currentRoadmapIndex >= appState.childRoadmap.length) {
-          appState.currentRoadmapIndex = appState.childRoadmap.length - 1;
-        }
-        appState.activeTask = appState.childRoadmap[appState.currentRoadmapIndex];
+      if (roadmapToEdit.length === 0) {
+        appState.parentCurrentRoadmapIndex = 0;
+      } else if (appState.parentCurrentRoadmapIndex >= roadmapToEdit.length) {
+        appState.parentCurrentRoadmapIndex = roadmapToEdit.length - 1;
+      }
+      appState.parentChildRoadmap = roadmapToEdit;
+
+      if (appState.childDeviceKidId === kidId) {
+        appState.childRoadmap = roadmapToEdit;
+        appState.currentRoadmapIndex = appState.parentCurrentRoadmapIndex;
+        appState.activeTask = appState.childRoadmap[appState.currentRoadmapIndex] || null;
+        if (typeof renderChildIslandRoadmap === 'function') renderChildIslandRoadmap();
       }
 
       if (window.miloBus) {
         window.miloBus.savePersistedState(appState);
         window.miloBus.broadcast('ROADMAP_UPDATED', {
-          roadmap: appState.childRoadmap,
-          currentIdx: appState.currentRoadmapIndex
+          target_kid_id: kidId,
+          kid_id: kidId,
+          roadmap: roadmapToEdit,
+          currentIdx: appState.parentCurrentRoadmapIndex
         });
       }
 
+      try {
+        fetch(`/api/child/${kidId}/state`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            child_roadmap: roadmapToEdit,
+            current_roadmap_index: appState.parentCurrentRoadmapIndex
+          })
+        });
+      } catch (_) {}
+
       renderParentActiveRoadmapList();
-      renderChildIslandRoadmap();
-      showToast("Đã Xóa Đảo", `Đã gỡ [${removed ? removed.title : 'Đảo'}] khỏi hải trình của Leo!`, "🗑️");
+      showToast("Đã Xóa Đảo", `Đã gỡ [${removed ? removed.title : 'Đảo'}] khỏi hải trình của ${currentKid.name}!`, "🗑️");
     }
 
     function parentRemoveRoutineTask(index) {
       playSfx('tap');
-      if (!Array.isArray(appState.childRoutineRoadmap) || index < 0 || index >= appState.childRoutineRoadmap.length) return;
-      const removed = appState.childRoutineRoadmap.splice(index, 1)[0];
+      const kidId = appState.parentSelectedKidId || 'kid_leo_01';
+      const currentKid = appState.parentSelectedKidProfile || { name: 'Bé' };
+
+      const routinesToEdit = Array.isArray(appState.parentChildRoutineRoadmap) && appState.parentChildRoutineRoadmap.length > 0
+        ? appState.parentChildRoutineRoadmap
+        : appState.childRoutineRoadmap;
+      if (!Array.isArray(routinesToEdit) || index < 0 || index >= routinesToEdit.length) return;
+      const removed = routinesToEdit.splice(index, 1)[0];
 
       if (removed && removed.id) {
         if (appState.selectedRoutineIds) {
@@ -538,10 +566,20 @@ window.UNLOCK_ALL_ROUTINES = false;
         if (typeof renderParentRoutinesCatalog === 'function') renderParentRoutinesCatalog();
       }
 
+      appState.parentChildRoutineRoadmap = routinesToEdit;
+      if (appState.childDeviceKidId === kidId) {
+        appState.childRoutineRoadmap = routinesToEdit;
+        if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
+          window.renderChildRoutineRoadmapFromTasks(appState.childRoutineRoadmap);
+        }
+      }
+
       const bus = window.miloBus || window.syncBus;
       if (bus && typeof bus.broadcast === 'function') {
         bus.broadcast('ROUTINE_ASSIGN_BATCH', {
-          routines: appState.childRoutineRoadmap,
+          target_kid_id: kidId,
+          kid_id: kidId,
+          routines: routinesToEdit,
           timestamp: Date.now()
         });
       }
@@ -549,12 +587,18 @@ window.UNLOCK_ALL_ROUTINES = false;
         bus.savePersistedState(appState);
       }
 
-      if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
-        window.renderChildRoutineRoadmapFromTasks(appState.childRoutineRoadmap);
-      }
+      try {
+        fetch(`/api/child/${kidId}/state`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            routines: routinesToEdit
+          })
+        });
+      } catch (_) {}
 
       renderParentActiveRoadmapList();
-      showToast("Đã Xóa Thói Quen", `Đã gỡ [${removed ? removed.title : 'Thói quen'}] khỏi Đảo Thói Quen của Leo!`, "🗑️");
+      showToast("Đã Xóa Thói Quen", `Đã gỡ [${removed ? removed.title : 'Thói quen'}] khỏi Đảo Thói Quen của ${currentKid.name}!`, "🗑️");
     }
 
     function parentClearRoutinesOnly() {
@@ -562,18 +606,34 @@ window.UNLOCK_ALL_ROUTINES = false;
       if (!confirm("Ba mẹ có chắc muốn xóa sạch toàn bộ các thói quen trên Đảo Thói Quen của con để giao lại từ đầu không?")) {
         return;
       }
+      const kidId = appState.parentSelectedKidId || 'kid_leo_01';
+      const currentKid = appState.parentSelectedKidProfile || { name: 'Bé' };
 
-      appState.childRoutineRoadmap = [];
-      appState.routineCleared = true;
-      try { if (typeof localStorage !== 'undefined') localStorage.setItem('milo_routine_cleared', 'true'); } catch(_) {}
+      appState.parentChildRoutineRoadmap = [];
+      if (appState.childDeviceKidId === kidId) {
+        appState.childRoutineRoadmap = [];
+        appState.routineCleared = true;
+        try { if (typeof localStorage !== 'undefined') localStorage.setItem('milo_routine_cleared', 'true'); } catch(_) {}
 
-      appState.completedRoutineIds = new Set();
-      appState.routinePhotoProofs = {};
-      appState.selectedActiveRoutineId = null;
-      appState.currentRoutineIndex = 0;
+        appState.completedRoutineIds = new Set();
+        appState.routinePhotoProofs = {};
+        appState.selectedActiveRoutineId = null;
+        appState.currentRoutineIndex = 0;
 
-      if (appState.activeTask && appState.activeTask.cat === 'routine') {
-        appState.activeTask = null;
+        if (appState.activeTask && appState.activeTask.cat === 'routine') {
+          appState.activeTask = null;
+        }
+
+        if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
+          window.renderChildRoutineRoadmapFromTasks([]);
+        }
+
+        const counter = document.getElementById('child-roadmap-counter');
+        const routineBtn = document.getElementById('child-tab-routine-btn');
+        const isRoutineTab = routineBtn && routineBtn.classList.contains('bg-amber-400');
+        if (counter && isRoutineTab) {
+          counter.innerHTML = `<span class="text-slate-500 font-bold">Đảo thói quen trống (0 nề nếp)</span>`;
+        }
       }
 
       if (appState.selectedRoutineIds) {
@@ -585,6 +645,8 @@ window.UNLOCK_ALL_ROUTINES = false;
       const bus = window.miloBus || window.syncBus;
       if (bus && typeof bus.broadcast === 'function') {
         bus.broadcast('ROUTINE_ASSIGN_BATCH', {
+          target_kid_id: kidId,
+          kid_id: kidId,
           routines: [],
           timestamp: Date.now()
         });
@@ -593,19 +655,20 @@ window.UNLOCK_ALL_ROUTINES = false;
         bus.savePersistedState(appState);
       }
 
-      if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
-        window.renderChildRoutineRoadmapFromTasks([]);
-      }
-
-      const counter = document.getElementById('child-roadmap-counter');
-      const routineBtn = document.getElementById('child-tab-routine-btn');
-      const isRoutineTab = routineBtn && routineBtn.classList.contains('bg-amber-400');
-      if (counter && isRoutineTab) {
-        counter.innerHTML = `<span class="text-slate-500 font-bold">Đảo thói quen trống (0 nề nếp)</span>`;
-      }
+      try {
+        fetch(`/api/child/${kidId}/state`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            routines: [],
+            completed_routine_ids: [],
+            photo_proofs: {}
+          })
+        });
+      } catch (_) {}
 
       renderParentActiveRoadmapList();
-      showToast("Đã Xóa Sạch Thói Quen", "Toàn bộ thói quen đã được xóa sạch trên cả hai máy! Hãy giao nề nếp mới cho bé nhé.", "🗑️");
+      showToast("Đã Xóa Sạch Thói Quen", `Toàn bộ thói quen của ${currentKid.name} đã được xóa sạch! Hãy giao nề nếp mới cho bé nhé.`, "🗑️");
     }
 
     function parentClearChildRoadmap() {
@@ -615,34 +678,57 @@ window.UNLOCK_ALL_ROUTINES = false;
       if (mode === 'routines') {
         parentClearRoutinesOnly();
       } else {
-        if (!Array.isArray(appState.childRoadmap) || appState.childRoadmap.length === 0) {
+        const kidId = appState.parentSelectedKidId || 'kid_leo_01';
+        const currentKid = appState.parentSelectedKidProfile || { name: 'Bé' };
+        const currentList = Array.isArray(appState.parentChildRoadmap) ? appState.parentChildRoadmap : appState.childRoadmap;
+
+        if (!Array.isArray(currentList) || currentList.length === 0) {
           showToast("Hải Trình Trống", "Hải trình của con hiện đang trống!", "ℹ️");
           return;
         }
 
-        if (!confirm("Ba mẹ có chắc muốn xóa sạch toàn bộ các hòn đảo trên máy con để giao lại từ đầu không?")) {
+        if (!confirm(`Ba mẹ có chắc muốn xóa sạch toàn bộ các hòn đảo của ${currentKid.name} để giao lại từ đầu không?`)) {
           return;
         }
 
-        appState.childRoadmap = [];
-        appState.roadmapCleared = true;
-        try { if (typeof localStorage !== 'undefined') localStorage.setItem('milo_roadmap_cleared', 'true'); } catch(_) {}
+        appState.parentChildRoadmap = [];
+        appState.parentCurrentRoadmapIndex = 0;
 
-        appState.currentRoadmapIndex = 0;
-        appState.activeTask = null;
-        appState.currentStepIndex = 0;
+        if (appState.childDeviceKidId === kidId) {
+          appState.childRoadmap = [];
+          appState.roadmapCleared = true;
+          try { if (typeof localStorage !== 'undefined') localStorage.setItem('milo_roadmap_cleared', 'true'); } catch(_) {}
+
+          appState.currentRoadmapIndex = 0;
+          appState.activeTask = null;
+          appState.currentStepIndex = 0;
+          renderChildIslandRoadmap();
+        }
 
         if (window.miloBus) {
           window.miloBus.savePersistedState(appState);
           window.miloBus.broadcast('ROADMAP_UPDATED', {
+            target_kid_id: kidId,
+            kid_id: kidId,
             roadmap: [],
             currentIdx: 0
           });
         }
 
+        try {
+          fetch(`/api/child/${kidId}/state`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              child_roadmap: [],
+              current_roadmap_index: 0,
+              current_step_index: 0
+            })
+          });
+        } catch (_) {}
+
         renderParentActiveRoadmapList();
-        renderChildIslandRoadmap();
-        showToast("Đã Làm Mới Hải Trình", "Toàn bộ đảo đã được xóa sạch! Hãy giao bài mới cho bé nhé.", "✨");
+        showToast("Đã Làm Mới Hải Trình", `Toàn bộ đảo của ${currentKid.name} đã được xóa sạch! Hãy giao bài mới cho bé nhé.`, "✨");
       }
     }
 

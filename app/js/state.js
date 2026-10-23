@@ -133,14 +133,45 @@
 
     var appState = window.appState = {
       role: 'dual', // 'dual', 'child', 'parent'
+      familyId: 'family_room_milo_01',
+      
+      // Decoupled Identity: Máy Con độc lập với Mẹ chọn xem
+      childDeviceKidId: (typeof localStorage !== 'undefined' && (localStorage.getItem('milo_child_device_kid_id') || localStorage.getItem('milo_active_kid_id'))) || 'kid_leo_01',
+      parentSelectedKidId: (typeof localStorage !== 'undefined' && localStorage.getItem('milo_parent_selected_kid_id')) || 'kid_leo_01',
+      
+      get activeChildId() {
+        return (this.role === 'child') ? this.childDeviceKidId : this.parentSelectedKidId;
+      },
+      set activeChildId(id) {
+        if (this.role === 'child') {
+          this.childDeviceKidId = id;
+        } else {
+          this.parentSelectedKidId = id;
+        }
+      },
+      
+      childrenList: [],
+      childrenData: {},
+      childrenStates: {}, // Cache riêng từng bé: { roadmap, routineRoadmap, selectedCatalogIds, selectedRoutineIds, stars }
+
+      childDeviceProfile: { kid_id: 'kid_leo_01', name: 'Bé Leo', grade: 1, avatar: '🦁', stars: 450, pairing_code: '729-184' },
+      parentSelectedKidProfile: { kid_id: 'kid_leo_01', name: 'Bé Leo', grade: 1, avatar: '🦁', stars: 450, pairing_code: '729-184' },
+      
+      get currentKidProfile() { return this.childDeviceProfile; },
+      set currentKidProfile(p) { this.childDeviceProfile = p; },
+
       stars: 450,
       cognitiveProfile: loadStoredCognitiveProfile(),
       surveyAnswers: null,
       
-      // Lộ Trình Đảo Nhiệm Vụ của Bé (Dynamic Island Quest Roadmap)
+      // Lộ Trình Đảo Nhiệm Vụ của Bé (Dynamic Island Quest Roadmap - Máy Con)
       childRoadmap: [taskDatabase['G1_MATH_01'], taskDatabase['G1_VIET_03'], taskDatabase['G1_MCQ_04']],
       currentRoadmapIndex: 0,
       
+      // Lộ trình hiển thị bên máy Mẹ cho bé đang chọn
+      parentChildRoadmap: [taskDatabase['G1_MATH_01'], taskDatabase['G1_VIET_03'], taskDatabase['G1_MCQ_04']],
+      parentCurrentRoadmapIndex: 0,
+
       // Task đang giải quyết trong Focus Cockpit
       activeTask: taskDatabase['G1_MATH_01'],
       currentStepIndex: 0,
@@ -157,17 +188,20 @@
       // Parent Batch Selection State
       selectedCatalogIds: new Set([]),
       catalogFilter: 'all',
-      gradeFilter: 'all',
+      gradeFilter: 'current_kid',
       modalTaskKey: 'G1_MATH_01',
       pendingTicket: null,
 
-      // Lộ Trình Đảo Nhiệm Vụ Sinh Hoạt của Bé (Dedicated Daily Routines)
+      // Lộ Trình Đảo Nhiệm Vụ Sinh Hoạt của Bé (Dedicated Daily Routines - Máy Con)
       childRoutineRoadmap: (function() {
         const isCleared = typeof localStorage !== 'undefined' && localStorage.getItem('milo_routine_cleared') === 'true';
         if (isCleared) return [];
         const ids = ['routine_morning_bed', 'routine_afterschool_drop', 'routine_clean_desk', 'routine_night_teeth'];
         return ids.map(id => routineDatabase[id]).filter(Boolean);
       })(),
+      // Lộ trình thói quen bên máy Mẹ cho bé đang chọn
+      parentChildRoutineRoadmap: [],
+      
       selectedRoutineIds: new Set(['routine_morning_bed', 'routine_afterschool_drop', 'routine_clean_desk', 'routine_night_teeth']),
       completedRoutineIds: new Set(),
       routinePhotoProofs: {},
@@ -191,6 +225,266 @@
     let breathingSecondsLeft = 4;
     let breathingCycleCount = 1;
 
+    /* ============================================================
+       B2. MULTI-CHILD MANAGEMENT & DYNAMIC STATE HYDRATION
+       ============================================================ */
+    async function fetchChildrenList() {
+      if (typeof fetch === 'undefined') return;
+      try {
+        const res = await fetch('/api/parent/children?parent_id=parent_lan_01');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.children) && data.children.length > 0) {
+            appState.childrenList = data.children;
+            data.children.forEach(c => {
+              appState.childrenData[c.kid_id] = c;
+            });
+
+            // Gán profile máy con
+            const childDev = data.children.find(c => c.kid_id === appState.childDeviceKidId) || data.children[0];
+            if (childDev) {
+              appState.childDeviceKidId = childDev.kid_id;
+              appState.childDeviceProfile = childDev;
+            }
+
+            // Gán profile mẹ đang chọn
+            const parentActive = data.children.find(c => c.kid_id === appState.parentSelectedKidId) || data.children[0];
+            if (parentActive) {
+              appState.parentSelectedKidId = parentActive.kid_id;
+              appState.parentSelectedKidProfile = parentActive;
+            }
+
+            if (typeof renderParentProfileCards === 'function') {
+              renderParentProfileCards();
+            }
+            if (typeof updateChildProfileDisplay === 'function') {
+              updateChildProfileDisplay();
+            }
+            if (typeof updateParentActiveChildBadge === 'function') {
+              updateParentActiveChildBadge();
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Cannot fetch children list from API:', err);
+      }
+    }
+    // Auto-fetch on boot
+    fetchChildrenList();
+
+    /* ------------------------------------------------------------
+       PARENT ACTION: Mẹ bấm chuyển xem / quản lý bé (CHỈ ĐỔI VIEW MẸ)
+       TUYỆT ĐỐI KHÔNG làm nhảy màn hình hay đổi máy con!
+       ------------------------------------------------------------ */
+    async function parentSelectChild(targetKidId) {
+      if (!targetKidId) return;
+      appState.parentSelectedKidId = targetKidId;
+      try {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('milo_parent_selected_kid_id', targetKidId);
+        }
+      } catch (e) {}
+
+      // Lấy thông tin bé
+      const child = (appState.childrenList || []).find(c => c.kid_id === targetKidId) || appState.childrenData[targetKidId] || {
+        kid_id: targetKidId,
+        name: targetKidId === 'kid_minh_02' ? 'Bé Minh' : 'Bé Leo',
+        grade: targetKidId === 'kid_minh_02' ? 3 : 1,
+        avatar: targetKidId === 'kid_minh_02' ? '🐯' : '🦁',
+        stars: targetKidId === 'kid_minh_02' ? 320 : 450
+      };
+      appState.parentSelectedKidProfile = child;
+
+      // 1. Tự động đồng bộ bộ lọc khối lớp kho GDPT sang lớp của bé mẹ đang chọn
+      if (typeof parentFilterGrade === 'function') {
+        parentFilterGrade('current_kid');
+      }
+
+      // 2. Fetch dữ liệu tiến độ & thói quen từ SQLite bền vững của bé này
+      try {
+        const res = await fetch(`/api/child/${targetKidId}/state`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data) {
+            appState.childrenStates[targetKidId] = data;
+            if (Array.isArray(data.child_roadmap)) {
+              appState.parentChildRoadmap = data.child_roadmap;
+              appState.parentCurrentRoadmapIndex = data.current_roadmap_index || 0;
+            } else {
+              appState.parentChildRoadmap = [];
+            }
+            if (Array.isArray(data.child_routine_roadmap)) {
+              appState.parentChildRoutineRoadmap = data.child_routine_roadmap;
+              // Khôi phục tick thói quen tương ứng của bé này
+              appState.selectedRoutineIds = new Set(data.child_routine_roadmap.map(r => r.id).filter(Boolean));
+            } else {
+              appState.parentChildRoutineRoadmap = [];
+              appState.selectedRoutineIds = new Set();
+            }
+          }
+        }
+      } catch (err) {
+        console.warn(`Lỗi tải dữ liệu cho bé ${targetKidId}:`, err);
+      }
+
+      // 3. Cập nhật TOÀN BỘ giao diện phía Mẹ
+      if (typeof updateParentActiveChildBadge === 'function') updateParentActiveChildBadge();
+      if (typeof renderParentProfileCards === 'function') renderParentProfileCards();
+      if (typeof renderParentActiveRoadmapList === 'function') renderParentActiveRoadmapList();
+      if (typeof renderParentAuditTimeline === 'function') renderParentAuditTimeline();
+      if (typeof renderParentRoutinesCatalog === 'function') renderParentRoutinesCatalog();
+      if (typeof renderParentCatalogList === 'function') renderParentCatalogList();
+
+      if (typeof showToast === 'function') {
+        showToast("Giám Sát Bé", `Đang xem tiến độ của ${child.avatar} ${child.name} (Lớp ${child.grade})`, "👩‍👧");
+      }
+    }
+
+    /* ------------------------------------------------------------
+       CHILD ACTION: Đăng nhập / Ghép nối mã PIN trên MÁY CON
+       Chỉ chạy khi bé nhập mã PIN 6 số trên điện thoại con
+       ------------------------------------------------------------ */
+    async function loginChildDevice(targetKidId) {
+      if (!targetKidId) return;
+      appState.childDeviceKidId = targetKidId;
+      try {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('milo_child_device_kid_id', targetKidId);
+          localStorage.setItem('milo_active_kid_id', targetKidId);
+        }
+      } catch (e) {}
+
+      // Update sync bus kidId and reconnect WS for new kid
+      if (window.miloBus) {
+        window.miloBus.kidId = targetKidId;
+        if (typeof window.miloBus.reconnectWithKid === 'function') {
+          window.miloBus.reconnectWithKid(targetKidId);
+        }
+      }
+
+      const child = (appState.childrenList || []).find(c => c.kid_id === targetKidId) || appState.childrenData[targetKidId] || {
+        kid_id: targetKidId,
+        name: targetKidId === 'kid_minh_02' ? 'Bé Minh' : 'Bé Leo',
+        grade: targetKidId === 'kid_minh_02' ? 3 : 1,
+        avatar: targetKidId === 'kid_minh_02' ? '🐯' : '🦁',
+        stars: targetKidId === 'kid_minh_02' ? 320 : 450,
+        pairing_code: targetKidId === 'kid_minh_02' ? '852-369' : '729-184'
+      };
+      appState.childDeviceProfile = child;
+
+      // Fetch state từ SQLite cho máy con
+      try {
+        const res = await fetch(`/api/child/${targetKidId}/state`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data) {
+            if (typeof data.stars === 'number') {
+              updateStarsEverywhere(data.stars);
+            }
+            if (Array.isArray(data.child_roadmap)) {
+              appState.childRoadmap = data.child_roadmap;
+              appState.currentRoadmapIndex = data.current_roadmap_index || 0;
+              appState.currentStepIndex = data.current_step_index || 0;
+              appState.activeTask = (appState.childRoadmap && appState.childRoadmap[appState.currentRoadmapIndex]) || null;
+            }
+            if (Array.isArray(data.child_routine_roadmap)) {
+              appState.childRoutineRoadmap = data.child_routine_roadmap;
+            }
+            if (data.routine_photo_proofs) {
+              appState.routinePhotoProofs = data.routine_photo_proofs;
+            }
+            if (data.profile && data.profile.cognitive_profile) {
+              appState.cognitiveProfile = data.profile.cognitive_profile;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn(`Lỗi tải dữ liệu máy con cho ${targetKidId}:`, err);
+      }
+
+      // Reset step interaction cache
+      if (appState.selectedClues && typeof appState.selectedClues.clear === 'function') appState.selectedClues.clear();
+      if (appState.cleanedItems && typeof appState.cleanedItems.clear === 'function') appState.cleanedItems.clear();
+
+      // Cập nhật giao diện MÁY CON
+      if (typeof updateChildProfileDisplay === 'function') updateChildProfileDisplay();
+      if (typeof renderChildIslandRoadmap === 'function') renderChildIslandRoadmap();
+      if (typeof renderChildRoutineRoadmapFromTasks === 'function') renderChildRoutineRoadmapFromTasks(appState.childRoutineRoadmap);
+
+      // Báo lên sync bus cho mẹ biết máy con vừa đăng nhập
+      if (window.miloBus && typeof window.miloBus.broadcast === 'function') {
+        window.miloBus.broadcast('CHILD_DEVICE_LOGGED_IN', {
+          kid_id: targetKidId,
+          child_name: child.name,
+          avatar: child.avatar,
+          grade: child.grade
+        });
+      }
+
+      if (typeof showToast === 'function') {
+        showToast("Đăng Nhập Thành Công! 🚀", `Chào mừng ${child.avatar} ${child.name} (Lớp ${child.grade}) sẵn sàng săn vé vàng!`, "🎉");
+      }
+    }
+
+    // Alias tương thích ngược
+    async function switchActiveChild(targetKidId, skipRemote = false) {
+      if (appState.role === 'parent') {
+        await parentSelectChild(targetKidId);
+      } else {
+        await loginChildDevice(targetKidId);
+      }
+    }
+
+    function updateChildProfileDisplay() {
+      const child = appState.childDeviceProfile || { name: 'Bé Leo', grade: 1, avatar: '🦁', pairing_code: '729-184' };
+      
+      // Update Child device elements
+      const nameEls = document.querySelectorAll('.child-profile-name');
+      nameEls.forEach(el => el.innerText = child.name);
+      
+      const gradeEls = document.querySelectorAll('.child-profile-grade');
+      gradeEls.forEach(el => el.innerText = `Lớp ${child.grade}`);
+      
+      const avatarEls = document.querySelectorAll('.child-profile-avatar');
+      avatarEls.forEach(el => el.innerText = child.avatar || '🦁');
+
+      const pinEl = document.getElementById('child-sheet-pin');
+      if (pinEl) pinEl.innerText = child.pairing_code || "729-184";
+
+      // Update label in Top Presentation Bar
+      const roleText = document.getElementById('header-role-text');
+      if (roleText && appState.role === 'child') {
+        roleText.innerText = `Hồ sơ: ${child.name} (Máy Con)`;
+      }
+    }
+
+    function updateParentActiveChildBadge() {
+      const child = appState.parentSelectedKidProfile || { name: 'Bé Leo', grade: 1, avatar: '🦁', stars: 450 };
+      const parentBadge = document.getElementById('parent-active-child-badge');
+      if (parentBadge) {
+        parentBadge.innerHTML = `<span class="text-sm">${child.avatar || '🦁'}</span> <span class="font-bold text-xs">${child.name} (Lớp ${child.grade || 1})</span>`;
+      }
+
+      // Cập nhật Top bar Mẹ thành "Giám Sát Bé [Tên]"
+      const parentAvatar = document.getElementById('parent-header-avatar');
+      if (parentAvatar) {
+        parentAvatar.innerText = child.avatar || '🦁';
+      }
+      const parentTitle = document.getElementById('parent-header-title');
+      if (parentTitle) {
+        parentTitle.innerText = `Giám Sát ${child.name || 'Bé'}`;
+      }
+      const parentSubtitle = document.getElementById('parent-header-subtitle');
+      if (parentSubtitle) {
+        parentSubtitle.innerText = `Hồ sơ Lớp ${child.grade || 1} • Bấm để đổi bé ▾`;
+      }
+
+      // Cập nhật số sao hiển thị trên top bar mẹ theo đúng sao của bé đang được chọn
+      const parentStarElem = document.querySelector('#parent-screen-container .sync-star-val');
+      if (parentStarElem && child.stars !== undefined) {
+        parentStarElem.innerText = child.stars;
+      }
+    }
 
     /* ============================================================
        C. PROFILE SWITCHER / MOCK LOGIN (LUỒNG ĐĂNG NHẬP GIẢ LẬP)
@@ -333,4 +627,10 @@ if (typeof window !== 'undefined') {
   window.updateStarsEverywhere = updateStarsEverywhere;
   window.showToast = showToast;
   window.formatTime = formatTime;
+  window.fetchChildrenList = fetchChildrenList;
+  window.parentSelectChild = parentSelectChild;
+  window.loginChildDevice = loginChildDevice;
+  window.switchActiveChild = switchActiveChild;
+  window.updateChildProfileDisplay = updateChildProfileDisplay;
+  window.updateParentActiveChildBadge = updateParentActiveChildBadge;
 }

@@ -6,6 +6,7 @@ Provides REST and WebSocket endpoints for Parent and Kid applications.
 from __future__ import annotations
 
 import asyncio
+import copy
 import json
 import logging
 import os
@@ -25,7 +26,7 @@ if sys.platform == "win32":
         pass
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect, status
+from fastapi import FastAPI, HTTPException, Query, Request, WebSocket, WebSocketDisconnect, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -36,6 +37,7 @@ if str(REPO_ROOT) not in sys.path:
 
 load_dotenv(dotenv_path=REPO_ROOT / ".env")
 
+import src.api.db as db
 from google import genai
 from src.api.routine_models import (
     DailyRoutineModel,
@@ -402,6 +404,7 @@ def get_or_create_room_state(room_id: str) -> Dict[str, Any]:
 @app.on_event("startup")
 async def startup_event():
     global CURRICULUM_DATA, PRE_DECOMPOSED_ROUTINES, TASKS_DB_MAP, ROUTINES_DB_MAP
+    db.init_db()
     tasks_db_path = REPO_ROOT / "data" / "curriculum" / "tasks_db.json"
     if tasks_db_path.is_file():
         with open(tasks_db_path, "r", encoding="utf-8") as f:
@@ -434,6 +437,29 @@ async def startup_event():
 # ==========================================
 # Pydantic Request / Response Models
 # ==========================================
+
+class CreateChildRequest(BaseModel):
+    parent_id: Optional[str] = "parent_lan_01"
+    name: str
+    grade: int = Field(..., ge=1, le=5)
+    avatar: Optional[str] = "🦁"
+    cognitive_profile: Optional[Dict[str, Any]] = None
+
+
+class PairingSubmitRequest(BaseModel):
+    code: str
+
+
+class ChildStateUpdateRequest(BaseModel):
+    stars: Optional[int] = None
+    roadmap: Optional[List[Dict[str, Any]]] = None
+    current_roadmap_index: Optional[int] = None
+    current_step_index: Optional[int] = None
+    pending_ticket: Optional[Dict[str, Any]] = None
+    routines: Optional[List[Dict[str, Any]]] = None
+    completed_routine_ids: Optional[List[str]] = None
+    photo_proofs: Optional[Dict[str, Any]] = None
+
 class MockLoginRequest(BaseModel):
     role: str = Field(..., description="'parent' hoặc 'kid'")
     username: Optional[str] = "demo_user"
@@ -501,7 +527,7 @@ class ConnectionManager:
         # websocket -> metadata (role, client_id, room_id)
         self.client_meta: Dict[WebSocket, Dict[str, str]] = {}
 
-    async def connect(self, websocket: WebSocket, room_id: str, role: str, client_id: str):
+    async def connect(self, websocket: WebSocket, room_id: str, role: str, client_id: str, kid_id: Optional[str] = None):
         await websocket.accept()
         if room_id not in self.active_rooms:
             self.active_rooms[room_id] = set()
@@ -510,9 +536,10 @@ class ConnectionManager:
             "room_id": room_id,
             "role": role,
             "client_id": client_id,
+            "kid_id": kid_id or "",
             "connected_at": str(time.time()),
         }
-        logger.info(f"WebSocket client connected: role={role}, client_id={client_id}, room={room_id}")
+        logger.info(f"WebSocket client connected: role={role}, client_id={client_id}, room={room_id}, kid_id={kid_id}")
 
     def disconnect(self, websocket: WebSocket):
         meta = self.client_meta.pop(websocket, None)
@@ -561,6 +588,83 @@ manager = ConnectionManager()
 # ==========================================
 # REST API Endpoints
 # ==========================================
+
+
+# ==========================================
+# Multi-Child Management REST APIs
+# ==========================================
+@app.get("/api/parent/children")
+async def get_parent_children(parent_id: str = "parent_lan_01"):
+    """Lấy danh sách tất cả các con của phụ huynh kèm mã ghép nối 6 số."""
+    children = db.get_children_by_parent(parent_id)
+    return {"status": "success", "total": len(children), "children": children}
+
+
+@app.post("/api/parent/children")
+async def create_new_child(req: CreateChildRequest):
+    """Phụ huynh thêm hồ sơ con mới -> Hệ thống tự sinh mã PIN 6 số ghép nối."""
+    new_child = db.create_child(
+        parent_id=req.parent_id or "parent_lan_01",
+        name=req.name,
+        grade=req.grade,
+        avatar=req.avatar or "🦁",
+        cognitive_profile=req.cognitive_profile,
+    )
+    # Broadcast cập nhật danh sách con tới các máy phụ huynh
+    await manager.broadcast_to_room("family_room_milo_01", {
+        "event_type": "CHILDREN_LIST_UPDATED",
+        "timestamp": time.time(),
+        "child": new_child,
+    })
+    return {"status": "success", "child": new_child}
+
+
+@app.post("/api/parent/children/{kid_id}/pairing-code")
+async def regenerate_pairing_code(kid_id: str, parent_id: str = "parent_lan_01"):
+    """Cấp lại mã PIN 6 số mới cho con khi mã cũ hết hạn."""
+    code = db.generate_new_pairing_code(kid_id, parent_id)
+    return {"status": "success", "kid_id": kid_id, "pairing_code": code}
+
+
+@app.post("/api/child/pair")
+async def pair_child_device(req: PairingSubmitRequest):
+    """Máy con nhập mã PIN 6 số -> Xác thực và nhận profile định danh."""
+    profile = db.verify_pairing_code(req.code)
+    if not profile:
+        raise HTTPException(status_code=400, detail="Mã PIN 6 số không đúng hoặc đã hết hạn.")
+    return {"status": "success", "child": profile}
+
+
+@app.get("/api/child/{kid_id}/state")
+async def get_child_state_endpoint(kid_id: str):
+    """Lấy toàn bộ trạng thái tiến độ, lộ trình bài học và thói quen của một bé."""
+    state = db.get_child_state(kid_id)
+    if not state:
+        raise HTTPException(status_code=404, detail=f"Không tìm thấy dữ liệu cho bé '{kid_id}'")
+    return state
+
+
+@app.put("/api/child/{kid_id}/state")
+async def update_child_state_endpoint(kid_id: str, req: ChildStateUpdateRequest):
+    """Cập nhật trạng thái tiến độ bền vững vào SQLite."""
+    if req.stars is not None:
+        db.update_child_stars(kid_id, req.stars)
+    if req.roadmap is not None:
+        db.save_child_roadmap(
+            kid_id,
+            req.roadmap,
+            req.current_roadmap_index or 0,
+            req.current_step_index or 0,
+            req.pending_ticket,
+        )
+    if req.routines is not None:
+        db.save_child_routines(
+            kid_id,
+            req.routines,
+            req.completed_routine_ids,
+            req.photo_proofs,
+        )
+    return {"status": "success", "kid_id": kid_id}
 
 @app.get("/api/health")
 async def health_check():
@@ -852,23 +956,42 @@ async def dispatch_tasks_to_kid(req: DispatchRequest):
     for r in PRE_DECOMPOSED_ROUTINES:
         all_exercises_map[r["id"]] = r
 
+    dispatched_tasks = []
     for idx, tid in enumerate(req.task_ids, start=1):
         item = all_exercises_map.get(tid)
         title = item.get("title", item.get("topic", item.get("category", f"Nhiệm vụ {idx}"))) if item else f"Nhiệm vụ {idx}"
         pts = 50 + (idx * 10)
         total_dopamine += pts
 
-        # Generate station coordinates on island map (grid coordinates 0-100)
-        stations.append({
+        inst_id = f"inst_{tid}_{int(time.time()*1000)}_{idx}"
+        station_info = {
             "station_id": idx,
             "station_name": f"Trạm {idx}: {title[:35]}",
             "task_id": tid,
+            "instance_id": inst_id,
             "status": "active" if idx == 1 else "locked",
             "coordinates": {"x": 20 + (idx * 22) % 70, "y": 30 + (idx * 18) % 55},
             "stars_reward": 3,
             "dopamine_points": pts,
             "milo_guidance": "Milo đang đứng chờ con ở trạm này nè!",
-        })
+        }
+        stations.append(station_info)
+
+        # Build full clean task object with instance_id and reset step
+        task_obj = copy.deepcopy(item) if item else {"id": tid, "title": title, "steps": []}
+        task_obj["instance_id"] = inst_id
+        task_obj["current_step_index"] = 0
+        task_obj["status"] = "active" if idx == 1 else "locked"
+        dispatched_tasks.append(task_obj)
+
+    # Persist directly into SQLite child_roadmaps table for this specific child
+    db.save_child_roadmap(
+        kid_id=req.kid_id,
+        roadmap=dispatched_tasks,
+        current_roadmap_index=0,
+        current_step_index=0,
+        pending_ticket=None
+    )
 
     response_payload = DispatchResponse(
         dispatch_id=dispatch_id,
@@ -886,7 +1009,11 @@ async def dispatch_tasks_to_kid(req: DispatchRequest):
         "event_type": "NEW_DISPATCH_ROUTE",
         "timestamp": time.time(),
         "sender": "parent",
+        "kid_id": req.kid_id,
+        "target_kid_id": req.kid_id,
         "data": response_payload.model_dump(),
+        "roadmap": dispatched_tasks,
+        "force_reset": True,
         "alert_message": f"Mẹ vừa gửi cho con 1 bản đồ Đảo mới: {response_payload.island_name}!",
     }
     await manager.broadcast_to_room(req.family_room_id, sync_event)
@@ -904,6 +1031,7 @@ async def websocket_sync_endpoint(
     room_id: str = Query("family_room_milo_01"),
     role: str = Query("kid"),
     client_id: str = Query(None),
+    kid_id: Optional[str] = Query(None),
 ):
     """
     Two-way real-time WebSocket connection to synchronize Parent & Kid devices:
@@ -912,18 +1040,45 @@ async def websocket_sync_endpoint(
     - Parent dispatches new route -> Kid map updates automatically.
     """
     cid = client_id or f"{role}_{uuid4().hex[:6]}"
-    await manager.connect(websocket, room_id=room_id, role=role, client_id=cid)
+    active_kid = kid_id or "kid_leo_01"
+    await manager.connect(websocket, room_id=room_id, role=role, client_id=cid, kid_id=active_kid)
+    child_db_state = db.get_child_state(active_kid)
     room_state = get_or_create_room_state(room_id)
+    if child_db_state:
+        room_state["kid_id"] = active_kid
+        room_state["stars"] = child_db_state.get("stars", room_state.get("stars", 450))
+        if child_db_state.get("child_roadmap"):
+            room_state["child_roadmap"] = child_db_state["child_roadmap"]
+            room_state["current_roadmap_index"] = child_db_state.get("current_roadmap_index", 0)
+            room_state["current_step_index"] = child_db_state.get("current_step_index", 0)
+        if child_db_state.get("child_routine_roadmap"):
+            room_state["child_routine_roadmap"] = child_db_state["child_routine_roadmap"]
+        if child_db_state.get("routine_photo_proofs"):
+            room_state["routine_photo_proofs"] = child_db_state["routine_photo_proofs"]
 
-    # 1. Send initial welcome handshake with server-authoritative room state
+    # Child-scoped initial state for handshake
+    child_init_state = {
+        "kid_id": active_kid,
+        "stars": child_db_state.get("stars", 450) if child_db_state else 450,
+        "child_roadmap": child_db_state.get("child_roadmap", []) if child_db_state else [],
+        "current_roadmap_index": child_db_state.get("current_roadmap_index", 0) if child_db_state else 0,
+        "current_step_index": child_db_state.get("current_step_index", 0) if child_db_state else 0,
+        "child_routine_roadmap": child_db_state.get("child_routine_roadmap", []) if child_db_state else [],
+        "routine_photo_proofs": child_db_state.get("routine_photo_proofs", {}) if child_db_state else {},
+        "pending_ticket": child_db_state.get("pending_ticket") if child_db_state else None,
+    }
+
+    # 1. Send initial welcome handshake with server-authoritative child-scoped state
     await websocket.send_text(json.dumps({
         "event_type": "CONNECTION_ESTABLISHED",
         "client_id": cid,
         "role": role,
         "room_id": room_id,
+        "kid_id": active_kid,
+        "target_kid_id": active_kid,
         "timestamp": time.time(),
         "message": f"Chào mừng {role} đã kết nối vào phòng gia đình {room_id}!",
-        "state": room_state,
+        "state": child_init_state,
     }, ensure_ascii=False))
 
     try:
@@ -955,28 +1110,38 @@ async def websocket_sync_endpoint(
                 continue
 
 
-            # 2. State-mutating events: update server room state
+            # Determine target/source kid_id for this event
+            payload_dict = data.get("payload", {}) if isinstance(data.get("payload"), dict) else {}
+            ev_kid_id = (
+                data.get("target_kid_id")
+                or data.get("kid_id")
+                or payload_dict.get("target_kid_id")
+                or payload_dict.get("kid_id")
+                or active_kid
+            )
+
+            # 2. State-mutating events: update in-memory room state scoped to kid
             if event_type == "TASK_ASSIGN_BATCH":
-                payload = data.get("payload", {})
-                new_tasks = payload.get("tasks", []) if isinstance(payload, dict) else []
+                new_tasks = payload_dict.get("tasks", [])
                 if not new_tasks and isinstance(data.get("tasks"), list):
                     new_tasks = data.get("tasks")
-                if new_tasks:
+                if new_tasks and ev_kid_id == active_kid:
                     room_state["child_roadmap"] = new_tasks
                     room_state["current_roadmap_index"] = 0
                     room_state["current_step_index"] = 0
             elif event_type == "KID_STEP_COMPLETED":
                 step_id = data.get("step_id")
                 points = data.get("dopamine_points", 25)
-                room_state["stars"] = room_state.get("stars", 450) + points
-                room_state["current_step_index"] = room_state.get("current_step_index", 0) + 1
+                if ev_kid_id == active_kid:
+                    room_state["stars"] = room_state.get("stars", 450) + points
+                    room_state["current_step_index"] = room_state.get("current_step_index", 0) + 1
             elif event_type == "KID_TASK_COMPLETED":
-                room_state["current_roadmap_index"] = room_state.get("current_roadmap_index", 0) + 1
-                room_state["current_step_index"] = 0
+                if ev_kid_id == active_kid:
+                    room_state["current_roadmap_index"] = room_state.get("current_roadmap_index", 0) + 1
+                    room_state["current_step_index"] = 0
             elif event_type == "STARS_SYNC":
-                payload = data.get("payload", {})
-                new_stars = payload.get("totalStars") if isinstance(payload, dict) else None
-                if new_stars is not None:
+                new_stars = payload_dict.get("totalStars")
+                if new_stars is not None and ev_kid_id == active_kid:
                     room_state["stars"] = int(new_stars)
             elif event_type == "TICKET_REDEEM":
                 payload = data.get("payload", {})
@@ -984,17 +1149,18 @@ async def websocket_sync_endpoint(
             elif event_type == "TICKET_APPROVE":
                 room_state["pending_ticket"] = None
             elif event_type == "ROADMAP_UPDATED":
-                payload = data.get("payload", {})
-                new_roadmap = payload.get("roadmap", []) if isinstance(payload, dict) else []
-                room_state["child_roadmap"] = new_roadmap
-                room_state["current_roadmap_index"] = 0
-                room_state["current_step_index"] = 0
-                room_state["roadmap_cleared"] = (len(new_roadmap) == 0)
+                new_roadmap = payload_dict.get("roadmap", [])
+                cur_idx = payload_dict.get("currentIdx", 0)
+                if ev_kid_id == active_kid:
+                    room_state["child_roadmap"] = new_roadmap
+                    room_state["current_roadmap_index"] = cur_idx
+                    room_state["current_step_index"] = 0
+                    room_state["roadmap_cleared"] = (len(new_roadmap) == 0)
             elif event_type == "ROUTINE_ASSIGN_BATCH":
-                payload = data.get("payload", {})
-                new_routines = payload.get("routines", []) if isinstance(payload, dict) else []
-                room_state["child_routine_roadmap"] = new_routines
-                room_state["routine_cleared"] = (len(new_routines) == 0)
+                new_routines = payload_dict.get("routines", [])
+                if ev_kid_id == active_kid:
+                    room_state["child_routine_roadmap"] = new_routines
+                    room_state["routine_cleared"] = (len(new_routines) == 0)
 
             # Kid completes a micro-task step -> Notify Parent
             if event_type == "KID_STEP_COMPLETED":
@@ -1004,6 +1170,8 @@ async def websocket_sync_endpoint(
                     "event_type": "PARENT_NOTIFICATION_STEP_DONE",
                     "timestamp": time.time(),
                     "sender": cid,
+                    "kid_id": ev_kid_id,
+                    "target_kid_id": ev_kid_id,
                     "step_id": step_id,
                     "points_earned": points,
                     "message": f"Bé vừa hoàn thành xuất sắc Bước {step_id}! (+{points} điểm Dopamine)",
@@ -1018,6 +1186,8 @@ async def websocket_sync_endpoint(
                     "event_type": "KID_RECEIVE_CHEER",
                     "timestamp": time.time(),
                     "sender": cid,
+                    "kid_id": ev_kid_id,
+                    "target_kid_id": ev_kid_id,
                     "cheer_text": cheer_text,
                     "sticker": sticker,
                     "milo_audio": "harp_glissando_soft",
@@ -1031,6 +1201,8 @@ async def websocket_sync_endpoint(
                     "sender": cid,
                     "sender_role": role,
                     "timestamp": time.time(),
+                    "kid_id": ev_kid_id,
+                    "target_kid_id": ev_kid_id,
                     "payload": data.get("payload", data),
                 }
                 await manager.broadcast_to_room(room_id, broadcast_data, exclude=websocket)

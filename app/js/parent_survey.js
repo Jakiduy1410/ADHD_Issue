@@ -251,7 +251,7 @@
       metaEl.innerText = `${count} thói quen • +${totalStars} ⭐ tổng thưởng`;
     }
 
-    function dispatchSelectedRoutines() {
+    async function dispatchSelectedRoutines() {
       playSfx('bell');
       appState.routineCleared = false;
       try { if (typeof localStorage !== 'undefined') localStorage.removeItem('milo_routine_cleared'); } catch(_) {}
@@ -267,35 +267,53 @@
 
       selected.sort((a, b) => (a.slot_time || '00:00').localeCompare(b.slot_time || '00:00'));
 
-      // ĐẢM BẢO RESET TRẠNG THÁI HOÀN THÀNH CHO CÁC THÓI QUEN ĐƯỢC GIAO MỚI
-      if (!appState.completedRoutineIds) appState.completedRoutineIds = new Set();
-      if (!appState.routinePhotoProofs) appState.routinePhotoProofs = {};
-      selected.forEach(rt => {
-        appState.completedRoutineIds.delete(rt.id);
-        delete appState.routinePhotoProofs[rt.id];
-      });
-      appState.selectedActiveRoutineId = null;
-      appState.currentRoutineIndex = 0;
+      const kidId = appState.parentSelectedKidId || 'kid_leo_01';
+      const currentKid = appState.parentSelectedKidProfile || { name: 'Bé' };
 
-      appState.childRoutineRoadmap = selected;
+      // 1. Cập nhật state mẹ
+      appState.parentChildRoutineRoadmap = selected;
+      
+      // Nếu trong Dual mode mà máy con cũng đang là bé này thì cập nhật luôn máy con
+      if (appState.childDeviceKidId === kidId) {
+        if (!appState.completedRoutineIds) appState.completedRoutineIds = new Set();
+        if (!appState.routinePhotoProofs) appState.routinePhotoProofs = {};
+        selected.forEach(rt => {
+          appState.completedRoutineIds.delete(rt.id);
+          delete appState.routinePhotoProofs[rt.id];
+        });
+        appState.selectedActiveRoutineId = null;
+        appState.currentRoutineIndex = 0;
+        appState.childRoutineRoadmap = selected;
+        if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
+          window.renderChildRoutineRoadmapFromTasks(selected);
+        }
+      }
 
+      // 2. Gửi API lưu bền vững vào SQLite backend qua PUT /api/child/{kid_id}/state
+      try {
+        await fetch(`/api/child/${kidId}/state`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            routines: selected,
+            completed_routine_ids: [],
+            photo_proofs: {}
+          })
+        });
+      } catch (err) {
+        console.warn('Lỗi lưu routines lên server SQLite:', err);
+      }
+
+      // 3. Broadcast WebSocket cho máy con
       const bus = window.miloBus || window.syncBus;
       if (bus && typeof bus.broadcast === 'function') {
         bus.broadcast('ROUTINE_ASSIGN_BATCH', {
+          target_kid_id: kidId,
+          kid_id: kidId,
           routines: selected,
           resetCompletions: true,
           timestamp: Date.now()
         });
-      }
-      if (bus && typeof bus.savePersistedState === 'function') {
-        bus.savePersistedState(appState);
-      }
-      if (typeof saveRoutineCustomizations === 'function') {
-        saveRoutineCustomizations();
-      }
-
-      if (typeof window.renderChildRoutineRoadmapFromTasks === 'function') {
-        window.renderChildRoutineRoadmapFromTasks(selected);
       }
 
       renderParentAuditTimeline();
@@ -303,7 +321,7 @@
         renderParentActiveRoadmapList();
       }
 
-      showToast("Đã Giao Nề Nếp", `Mẹ vừa giao ${selected.length} thói quen nề nếp sang Đảo Thói Quen của Leo!`, "🌟");
+      showToast("Đã Giao Nề Nếp", `Mẹ vừa giao ${selected.length} thói quen nề nếp sang Đảo Thói Quen của ${currentKid.name}!`, "🌟");
     }
 
     function parentJumpToAssignRoutines() {
@@ -322,7 +340,7 @@
 
       const isCleared = !!appState.routineCleared;
       const routines = window.routineDatabase || {};
-      const rawList = isCleared ? [] : (appState.childRoutineRoadmap || []);
+      const rawList = isCleared ? [] : ((appState.parentChildRoutineRoadmap && appState.parentChildRoutineRoadmap.length > 0) ? appState.parentChildRoutineRoadmap : (appState.childRoutineRoadmap || []));
       const activeList = rawList.map(r => (typeof r === 'string' ? routines[r] : r)).filter(Boolean);
 
       // 1. EMPTY STATE KHI CHƯA GIAO THÓI QUEN
@@ -449,7 +467,13 @@
       container.innerHTML = '';
 
       const catFilter = appState.catalogFilter || 'all';
-      const gradeFilter = appState.gradeFilter || 'all';
+      let gradeFilter = appState.gradeFilter || 'current_kid';
+
+      const currentKid = appState.parentSelectedKidProfile || (appState.childrenList || []).find(c => c.kid_id === appState.parentSelectedKidId) || { grade: 1 };
+      let effectiveGrade = gradeFilter;
+      if (gradeFilter === 'current_kid') {
+        effectiveGrade = currentKid.grade || 1;
+      }
 
       // Deduplicate aliases (e.g. math_garden -> G1_MATH_01)
       const taskMap = new Map();
@@ -460,8 +484,14 @@
 
       tasks.forEach(t => {
         if (t.cat === 'chore' || t.cat === 'routine') return;
+        
+        // Khi chọn theo lớp (1,2,3,4,5 hoặc current_kid): chỉ hiển thị Toán, Tiếng Việt, Tiếng Anh
+        if (effectiveGrade !== 'all') {
+          if (t.grade !== effectiveGrade) return;
+          if (!['math', 'viet', 'eng'].includes(t.cat)) return;
+        }
+
         if (catFilter !== 'all' && t.cat !== catFilter) return;
-        if (gradeFilter !== 'all' && t.grade !== gradeFilter) return;
 
         const isChecked = appState.selectedCatalogIds.has(t.id);
         const card = document.createElement('div');
@@ -500,15 +530,32 @@
     const renderCatalogTaskCards = renderParentCatalogList;
 
     function parentFilterGrade(grade) {
-      playSfx('tap');
+      if (grade !== 'current_kid') playSfx('tap');
       appState.gradeFilter = grade;
-      ['all', 1, 2, 3, 4, 5].forEach(g => {
-        const btn = document.getElementById(`p-grade-${g}`);
-        if (btn) {
-          if (g === grade) {
-            btn.className = "px-2 py-0.5 rounded-lg bg-teal-700 text-white shrink-0 text-[10px]";
+      const currentKid = appState.parentSelectedKidProfile || (appState.childrenList || []).find(c => c.kid_id === appState.parentSelectedKidId) || { grade: 1 };
+      const kidGrade = currentKid.grade || 1;
+      
+      const labelKid = document.getElementById('label-p-grade-kid');
+      if (labelKid) {
+        labelKid.innerText = `🎯 Lớp của bé (Lớp ${kidGrade})`;
+      }
+
+      const allGradeKeys = ['kid', 1, 2, 3, 4, 5, 'all'];
+      allGradeKeys.forEach(k => {
+        const btn = document.getElementById(`p-grade-${k}`);
+        if (!btn) return;
+        const isMatch = (k === 'kid' && grade === 'current_kid') || (k === grade) || (k === 'all' && grade === 'all');
+        if (isMatch) {
+          if (k === 'all') {
+            btn.className = "px-2.5 py-0.5 rounded-lg bg-amber-500 text-white border border-amber-600 shrink-0 text-[10px] font-black shadow-xs flex items-center gap-1 cursor-pointer";
           } else {
-            btn.className = "px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 shrink-0 text-[10px]";
+            btn.className = "px-2.5 py-0.5 rounded-lg bg-teal-600 text-white shrink-0 text-[10px] font-black shadow-xs flex items-center gap-1 cursor-pointer";
+          }
+        } else {
+          if (k === 'all') {
+            btn.className = "px-2.5 py-0.5 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 shrink-0 text-[10px] font-black flex items-center gap-1 cursor-pointer";
+          } else {
+            btn.className = "px-2 py-0.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 shrink-0 text-[10px] cursor-pointer";
           }
         }
       });
@@ -573,7 +620,7 @@
     }
 
     // BẮN LÔ BÀI TẬP ĐÃ CHỌN SANG MÁY CON TẠO LỘ TRÌNH ĐẢO
-    function dispatchSelectedCatalogTasks() {
+    async function dispatchSelectedCatalogTasks() {
       playSfx('bell');
       appState.roadmapCleared = false;
       try { if (typeof localStorage !== 'undefined') localStorage.removeItem('milo_roadmap_cleared'); } catch(_) {}
@@ -583,24 +630,49 @@
         return;
       }
 
-      // Broadcast TASK_ASSIGN_BATCH via MiloSyncBus
-      if (window.miloBus) {
+      const kidId = appState.parentSelectedKidId || 'kid_leo_01';
+      const currentKid = appState.parentSelectedKidProfile || { name: 'Bé' };
+
+      // 1. Cập nhật state mẹ
+      appState.parentChildRoadmap = selectedTasks;
+      appState.parentCurrentRoadmapIndex = 0;
+      
+      // Nếu trong Dual mode mà máy con cũng đang là bé này thì cập nhật luôn máy con
+      if (appState.childDeviceKidId === kidId) {
+        appState.childRoadmap = selectedTasks;
+        appState.currentRoadmapIndex = 0;
+        appState.activeTask = selectedTasks[0];
+        if (typeof renderChildIslandRoadmap === 'function') renderChildIslandRoadmap();
+      }
+
+      // 2. Gửi API lưu bền vững vào SQLite backend
+      try {
+        await fetch('/api/tasks/dispatch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            parent_id: 'parent_lan_01',
+            kid_id: kidId,
+            task_ids: selectedTasks.map(t => t.id)
+          })
+        });
+      } catch (e) {
+        console.warn('Dispatch API error:', e);
+      }
+
+      // 3. Broadcast WebSocket cho thiết bị con của bé này
+      if (window.miloBus && typeof window.miloBus.broadcast === 'function') {
         window.miloBus.broadcast('TASK_ASSIGN_BATCH', {
+          target_kid_id: kidId,
+          kid_id: kidId,
           tasks: selectedTasks,
           islandName: `Hải Trình ${selectedTasks.length} Đảo Tri Thức`,
           dispatchId: 'DISPATCH_' + Date.now()
         });
-      } else {
-        appState.childRoadmap = selectedTasks;
-        appState.currentRoadmapIndex = 0;
-        appState.activeTask = selectedTasks[0];
-        renderChildIslandRoadmap();
-        renderParentActiveRoadmapList();
-        childSwitchScreen('home');
       }
 
       renderParentActiveRoadmapList();
-      showToast("Lộ Trình Đảo Đã Cập Nhật", `Mẹ vừa giao lô ${selectedTasks.length} bài tập sang hải trình của Leo!`, "🚀");
+      showToast("Lộ Trình Đã Giao!", `Mẹ vừa giao lô ${selectedTasks.length} bài tập sang hải trình của ${currentKid.name}!`, "🚀");
     }
 
     // Modal chi tiết bước bên phía mẹ
@@ -645,31 +717,59 @@
     function parentDispatchActiveModalTask() {
       playSfx('bell');
       const task = taskDatabase[appState.modalTaskKey];
+      if (!task) return;
       const btn = document.getElementById('parent-modal-dispatch-btn');
       btn.innerText = "✅ ĐÃ BẮN SANG HẢI TRÌNH CỦA CON!";
       btn.className = "w-full py-3 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md";
 
-      setTimeout(() => {
+      setTimeout(async () => {
         parentCloseTaskModal();
         btn.innerText = "GỬI SANG MÁY CỦA CON 🚀";
         btn.className = "w-full py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-md transition";
         
-        // Cập nhật hải trình máy con
+        const kidId = appState.parentSelectedKidId || 'kid_leo_01';
+        const currentKid = appState.parentSelectedKidProfile || { name: 'Bé' };
+
+        // 1. Cập nhật state mẹ
+        appState.parentChildRoadmap = [task];
+        appState.parentCurrentRoadmapIndex = 0;
+        if (typeof renderParentActiveRoadmapList === 'function') renderParentActiveRoadmapList();
+
+        // 2. Nếu trong dual mode máy con cũng là bé này thì cập nhật máy con
+        if (appState.childDeviceKidId === kidId) {
+          appState.childRoadmap = [task];
+          appState.currentRoadmapIndex = 0;
+          appState.activeTask = task;
+          appState.currentStepIndex = 0;
+          if (typeof renderChildIslandRoadmap === 'function') renderChildIslandRoadmap();
+          if (typeof childSwitchScreen === 'function') childSwitchScreen('home');
+        }
+
+        // 3. Lưu SQLite
+        try {
+          await fetch('/api/tasks/dispatch', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              parent_id: 'parent_lan_01',
+              kid_id: kidId,
+              task_ids: [task.id]
+            })
+          });
+        } catch (_) {}
+
+        // 4. Broadcast qua WebSocket / MiloSyncBus
         if (window.miloBus) {
           window.miloBus.broadcast('TASK_ASSIGN_BATCH', {
+            target_kid_id: kidId,
+            kid_id: kidId,
             tasks: [task],
             islandName: `Đảo Thử Thách: ${task.title}`,
             dispatchId: 'DISPATCH_' + Date.now()
           });
-        } else {
-          appState.childRoadmap = [task];
-          appState.currentRoadmapIndex = 0;
-          appState.activeTask = task;
-          renderChildIslandRoadmap();
-          childSwitchScreen('home');
         }
 
-        showToast("Nhiệm Vụ Mới Nhận", `Mẹ vừa giao: ${task.title} (${task.steps.length} bước)`, "🚀");
+        showToast("Nhiệm Vụ Mới Nhận", `Mẹ vừa giao cho ${currentKid.name}: ${task.title} (${task.steps.length} bước)`, "🚀");
       }, 700);
     }
 
@@ -683,25 +783,43 @@
        ============================================================ */
     function parentSwitchTab(tabName) {
       playSfx('tap');
-      const tabs = ['home', 'tasks', 'rewards', 'coach', 'routines'];
+      const tabs = ['home', 'tasks', 'routines', 'rewards', 'profile'];
       tabs.forEach(t => {
         const sec = document.getElementById(`parent-screen-${t}`);
         const nav = document.getElementById(`p-nav-${t}`);
-        if (t === tabName) {
-          sec.classList.remove('hidden');
-          sec.classList.add(t === 'coach' ? 'flex' : 'block');
-          nav.className = "flex flex-col items-center py-1 text-teal-600 font-bold text-[10px]";
-        } else {
-          sec.classList.add('hidden');
-          sec.classList.remove('flex', 'block');
-          nav.className = "flex flex-col items-center py-1 text-slate-400 hover:text-slate-600 font-bold text-[10px]";
+        if (sec) {
+          if (t === tabName) {
+            sec.classList.remove('hidden');
+            sec.classList.add(t === 'profile' ? 'flex' : 'block');
+            sec.style.display = (t === 'profile' ? 'flex' : 'block');
+          } else {
+            sec.classList.add('hidden');
+            sec.classList.remove('flex', 'block');
+            sec.style.display = 'none';
+          }
+        }
+        if (nav) {
+          if (t === tabName) {
+            nav.className = "flex flex-col items-center py-1 text-teal-600 font-bold text-[10px]";
+          } else {
+            nav.className = "flex flex-col items-center py-1 text-slate-400 hover:text-slate-600 font-bold text-[10px]";
+          }
         }
       });
+
       if (tabName === 'rewards') {
-        document.getElementById('p-reward-dot').classList.add('hidden');
+        const dot = document.getElementById('p-reward-dot');
+        if (dot) dot.classList.add('hidden');
       }
       if (tabName === 'routines') {
-        renderParentAuditTimeline();
+        if (typeof renderParentAuditTimeline === 'function') {
+          renderParentAuditTimeline();
+        }
+      }
+      if (tabName === 'profile') {
+        if (typeof renderParentProfileCards === 'function') {
+          renderParentProfileCards();
+        }
       }
     }
 
@@ -1416,3 +1534,454 @@ window.parentJumpToAssignRoutines = parentJumpToAssignRoutines;
     window.loadRoutineCustomizations = loadRoutineCustomizations;
     window.parentUpdateRoutineSlotTime = parentUpdateRoutineSlotTime;
     window.parentOpenFlexMealConfig = parentOpenFlexMealConfig;
+
+
+    /* ============================================================
+       MULTI-CHILD MANAGEMENT & PINPAD CONTROLLER
+       ============================================================ */
+
+    function renderParentProfileCards() {
+      const container = document.getElementById('parent-profile-cards-list');
+      if (!container) return;
+      container.innerHTML = '';
+
+      let children = appState.childrenList || [];
+      if (!Array.isArray(children) || children.length === 0) {
+        children = [
+          { kid_id: 'kid_leo_01', name: 'Bé Leo', grade: 1, avatar: '🦁', stars: 450, pairing_code: '729-184' },
+          { kid_id: 'kid_minh_02', name: 'Bé Minh', grade: 3, avatar: '🐯', stars: 320, pairing_code: '852-369' }
+        ];
+        appState.childrenList = children;
+      }
+
+      children.forEach(c => {
+        const isActive = (c.kid_id === (appState.parentSelectedKidId || appState.activeChildId));
+        const card = document.createElement('div');
+        card.className = `p-3.5 rounded-2xl border-2 transition ${
+          isActive 
+            ? 'bg-gradient-to-br from-teal-50 to-emerald-50/70 border-teal-500 shadow-sm' 
+            : 'bg-white border-slate-200 hover:border-slate-300'
+        }`;
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl bg-white border border-slate-200 shadow-xs text-2xl flex items-center justify-center shrink-0">
+                ${c.avatar || '🦁'}
+              </div>
+              <div>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <h3 class="font-black text-sm text-slate-900">${c.name}</h3>
+                  <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-teal-100 text-teal-800">Lớp ${c.grade}</span>
+                  ${isActive ? '<span class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-emerald-500 text-white animate-pulse">● Đang xem</span>' : ''}
+                </div>
+                <div class="flex items-center gap-2 mt-1 text-[11px] font-bold text-slate-500">
+                  <span class="text-amber-600 font-extrabold">${c.stars || 0} ⭐</span>
+                  <span>•</span>
+                  <span class="text-slate-400">GDPT 2018</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- PIN Badge -->
+            <div class="text-right shrink-0">
+              <span class="text-[9px] font-bold text-slate-400 block">MÃ GHÉP NỐI</span>
+              <button onclick="showParentPinModal('${c.name}', '${c.pairing_code || '729-184'}')" class="font-mono font-black text-xs px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-300 rounded-lg hover:bg-amber-200 transition cursor-pointer">
+                🔑 ${c.pairing_code || '729-184'}
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between gap-2 pt-3 mt-2 border-t border-slate-200/60">
+            ${
+              isActive 
+                ? '<button disabled class="flex-1 py-1.5 bg-teal-600 text-white rounded-xl text-xs font-black opacity-80 cursor-default">Đang xem trên Giám Sát</button>'
+                : `<button onclick="parentSelectChild('${c.kid_id}')" class="flex-1 py-1.5 bg-white hover:bg-teal-50 border border-teal-500 text-teal-700 rounded-xl text-xs font-black transition active:scale-95 cursor-pointer">👁️ Chuyển Xem Bé Này</button>`
+            }
+            <button onclick="openSurveyModal()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition cursor-pointer" title="Làm khảo sát ADHD riêng cho bé">
+              📝 Khảo Sát
+            </button>
+            <button onclick="regenerateChildPin('${c.kid_id}')" class="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs transition cursor-pointer" title="Đổi mã PIN mới">
+              🔄
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    let selectedNewGrade = 1;
+    let selectedNewAvatar = '🦁';
+
+    function openAddChildModal() {
+      playSfx('tap');
+      selectedNewGrade = 1;
+      selectedNewAvatar = '🦁';
+      const nameInput = document.getElementById('add-child-name');
+      if (nameInput) nameInput.value = '';
+      selectAddChildGrade(1);
+      selectAddChildAvatar('🦁');
+      const modal = document.getElementById('parent-add-child-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.style.display = 'flex';
+      }
+    }
+
+    function closeAddChildModal() {
+      playSfx('tap');
+      const modal = document.getElementById('parent-add-child-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.style.display = 'none';
+      }
+    }
+
+    function selectAddChildGrade(grade) {
+      selectedNewGrade = grade;
+      [1, 2, 3, 4, 5].forEach(g => {
+        const btn = document.getElementById(`add-grade-${g}`);
+        if (!btn) return;
+        if (g === grade) {
+          btn.className = "py-1.5 rounded-lg border font-bold text-center bg-teal-600 text-white border-teal-600 cursor-pointer";
+        } else {
+          btn.className = "py-1.5 rounded-lg border font-bold text-center bg-slate-50 text-slate-700 border-slate-200 cursor-pointer";
+        }
+      });
+    }
+
+    function selectAddChildAvatar(emoji) {
+      selectedNewAvatar = emoji;
+      document.querySelectorAll('#add-child-avatar-group .avatar-opt').forEach(el => {
+        if (el.innerText.trim() === emoji) {
+          el.className = "avatar-opt cursor-pointer p-1 rounded-lg bg-teal-100 ring-2 ring-teal-500";
+        } else {
+          el.className = "avatar-opt cursor-pointer p-1 rounded-lg";
+        }
+      });
+    }
+
+    async function submitCreateChild() {
+      playSfx('bell');
+      const nameInput = document.getElementById('add-child-name');
+      const name = (nameInput && nameInput.value.trim()) || "Bé Yêu";
+
+      try {
+        const res = await fetch('/api/parent/children', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            parent_id: 'parent_lan_01',
+            name: name,
+            grade: selectedNewGrade,
+            avatar: selectedNewAvatar,
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          closeAddChildModal();
+          await fetchChildrenList();
+          if (data.child && data.child.pairing_code) {
+            showParentPinModal(data.child.name, data.child.pairing_code);
+          }
+          showToast("Đã Tạo Hồ Sơ Mới", `${name} (Lớp ${selectedNewGrade}) đã sẵn sàng!`, "🎉");
+        }
+      } catch (err) {
+        console.error("Lỗi tạo con:", err);
+      }
+    }
+
+    function showParentPinModal(childName, code) {
+      playSfx('tap');
+      const modal = document.getElementById('parent-pin-modal');
+      const nameEl = document.getElementById('parent-pin-modal-name');
+      const codeEl = document.getElementById('parent-pin-modal-code');
+      if (nameEl) nameEl.innerText = `Mã Ghép Nối ${childName}`;
+      if (codeEl) codeEl.innerText = code || "729-184";
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.style.display = 'flex';
+      }
+    }
+
+    function closeParentPinModal() {
+      playSfx('tap');
+      const modal = document.getElementById('parent-pin-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.style.display = 'none';
+      }
+    }
+
+    async function regenerateChildPin(kidId) {
+      playSfx('tap');
+      try {
+        const res = await fetch(`/api/parent/children/${kidId}/pairing-code`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ parent_id: 'parent_lan_01' })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          await fetchChildrenList();
+          showToast("Mã PIN Mới", `Mã mới: ${data.pairing_code}`, "🔑");
+        }
+      } catch (e) {
+        console.error("Lỗi đổi mã PIN:", e);
+      }
+    }
+
+    function toggleParentCoachDrawer() {
+      const drawer = document.getElementById('coach-drawer-content');
+      const chevron = document.getElementById('coach-drawer-chevron');
+      if (!drawer) return;
+      if (drawer.classList.contains('hidden')) {
+        drawer.classList.remove('hidden');
+        if (chevron) chevron.innerText = "▾";
+      } else {
+        drawer.classList.add('hidden');
+        if (chevron) chevron.innerText = "▸";
+      }
+    }
+
+    /* ---------------- Child Profile Sheet & Pinpad ---------------- */
+    function openChildProfileSheet() {
+      playSfx('tap');
+      const child = appState.childDeviceProfile || appState.currentKidProfile || { name: 'Bé Leo', grade: 1, avatar: '🦁', stars: 450, pairing_code: '729-184' };
+      const pinEl = document.getElementById('child-sheet-pin');
+      if (pinEl) pinEl.innerText = child.pairing_code || "729-184";
+      if (typeof updateChildProfileDisplay === 'function') updateChildProfileDisplay();
+      const sheet = document.getElementById('child-profile-sheet');
+      if (sheet) {
+        sheet.classList.remove('hidden');
+        sheet.classList.add('flex');
+        sheet.style.display = 'flex';
+      }
+      const pinInput = document.getElementById('child-sheet-pin-input');
+      if (pinInput) {
+        pinInput.value = '';
+        setTimeout(() => pinInput.focus(), 100);
+      }
+    }
+
+    function quickFillSheetPin(code) {
+      playSfx('tap');
+      const input = document.getElementById('child-sheet-pin-input');
+      if (input) {
+        input.value = code;
+        setTimeout(() => {
+          submitChildSheetPin();
+        }, 120);
+      }
+    }
+
+    async function submitChildSheetPin() {
+      const input = document.getElementById('child-sheet-pin-input');
+      const rawVal = input ? input.value.trim() : '';
+      const digits = rawVal.replace(/\D/g, '');
+      if (digits.length !== 6) {
+        showToast("Mã PIN Chưa Đủ", "Vui lòng nhập đủ 6 chữ số con nhé (VD: 852-369)!", "⚠️");
+        if (input) input.focus();
+        return;
+      }
+
+      playSfx('bell');
+      const formattedCode = `${digits.slice(0, 3)}-${digits.slice(3, 6)}`;
+      try {
+        const res = await fetch('/api/child/pair', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: formattedCode })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const matchedChild = data.child;
+          closeChildProfileSheet();
+          if (input) input.value = '';
+          await loginChildDevice(matchedChild.kid_id);
+          showToast("Đổi Bé Thành Công! 🚀", `Chào mừng ${matchedChild.avatar} ${matchedChild.name} (Lớp ${matchedChild.grade})!`, "🎉");
+        } else {
+          showToast("Mã Không Hợp Lệ", "Mã PIN không đúng hoặc đã hết hạn.", "❌");
+          if (input) {
+            input.value = '';
+            input.focus();
+          }
+        }
+      } catch (err) {
+        showToast("Lỗi Kết Nối", "Không thể kiểm tra mã PIN.", "❌");
+      }
+    }
+
+    function closeChildProfileSheet() {
+      playSfx('tap');
+      const sheet = document.getElementById('child-profile-sheet');
+      if (sheet) {
+        sheet.classList.add('hidden');
+        sheet.classList.remove('flex');
+        sheet.style.display = 'none';
+      }
+    }
+
+    let pinInputBuffer = "";
+
+    function openChildPinpadModal() {
+      closeChildProfileSheet();
+      playSfx('tap');
+      pinInputBuffer = "";
+      renderPinSlots();
+      const modal = document.getElementById('child-pinpad-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.style.display = 'flex';
+        modal.style.zIndex = '99999';
+      }
+    }
+
+    // 1-Click Quick Switch dành cho bé và user kiểm thử
+    function quickFillChildPin(digits) {
+      playSfx('tap');
+      pinInputBuffer = digits.replace(/\D/g, '').slice(0, 6);
+      renderPinSlots();
+      setTimeout(() => {
+        submitChildPin();
+      }, 150);
+    }
+
+    function closeChildPinpadModal() {
+      playSfx('tap');
+      const modal = document.getElementById('child-pinpad-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        modal.style.display = 'none';
+      }
+    }
+
+    function renderPinSlots() {
+      for (let i = 0; i < 6; i++) {
+        const slot = document.getElementById(`pin-slot-${i}`);
+        if (slot) {
+          if (i < pinInputBuffer.length) {
+            slot.innerText = pinInputBuffer[i];
+            slot.className = "w-9 h-11 rounded-xl bg-teal-900 border-2 border-teal-400 text-teal-200 font-mono font-black text-xl flex items-center justify-center shadow-inner animate-scale-up";
+          } else {
+            slot.innerText = "-";
+            slot.className = "w-9 h-11 rounded-xl bg-slate-800 border-2 border-slate-700 text-white font-mono font-black text-xl flex items-center justify-center shadow-inner";
+          }
+        }
+      }
+    }
+
+    function pressPinDigit(digit) {
+      if (pinInputBuffer.length < 6) {
+        playSfx('tap');
+        pinInputBuffer += digit;
+        renderPinSlots();
+      }
+    }
+
+    function clearPinDigits() {
+      playSfx('tap');
+      pinInputBuffer = "";
+      renderPinSlots();
+    }
+
+    function backspacePinDigit() {
+      if (pinInputBuffer.length > 0) {
+        playSfx('tap');
+        pinInputBuffer = pinInputBuffer.slice(0, -1);
+        renderPinSlots();
+      }
+    }
+
+    async function submitChildPin() {
+      if (pinInputBuffer.length !== 6) {
+        showToast("Mã PIN Chưa Đủ", "Vui lòng nhập đủ 6 chữ số con nhé!", "⚠️");
+        return;
+      }
+      playSfx('bell');
+      try {
+        const formattedCode = `${pinInputBuffer.slice(0, 3)}-${pinInputBuffer.slice(3, 6)}`;
+        const res = await fetch('/api/child/pair', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: formattedCode })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const matchedChild = data.child;
+          closeChildPinpadModal();
+          await loginChildDevice(matchedChild.kid_id);
+          showToast("Ghép Nối Thành Công! 🚀", `Chào mừng ${matchedChild.avatar} ${matchedChild.name} (Lớp ${matchedChild.grade})!`, "🦁");
+        } else {
+          showToast("Mã Không Hợp Lệ", "Mã PIN không đúng hoặc đã hết hạn.", "❌");
+          clearPinDigits();
+        }
+      } catch (err) {
+        showToast("Lỗi Kết Nối", "Không thể kiểm tra mã PIN.", "❌");
+      }
+    }
+
+
+// Global Window Exports for Multi-Child & Profile Controls
+if (typeof window !== 'undefined') {
+  window.parentSwitchTab = parentSwitchTab;
+  window.parentFilterGrade = parentFilterGrade;
+  window.renderParentCatalogList = renderParentCatalogList;
+  window.renderParentProfileCards = renderParentProfileCards;
+  window.openAddChildModal = openAddChildModal;
+  window.closeAddChildModal = closeAddChildModal;
+  window.selectAddChildGrade = selectAddChildGrade;
+  window.selectAddChildAvatar = selectAddChildAvatar;
+  window.submitCreateChild = submitCreateChild;
+  window.showParentPinModal = showParentPinModal;
+  window.closeParentPinModal = closeParentPinModal;
+  window.regenerateChildPin = regenerateChildPin;
+  window.toggleParentCoachDrawer = toggleParentCoachDrawer;
+  window.openChildProfileSheet = openChildProfileSheet;
+  window.closeChildProfileSheet = closeChildProfileSheet;
+  window.openChildPinpadModal = openChildPinpadModal;
+  window.closeChildPinpadModal = closeChildPinpadModal;
+  window.pressPinDigit = pressPinDigit;
+  window.clearPinDigits = clearPinDigits;
+  window.backspacePinDigit = backspacePinDigit;
+  window.submitChildPin = submitChildPin;
+  window.submitChildSheetPin = submitChildSheetPin;
+  window.quickFillSheetPin = quickFillSheetPin;
+  window.quickFillChildPin = quickFillChildPin;
+
+  // Lắng nghe bàn phím vật lý máy tính khi mở modal PIN máy con
+  window.addEventListener('keydown', (e) => {
+    const modal = document.getElementById('child-pinpad-modal');
+    if (!modal || modal.classList.contains('hidden') || modal.style.display === 'none') return;
+    
+    if (e.key >= '0' && e.key <= '9') {
+      e.preventDefault();
+      pressPinDigit(e.key);
+    } else if (e.key === 'Backspace') {
+      e.preventDefault();
+      backspacePinDigit();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      submitChildPin();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      closeChildPinpadModal();
+    }
+  });
+}
+
+
+// Auto-initialize profile cards on script load
+setTimeout(() => {
+  if (typeof renderParentProfileCards === 'function') renderParentProfileCards();
+  if (typeof updateChildProfileDisplay === 'function') updateChildProfileDisplay();
+}, 150);

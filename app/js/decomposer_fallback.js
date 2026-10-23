@@ -579,36 +579,50 @@
       // Đăng ký vào database & gán vào lộ trình máy con
       taskDatabase[activeGeneratedAiTask.id] = activeGeneratedAiTask;
 
-      if (mode === 'append' && Array.isArray(appState.childRoadmap) && appState.childRoadmap.length > 0) {
-        const updated = [...appState.childRoadmap, activeGeneratedAiTask];
+      const kidId = appState.parentSelectedKidId || 'kid_leo_01';
+      const currentKid = appState.parentSelectedKidProfile || { name: 'Bé' };
+      const currentList = Array.isArray(appState.parentChildRoadmap) ? appState.parentChildRoadmap : appState.childRoadmap;
+
+      if (mode === 'append' && Array.isArray(currentList) && currentList.length > 0) {
+        const updated = [...currentList, activeGeneratedAiTask];
+        appState.parentChildRoadmap = updated;
+        if (appState.childDeviceKidId === kidId) {
+          appState.childRoadmap = updated;
+          if (typeof renderChildIslandRoadmap === 'function') renderChildIslandRoadmap();
+        }
         if (window.miloBus) {
           window.miloBus.broadcast('TASK_ASSIGN_BATCH', {
+            target_kid_id: kidId,
+            kid_id: kidId,
             tasks: updated,
             islandName: `Hải Trình ${updated.length} Đảo Tri Thức`,
             dispatchId: 'DISPATCH_' + Date.now()
           });
-        } else {
-          appState.childRoadmap = updated;
-          renderChildIslandRoadmap();
         }
         renderParentActiveRoadmapList();
-        showToast("Đã Thêm Đảo Mới", `Đã thêm [${activeGeneratedAiTask.title}] vào hải trình của con!`, "🏝️");
+        showToast("Đã Thêm Đảo Mới", `Đã thêm [${activeGeneratedAiTask.title}] vào hải trình của ${currentKid.name}!`, "🏝️");
       } else {
+        const updated = [activeGeneratedAiTask];
+        appState.parentChildRoadmap = updated;
+        appState.parentCurrentRoadmapIndex = 0;
+        if (appState.childDeviceKidId === kidId) {
+          appState.childRoadmap = updated;
+          appState.currentRoadmapIndex = 0;
+          appState.activeTask = activeGeneratedAiTask;
+          if (typeof renderChildIslandRoadmap === 'function') renderChildIslandRoadmap();
+          if (typeof childSwitchScreen === 'function') childSwitchScreen('home');
+        }
         if (window.miloBus) {
           window.miloBus.broadcast('TASK_ASSIGN_BATCH', {
-            tasks: [activeGeneratedAiTask],
+            target_kid_id: kidId,
+            kid_id: kidId,
+            tasks: updated,
             islandName: activeGeneratedAiTask.title,
             dispatchId: 'DISPATCH_' + Date.now()
           });
-        } else {
-          appState.childRoadmap = [activeGeneratedAiTask];
-          appState.currentRoadmapIndex = 0;
-          appState.activeTask = activeGeneratedAiTask;
-          renderChildIslandRoadmap();
-          childSwitchScreen('home');
         }
         renderParentActiveRoadmapList();
-        showToast("Đã Giao Bài AI Băm", `[${activeGeneratedAiTask.title}] đã xuất hiện trên hải trình của con!`, "🚀");
+        showToast("Đã Giao Bài AI Băm", `[${activeGeneratedAiTask.title}] đã xuất hiện trên hải trình của ${currentKid.name}!`, "🚀");
       }
     }
 
@@ -676,36 +690,50 @@
 
       taskDatabase[customTask.id] = customTask;
 
-      if (mode === 'append' && Array.isArray(appState.childRoadmap) && appState.childRoadmap.length > 0) {
-        const updated = [...appState.childRoadmap, customTask];
+      const kidId = appState.parentSelectedKidId || 'kid_leo_01';
+      const currentKid = appState.parentSelectedKidProfile || { name: 'Bé' };
+      const currentList = Array.isArray(appState.parentChildRoadmap) ? appState.parentChildRoadmap : appState.childRoadmap;
+
+      if (mode === 'append' && Array.isArray(currentList) && currentList.length > 0) {
+        const updated = [...currentList, customTask];
+        appState.parentChildRoadmap = updated;
+        if (appState.childDeviceKidId === kidId) {
+          appState.childRoadmap = updated;
+          if (typeof renderChildIslandRoadmap === 'function') renderChildIslandRoadmap();
+        }
         if (window.miloBus) {
           window.miloBus.broadcast('TASK_ASSIGN_BATCH', {
+            target_kid_id: kidId,
+            kid_id: kidId,
             tasks: updated,
             islandName: `Hải Trình ${updated.length} Đảo Tri Thức`,
             dispatchId: 'DISPATCH_' + Date.now()
           });
-        } else {
-          appState.childRoadmap = updated;
-          renderChildIslandRoadmap();
         }
         renderParentActiveRoadmapList();
-        showToast("Đã Thêm Đảo Mới", `Đã thêm [${title}] vào hải trình của con!`, "🏝️");
+        showToast("Đã Thêm Đảo Mới", `Đã thêm [${title}] vào hải trình của ${currentKid.name}!`, "🏝️");
       } else {
+        const updated = [customTask];
+        appState.parentChildRoadmap = updated;
+        appState.parentCurrentRoadmapIndex = 0;
+        if (appState.childDeviceKidId === kidId) {
+          appState.childRoadmap = updated;
+          appState.currentRoadmapIndex = 0;
+          appState.activeTask = customTask;
+          if (typeof renderChildIslandRoadmap === 'function') renderChildIslandRoadmap();
+          if (typeof childSwitchScreen === 'function') childSwitchScreen('home');
+        }
         if (window.miloBus) {
           window.miloBus.broadcast('TASK_ASSIGN_BATCH', {
-            tasks: [customTask],
+            target_kid_id: kidId,
+            kid_id: kidId,
+            tasks: updated,
             islandName: customTask.title,
             dispatchId: 'DISPATCH_' + Date.now()
           });
-        } else {
-          appState.childRoadmap = [customTask];
-          appState.currentRoadmapIndex = 0;
-          appState.activeTask = customTask;
-          renderChildIslandRoadmap();
-          childSwitchScreen('home');
         }
         renderParentActiveRoadmapList();
-        showToast("Giao Bài Thành Công", `Đã gửi [${title}] (${dynamicSteps.length} bước) sang máy con!`, "✍️");
+        showToast("Giao Bài Thành Công", `Đã gửi [${title}] (${dynamicSteps.length} bước) sang máy ${currentKid.name}!`, "✍️");
       }
     }
 

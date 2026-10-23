@@ -1880,15 +1880,24 @@
         liveApplianceCard.className = "w-full max-w-[280px] mx-auto mb-2 bg-emerald-100 border-2 border-emerald-300 rounded-2xl p-2.5 flex items-center justify-between shadow-xs";
       }
 
-      // 2. GHI NHẬN VÀO APPSTATE & MINH CHỨNG THỰC TẾ
+      // 2. GHI NHẬN VÀO APPSTATE & MINH CHỨNG THỰC TẾ (HỖ TRỢ MẢNG ĐA ẢNH)
       if (!appState.completedRoutineIds) appState.completedRoutineIds = new Set();
       appState.completedRoutineIds.add(routineId);
       if (!appState.routinePhotoProofs) appState.routinePhotoProofs = {};
+
+      const prevProof = appState.routinePhotoProofs[routineId] || {};
+      let accumulatedPhotos = Array.isArray(prevProof.photos) ? [...prevProof.photos] : (prevProof.photo_data ? [prevProof.photo_data] : []);
+      if (realPhotoData && !accumulatedPhotos.includes(realPhotoData)) {
+        accumulatedPhotos.push(realPhotoData);
+      }
+      const finalPhotoData = realPhotoData || prevProof.photo_data || (accumulatedPhotos[0] || null);
+
       appState.routinePhotoProofs[routineId] = {
         routine_id: routineId,
         routine_title: routineTitle,
         photo_tag: (task && task.target_photo_tag) || 'PHOTO.JPG',
-        photo_data: realPhotoData || null,
+        photo_data: finalPhotoData,
+        photos: accumulatedPhotos,
         timestamp: timeStr,
         icon: (task && task.icon) || '📸',
         reward: reward
@@ -1901,7 +1910,8 @@
           routine_id: routineId,
           routine_title: routineTitle,
           photo_tag: (task && task.target_photo_tag) || 'PHOTO.JPG',
-          photo_data: realPhotoData || null,
+          photo_data: finalPhotoData,
+          photos: accumulatedPhotos,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         });
       }

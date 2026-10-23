@@ -87,19 +87,56 @@
     function proceedToNextRoadmapIsland() {
       playSfx('tap');
       const modal = document.getElementById('child-modal-celebration');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
 
-      // Chuyển sang đảo kế tiếp nếu có
-      if (appState.currentRoadmapIndex < appState.childRoadmap.length - 1) {
+      const isRoutine = !!(appState.activeTaskIsRoutine || (appState.activeTask && (appState.activeTask.cat === 'chore' || appState.activeTask.isRoutine || (typeof routineDatabase !== 'undefined' && routineDatabase[appState.activeTask.id]))));
+
+      if (isRoutine) {
+        // ĐÂY LÀ NHIỆM VỤ SINH HOẠT THÓI QUEN
+        if (appState.activeTask && appState.activeTask.id) {
+          if (!appState.completedRoutineIds) appState.completedRoutineIds = new Set();
+          appState.completedRoutineIds.add(appState.activeTask.id);
+        }
+        appState.selectedActiveRoutineId = null;
+
+        const routines = appState.childRoutineRoadmap || [];
+        const completed = appState.completedRoutineIds || new Set();
+        const allDone = routines.length > 0 && routines.every(r => {
+          const id = typeof r === 'string' ? r : (r ? r.id : null);
+          return id && completed.has(id);
+        });
+
+        if (allDone) {
+          // ĐÃ HOÀN THÀNH TOÀN BỘ CÁC NỀ NẾP SINH HOẠT TRONG NGÀY
+          openRoutineTreasureCeremony();
+        } else {
+          // Vẫn còn nề nếp khác: Quay về Đảo Thói Quen, hòn đảo vừa làm được tick xanh
+          childSwitchScreen('home');
+          if (typeof window.childSwitchIslandMode === 'function') {
+            window.childSwitchIslandMode('routine');
+          }
+        }
+        if (window.miloBus) window.miloBus.savePersistedState(appState);
+        return;
+      }
+
+      // ĐÂY LÀ NHIỆM VỤ HỌC TẬP GDPT 2018
+      const totalStudyTasks = Array.isArray(appState.childRoadmap) ? appState.childRoadmap.length : 0;
+      if (appState.currentRoadmapIndex < totalStudyTasks - 1) {
         appState.currentRoadmapIndex++;
         childSwitchScreen('home');
-        showToast("Mở Khóa Đảo Mới", `Chúc mừng Leo! Đảo tiếp theo đã sẵn sàng trên bản đồ!`, "🏝️");
+        if (typeof window.childSwitchIslandMode === 'function') {
+          window.childSwitchIslandMode('study');
+        }
       } else {
-        // ĐÃ HOÀN THÀNH TẤT CẢ CÁC ĐẢO -> MỞ RƯƠNG BÁU HOÀNG KIM!
-        appState.currentRoadmapIndex = appState.childRoadmap.length;
+        // ĐÃ HOÀN THÀNH TẤT CẢ CÁC BÀI TẬP GDPT -> MỞ RƯƠNG BÁU HOÀNG KIM!
+        appState.currentRoadmapIndex = totalStudyTasks;
         openTreasureCeremony();
       }
+      if (window.miloBus) window.miloBus.savePersistedState(appState);
     }
 
     function openTreasureCeremony() {
@@ -123,7 +160,39 @@
         });
         window.miloBus.savePersistedState(appState);
       }
-      showToast("RƯƠNG BÁU HOÀNG KIM!", "Leo đã nhận thêm +250 ⭐ và mở khóa Trạm Vé Vàng!", "👑");
+      if (appState.role === 'parent' || appState.role === 'dual') {
+        showToast("RƯƠNG BÁU HOÀNG KIM!", "Leo đã nhận thêm +250 ⭐ và mở khóa Trạm Vé Vàng!", "👑");
+      }
+    }
+
+    function openRoutineTreasureCeremony() {
+      playSfx('success');
+      const ceremony = document.getElementById('child-modal-treasure-ceremony');
+      if (ceremony) {
+        const titleEl = ceremony.querySelector('h2, .text-xl, .font-black');
+        if (titleEl) titleEl.innerText = "🏆 RƯƠNG HOÀNG KIM NỀ NẾP!";
+        const descEl = ceremony.querySelector('p');
+        if (descEl) descEl.innerText = "Leo đã tự giác hoàn thành xuất sắc tất cả các thói quen nề nếp trong ngày! Nhận thưởng +100 ⭐!";
+        ceremony.classList.remove('hidden');
+        ceremony.classList.add('flex');
+      }
+      const newStars = appState.stars + 100;
+      updateStarsEverywhere(newStars);
+      if (window.miloBus) {
+        window.miloBus.broadcast('ROUTINE_TREASURE_UNLOCKED', {
+          totalStarsEarned: newStars,
+          unlockedRewards: ["Huy hiệu Hiệp Sĩ Nề Nếp Tự Lập", "+100 ⭐"]
+        });
+        window.miloBus.broadcast('STARS_SYNC', {
+          totalStars: newStars,
+          delta: 100,
+          reason: 'routine_bonus'
+        });
+        window.miloBus.savePersistedState(appState);
+      }
+      if (typeof renderChildRoutineRoadmapFromTasks === 'function') {
+        renderChildRoutineRoadmapFromTasks(appState.childRoutineRoadmap);
+      }
     }
 
     function openRedeemFromTreasure() {
@@ -139,7 +208,15 @@
         ceremony.classList.remove('flex');
       }
       childSwitchScreen('home');
-      renderChildIslandRoadmap();
+      if (appState.activeTaskIsRoutine) {
+        if (typeof window.childSwitchIslandMode === 'function') {
+          window.childSwitchIslandMode('routine');
+        }
+      } else {
+        if (typeof window.childSwitchIslandMode === 'function') {
+          window.childSwitchIslandMode('study');
+        }
+      }
     }
 
 

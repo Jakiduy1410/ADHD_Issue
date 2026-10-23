@@ -50,7 +50,25 @@
     }
   </script>
 
-  <link rel="stylesheet" href="css/style.css?v=3.6">
+  <link rel="stylesheet" href="css/style.css?v=4.1">
+  <script>
+    /* Early Role Guard: Triệt tiêu 100% hiện tượng chớp nháy (FOUC) giữa 2 máy */
+    (function() {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var role = params.get('role');
+        var isStandalone = window.innerWidth <= 900 || params.get('standalone') === '1' || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+        if (isStandalone && (role === 'child' || role === 'parent')) {
+          document.documentElement.classList.add('mobile-standalone-view');
+        }
+        if (role === 'child') {
+          document.write('<style id="early-role-guard">#col-parent { display: none !important; }</style>');
+        } else if (role === 'parent') {
+          document.write('<style id="early-role-guard">#col-child { display: none !important; }</style>');
+        }
+      } catch(e) {}
+    })();
+  </script>
 </head>
 
 <body class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-teal-500 selection:text-white">
@@ -353,11 +371,11 @@
                 <!-- ĐẢO 2: NHIỆM VỤ TIẾP THEO (QUEUE ISLAND) -->
                 <div id="node-island-next" class="relative z-10 flex flex-col items-center translate-x-10 opacity-70 cursor-pointer hover:opacity-100 transition" onclick="selectQueuedIsland(1)">
                   <div id="child-next-island-btn" class="w-16 h-16 rounded-2xl bg-slate-100 border-2 border-slate-300 border-b-4 border-slate-400 flex flex-col items-center justify-center shadow-md">
-                    <span id="child-next-icon" class="text-2xl">🎒</span>
+                    <span id="child-next-icon" class="text-2xl">📚</span>
                     <span id="child-next-reward" class="text-[9px] font-black text-slate-600">+120 ⭐</span>
                   </div>
                   <span id="child-next-title" class="text-[10px] font-extrabold text-slate-600 mt-1 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-xs max-w-[150px] truncate text-center">
-                    Tự chuẩn bị balo
+                    Tiếng Việt: Đọc hiểu
                   </span>
                 </div>
 
@@ -375,22 +393,22 @@
 
                   <!-- Đảo nhiệm vụ chính -->
                   <div id="child-island-btn" onclick="startChildQuest()" class="w-24 h-24 rounded-[32px] btn-3d-green flex flex-col items-center justify-center text-white shadow-xl ring-8 ring-emerald-100 cursor-pointer hover:scale-105 transition">
-                    <span id="child-current-icon" class="text-4xl mb-0.5">🧹</span>
+                    <span id="child-current-icon" class="text-4xl mb-0.5">🔢</span>
                     <span id="child-current-reward" class="text-[10px] font-black uppercase tracking-wider bg-black/20 px-2 py-0.5 rounded-full">+120 ⭐</span>
                   </div>
 
                   <!-- Tên nhiệm vụ hiện tại -->
                   <div class="mt-2 text-center max-w-[260px]">
                     <div class="flex items-center justify-center gap-1.5 mb-0.5 flex-wrap">
-                      <span id="child-island-tag" class="text-[10px] font-black px-2.5 py-0.5 rounded-full border bg-amber-100 text-amber-800 border-amber-300">
-                        ĐẢO SINH HOẠT THƯ THÁI 🌿
+                      <span id="child-island-tag" class="text-[10px] font-black px-2.5 py-0.5 rounded-full border bg-teal-100 text-teal-800 border-teal-300">
+                        ĐẢO TOÁN HỌC DIỆU KỲ 🔢
                       </span>
-                      <span id="child-current-badge" class="bg-amber-100 text-amber-900 border border-amber-300 ring-2 ring-amber-200 text-[10px] font-black px-2 py-0.2 rounded-full uppercase">
+                      <span id="child-current-badge" class="bg-teal-100 text-teal-900 border border-teal-300 ring-2 ring-teal-200 text-[10px] font-black px-2 py-0.2 rounded-full uppercase">
                         Đang Chinh Phục
                       </span>
                     </div>
-                    <h2 id="child-current-title" class="text-base font-black text-slate-800 leading-snug">Dọn bàn học gọn gàng</h2>
-                    <p id="child-current-sub" class="text-[11px] font-bold text-slate-500 mt-0.5">Chuỗi 4 vi nhiệm vụ vừa sức • Milo hỗ trợ</p>
+                    <h2 id="child-current-title" class="text-base font-black text-slate-800 leading-snug">Phép cộng trong phạm vi 10</h2>
+                    <p id="child-current-sub" class="text-[11px] font-bold text-slate-500 mt-0.5">Chuỗi 3 vi nhiệm vụ vừa sức • Milo hỗ trợ</p>
                   </div>
                 </div>
 
@@ -1432,18 +1450,21 @@
               </button>
             </div>
 
-            <!-- MODAL XEM ẢNH MINH CHỨNG & THẢ TIM CỦA MẸ -->
-            <div id="parent-photo-modal" class="absolute inset-0 bg-slate-950/70 backdrop-blur-xs z-50 hidden flex-col items-center justify-center p-4">
+            <!-- MODAL XEM ẢNH MINH CHỨNG & THẢ TIM CỦA MẸ (STACKED CARDS +11° PEAK) -->
+            <div id="parent-photo-modal" class="absolute inset-0 bg-slate-950/75 backdrop-blur-xs z-50 hidden flex-col items-center justify-center p-4">
               <div class="bg-white rounded-3xl p-4 max-w-xs w-full shadow-2xl space-y-3 animate-slide-up border border-slate-200">
                 <div class="flex items-center justify-between pb-2 border-b border-slate-100">
                   <div class="flex items-center gap-1.5">
                     <span class="text-base">📷</span>
-                    <span id="p-modal-title" class="font-black text-xs text-slate-900 uppercase">Minh Chứng Của Bé Leo</span>
+                    <div>
+                      <span id="p-modal-title" class="font-black text-xs text-slate-900 uppercase">Minh Chứng Của Bé Leo</span>
+                      <div id="p-modal-photo-index" class="text-[9px] text-teal-600 font-extrabold hidden">Ảnh 1 / 2</div>
+                    </div>
                   </div>
-                  <button onclick="parentClosePhotoModal()" class="w-6 h-6 rounded-full bg-slate-100 text-slate-500 font-bold text-xs flex items-center justify-center">✕</button>
+                  <button onclick="parentClosePhotoModal()" class="w-6 h-6 rounded-full bg-slate-100 text-slate-500 font-bold text-xs flex items-center justify-center cursor-pointer hover:bg-slate-200 transition">✕</button>
                 </div>
 
-                <div class="rounded-2xl overflow-hidden border-2 border-teal-200 aspect-4/3 relative bg-gradient-to-tr from-amber-100 via-orange-50 to-teal-50 flex items-center justify-center shadow-inner">
+                <div id="p-modal-photo-stage" class="w-full h-64 min-h-[256px] rounded-2xl overflow-hidden border-2 border-teal-200 relative bg-slate-900/10 flex items-center justify-center shadow-inner">
                   <img id="p-modal-real-photo" class="absolute inset-0 w-full h-full object-cover hidden" alt="Minh chứng ảnh thật">
                   <div class="text-center p-2 space-y-1 relative z-10" id="p-modal-emoji-box">
                     <div class="text-4xl" id="p-modal-photo-emoji">✨🪑📚✨</div>
@@ -1453,16 +1474,26 @@
                 </div>
 
                 <div class="bg-teal-50 p-2.5 rounded-2xl border border-teal-200 flex items-center gap-2">
-                  <span class="text-2xl">🦁</span>
+                  <span class="text-2xl shrink-0">🦁</span>
                   <p class="text-[10px] text-teal-950 font-extrabold leading-tight" id="p-modal-milo-praise">
                     "Leo đã tự tay dọn dẹp sạch sẽ trước khi chụp ảnh gửi Mẹ!"
                   </p>
                 </div>
 
-                <button id="btn-parent-heart" onclick="parentSendHeart()" class="w-full py-3 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-black text-xs rounded-2xl shadow-md transition active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer">
-                  <span class="text-base">💖</span>
-                  <span>THẢ TIM KHEN NGỢI (+5⭐)</span>
-                </button>
+                <div class="space-y-1.5">
+                  <button id="btn-parent-next-photo" onclick="parentModalNextPhoto()" class="hidden w-full py-3 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white font-black text-xs rounded-2xl shadow-md active:scale-95 transition flex items-center justify-center gap-1.5 cursor-pointer">
+                    <span>XEM TIẾP ẢNH 2</span> <span>👉</span>
+                  </button>
+                  <button id="btn-parent-heart" onclick="parentSendHeart()" class="w-full py-3 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-black text-xs rounded-2xl shadow-md transition active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer">
+                    <span class="text-base">💖</span>
+                    <span>THẢ TIM KHEN NGỢI (+5⭐)</span>
+                  </button>
+                  <div id="p-modal-reset-link" class="text-center pt-0.5 hidden">
+                    <button onclick="parentModalResetPhotos()" class="text-[10px] text-slate-400 hover:text-slate-600 font-bold underline cursor-pointer">
+                      ↺ Xem lại từ đầu ảnh 1
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -1561,17 +1592,17 @@
   <!-- ============================================================== -->
   <!-- 4. MODULAR JAVASCRIPT ARCHITECTURE (Single Responsibility) -->
   <!-- ============================================================== -->
-  <script src="js/tasks_data.js?v=3.6"></script>
-  <script src="js/audio.js?v=3.6"></script>
-  <script src="js/sync_bus.js?v=3.6"></script>
-  <script src="js/state.js?v=3.6"></script>
-  <script src="js/geometry.js?v=3.6"></script>
-  <script src="js/roadmap.js?v=3.6"></script>
-  <script src="js/renderers.js?v=3.6"></script>
-  <script src="js/rewards_timer_milo.js?v=3.6"></script>
-  <script src="js/parent_survey.js?v=3.6"></script>
-  <script src="js/decomposer_fallback.js?v=3.6"></script>
-  <script src="js/app.js?v=3.6"></script>
+  <script src="js/tasks_data.js?v=4.1"></script>
+  <script src="js/audio.js?v=4.1"></script>
+  <script src="js/sync_bus.js?v=4.1"></script>
+  <script src="js/state.js?v=4.1"></script>
+  <script src="js/geometry.js?v=4.1"></script>
+  <script src="js/roadmap.js?v=4.1"></script>
+  <script src="js/renderers.js?v=4.1"></script>
+  <script src="js/rewards_timer_milo.js?v=4.1"></script>
+  <script src="js/parent_survey.js?v=4.1"></script>
+  <script src="js/decomposer_fallback.js?v=4.1"></script>
+  <script src="js/app.js?v=4.1"></script>
 
   <script>
     // Routine Switcher and UI Helpers
@@ -1747,12 +1778,27 @@
         return;
       }
 
-      appState.childRoadmap = [task];
-      appState.currentRoadmapIndex = 0;
+      appState.activeTaskIsRoutine = true;
       appState.activeTask = task;
       appState.currentStepIndex = 0;
-      if (typeof startChildQuest === 'function') {
-        startChildQuest();
+      appState.selectedClues = appState.selectedClues || new Set();
+      appState.selectedClues.clear();
+      appState.cleanedItems = appState.cleanedItems || new Set();
+      appState.cleanedItems.clear();
+      appState.numpadValue = "";
+
+      childSwitchScreen('workspace');
+      const wsTagEl = document.getElementById('child-workspace-island-tag');
+      if (wsTagEl) {
+        wsTagEl.innerText = "ĐẢO SINH HOẠT THƯ THÁI 🌿";
+        wsTagEl.className = "text-[10px] font-black px-2 py-0.5 rounded-full border bg-amber-100 text-amber-800 border-amber-300";
+      }
+      const wsNameEl = document.getElementById('child-workspace-island-name');
+      if (wsNameEl) {
+        wsNameEl.innerText = `🏝️ Nề nếp: ${task.title || 'Sinh hoạt'}`;
+      }
+      if (typeof renderChildWorkspaceStep === 'function') {
+        renderChildWorkspaceStep();
       }
     };
 
@@ -1768,80 +1814,329 @@
       }
     };
 
-    window.parentOpenPhotoModal = function(key) {
-      const modal = document.getElementById('parent-photo-modal');
-      const emoji = document.getElementById('p-modal-photo-emoji');
-      const caption = document.getElementById('p-modal-photo-caption');
-      const sub = document.getElementById('p-modal-photo-sub');
-      const praise = document.getElementById('p-modal-milo-praise');
-      const btn = document.getElementById('btn-parent-heart');
+    let parentModalPhotos = [];
+    let parentModalCurrentPhotoIndex = 0;
+    let parentModalActiveKey = null;
 
-      btn.className = "w-full py-3 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-black text-xs rounded-2xl shadow-md transition active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer";
-      btn.innerHTML = "<span class='text-base'>💖</span> <span>THẢ TIM KHEN NGỢI (+5⭐)</span>";
-      btn.disabled = false;
+    window.parentOpenPhotoModal = function(key) {
+      parentModalActiveKey = key;
+      parentModalCurrentPhotoIndex = 0;
+      
+      const modal = document.getElementById('parent-photo-modal');
+      const btnHeart = document.getElementById('btn-parent-heart');
+      if (btnHeart) {
+        btnHeart.className = "w-full py-3 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-black text-xs rounded-2xl shadow-md transition active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer";
+        btnHeart.innerHTML = "<span class='text-base'>💖</span> <span>THẢ TIM KHEN NGỢI (+5⭐)</span>";
+        btnHeart.disabled = false;
+      }
 
       const routines = window.routineDatabase || {};
       const proof = (appState.routinePhotoProofs && appState.routinePhotoProofs[key]) || null;
       const rt = routines[key] || (key === 'bed' ? routines['routine_morning_bed'] : key === 'drop' ? routines['routine_afterschool_drop'] : routines['routine_clean_desk']);
 
-      const realImg = document.getElementById('p-modal-real-photo');
-      const emojiBox = document.getElementById('p-modal-emoji-box');
+      // Build photos array for this task
+      const photoSteps = (rt && Array.isArray(rt.steps)) ? rt.steps.filter(s => s.ui_type === 'photo_proof' || s.type === 'photo_proof') : [];
+      const hasMultiSteps = photoSteps.length > 1;
+      const hasMultiProofPhotos = proof && Array.isArray(proof.photos) && proof.photos.length > 1;
 
-      if (proof && proof.photo_data) {
-        if (realImg) {
-          realImg.src = proof.photo_data;
-          realImg.classList.remove('hidden');
+      if (key === 'routine_morning_bed' || key === 'bed' || hasMultiSteps || hasMultiProofPhotos) {
+        // Multi-photo Task (Style Thẻ Xếp Chồng +11° lấp ló, Full Frame)
+        let p1Data = (proof && proof.photos && proof.photos[0] && proof.photos.length > 1) ? proof.photos[0] : null;
+        let p2Data = proof ? (proof.photo_data || (proof.photos && (proof.photos[1] || proof.photos[0]))) : null;
+
+        if (key === 'routine_morning_bed' || key === 'bed') {
+          parentModalPhotos = [
+            {
+              id: 1,
+              title: "ẢNH 1",
+              badge: "ẢNH 1",
+              time: "07:05 AM",
+              icon: "📐",
+              bgColor: "from-amber-400 via-orange-400 to-amber-500",
+              realUrl: p1Data
+            },
+            {
+              id: 2,
+              title: "ẢNH 2",
+              badge: "ẢNH 2",
+              time: (proof && proof.timestamp) || "07:08 AM",
+              icon: "🛏️✨",
+              bgColor: "from-emerald-400 via-teal-400 to-cyan-500",
+              realUrl: p2Data
+            }
+          ];
+        } else if (key === 'routine_morning_teeth' || key === 'routine_night_teeth') {
+          parentModalPhotos = [
+            {
+              id: 1,
+              title: "ẢNH 1",
+              badge: "ẢNH 1",
+              time: "07:12 AM",
+              icon: "🪥",
+              bgColor: "from-cyan-400 via-teal-400 to-emerald-500",
+              realUrl: p1Data
+            },
+            {
+              id: 2,
+              title: "ẢNH 2",
+              badge: "ẢNH 2",
+              time: (proof && proof.timestamp) || "07:15 AM",
+              icon: "😁✨",
+              bgColor: "from-blue-400 via-indigo-400 to-purple-500",
+              realUrl: p2Data
+            }
+          ];
+        } else if (hasMultiProofPhotos) {
+          parentModalPhotos = proof.photos.map((photoUrl, idx) => ({
+            id: idx + 1,
+            title: `ẢNH ${idx + 1}`,
+            badge: `ẢNH ${idx + 1}`,
+            time: (proof && proof.timestamp) || "Hôm nay",
+            icon: (rt && rt.icon) || "📸",
+            bgColor: idx === 0 ? "from-amber-400 via-orange-400 to-amber-500" : "from-emerald-400 via-teal-400 to-cyan-500",
+            realUrl: photoUrl
+          }));
+        } else {
+          // Fallback multi-step from routine steps
+          const step1 = photoSteps[0] || {};
+          const step2 = photoSteps[1] || {};
+          parentModalPhotos = [
+            {
+              id: 1,
+              title: "ẢNH 1",
+              badge: "ẢNH 1",
+              time: (rt && rt.slot_time) || "07:00",
+              icon: (rt && rt.icon) || "📸",
+              bgColor: "from-amber-400 via-orange-400 to-amber-500",
+              realUrl: p1Data
+            },
+            {
+              id: 2,
+              title: "ẢNH 2",
+              badge: "ẢNH 2",
+              time: (proof && proof.timestamp) || (rt && rt.slot_time) || "07:10",
+              icon: `${(rt && rt.icon) || '📸'}✨`,
+              bgColor: "from-emerald-400 via-teal-400 to-cyan-500",
+              realUrl: p2Data
+            }
+          ];
         }
-        if (emojiBox) emojiBox.classList.add('hidden');
-        caption.innerText = `${proof.routine_title || (rt && rt.title)} đã hoàn thành!`;
-        sub.innerText = `Chụp bởi Bé Leo • Hoàn thành lúc ${proof.timestamp || 'hôm nay'}`;
-        praise.innerText = `Leo đã tự tay chụp ảnh thực tế và gửi cho mẹ, mẹ rất tự hào về con!`;
-      } else if (proof) {
-        if (realImg) realImg.classList.add('hidden');
-        if (emojiBox) emojiBox.classList.remove('hidden');
-        emoji.innerText = `${proof.icon || (rt && rt.icon) || '📸'}✨`;
-        caption.innerText = `${proof.routine_title || (rt && rt.title)} đã hoàn thành!`;
-        sub.innerText = `Chụp bởi Bé Leo • Hoàn thành lúc ${proof.timestamp || (rt && rt.slot_time) || 'hôm nay'}`;
-        praise.innerText = `Leo đã tự giác hoàn thành [${proof.routine_title || (rt && rt.title)}], mẹ rất tự hào về sự tiến bộ của con!`;
-      } else if (rt) {
-        if (realImg) realImg.classList.add('hidden');
-        if (emojiBox) emojiBox.classList.remove('hidden');
-        emoji.innerText = `${rt.icon || '📸'}✨`;
-        caption.innerText = `${rt.title} đã hoàn thành!`;
-        sub.innerText = `Chụp bởi Bé Leo • Hoàn thành lúc ${rt.slot_time || '19:00'}`;
-        praise.innerText = `Leo đã tự giác thực hiện '${rt.title}', mẹ rất tự hào về con!`;
-      } else if (key === 'bed') {
-        emoji.innerText = "🛏️✨";
-        caption.innerText = "Giường ngủ được giũ phẳng và xếp gối";
-        sub.innerText = "Chụp bởi Bé Leo • Hoàn thành lúc 06:45";
-        praise.innerText = "Leo thức dậy là chủ động gấp chăn ngay, mẹ rất vui vì con tự lập!";
-      } else if (key === 'drop') {
-        emoji.innerText = "👟🎒✨";
-        caption.innerText = "Đôi giày đặt trên kệ • Balo treo gọn gàng";
-        sub.innerText = "Chụp bởi Bé Leo • Hoàn thành lúc 16:45";
-        praise.innerText = "Vừa đi học về là Leo cất đồ ngay ngắn, không vứt bừa ra sàn!";
       } else {
-        emoji.innerText = "✨🪑📚✨";
-        caption.innerText = "Mặt bàn học đã sạch bóng • Ống bút ngăn nắp";
-        sub.innerText = "Chụp bởi Bé Leo • Hoàn thành lúc 19:15";
-        praise.innerText = "Leo đã tự tay cất bút, nhặt rác và xếp sách gọn gàng trước khi chụp!";
+        // Single Photo Task (Full Frame)
+        const realPhoto = (proof && proof.photo_data) || (proof && proof.photos && proof.photos[0]) || null;
+        let icon = `${(proof && proof.icon) || (rt && rt.icon) || '📸'}✨`;
+        let time = (proof && proof.timestamp) || (rt && rt.slot_time) || "Hôm nay";
+
+        if (key === 'drop') {
+          icon = "👟🎒✨";
+          time = (proof && proof.timestamp) || "16:45";
+        } else if (key === 'clean_desk' || key === 'routine_clean_desk') {
+          icon = "✨🪑📚✨";
+          time = (proof && proof.timestamp) || "19:15";
+        }
+
+        parentModalPhotos = [
+          {
+            id: 1,
+            title: "ẢNH 1",
+            badge: "ẢNH 1",
+            time: time,
+            icon: icon,
+            bgColor: "from-teal-400 via-emerald-400 to-cyan-500",
+            realUrl: realPhoto
+          }
+        ];
       }
 
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+      renderParentModalStage();
+
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
     };
+
+    function renderParentModalStage() {
+      const stage = document.getElementById('p-modal-photo-stage');
+      const idxEl = document.getElementById('p-modal-photo-index');
+      const praise = document.getElementById('p-modal-milo-praise');
+      const btnNext = document.getElementById('btn-parent-next-photo');
+      const btnHeart = document.getElementById('btn-parent-heart');
+      const resetLink = document.getElementById('p-modal-reset-link');
+
+      if (!stage || parentModalPhotos.length === 0) return;
+
+      const isMulti = parentModalPhotos.length > 1;
+
+      if (idxEl) {
+        if (isMulti) {
+          idxEl.classList.remove('hidden');
+          idxEl.innerText = `Đang xem: Ảnh ${parentModalCurrentPhotoIndex + 1} / ${parentModalPhotos.length}`;
+        } else {
+          idxEl.classList.add('hidden');
+        }
+      }
+
+      if (isMulti) {
+        const p1 = parentModalPhotos[0];
+        const p2 = parentModalPhotos[1];
+        const isCard2VisibleBehind = (parentModalCurrentPhotoIndex === 0);
+
+        stage.innerHTML = `
+          <div class="w-full h-full p-2 relative flex items-center justify-center bg-slate-900/15 overflow-hidden select-none">
+            
+            <!-- Thẻ Ảnh 2 (Nằm Dưới, Ché Góc Lấp Ló +11°, Ảnh Ôm Trọn Khung) -->
+            <div id="p-card-stack-1" style="--c2-rot: 11deg; --peek-x: 14px;" 
+                 class="absolute w-[88%] h-[92%] rounded-2xl overflow-hidden border-2 border-white/80 shadow-lg transition-all duration-400 select-none bg-slate-900
+                 ${isCard2VisibleBehind ? 'rotate-[11deg] translate-x-3.5 -translate-y-1 opacity-95 z-10 scale-[0.98]' : 'top-2 rotate-0 translate-x-0 translate-y-0 opacity-100 z-20 scale-100 shadow-2xl anim-card-promote'}">
+              
+              <!-- Ảnh ôm trọn toàn bộ khung card -->
+              ${p2.realUrl ? `
+                <img src="${p2.realUrl}" class="absolute inset-0 w-full h-full object-cover" alt="Ảnh 2">
+              ` : `
+                <div class="absolute inset-0 w-full h-full bg-gradient-to-tr ${p2.bgColor} flex flex-col items-center justify-center text-white">
+                  <div class="text-6xl drop-shadow-md">${p2.icon}</div>
+                </div>
+              `}
+
+              <!-- Gradient overlay đỉnh để nổi bật badge & thời gian -->
+              <div class="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/60 via-black/20 to-transparent pointer-events-none z-10"></div>
+
+              <!-- Thanh trên: CHỈ HIỂN THỊ BƯỚC + MỐC THỜI GIAN -->
+              <div class="relative z-20 flex items-center justify-between p-3">
+                <span class="px-2.5 py-1 rounded-full bg-black/55 text-emerald-300 font-black text-[10px] backdrop-blur-md border border-white/20 shadow-sm flex items-center gap-1">
+                  <span>✨</span> <span>${p2.badge || 'ẢNH 2'}</span>
+                </span>
+                <span class="text-white text-[10px] font-black bg-black/55 px-2.5 py-1 rounded-full backdrop-blur-md border border-white/20 shadow-sm">${p2.time}</span>
+              </div>
+
+              ${isCard2VisibleBehind ? `
+                <div class="absolute -top-1 -right-1 bg-amber-300 text-amber-950 font-black text-[8px] px-2 py-0.5 rounded-bl-xl rounded-tr-xl shadow-md uppercase tracking-wider animate-pulse z-30">
+                  👉 Lấp ló ảnh sau (+11°)
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- Thẻ Ảnh 1 (Nằm Phía Trước, Nghiêng Nhẹ -2°, Bấm Gạt Bay, Ảnh Ôm Trọn Khung) -->
+            <div id="p-card-stack-0" onclick="parentModalNextPhoto()" style="--c1-rot: -2deg;"
+                 class="absolute w-[88%] h-[92%] -rotate-2 top-2 rounded-2xl overflow-hidden shadow-2xl border-2 border-white/90 cursor-pointer z-20 transition-all active:scale-95 select-none bg-slate-900
+                 ${parentModalCurrentPhotoIndex === 1 ? 'hidden' : ''}">
+              
+              <!-- Ảnh ôm trọn toàn bộ khung card -->
+              ${p1.realUrl ? `
+                <img src="${p1.realUrl}" class="absolute inset-0 w-full h-full object-cover" alt="Ảnh 1">
+              ` : `
+                <div class="absolute inset-0 w-full h-full bg-gradient-to-tr ${p1.bgColor} flex flex-col items-center justify-center text-white">
+                  <div class="text-6xl drop-shadow-md">${p1.icon}</div>
+                </div>
+              `}
+
+              <!-- Gradient overlay đỉnh để nổi bật badge & thời gian -->
+              <div class="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/60 via-black/20 to-transparent pointer-events-none z-10"></div>
+
+              <!-- Thanh trên: CHỈ HIỂN THỊ BƯỚC + MỐC THỜI GIAN -->
+              <div class="relative z-20 flex items-center justify-between p-3">
+                <span class="px-2.5 py-1 rounded-full bg-black/55 text-white font-black text-[10px] backdrop-blur-md border border-white/20 shadow-sm flex items-center gap-1">
+                  <span>✨</span> <span>${p1.badge || 'ẢNH 1'}</span>
+                </span>
+                <span class="text-white text-[10px] font-black bg-black/55 px-2.5 py-1 rounded-full backdrop-blur-md border border-white/20 shadow-sm">${p1.time}</span>
+              </div>
+
+              <!-- Gợi ý bấm gạt thẻ ở đáy -->
+              <div class="absolute inset-x-0 bottom-0 p-2.5 z-20 pointer-events-none">
+                <div class="text-center text-[9px] text-white font-black bg-black/55 backdrop-blur-md py-1.5 rounded-xl flex items-center justify-center gap-1.5 animate-pulse shadow-md border border-white/20">
+                  <span>👈</span> <span>CHẠM ĐỂ XEM TIẾP ẢNH 2</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        `;
+
+        if (parentModalCurrentPhotoIndex === 0) {
+          if (btnNext) btnNext.classList.remove('hidden');
+          if (btnHeart) btnHeart.classList.add('hidden');
+          if (resetLink) resetLink.classList.add('hidden');
+          if (praise) praise.innerText = `Leo đã gửi ảnh 1 (${p1.time}). Mẹ bấm xem tiếp ảnh 2 nhé!`;
+        } else {
+          if (btnNext) btnNext.classList.add('hidden');
+          if (btnHeart) btnHeart.classList.remove('hidden');
+          if (resetLink) resetLink.classList.remove('hidden');
+          if (praise) praise.innerText = `Leo đã hoàn thành đủ các bước và gửi cả 2 ảnh cho Mẹ, Mẹ thả tim khen ngợi bé nhé! 💖`;
+        }
+      } else {
+        // Single Photo Render (Full Frame: Ảnh Ôm Trọn Khung)
+        const p = parentModalPhotos[0];
+        stage.innerHTML = `
+          <div class="w-full h-full rounded-2xl overflow-hidden border-2 border-white/80 shadow-md relative select-none bg-slate-900">
+            ${p.realUrl ? `
+              <img src="${p.realUrl}" class="absolute inset-0 w-full h-full object-cover" alt="Minh chứng">
+            ` : `
+              <div class="absolute inset-0 w-full h-full bg-gradient-to-tr ${p.bgColor} flex flex-col items-center justify-center text-white">
+                <div class="text-6xl drop-shadow-md">${p.icon}</div>
+              </div>
+            `}
+
+            <!-- Gradient overlay đỉnh để nổi bật badge & thời gian -->
+            <div class="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/60 via-black/20 to-transparent pointer-events-none z-10"></div>
+
+            <!-- Thanh trên: CHỈ HIỂN THỊ BƯỚC + MỐC THỜI GIAN -->
+            <div class="relative z-20 flex items-center justify-between p-3">
+              <span class="px-2.5 py-1 rounded-full bg-black/55 text-white font-black text-[10px] backdrop-blur-md border border-white/20 shadow-sm flex items-center gap-1">
+                <span>✨</span> <span>${p.badge || 'ẢNH 1'}</span>
+              </span>
+              <span class="text-white text-[10px] font-black bg-black/55 px-2.5 py-1 rounded-full backdrop-blur-md border border-white/20 shadow-sm">${p.time}</span>
+            </div>
+          </div>
+        `;
+
+        if (btnNext) btnNext.classList.add('hidden');
+        if (btnHeart) btnHeart.classList.remove('hidden');
+        if (resetLink) resetLink.classList.add('hidden');
+        if (praise) praise.innerText = `Leo đã tự giác thực hiện và gửi minh chứng lúc ${p.time}, Mẹ rất tự hào về sự tiến bộ của con!`;
+      }
+    }
+    window.renderParentModalStage = renderParentModalStage;
+
+    function parentModalNextPhoto() {
+      if (parentModalCurrentPhotoIndex >= parentModalPhotos.length - 1) return;
+      const card0 = document.getElementById('p-card-stack-0');
+      if (card0) {
+        if (typeof playSfx === 'function') playSfx('tap');
+        card0.classList.add('anim-card-flyout');
+        setTimeout(() => {
+          parentModalCurrentPhotoIndex = 1;
+          renderParentModalStage();
+        }, 320);
+      } else {
+        parentModalCurrentPhotoIndex = 1;
+        renderParentModalStage();
+      }
+    }
+    window.parentModalNextPhoto = parentModalNextPhoto;
+
+    function parentModalResetPhotos() {
+      if (typeof playSfx === 'function') playSfx('tap');
+      parentModalCurrentPhotoIndex = 0;
+      renderParentModalStage();
+    }
+    window.parentModalResetPhotos = parentModalResetPhotos;
 
     window.parentClosePhotoModal = function() {
       const modal = document.getElementById('parent-photo-modal');
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
     };
 
     window.parentSendHeart = function() {
       const btn = document.getElementById('btn-parent-heart');
-      btn.className = "w-full py-3 bg-emerald-600 text-white font-black text-xs rounded-2xl shadow-sm transition flex items-center justify-center gap-1.5 cursor-default";
-      btn.innerHTML = "<span>✅</span> <span>ĐÃ THẢ TIM YÊU THƯƠNG!</span>";
-      btn.disabled = true;
+      if (btn) {
+        btn.className = "w-full py-3 bg-emerald-600 text-white font-black text-xs rounded-2xl shadow-sm transition flex items-center justify-center gap-1.5 cursor-default";
+        btn.innerHTML = "<span>✅</span> <span>ĐÃ THẢ TIM YÊU THƯƠNG!</span>";
+        btn.disabled = true;
+      }
 
       if (typeof syncBus !== 'undefined' && syncBus && typeof syncBus.broadcast === 'function') {
         syncBus.broadcast('ROUTINE_HEART_RECEIVED', {
@@ -1853,8 +2148,7 @@
         parentClosePhotoModal();
       }, 1000);
     };
-
-    window.triggerRoutineHeartCelebration = function(msg) {
+window.triggerRoutineHeartCelebration = function(msg) {
       if (typeof spawnStars === 'function') spawnStars();
       if (typeof playSfx === 'function') playSfx('bell');
       if (typeof showToast === 'function') {

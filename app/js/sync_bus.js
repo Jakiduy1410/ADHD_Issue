@@ -122,10 +122,18 @@
       _initWebSocket() {
         const isHttps = typeof window !== 'undefined' && window.location && window.location.protocol === 'https:';
         const host = (typeof window !== 'undefined' && window.location && window.location.hostname) || 'localhost';
-        const port = this._getUrlParam('ws_port') || '8000';
+        const explicitWsPort = this._getUrlParam('ws_port');
+        let portPart = '';
+        if (explicitWsPort) {
+          portPart = `:${explicitWsPort}`;
+        } else if (typeof window !== 'undefined' && window.location && window.location.port) {
+          portPart = `:${window.location.port}`;
+        } else if (!isHttps) {
+          portPart = ':8000';
+        }
         const wsProto = isHttps ? 'wss://' : 'ws://';
         const wsRole = this.role === 'child' ? 'kid' : (this.role === 'parent' ? 'parent' : 'kid');
-        const wsUrl = `${wsProto}${host}:${port}/ws/sync?room_id=${this.roomId}&role=${wsRole}&client_id=${this.clientId}`;
+        const wsUrl = `${wsProto}${host}${portPart}/ws/sync?room_id=${encodeURIComponent(this.roomId)}&role=${encodeURIComponent(wsRole)}&client_id=${encodeURIComponent(this.clientId)}`;
 
         try {
           this.ws = new WebSocket(wsUrl);
@@ -369,12 +377,37 @@
         updateStarsEverywhere(state.stars);
       }
 
-      if (Array.isArray(state.child_roadmap) && state.child_roadmap.length > 0) {
-        const validTasks = state.child_roadmap.filter(t => (
-          t && typeof t === 'object' && t.id && Array.isArray(t.steps) && t.steps.length > 0
-        ));
-        if (validTasks.length > 0) {
-          appState.childRoadmap = validTasks;
+      if (Array.isArray(state.child_roadmap)) {
+        if (state.child_roadmap.length === 0 || state.roadmap_cleared) {
+          appState.childRoadmap = [];
+          appState.activeTask = null;
+          appState.currentRoadmapIndex = 0;
+          appState.roadmapCleared = true;
+          try { if (typeof localStorage !== 'undefined') localStorage.setItem('milo_roadmap_cleared', 'true'); } catch(_) {}
+        } else {
+          const validTasks = state.child_roadmap.filter(t => (
+            t && typeof t === 'object' && t.id && Array.isArray(t.steps) && t.steps.length > 0
+          ));
+          if (validTasks.length > 0) {
+            appState.childRoadmap = validTasks;
+            appState.roadmapCleared = false;
+            try { if (typeof localStorage !== 'undefined') localStorage.removeItem('milo_roadmap_cleared'); } catch(_) {}
+          }
+        }
+      }
+
+      if (Array.isArray(state.child_routine_roadmap)) {
+        if (state.child_routine_roadmap.length === 0 || state.routine_cleared) {
+          appState.childRoutineRoadmap = [];
+          appState.routineCleared = true;
+          try { if (typeof localStorage !== 'undefined') localStorage.setItem('milo_routine_cleared', 'true'); } catch(_) {}
+        } else {
+          appState.childRoutineRoadmap = state.child_routine_roadmap;
+          appState.routineCleared = false;
+          try { if (typeof localStorage !== 'undefined') localStorage.removeItem('milo_routine_cleared'); } catch(_) {}
+        }
+        if (typeof renderChildRoutineRoadmapFromTasks === 'function') {
+          renderChildRoutineRoadmapFromTasks(appState.childRoutineRoadmap);
         }
       }
 
@@ -448,14 +481,23 @@
       // 0. ROADMAP_UPDATED: Parent deletes/clears islands -> Child updates immediately
       bus.subscribe('ROADMAP_UPDATED', (payload) => {
         if (!payload) return;
-        appState.childRoadmap = Array.isArray(payload.roadmap) ? payload.roadmap : [];
+        const newRoadmap = Array.isArray(payload.roadmap) ? payload.roadmap : [];
+        appState.childRoadmap = newRoadmap;
         appState.currentRoadmapIndex = (typeof payload.currentIdx === 'number') ? payload.currentIdx : 0;
         appState.activeTask = appState.childRoadmap[appState.currentRoadmapIndex] || null;
         appState.currentStepIndex = 0;
-        renderChildIslandRoadmap();
-      // 5b. Khởi tạo bảng quản lý hải trình bên máy mẹ
-      renderParentActiveRoadmapList();
-        renderParentActiveRoadmapList();
+        appState.roadmapCleared = (newRoadmap.length === 0);
+        if (appState.roadmapCleared) {
+          try { if (typeof localStorage !== 'undefined') localStorage.setItem('milo_roadmap_cleared', 'true'); } catch(_) {}
+        } else {
+          try { if (typeof localStorage !== 'undefined') localStorage.removeItem('milo_roadmap_cleared'); } catch(_) {}
+        }
+        if (typeof renderChildIslandRoadmap === 'function') {
+          renderChildIslandRoadmap();
+        }
+        if (typeof renderParentActiveRoadmapList === 'function') {
+          renderParentActiveRoadmapList();
+        }
         bus.savePersistedState(appState);
       });
 
@@ -511,7 +553,7 @@
           badge.innerHTML = `⭐ Bước ${payload.stepIndex + 1} hoàn thành!`;
           badge.className = "inline-flex items-center gap-1 bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full text-[10px] font-bold";
         }
-        showToast("Tiến Độ Cập Nhật", `Leo vừa hoàn thành bước ${payload.stepIndex + 1}! (+${payload.starsEarned || 40} ⭐)`, "⭐");
+        if (appState.role === "parent" || appState.role === "dual") { showToast("Tiến Độ Cập Nhật", `Leo vừa hoàn thành bước ${payload.stepIndex + 1}! (+${payload.starsEarned || 40} ⭐)`, "⭐"); }
       });
 
       // 4. ISLAND_COMPLETED: Whole island cleared

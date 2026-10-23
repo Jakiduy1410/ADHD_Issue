@@ -255,15 +255,42 @@
 
     function alertTreasureStatus() {
       playSfx('tap');
-      if (appState.currentRoadmapIndex >= appState.childRoadmap.length) {
-        openTreasureCeremony();
+      const routineBtn = document.getElementById('child-tab-routine-btn');
+      const isRoutineTab = routineBtn && routineBtn.classList.contains('bg-amber-400');
+
+      if (isRoutineTab) {
+        // RƯƠNG BÁU CỦA ĐẢO THÓI QUEN (ROUTINE)
+        const routines = appState.childRoutineRoadmap || [];
+        const completed = appState.completedRoutineIds || new Set();
+        const remaining = routines.filter(r => {
+          const id = typeof r === 'string' ? r : (r ? r.id : null);
+          return id && !completed.has(id);
+        }).length;
+
+        if (routines.length > 0 && remaining === 0) {
+          if (typeof openRoutineTreasureCeremony === 'function') {
+            openRoutineTreasureCeremony();
+          }
+        } else {
+          showToast("Rương Hoàng Kim Nề Nếp 🔒", `Cần hoàn thành nốt ${remaining} thói quen sinh hoạt hôm nay để mở rương nhé Leo!`, "🏆");
+        }
+        return;
+      }
+
+      // RƯƠNG BÁU CỦA ĐẢO HỌC TẬP (GDPT)
+      const total = (appState.childRoadmap || []).length;
+      if (total > 0 && appState.currentRoadmapIndex >= total) {
+        if (typeof openTreasureCeremony === 'function') {
+          openTreasureCeremony();
+        }
       } else {
-        const remaining = appState.childRoadmap.length - appState.currentRoadmapIndex;
-        showToast("Rương Báu Hoàng Kim 🔒", `Cần hoàn thành nốt ${remaining} hòn đảo hôm nay để mở rương báu và đổi Vé Vàng!`, "🏆");
+        const remaining = Math.max(0, total - (appState.currentRoadmapIndex || 0));
+        showToast("Rương Báu Hoàng Kim 🔒", `Cần hoàn thành nốt ${remaining} hòn đảo bài tập để mở rương báu và đổi Vé Vàng!`, "🏆");
       }
     }
 
     function startChildQuest() {
+      appState.activeTaskIsRoutine = false;
       // Khóa không cho bỏ chạy sang học bài khi bếp/nồi đang nấu thức ăn dở
       const runningTimer = (window.miloActiveTimers || []).find(t => !t.isCompleted && t.endTime > Date.now());
       if (runningTimer && runningTimer.taskId) {

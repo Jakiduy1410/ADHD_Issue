@@ -68,6 +68,14 @@ app = FastAPI(
     description="Dual-device Parent/Kid ecosystem with AI Micro-Task decomposition and real-time WebSocket sync.",
     version="1.0.0",
 )
+@app.middleware("http")
+async def add_no_cache_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -975,6 +983,18 @@ async def websocket_sync_endpoint(
                 room_state["pending_ticket"] = payload.get("ticket") if isinstance(payload, dict) else data.get("ticket")
             elif event_type == "TICKET_APPROVE":
                 room_state["pending_ticket"] = None
+            elif event_type == "ROADMAP_UPDATED":
+                payload = data.get("payload", {})
+                new_roadmap = payload.get("roadmap", []) if isinstance(payload, dict) else []
+                room_state["child_roadmap"] = new_roadmap
+                room_state["current_roadmap_index"] = 0
+                room_state["current_step_index"] = 0
+                room_state["roadmap_cleared"] = (len(new_roadmap) == 0)
+            elif event_type == "ROUTINE_ASSIGN_BATCH":
+                payload = data.get("payload", {})
+                new_routines = payload.get("routines", []) if isinstance(payload, dict) else []
+                room_state["child_routine_roadmap"] = new_routines
+                room_state["routine_cleared"] = (len(new_routines) == 0)
 
             # Kid completes a micro-task step -> Notify Parent
             if event_type == "KID_STEP_COMPLETED":

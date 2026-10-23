@@ -353,12 +353,15 @@
         if (isDone) completedCount++;
 
         if (isDone) {
+          const thumbUrl = proof && (proof.photo_data || (Array.isArray(proof.photos) && proof.photos[0]));
+          const photoCount = proof && Array.isArray(proof.photos) && proof.photos.length > 1 ? proof.photos.length : (thumbUrl ? 1 : 0);
           card.className = "bg-white rounded-2xl p-3 border border-slate-200 hover:border-teal-400 shadow-2xs flex items-center justify-between cursor-pointer transition active:scale-98";
           card.onclick = () => parentOpenPhotoModal(rt.id);
           card.innerHTML = `
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl ${proof && proof.photo_data ? 'overflow-hidden border-2 border-emerald-400 shadow-2xs' : 'bg-emerald-50 text-emerald-600'} flex items-center justify-center text-xl shrink-0">
-                ${proof && proof.photo_data ? `<img src="${proof.photo_data}" class="w-full h-full object-cover" alt="Thumb">` : (rt.icon || '🛏️')}
+              <div class="w-10 h-10 rounded-xl ${thumbUrl ? 'overflow-hidden border-2 border-emerald-400 shadow-2xs relative' : 'bg-emerald-50 text-emerald-600'} flex items-center justify-center text-xl shrink-0">
+                ${thumbUrl ? `<img src="${thumbUrl}" class="w-full h-full object-cover" alt="Thumb">` : (rt.icon || '🛏️')}
+                ${photoCount > 1 ? `<span class="absolute bottom-0 right-0 bg-black/75 text-amber-300 font-black text-[8px] px-1 rounded-tl leading-tight">${photoCount}📷</span>` : ''}
               </div>
               <div>
                 <div class="flex items-center gap-1.5">
@@ -369,7 +372,7 @@
               </div>
             </div>
             <span class="px-2.5 py-1 rounded-xl bg-teal-50 text-teal-700 text-[10px] font-black border border-teal-200 flex items-center gap-1 hover:bg-teal-100 transition">
-              <span>📷</span> <span>Xem Ảnh</span>
+              <span>📷</span> <span>${photoCount > 1 ? `${photoCount} Ảnh` : 'Xem Ảnh'}</span>
             </span>
           `;
         } else if (isCurrent) {

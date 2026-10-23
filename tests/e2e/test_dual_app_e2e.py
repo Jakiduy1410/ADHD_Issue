@@ -1003,6 +1003,39 @@ class TestTier1FeatureCoverage(unittest.TestCase):
         roadmap_content = (REPO_ROOT / "app" / "js" / "roadmap.js").read_text(encoding="utf-8")
         self.assertIn("svg.setAttribute('viewBox', `0 0 ${cWidth} ${cHeight}`)", roadmap_content)
 
+    # -------------------------------------------------------------------------
+    # Feature 24: Responsive Stacked Cards (+11° Peek) & Multi/Single Photo Viewer
+    # -------------------------------------------------------------------------
+    def test_tier1_f24_01_photo_modal_stage_no_collapse(self):
+        """F24.1: Photo stage has explicit height/min-height to prevent 0px collapse on mobile."""
+        self.assertTrue(self.dom.has_element_id("p-modal-photo-stage"))
+        stage_elem = self.dom.get_element_by_id("p-modal-photo-stage")
+        classes = stage_elem.get("class", "")
+        self.assertTrue(any("min-h-" in cls for cls in classes))
+        self.assertIn("h-64", classes)
+
+    def test_tier1_f24_02_stacked_cards_and_photo_navigation(self):
+        """F24.2: Photo modal supports navigation across stacked cards."""
+        self.assertTrue(self.dom.has_js_function("parentOpenPhotoModal"))
+        self.assertTrue(self.dom.has_js_function("parentModalNextPhoto"))
+        self.assertTrue(self.dom.has_js_function("renderParentModalStage"))
+
+    def test_tier1_f24_03_stacked_cards_css_animations(self):
+        """F24.3: Flyout and promote CSS animations exist with +11deg peek."""
+        style_content = (REPO_ROOT / "app" / "css" / "style.css").read_text(encoding="utf-8")
+        self.assertIn("anim-card-flyout", style_content)
+        self.assertIn("anim-card-promote", style_content)
+        self.assertIn("cardFlyOutLeft", style_content)
+        self.assertIn("cardPromoteUp", style_content)
+        self.assertIn("rotate(11deg)", style_content)
+
+    def test_tier1_f24_04_multi_photo_and_single_photo_handling(self):
+        """F24.4: Renderers and parent survey support multi-photo accumulation and badges."""
+        renderers_content = (REPO_ROOT / "app" / "js" / "renderers.js").read_text(encoding="utf-8")
+        parent_content = (REPO_ROOT / "app" / "js" / "parent_survey.js").read_text(encoding="utf-8")
+        self.assertIn("accumulatedPhotos", renderers_content)
+        self.assertIn("photoCount > 1", parent_content)
+
 
 class TestTier2BoundaryAndCornerCases(unittest.TestCase):
     @classmethod

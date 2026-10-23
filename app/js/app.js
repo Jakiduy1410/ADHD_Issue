@@ -110,11 +110,17 @@ window.addEventListener('DOMContentLoaded', () => {
   const urlParams = new URLSearchParams(window.location.search);
   let targetRole = urlParams.get('role');
   const isMobileOrStandalone = window.innerWidth <= 900 || 
+    (window.matchMedia && window.matchMedia('(max-width: 900px)').matches) ||
     (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
     urlParams.get('standalone') === '1';
 
-  if (!targetRole && isMobileOrStandalone) {
-    targetRole = localStorage.getItem('milo_preferred_role') || 'child';
+  if (isMobileOrStandalone) {
+    if (!targetRole || targetRole === 'dual') {
+      const saved = localStorage.getItem('milo_preferred_role');
+      targetRole = (saved === 'parent' || saved === 'child') ? saved : 'child';
+    }
+  } else if (!targetRole) {
+    targetRole = 'dual';
   }
 
   if (targetRole === 'child' || targetRole === 'parent' || targetRole === 'dual') {

@@ -249,29 +249,32 @@
         (new URLSearchParams(window.location.search).get('standalone') === '1');
 
       if (mode === 'dual') {
-        if (childCol) childCol.classList.remove('hidden');
-        if (parentCol) parentCol.classList.remove('hidden');
+        if (childCol) { childCol.classList.remove('hidden'); childCol.style.display = 'flex'; }
+        if (parentCol) { parentCol.classList.remove('hidden'); parentCol.style.display = 'flex'; }
         if (btnDual) btnDual.className = "px-3 py-1.5 rounded-xl bg-teal-600 text-white shadow-sm transition flex items-center gap-1.5";
         if (roleIcon) roleIcon.innerText = "📱📱";
         if (roleText) roleText.innerText = "Hồ sơ: Song Song (Dual)";
         document.body.classList.remove('mobile-standalone-view');
+        document.documentElement.classList.remove('mobile-standalone-view');
       } else if (mode === 'child') {
-        if (childCol) childCol.classList.remove('hidden');
-        if (parentCol) parentCol.classList.add('hidden');
+        if (childCol) { childCol.classList.remove('hidden'); childCol.style.display = 'flex'; }
+        if (parentCol) { parentCol.classList.add('hidden'); parentCol.style.display = 'none'; }
         if (btnChild) btnChild.className = "px-3 py-1.5 rounded-xl bg-emerald-600 text-white shadow-sm transition flex items-center gap-1.5";
         if (roleIcon) roleIcon.innerText = "👦";
         if (roleText) roleText.innerText = "Hồ sơ: Bé Leo (Máy Con)";
         if (isMobileOrStandalone) {
           document.body.classList.add('mobile-standalone-view');
+          document.documentElement.classList.add('mobile-standalone-view');
         }
       } else if (mode === 'parent') {
-        if (childCol) childCol.classList.add('hidden');
-        if (parentCol) parentCol.classList.remove('hidden');
+        if (childCol) { childCol.classList.add('hidden'); childCol.style.display = 'none'; }
+        if (parentCol) { parentCol.classList.remove('hidden'); parentCol.style.display = 'flex'; }
         if (btnParent) btnParent.className = "px-3 py-1.5 rounded-xl bg-teal-600 text-white shadow-sm transition flex items-center gap-1.5";
         if (roleIcon) roleIcon.innerText = "👩";
         if (roleText) roleText.innerText = "Hồ sơ: Mẹ Lan (Máy Mẹ)";
         if (isMobileOrStandalone) {
           document.body.classList.add('mobile-standalone-view');
+          document.documentElement.classList.add('mobile-standalone-view');
         }
       }
 
@@ -285,10 +288,21 @@
        D. TOAST NOTIFICATION & REAL-TIME SYNC
        ============================================================ */
     function showToast(title, desc, icon = "⚡") {
+      const currentRole = (typeof appState !== 'undefined' && appState.role) || (window.miloBus && window.miloBus.role) || 'dual';
+      if (currentRole === 'child') {
+        // Trên điện thoại con: KHÔNG pop toast tiến độ gây vướng màn hình của bé
+        const isAllowedOnChild = title && (title.includes("Lời Khen Của Mẹ") || title.includes("Mẹ Lan Thả Tim") || title.includes("Vé Vàng") || title.includes("RƯƠNG"));
+        if (!isAllowedOnChild) return;
+      }
+
       const toast = document.getElementById('sync-toast');
-      document.getElementById('sync-toast-title').innerText = title;
-      document.getElementById('sync-toast-desc').innerText = desc;
-      document.getElementById('sync-toast-icon').innerText = icon;
+      if (!toast) return;
+      const tEl = document.getElementById('sync-toast-title');
+      const dEl = document.getElementById('sync-toast-desc');
+      const iEl = document.getElementById('sync-toast-icon');
+      if (tEl) tEl.innerText = title;
+      if (dEl) dEl.innerText = desc;
+      if (iEl) iEl.innerText = icon;
       toast.classList.remove('translate-y-24', 'opacity-0');
       setTimeout(() => {
         toast.classList.add('translate-y-24', 'opacity-0');

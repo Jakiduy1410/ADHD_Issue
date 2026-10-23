@@ -292,8 +292,51 @@ class MiloVoicePlayer {
     this.play('reward_step_win');
   }
 
-  playRewardIsland() {
-    this.play('reward_island_win');
+  playRewardIsland(context = {}) {
+    let islandIndex = context.islandIndex;
+    let totalIslands = context.totalIslands;
+
+    // Tự động nhận diện ngữ cảnh vị trí đảo trên Roadmap nếu không truyền trực tiếp
+    if ((islandIndex === undefined || totalIslands === undefined) && typeof appState !== 'undefined') {
+      const isRoutine = !!(appState.activeTaskIsRoutine || (appState.activeTask && (appState.activeTask.cat === 'chore' || appState.activeTask.isRoutine || (typeof routineDatabase !== 'undefined' && routineDatabase[appState.activeTask.id]))));
+      if (isRoutine) {
+        const routines = appState.childRoutineRoadmap || [];
+        const completed = appState.completedRoutineIds || new Set();
+        islandIndex = completed.size + (appState.activeTask && !completed.has(appState.activeTask.id) ? 1 : 0);
+        totalIslands = routines.length || 1;
+      } else {
+        totalIslands = Array.isArray(appState.childRoadmap) ? appState.childRoadmap.length : 1;
+        islandIndex = (appState.currentRoadmapIndex !== undefined ? appState.currentRoadmapIndex : 0) + 1;
+      }
+    }
+
+    // Nếu chỉ có 1 đảo duy nhất trong lộ trình
+    if (!totalIslands || totalIslands <= 1) {
+      const singles = ['reward_island_win', 'progress_finish'];
+      this.play(singles[Math.floor(Math.random() * singles.length)]);
+      return;
+    }
+
+    const islandsLeft = totalIslands - islandIndex;
+
+    // Ngữ cảnh thông minh theo tiến trình chuỗi đảo trên Roadmap (Island Progression Pacing)
+    if (islandIndex >= totalIslands) {
+      // 1. Đảo cuối cùng: Về đích mở Rương Báu Hoàng Kim!
+      this.play('progress_finish'); // "Tuyệt vời! Chúng mình đã về đích rồi!"
+    } else if (islandsLeft === 1) {
+      // 2. Đảo áp chót: Còn 1 đảo nữa là tới đích
+      this.play('progress_almost'); // "Chỉ còn một bước nữa là tới đích rồi!"
+    } else if (islandIndex === Math.floor(totalIslands / 2)) {
+      // 3. Đảo ở nửa chặng đường lộ trình
+      this.play('progress_halfway'); // "Cố lên! Ta đi được nửa chặng đường rồi!"
+    } else if (islandIndex === 1) {
+      // 4. Vừa chinh phục xong đảo đầu tiên: Luân phiên tươi mới
+      const poolFirst = ['reward_island_win', 'progress_next'];
+      this.play(poolFirst[Math.floor(Math.random() * poolFirst.length)]);
+    } else {
+      // 5. Các hòn đảo trung gian tiếp theo
+      this.play('progress_next'); // "Tiếp tục tiến lên nào!"
+    }
   }
 
   playRewardPhoto() {

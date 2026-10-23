@@ -151,8 +151,8 @@
   },
   "reward_island_win": {
     "category": "behavioral",
-    "file": "data/audio/behavioral/progress_finish.mp3",
-    "text": "Tuyệt vời! Chúng mình đã về đích rồi!"
+    "file": "data/audio/behavioral/reward_island_win.mp3",
+    "text": "Hoan hô! Bạn vừa chinh phục thêm một hòn đảo kỳ thú! Bố mẹ sẽ tự hào lắm đấy!"
   },
   "reward_golden_ticket": {
     "category": "behavioral",

@@ -392,8 +392,10 @@ window.UNLOCK_ALL_ROUTINES = false;
           else if (rt.timeline_slot === 'evening') slotText = `🌙 Tối ${rt.slot_time || '19:00'}`;
           else slotText = `✨ Ngủ ${rt.slot_time || '21:00'}`;
 
-          const isDone = appState.completedRoutineIds && appState.completedRoutineIds.has(rt.id);
-          const isLocked = !isDone && (typeof isRoutineTimeLocked === 'function' ? isRoutineTimeLocked(rt) : false);
+          const timeLocked = typeof isRoutineTimeLocked === 'function' ? isRoutineTimeLocked(rt) : false;
+          const hasProof = !!(appState.routinePhotoProofs && appState.routinePhotoProofs[rt.id]);
+          const isDone = appState.completedRoutineIds && appState.completedRoutineIds.has(rt.id) && (!timeLocked || hasProof);
+          const isLocked = !isDone && timeLocked;
           let statusBadge = isDone 
             ? `<span class="text-[8px] font-black text-emerald-700 bg-emerald-100 px-1 rounded border border-emerald-300">✓ Xong</span>`
             : (isLocked 
@@ -522,8 +524,16 @@ window.UNLOCK_ALL_ROUTINES = false;
       if (!Array.isArray(appState.childRoutineRoadmap) || index < 0 || index >= appState.childRoutineRoadmap.length) return;
       const removed = appState.childRoutineRoadmap.splice(index, 1)[0];
 
-      if (removed && removed.id && appState.selectedRoutineIds) {
-        appState.selectedRoutineIds.delete(removed.id);
+      if (removed && removed.id) {
+        if (appState.selectedRoutineIds) {
+          appState.selectedRoutineIds.delete(removed.id);
+        }
+        if (appState.completedRoutineIds) {
+          appState.completedRoutineIds.delete(removed.id);
+        }
+        if (appState.routinePhotoProofs) {
+          delete appState.routinePhotoProofs[removed.id];
+        }
         if (typeof updateRoutineSelectedMeta === 'function') updateRoutineSelectedMeta();
         if (typeof renderParentRoutinesCatalog === 'function') renderParentRoutinesCatalog();
       }
@@ -675,16 +685,18 @@ window.UNLOCK_ALL_ROUTINES = false;
       const ty = Math.round(tRect.top - canvasRect.top + tRect.height / 2);
       points.push({ x: tx, y: ty, isTreasure: true });
 
-      // ĐỒNG BỘ 100% VIEWBOX VÀ WIDTH/HEIGHT CỦA SVG THEO CANVAS THỰC TẾ
+      // ĐỒNG BỘ 100% VIEWBOX VÀ WIDTH/HEIGHT CỦA SVG THEO CANVAS THỰC TẾ (BAO PHỦ TẬN ĐÁY)
       const svg = container.querySelector(isRoutine ? '#svg-routine-trail' : '#svg-quest-trail') || container.querySelector('svg');
       if (svg) {
         const cWidth = Math.round(canvasRect.width);
-        const cHeight = Math.round(canvasRect.height);
+        const maxPointY = points.reduce((m, p) => Math.max(m, p.y), 0);
+        const cHeight = Math.max(canvas.scrollHeight, canvas.offsetHeight, Math.round(canvasRect.height), maxPointY + 85);
         svg.setAttribute('viewBox', `0 0 ${cWidth} ${cHeight}`);
         svg.setAttribute('width', cWidth);
         svg.setAttribute('height', cHeight);
         svg.style.width = cWidth + 'px';
         svg.style.height = cHeight + 'px';
+        canvas.style.minHeight = cHeight + 'px';
       }
 
       // Xây dựng đường cong Bézier toàn trình đi xuyên qua tâm mọi đảo
@@ -948,10 +960,15 @@ window.UNLOCK_ALL_ROUTINES = false;
         return;
       }
 
-      // 2. TÍNH TOÁN TIẾN ĐỘ THÓI QUEN & TRẠNG THÁI ACTIVE
+      // 2. TÍNH TOÁN TIẾN ĐỘ THÓI QUEN & TRẠNG THÁI ACTIVE (CHUẨN HÓA KHÓA GIỜ)
       const completedSet = appState.completedRoutineIds || new Set();
-      const allDone = totalIslands > 0 && validRoutines.every(r => completedSet.has(r.id));
-      const uncompletedRoutines = validRoutines.filter(r => !completedSet.has(r.id));
+      const isRoutineEffectivelyDone = (r) => {
+        const timeLocked = isRoutineTimeLocked(r);
+        const hasProof = !!(appState.routinePhotoProofs && appState.routinePhotoProofs[r.id]);
+        return completedSet.has(r.id) && (!timeLocked || hasProof);
+      };
+      const allDone = totalIslands > 0 && validRoutines.every(r => isRoutineEffectivelyDone(r));
+      const uncompletedRoutines = validRoutines.filter(r => !isRoutineEffectivelyDone(r));
       const availableUncompleted = uncompletedRoutines.filter(r => !isRoutineTimeLocked(r));
 
       let activeRoutine = null;
@@ -1011,15 +1028,16 @@ window.UNLOCK_ALL_ROUTINES = false;
 
       // 3. DYNAMIC POINTS & S-CURVE BÉZIER TRAIL (CANH CHÍNH XÁC VÀO CÚP VÀNG)
       const points = [];
+      const stepY = 125;
       for (let r = totalIslands; r >= 1; r--) {
         const xr = (totalIslands === 1) ? 170 : ((r % 2 === 1) ? 218 : 122);
-        const yr = 45 + r * 105;
+        const yr = 55 + r * stepY;
         points.push({ x: xr, y: yr, rowIndex: r, islandIndex: totalIslands - r });
       }
-      // Điểm đỉnh: Rương báu cúp vàng tại tọa độ (170, 45)
-      points.push({ x: 170, y: 45, rowIndex: 0, isTreasure: true });
+      // Điểm đỉnh: Rương báu cúp vàng tại tọa độ (170, 55)
+      points.push({ x: 170, y: 55, rowIndex: 0, isTreasure: true });
 
-      const totalHeight = 45 + totalIslands * 105 + 55;
+      const totalHeight = 55 + totalIslands * stepY + 85;
 
       // Vẽ đường cong Bézier kết nối từ đảo dưới cùng lên đỉnh Cúp vàng
       let fullPathD = `M ${points[0].x} ${points[0].y}`;
@@ -1068,7 +1086,7 @@ window.UNLOCK_ALL_ROUTINES = false;
       for (let r = 1; r <= totalIslands; r++) {
         const i = totalIslands - r;
         const rt = validRoutines[i] || {};
-        const isDone = completedSet.has(rt.id);
+        const isDone = isRoutineEffectivelyDone(rt);
         const isLocked = !isDone && isRoutineTimeLocked(rt);
         const isActive = !allDone && !isDone && (rt.id === activeRoutineId);
 
@@ -1146,7 +1164,7 @@ window.UNLOCK_ALL_ROUTINES = false;
       }
 
       container.innerHTML = `
-        <div class="roadmap-canvas relative w-full flex flex-col items-center justify-between py-2" style="height: ${totalHeight}px; min-height: 100%;">
+        <div class="roadmap-canvas relative w-full flex flex-col items-center gap-3 py-4" style="min-height: ${totalHeight}px;">
           ${svgTrailHtml}
           ${islandsHtml}
         </div>

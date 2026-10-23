@@ -178,15 +178,21 @@ Nói rõ ràng từng hành động cơ bắp cụ thể, và hướng dẫn chi
 * Pha 4 (Thả lỏng 4 giây):
   "Thả lỏng hai vai... Sẵn sàng quay lại rồi nè!"
 
-### 5. Cổ Vũ Tiến Độ & Ăn Mừng Về Đích (Progression Pacing)
-* Khi hoàn thành bước đầu tiên:
-  "Tiếp tục tiến lên nào!"
-* Khi đi được một nửa chặng đường (nửa số bước):
-  "Cố lên! Ta đi được nửa chặng đường rồi!"
-* Khi chỉ còn 1 bước cuối cùng (bước áp chót):
-  "Chỉ còn một bước nữa là tới đích rồi!"
-* Khi hoàn thành cả bài / cả đảo (Về đích gọn gàng, sảng khoái, không sến):
-  "Tuyệt vời! Chúng mình đã về đích rồi!"
+### 5. Cổ Vũ Chinh Phục Chuỗi Đảo Trên Roadmap (Island Progression Pacing)
+> ⚠️ **NGUYÊN TẮC SƯ PHẠM ADHD QUAN TRỌNG:**
+> - Tuyệt đối **KHÔNG** chèn audio giọng nói vào giữa các vi nhiệm vụ (microtasks) khi bé đang làm bài để tránh đứt mạch tư duy và làm mệt tai (giữa các bước chỉ dùng hiệu ứng nổ sao SFX).
+> - Giàn âm thanh `progress_*` và `reward_island_win` được dùng để **thay đổi linh hoạt theo tiến trình chuỗi ĐẢO trên Roadmap** (Island Progression Pacing), tránh lặp lại nhàm chán mỗi khi hoàn thành đảo.
+
+* **Đảo đầu tiên vừa hoàn thành**:
+  Luân phiên giữa:
+  - "Hoan hô! Bạn vừa chinh phục thêm một hòn đảo kỳ thú! Bố mẹ sẽ tự hào lắm đấy!" (`reward_island_win`)
+  - "Tiếp tục tiến lên nào!" (`progress_next`)
+* **Đảo ở nửa chặng đường lộ trình** (ví dụ đảo 2/4):
+  "Cố lên! Ta đi được nửa chặng đường rồi!" (`progress_halfway`)
+* **Đảo áp chót** (chỉ còn 1 đảo nữa là tới đích):
+  "Chỉ còn một bước nữa là tới đích rồi!" (`progress_almost`)
+* **Đảo cuối cùng** (về đích mở Rương Báu Hoàng Kim):
+  "Tuyệt vời! Chúng mình đã về đích rồi!" (`progress_finish`)
 * Khi bấm gửi ảnh minh chứng:
   "Tách! Bức ảnh xịn xò đã bay sang máy bố mẹ rồi! Bố mẹ sẽ tự hào về bạn lắm đấy!"
 * Khi đổi vé vàng thành công:

@@ -345,8 +345,10 @@
       activeList.forEach((rt) => {
         if (!rt) return;
         const card = document.createElement('div');
-        const isDone = appState.completedRoutineIds && appState.completedRoutineIds.has(rt.id);
-        const isLocked = !isDone && (typeof isRoutineTimeLocked === 'function' ? isRoutineTimeLocked(rt) : false);
+        const timeLocked = typeof isRoutineTimeLocked === 'function' ? isRoutineTimeLocked(rt) : false;
+        const hasProof = !!(appState.routinePhotoProofs && appState.routinePhotoProofs[rt.id]);
+        const isDone = appState.completedRoutineIds && appState.completedRoutineIds.has(rt.id) && (!timeLocked || hasProof);
+        const isLocked = !isDone && timeLocked;
         const isCurrent = !isDone && !isLocked && (appState.activeTask && appState.activeTask.id === rt.id);
         const proof = (appState.routinePhotoProofs && appState.routinePhotoProofs[rt.id]) || null;
 
@@ -1235,6 +1237,14 @@ window.parentJumpToAssignRoutines = parentJumpToAssignRoutines;
       const routines = window.routineDatabase || {};
       if (routines[routineId]) {
         routines[routineId].slot_time = newTime;
+
+        // Reset trạng thái hoàn thành cũ khi đổi sang khung giờ nhắc mới
+        if (appState.completedRoutineIds) {
+          appState.completedRoutineIds.delete(routineId);
+        }
+        if (appState.routinePhotoProofs) {
+          delete appState.routinePhotoProofs[routineId];
+        }
 
         // 1. Cập nhật nhãn giờ trên thẻ UI ngay lập tức
         const label = document.getElementById(`label-time-${routineId}`);

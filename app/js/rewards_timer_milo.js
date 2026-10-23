@@ -33,31 +33,15 @@
       }
 
       if (!isFinalStep) {
-        const nextStep = appState.currentStepIndex + 1;
-        const stepsLeft = totalSteps - nextStep;
-
-        // Cổ vũ nhận biết tiến độ (Progression Pacing) không gây mệt tai
-        if (window.miloVoice) {
-          if (stepsLeft === 1) {
-            // Bước áp chót
-            window.miloVoice.play('progress_almost');
-          } else if (nextStep === Math.floor(totalSteps / 2)) {
-            // Nửa chặng đường
-            window.miloVoice.play('progress_halfway');
-          } else if (appState.currentStepIndex === 0 && totalSteps >= 3) {
-            // Vừa hoàn thành bước đầu tiên
-            window.miloVoice.play('progress_next');
-          }
-        }
-
+        // Chuyển vi bước tiếp theo: Tuyệt đối không phát audio giọng nói chen giữa các microtask để tránh quá tải giác quan / đứt mạch tập trung
         appState.currentStepIndex++;
         if (window.miloBus) window.miloBus.savePersistedState(appState);
         setTimeout(() => { renderChildWorkspaceStep(); }, 250);
       } else {
-        // Hoàn thành toàn bộ hòn đảo hiện tại - Về đích sảng khoái, không sến
+        // Hoàn thành toàn bộ hòn đảo hiện tại - Phát audio hoan hô chúc mừng hòn đảo thành công!
         stopStepTimer();
         playSfx('success');
-        if (window.miloVoice) window.miloVoice.play('progress_finish');
+        if (window.miloVoice) window.miloVoice.playRewardIsland();
         if (window.miloBus) {
           window.miloBus.broadcast('ISLAND_COMPLETED', {
             taskId: appState.activeTask ? appState.activeTask.id : 'unknown',

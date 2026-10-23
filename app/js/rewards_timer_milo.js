@@ -33,13 +33,31 @@
       }
 
       if (!isFinalStep) {
+        const nextStep = appState.currentStepIndex + 1;
+        const stepsLeft = totalSteps - nextStep;
+
+        // Cổ vũ nhận biết tiến độ (Progression Pacing) không gây mệt tai
+        if (window.miloVoice) {
+          if (stepsLeft === 1) {
+            // Bước áp chót
+            window.miloVoice.play('progress_almost');
+          } else if (nextStep === Math.floor(totalSteps / 2)) {
+            // Nửa chặng đường
+            window.miloVoice.play('progress_halfway');
+          } else if (appState.currentStepIndex === 0 && totalSteps >= 3) {
+            // Vừa hoàn thành bước đầu tiên
+            window.miloVoice.play('progress_next');
+          }
+        }
+
         appState.currentStepIndex++;
         if (window.miloBus) window.miloBus.savePersistedState(appState);
         setTimeout(() => { renderChildWorkspaceStep(); }, 250);
       } else {
-        // Hoàn thành toàn bộ hòn đảo hiện tại!
+        // Hoàn thành toàn bộ hòn đảo hiện tại - Về đích sảng khoái, không sến
         stopStepTimer();
         playSfx('success');
+        if (window.miloVoice) window.miloVoice.play('progress_finish');
         if (window.miloBus) {
           window.miloBus.broadcast('ISLAND_COMPLETED', {
             taskId: appState.activeTask ? appState.activeTask.id : 'unknown',
@@ -303,6 +321,14 @@
       counter.innerText = `Nhịp ${breathingCycleCount} / 3`;
       num.innerText = breathingSecondsLeft;
 
+      // Phát âm thanh hướng dẫn nhịp thở ở giây đầu tiên của mỗi pha
+      if (breathingSecondsLeft === 4 && window.miloVoice) {
+        if (breathingStage === 0) window.miloVoice.play('breathe_phase1_inhale');
+        else if (breathingStage === 1) window.miloVoice.play('breathe_phase2_hold');
+        else if (breathingStage === 2) window.miloVoice.play('breathe_phase3_exhale');
+        else if (breathingStage === 3) window.miloVoice.play('breathe_phase4_relax');
+      }
+
       if (breathingStage === 0) {
         label.innerText = `🫁 1. Hít vào từ từ bằng mũi (${breathingSecondsLeft}s)`;
         label.className = "text-xs font-black text-sky-900 bg-sky-200/80 px-2.5 py-0.5 rounded-full";
@@ -385,6 +411,7 @@
       if (desc) desc.innerText = `🎉 Leo vừa dùng ${stars} ⭐ để đổi [Vé Vàng: ${name}]!`;
 
       showToast("Vé Vàng Đã Gửi", `Yêu cầu đổi [${name}] đã gửi sang máy mẹ Lan để phê duyệt!`, "🎟️");
+      if (window.miloVoice) window.miloVoice.playRewardTicket();
     }
 
     function childRedeemCustomTicket() {
@@ -413,3 +440,53 @@ window.updateBreathingUI = updateBreathingUI;
 window.useMiloHint = useMiloHint;
 window.childRedeemTicket = childRedeemTicket;
 window.childRedeemCustomTicket = childRedeemCustomTicket;
+
+
+/* ============================================================
+   K. BỘ ĐẾM THỜI GIAN LƠ ĐÃNG (INACTIVITY IDLE WATCHER 25S / 50S)
+   Tự động nhắc nhở không phán xét khi trẻ ADHD mất tập trung
+   ============================================================ */
+let miloIdleSeconds = 0;
+let miloIdleInterval = null;
+
+function resetMiloIdle() {
+  miloIdleSeconds = 0;
+}
+
+function initInactivityWatcher() {
+  if (typeof window === 'undefined') return;
+
+  const events = ['mousemove', 'mousedown', 'pointerdown', 'keydown', 'touchstart'];
+  events.forEach(evt => {
+    window.addEventListener(evt, resetMiloIdle, { passive: true });
+  });
+
+  if (miloIdleInterval) clearInterval(miloIdleInterval);
+  miloIdleInterval = setInterval(() => {
+    // Chỉ đếm khi đang ở màn hình làm bài workspace và timer không pause
+    const ws = document.getElementById('child-screen-workspace');
+    const isWorkspaceActive = ws && !ws.classList.contains('hidden');
+    const isPaused = typeof isTimerPaused !== 'undefined' ? isTimerPaused : false;
+
+    if (!isWorkspaceActive || isPaused) {
+      miloIdleSeconds = 0;
+      return;
+    }
+
+    miloIdleSeconds++;
+
+    if (miloIdleSeconds === 25) {
+      if (window.miloVoice) window.miloVoice.playIdleNudge();
+    } else if (miloIdleSeconds === 50) {
+      if (window.miloVoice) window.miloVoice.playIdleRescue();
+    }
+  }, 1000);
+}
+
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initInactivityWatcher);
+  } else {
+    initInactivityWatcher();
+  }
+}

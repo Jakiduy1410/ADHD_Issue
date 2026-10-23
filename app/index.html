@@ -133,6 +133,9 @@
           <button id="time-btn-realtime" onclick="setSimulatedTimeSlot('realtime')" class="px-2.5 py-1 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">
             ⏱️ Giờ thật
           </button>
+          <button id="time-btn-all" onclick="setSimulatedTimeSlot('all')" class="px-2.5 py-1 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">
+            🔓 Mở hết (Test All)
+          </button>
         </div>
 
         <!-- Live Sync Bus Status Indicator -->
@@ -1693,8 +1696,12 @@
         noon: document.getElementById('time-btn-noon'),
         afternoon: document.getElementById('time-btn-afternoon'),
         evening: document.getElementById('time-btn-evening'),
-        realtime: document.getElementById('time-btn-realtime')
+        realtime: document.getElementById('time-btn-realtime'),
+        all: document.getElementById('time-btn-all')
       };
+      if (slot === 'all') {
+        window.UNLOCK_ALL_ROUTINES = true;
+      }
 
       Object.entries(buttons).forEach(([key, btn]) => {
         if (!btn) return;
@@ -1710,7 +1717,8 @@
         noon: '☀️ 11:30 Trưa',
         afternoon: '🌤️ 16:30 Chiều',
         evening: '🌙 20:30 Tối / Đêm',
-        realtime: '⏱️ Giờ thực tế'
+        realtime: '⏱️ Giờ thực tế',
+        all: '🔓 Mở tất cả nề nếp (Test All)'
       };
 
       if (typeof showToast === 'function') {
@@ -1750,8 +1758,8 @@
       const task = (typeof routineDatabase !== 'undefined' && routineDatabase[routineId]) || (typeof taskDatabase !== 'undefined' && taskDatabase[routineId]);
       if (!task) return;
 
-      // Kiểm tra khóa theo giờ: Nếu chưa tới giờ thì rung lắc và báo bé
-      if (typeof isRoutineTimeLocked === 'function' && isRoutineTimeLocked(task)) {
+      // Kiểm tra khóa theo giờ: Nếu chưa tới giờ thì rung lắc và báo bé (Bỏ qua khi UNLOCK_ALL_ROUTINES)
+      if (!window.UNLOCK_ALL_ROUTINES && typeof isRoutineTimeLocked === 'function' && isRoutineTimeLocked(task)) {
         if (typeof handleLockedRoutineClick === 'function') {
           handleLockedRoutineClick(routineId);
         }
@@ -1761,7 +1769,7 @@
 
       // Bảo vệ đa nhiệm: Khóa không cho chuyển sang đảo khác khi bếp/thiết bị đang nấu dở cho nhiệm vụ hiện tại!
       const runningTimer = (window.miloActiveTimers || []).find(t => !t.isCompleted && t.endTime > Date.now());
-      if (runningTimer && runningTimer.taskId && runningTimer.taskId !== routineId) {
+      if (runningTimer && runningTimer.taskId && runningTimer.taskId !== routineId && !window.UNLOCK_ALL_ROUTINES) {
         if (typeof showToast === 'function') {
           showToast("Bếp Đang Nấu! ♨️", `Lò đang hâm nóng món [${runningTimer.dishName}] nè Leo! Con hoàn thành nốt Bữa sáng rồi hẵng sang đảo mới nhé!`, "⏳");
         }

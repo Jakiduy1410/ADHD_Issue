@@ -1,0 +1,362 @@
+{
+  "highlight": {
+    "category": "generic_ui",
+    "file": "data/audio/generic_ui/highlight.mp3",
+    "text": "Thám tử ơi, chạm tay gạch chân những số liệu và từ khóa quan trọng nào!"
+  },
+  "single_choice": {
+    "category": "generic_ui",
+    "file": "data/audio/generic_ui/single_choice.mp3",
+    "text": "Quan sát kỹ và chạm vào chiếc hộp có đáp án đúng nhất nhé!"
+  },
+  "text_input": {
+    "category": "generic_ui",
+    "file": "data/audio/generic_ui/text_input.mp3",
+    "text": "Tuyệt lắm! Bây giờ gõ kết quả vào ô để mở rương kho báu nào!"
+  },
+  "checkbox": {
+    "category": "generic_ui",
+    "file": "data/audio/generic_ui/checkbox.mp3",
+    "text": "Làm xong rồi thì chạm vào ô vuông để tích hoàn thành nhé!"
+  },
+  "photo_proof": {
+    "category": "generic_ui",
+    "file": "data/audio/generic_ui/photo_proof.mp3",
+    "text": "Bây giờ hãy chụp một bức ảnh thật đẹp gửi cho bố mẹ ngay nào!"
+  },
+  "timer_brush": {
+    "category": "generic_ui",
+    "file": "data/audio/generic_ui/timer_brush.mp3",
+    "text": "Bắt đầu chải xoay tròn êm tay nào! Khi chuông reo sẽ tự chuyển bước nhé!"
+  },
+  "geometry_step1_dims": {
+    "category": "study_special",
+    "file": "data/audio/study_special/geometry_step1_dims.mp3",
+    "text": "Nhìn hình vẽ phía trên kìa! Chạm vào số đo các cạnh để lấy dữ liệu nhé!"
+  },
+  "geometry_step2_formula": {
+    "category": "study_special",
+    "file": "data/audio/study_special/geometry_step2_formula.mp3",
+    "text": "Muốn tính diện tích hay chu vi nhỉ? Chọn đúng thần chú công thức nào!"
+  },
+  "geometry_step3_calc": {
+    "category": "study_special",
+    "file": "data/audio/study_special/geometry_step3_calc.mp3",
+    "text": "Thay số vào công thức rồi gõ kết quả vào ô nào!"
+  },
+  "reading_step1_passage": {
+    "category": "study_special",
+    "file": "data/audio/study_special/reading_step1_passage.mp3",
+    "text": "Đoạn văn ở ngay phía trên! Con lướt mắt tìm từ khóa Milo ghim nhé!"
+  },
+  "reading_step2_character": {
+    "category": "study_special",
+    "file": "data/audio/study_special/reading_step2_character.mp3",
+    "text": "Ai vừa xuất hiện trong câu chuyện nhỉ? Chọn đáp án đúng nào!"
+  },
+  "find_x_step1_role": {
+    "category": "study_special",
+    "file": "data/audio/study_special/find_x_step1_role.mp3",
+    "text": "Anh bạn X đang đóng vai gì trong phép tính này nhỉ? Chọn vai trò của X nào!"
+  },
+  "find_x_step2_rule": {
+    "category": "study_special",
+    "file": "data/audio/study_special/find_x_step2_rule.mp3",
+    "text": "Muốn tìm anh bạn X này, chúng mình dùng phép tính gì đây?"
+  },
+  "arithmetic_step1_units": {
+    "category": "study_special",
+    "file": "data/audio/study_special/arithmetic_step1_units.mp3",
+    "text": "Cùng tính hàng đơn vị trước nào! Nhớ giữ lại phần nhớ trong đầu nhé!"
+  },
+  "arithmetic_step2_tens": {
+    "category": "study_special",
+    "file": "data/audio/study_special/arithmetic_step2_tens.mp3",
+    "text": "Bây giờ cộng thêm số nhớ vào hàng chục để ra đáp số cuối cùng nào!"
+  },
+  "english_step1_vocab": {
+    "category": "study_special",
+    "file": "data/audio/study_special/english_step1_vocab.mp3",
+    "text": "Lắng nghe và chạm vào từ vựng tiếng Anh tương ứng nào!"
+  },
+  "english_step2_meaning": {
+    "category": "study_special",
+    "file": "data/audio/study_special/english_step2_meaning.mp3",
+    "text": "Chọn nghĩa tiếng Việt chính xác của từ này nhé!"
+  },
+  "wrong_attempt_1": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/wrong_attempt_1.mp3",
+    "text": "Úi chà, suýt trúng rồi! Thử lại chiếc chìa khóa khác xem sao!"
+  },
+  "wrong_attempt_2": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/wrong_attempt_2.mp3",
+    "text": "Ủa kì lạ ta? Manh mối này hơi lệch một tẹo, Milo cùng bạn ngắm lại nhé!"
+  },
+  "wrong_attempt_3_rescue": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/wrong_attempt_3_rescue.mp3",
+    "text": "Đừng lo nhé! Để Milo chiếu đèn pin làm mờ các ô sai giúp bạn nha!"
+  },
+  "idle_nudge_25s": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/idle_nudge_25s.mp3",
+    "text": "Cốc cốc! Thám tử ơi, bạn đang nghĩ đến đâu rồi?"
+  },
+  "idle_rescue_50s": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/idle_rescue_50s.mp3",
+    "text": "Có bước nào hơi khó không? Cậu có muốn bấm nút Milo để được gợi ý không nè?"
+  },
+  "timer_10s_warning": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/timer_10s_warning.mp3",
+    "text": "Mười giây đếm ngược! Bình tĩnh về đích nào bạn ơi!"
+  },
+  "timer_timeout_bonus": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/timer_timeout_bonus.mp3",
+    "text": "Hết giờ mất rồi, nhưng không sao cả! Milo tặng thêm cho bạn một ít thời gian để hoàn thành nè!"
+  },
+  "breathe_phase1_inhale": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/breathe_phase1_inhale.mp3",
+    "text": "Hít sâu vào bằng mũi nào... căng tròn bụng lên..."
+  },
+  "breathe_phase2_hold": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/breathe_phase2_hold.mp3",
+    "text": "Giữ hơi êm dịu... cảm nhận sự bình yên..."
+  },
+  "breathe_phase3_exhale": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/breathe_phase3_exhale.mp3",
+    "text": "Thở nhẹ nhàng ra bằng miệng... như thổi nguội bát súp..."
+  },
+  "breathe_phase4_relax": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/breathe_phase4_relax.mp3",
+    "text": "Thả lỏng hai vai... Sẵn sàng quay lại rồi nè!"
+  },
+  "reward_step_win": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/reward_step_win.mp3",
+    "text": "Thêm sao vào túi!"
+  },
+  "reward_photo_sent": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/reward_photo_sent.mp3",
+    "text": "Tách! Bức ảnh xịn xò đã bay sang máy bố mẹ rồi! Bố mẹ sẽ tự hào về bạn lắm đấy!"
+  },
+  "reward_island_win": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/progress_finish.mp3",
+    "text": "Tuyệt vời! Chúng mình đã về đích rồi!"
+  },
+  "reward_golden_ticket": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/reward_golden_ticket.mp3",
+    "text": "Ting ting! Chiếc vé vàng đã bay thẳng sang máy của bố mẹ rồi! Chờ bố mẹ mở quà nhé!"
+  },
+  "routine_morning_bed_step1": {
+    "category": "routines/routine_morning_bed",
+    "file": "data/audio/routines/routine_morning_bed/step1_photo_start.mp3",
+    "text": "Hãy giơ máy lên chụp một bức ảnh chiếc giường lúc vừa thức dậy để làm mốc nào!"
+  },
+  "routine_morning_bed_step2": {
+    "category": "routines/routine_morning_bed",
+    "file": "data/audio/routines/routine_morning_bed/step2_shake_blanket.mp3",
+    "text": "Cầm hai mép chăn giũ nhẹ để chăn trải thật phẳng phiu trên mặt giường nhé!"
+  },
+  "routine_morning_bed_step3": {
+    "category": "routines/routine_morning_bed",
+    "file": "data/audio/routines/routine_morning_bed/step3_fold_blanket.mp3",
+    "text": "Gấp đôi chăn theo chiều dọc rồi gấp thành hình vuông, và xếp gối ngay ngắn sát đầu giường nào!"
+  },
+  "routine_morning_bed_step4": {
+    "category": "routines/routine_morning_bed",
+    "file": "data/audio/routines/routine_morning_bed/step4_photo_finish.mp3",
+    "text": "Chiếc giường đã phẳng phiu đẹp đẽ rồi! Chụp một bức ảnh chiếc giường năm sao gửi mẹ ngay nào!"
+  },
+  "routine_morning_outfit_step1": {
+    "category": "routines/routine_morning_outfit",
+    "file": "data/audio/routines/routine_morning_outfit/step1_button_shirt.mp3",
+    "text": "Mặc áo đồng phục và cài các nút cúc thẳng hàng từ trên xuống dưới nhé!"
+  },
+  "routine_morning_outfit_step2": {
+    "category": "routines/routine_morning_outfit",
+    "file": "data/audio/routines/routine_morning_outfit/step2_wear_badge.mp3",
+    "text": "Lấy dây thẻ học sinh đeo vào cổ ngay ngắn trước ngực nào!"
+  },
+  "routine_morning_outfit_step3": {
+    "category": "routines/routine_morning_outfit",
+    "file": "data/audio/routines/routine_morning_outfit/step3_photo_finish.mp3",
+    "text": "Chỉnh trang phục thật ngay ngắn rồi chụp một bức ảnh gửi mẹ trước khi đi học nào!"
+  },
+  "routine_afterschool_drop_step1": {
+    "category": "routines/routine_afterschool_drop",
+    "file": "data/audio/routines/routine_afterschool_drop/step1_shoes_rack.mp3",
+    "text": "Cởi giày ra và đặt ngay ngắn lên tầng kệ dép của con nhé!"
+  },
+  "routine_afterschool_drop_step2": {
+    "category": "routines/routine_afterschool_drop",
+    "file": "data/audio/routines/routine_afterschool_drop/step2_hang_backpack.mp3",
+    "text": "Treo quai cặp lên chiếc móc treo tường quen thuộc nào!"
+  },
+  "routine_afterschool_drop_step3": {
+    "category": "routines/routine_afterschool_drop",
+    "file": "data/audio/routines/routine_afterschool_drop/step3_bottle_sink.mp3",
+    "text": "Mở cặp lấy bình nước mang từ trường về đặt vào bồn rửa bát để rửa sạch nhé!"
+  },
+  "routine_afterschool_drop_step4": {
+    "category": "routines/routine_afterschool_drop",
+    "file": "data/audio/routines/routine_afterschool_drop/step4_photo_finish.mp3",
+    "text": "Chụp một bức ảnh kệ dép, cặp và bình nước đã đặt đúng chỗ gửi mẹ nào!"
+  },
+  "routine_afterschool_wash_step1": {
+    "category": "routines/routine_afterschool_wash",
+    "file": "data/audio/routines/routine_afterschool_wash/step1_soap_foam.mp3",
+    "text": "Bơm một lần xà phòng, xoa đều lòng bàn tay, mu bàn tay và các kẽ ngón trong ba mươi giây nào!"
+  },
+  "routine_afterschool_wash_step2": {
+    "category": "routines/routine_afterschool_wash",
+    "file": "data/audio/routines/routine_afterschool_wash/step2_rinse_change.mp3",
+    "text": "Xả sạch bọt dưới vòi nước, lau khô tay và thay bộ quần áo ở nhà thật thoải mái nhé!"
+  },
+  "routine_afterschool_wash_step3": {
+    "category": "routines/routine_afterschool_wash",
+    "file": "data/audio/routines/routine_afterschool_wash/step3_photo_finish.mp3",
+    "text": "Đưa hai bàn tay ra trước máy và chụp một bức ảnh đôi tay sạch thơm tho gửi mẹ nào!"
+  },
+  "routine_afterschool_snack_step1": {
+    "category": "routines/routine_afterschool_snack",
+    "file": "data/audio/routines/routine_afterschool_snack/step1_wash_hands.mp3",
+    "text": "Rửa hai bàn tay thật sạch với xà phòng dưới vòi nước trước khi ăn xế nhé!"
+  },
+  "routine_afterschool_snack_step2": {
+    "category": "routines/routine_afterschool_snack",
+    "file": "data/audio/routines/routine_afterschool_snack/step2_eat_snack.mp3",
+    "text": "Thưởng thức sữa hoặc đĩa trái cây tươi để nạp lại năng lượng sau giờ học nào!"
+  },
+  "routine_afterschool_snack_step3": {
+    "category": "routines/routine_afterschool_snack",
+    "file": "data/audio/routines/routine_afterschool_snack/step3_clean_table_photo.mp3",
+    "text": "Bê đĩa cốc đã ăn xong đặt vào bồn rửa và chụp một bức ảnh bàn ăn sạch sẽ gửi mẹ nhé!"
+  },
+  "routine_clean_desk_step1": {
+    "category": "routines/routine_clean_desk",
+    "file": "data/audio/routines/routine_clean_desk/step1_collect_pens.mp3",
+    "text": "Thu gom tất cả bút và thước rải rác trên bàn cắm gọn vào ống đựng bút nào!"
+  },
+  "routine_clean_desk_step2": {
+    "category": "routines/routine_clean_desk",
+    "file": "data/audio/routines/routine_clean_desk/step2_trash_bin.mp3",
+    "text": "Nhặt sạch các mẩu giấy vụn và rác trên bàn bỏ vào sọt rác dưới gầm bàn nhé!"
+  },
+  "routine_clean_desk_step3": {
+    "category": "routines/routine_clean_desk",
+    "file": "data/audio/routines/routine_clean_desk/step3_stack_books.mp3",
+    "text": "Xếp các cuốn sách vở thành một chồng ngay ngắn ở góc bàn bên trái nào!"
+  },
+  "routine_clean_desk_step4": {
+    "category": "routines/routine_clean_desk",
+    "file": "data/audio/routines/routine_clean_desk/step4_photo_finish.mp3",
+    "text": "Mặt bàn đã sạch bóng rồi! Chụp một bức ảnh bàn học ngăn nắp gửi mẹ nhận thưởng ngay nào!"
+  },
+  "routine_dinner_prep_step1": {
+    "category": "routines/routine_dinner_prep",
+    "file": "data/audio/routines/routine_dinner_prep/step1_wipe_table.mp3",
+    "text": "Cho đĩa thức ăn vào lò vi sóng, chỉnh hai phút rồi bấm nút bắt đầu nhé!"
+  },
+  "routine_dinner_prep_step2": {
+    "category": "routines/routine_dinner_prep",
+    "file": "data/audio/routines/routine_dinner_prep/step2_set_chopsticks.mp3",
+    "text": "Bật bếp nhỏ hâm nóng nồi canh trong lúc lò vi sóng đang chạy ngầm nào!"
+  },
+  "routine_dinner_prep_step3": {
+    "category": "routines/routine_dinner_prep",
+    "file": "data/audio/routines/routine_dinner_prep/step3_set_bowls.mp3",
+    "text": "Lấy bát đũa, thìa và xới các bát cơm nóng ra bàn ăn cho cả nhà nhé!"
+  },
+  "routine_dinner_prep_step4": {
+    "category": "routines/routine_dinner_prep",
+    "file": "data/audio/routines/routine_dinner_prep/step4_photo_finish.mp3",
+    "text": "Dùng lót tay bê các món ra bàn và chụp một bức ảnh mâm cơm tươm tất gửi mẹ nào!"
+  },
+  "routine_pack_schoolbag_step1": {
+    "category": "routines/routine_pack_schoolbag",
+    "file": "data/audio/routines/routine_pack_schoolbag/step1_check_schedule.mp3",
+    "text": "Mở bảng thời khóa biểu trên tường và đối chiếu các môn học của ngày mai nào!"
+  },
+  "routine_pack_schoolbag_step2": {
+    "category": "routines/routine_pack_schoolbag",
+    "file": "data/audio/routines/routine_pack_schoolbag/step2_pack_books.mp3",
+    "text": "Lấy đủ sách vở và hộp bút của ngày mai xếp thành một chồng ngay ngắn trên mặt bàn nhé!"
+  },
+  "routine_pack_schoolbag_step3": {
+    "category": "routines/routine_pack_schoolbag",
+    "file": "data/audio/routines/routine_pack_schoolbag/step3_photo_books_table.mp3",
+    "text": "Chụp một bức ảnh cận cảnh chồng sách vở và hộp bút trên bàn để mẹ kiểm tra nào!"
+  },
+  "routine_pack_schoolbag_step4": {
+    "category": "routines/routine_pack_schoolbag",
+    "file": "data/audio/routines/routine_pack_schoolbag/step4_photo_finish.mp3",
+    "text": "Cất toàn bộ sách vở vào cặp, kéo khóa lại và đặt ngay ngắn cạnh cửa nhé!"
+  },
+  "routine_night_teeth_step1": {
+    "category": "routines/routine_night_teeth",
+    "file": "data/audio/routines/routine_night_teeth/step1_photo_paste.mp3",
+    "text": "Hãy lấy tuýp kem bóp một lượng nhỏ bằng hạt đậu lên đầu bàn chải nhé!"
+  },
+  "routine_night_teeth_step2": {
+    "category": "routines/routine_night_teeth",
+    "file": "data/audio/routines/routine_night_teeth/step2_upper_teeth.mp3",
+    "text": "Bây giờ đưa bàn chải lên hàm trên, chải xoay tròn đều khắp các mặt răng trong ba mươi giây nào!"
+  },
+  "routine_night_teeth_step3": {
+    "category": "routines/routine_night_teeth",
+    "file": "data/audio/routines/routine_night_teeth/step3_lower_teeth.mp3",
+    "text": "Chuyển xuống chải đều khắp các mặt răng của hàm dưới trong ba mươi giây nhé!"
+  },
+  "routine_night_teeth_step4": {
+    "category": "routines/routine_night_teeth",
+    "file": "data/audio/routines/routine_night_teeth/step4_photo_smile.mp3",
+    "text": "Súc miệng thật sạch rồi đứng trước gương chụp một bức ảnh cười tươi khoe hàm răng trắng sạch gửi mẹ nào!"
+  },
+  "routine_bedtime_screen_off_step1": {
+    "category": "routines/routine_bedtime_screen_off",
+    "file": "data/audio/routines/routine_bedtime_screen_off/step1_screen_off.mp3",
+    "text": "Tắt màn hình điện thoại hoặc máy tính bảng và mang ra đặt trên bàn của bố mẹ nào!"
+  },
+  "routine_bedtime_screen_off_step2": {
+    "category": "routines/routine_bedtime_screen_off",
+    "file": "data/audio/routines/routine_bedtime_screen_off/step2_read_book.mp3",
+    "text": "Nằm trên giường và đọc vài trang sách truyện yêu thích để thư giãn não bộ nhé!"
+  },
+  "routine_bedtime_screen_off_step3": {
+    "category": "routines/routine_bedtime_screen_off",
+    "file": "data/audio/routines/routine_bedtime_screen_off/step3_photo_finish.mp3",
+    "text": "Gập sách lại đặt đầu giường và chụp một bức ảnh trước khi tắt đèn đi ngủ nào!"
+  },
+  "progress_next": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/progress_next.mp3",
+    "text": "Tiếp tục tiến lên nào!"
+  },
+  "progress_halfway": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/progress_halfway.mp3",
+    "text": "Cố lên! Ta đi được nửa chặng đường rồi!"
+  },
+  "progress_almost": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/progress_almost.mp3",
+    "text": "Chỉ còn một bước nữa là tới đích rồi!"
+  },
+  "progress_finish": {
+    "category": "behavioral",
+    "file": "data/audio/behavioral/progress_finish.mp3",
+    "text": "Tuyệt vời! Chúng mình đã về đích rồi!"
+  }
+}

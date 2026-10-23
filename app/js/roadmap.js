@@ -1,3 +1,4 @@
+window.UNLOCK_ALL_ROUTINES = false;
 /* ============================================================
    MODULE: ISLAND QUEST ROADMAP & S-CURVE BÉZIER TRAIL
    ============================================================ */
@@ -293,7 +294,7 @@
       appState.activeTaskIsRoutine = false;
       // Khóa không cho bỏ chạy sang học bài khi bếp/nồi đang nấu thức ăn dở
       const runningTimer = (window.miloActiveTimers || []).find(t => !t.isCompleted && t.endTime > Date.now());
-      if (runningTimer && runningTimer.taskId) {
+      if (runningTimer && runningTimer.taskId && !window.UNLOCK_ALL_ROUTINES) {
         if (typeof showToast === 'function') {
           showToast("Bếp Đang Nấu! ♨️", `Lò đang hâm nóng món [${runningTimer.dishName}] nè Leo! Con hoàn thành nốt Bữa sáng rồi hẵng sang học bài nhé!`, "⏳");
         }
@@ -878,6 +879,9 @@
     }
 
     function isRoutineTimeLocked(rt) {
+      if (window.UNLOCK_ALL_ROUTINES === true || (typeof appState !== 'undefined' && appState && appState.simulatedTimeSlot === 'all')) {
+        return false;
+      }
       if (!rt) return false;
       const currentMinutes = getSimulatedCurrentMinutes();
       const routineMinutes = getRoutineMinutes(rt);

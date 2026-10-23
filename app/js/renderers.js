@@ -260,9 +260,19 @@
       }
       startStepTimer(stepSec);
 
-      // 3. Header Text (Duy nhất 1 tiêu đề to rõ, badge bước gọn gàng)
-      document.getElementById('child-step-badge').innerText = `Bước ${stepIdx + 1} / ${totalSteps}`;
+      // 3. Header Text (Duy nhất 1 tiêu đề to rõ, badge bước gọn gàng + Nút loa nghe lại)
+      const badgeEl = document.getElementById('child-step-badge');
+      if (badgeEl) {
+        badgeEl.innerHTML = `<span>Bước ${stepIdx + 1} / ${totalSteps}</span> <button id="step-voice-btn" onclick="if(window.miloVoice) window.miloVoice.playStep(appState.activeTask, appState.currentStepIndex)" class="inline-flex items-center justify-center ml-1 px-1 text-sm hover:scale-125 transition-transform cursor-pointer" title="Nghe bạn Milo đọc hướng dẫn">🔊</button>`;
+      }
       document.getElementById('child-instruction-text').innerHTML = stepData.text || stepData.atomic_instruction || (stepData.title || "");
+
+      // Tự động phát âm thanh hướng dẫn vi bước sau khi giao diện ổn định
+      if (window.miloVoice && typeof window.miloVoice.playStep === 'function') {
+        setTimeout(() => {
+          window.miloVoice.playStep(task, stepIdx);
+        }, 300);
+      }
 
 
       // 4. Interactive Stage Render theo Loại
@@ -1213,7 +1223,19 @@
           btnNext.classList.remove('btn-disabled');
         }
       } else {
-        toggleSoftPause(true);
+        // Phản hồi không phán xét bằng giọng bạn Milo (No-fault redirection)
+        if (window.miloVoice) {
+          window.miloVoice.playWrongAttempt();
+        }
+        btn.classList.add('border-amber-300', 'bg-amber-50');
+        const fb = document.getElementById('choice-feedback');
+        if (fb) {
+          fb.innerHTML = `<span class="text-amber-700 font-bold">✨ Manh mối đang ở ô khác, cùng Milo thử lại nhé!</span>`;
+        }
+        // Nếu sai liên tiếp 3 lần mới nhẹ nhàng đề xuất bài tập thở hạ nhiệt
+        if (window.miloVoice && window.miloVoice.wrongAttemptCount >= 3) {
+          setTimeout(() => toggleSoftPause(true), 1500);
+        }
       }
     }
 

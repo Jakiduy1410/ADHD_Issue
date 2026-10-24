@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Demo Nhật Ký Chuẩn Hóa Theo Mốc Thời Gian & Viền Màu</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* iPhone Frame */
+    .phone-mockup {
+      width: 390px;
+      height: 790px;
+      border-radius: 46px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.45), 0 0 0 10px #1e293b, 0 0 0 12px #334155;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: #F8FAFC;
+    }
+
+    .dynamic-island {
+      width: 110px;
+      height: 26px;
+      background: #000;
+      border-radius: 20px;
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+    }
+
+    /* Stacked Angle Photo Thumbnail (Xếp Chéo Góc) */
+    .photo-stack-thumb {
+      position: relative;
+      width: 44px;
+      height: 44px;
+    }
+    .photo-stack-back {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      transform: rotate(8deg) translate(3px, -2px);
+      background: #CBD5E1;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      z-index: 1;
+    }
+    .photo-stack-front {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      transform: rotate(-3deg);
+      border: 2px solid #fff;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    /* Animations for Deck */
+    @keyframes cardFlyOutLeft {
+      0% { transform: translateX(0) rotate(-2deg) scale(1); opacity: 1; }
+      100% { transform: translateX(-140%) rotate(-25deg) scale(0.85); opacity: 0; }
+    }
+    @keyframes cardPromoteUp {
+      0% { transform: translate(12px, -6px) rotate(8deg) scale(0.97); opacity: 0.95; }
+      100% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+    }
+    .anim-card-flyout {
+      animation: cardFlyOutLeft 0.38s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+    }
+    .anim-card-promote {
+      animation: cardPromoteUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col items-center py-6 px-4">
+
+  <!-- TOP HEADER -->
+  <header class="w-full max-w-5xl flex flex-col md:flex-row items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-800">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-xs font-black uppercase tracking-widest text-teal-400 bg-teal-950/80 border border-teal-800 px-2.5 py-0.5 rounded-full">Parent UX Prototype v3</span>
+        <span class="text-xs text-slate-400">| Sắp Xếp Đúng Timeline 24H</span>
+      </div>
+      <h1 class="text-xl md:text-2xl font-black text-white">Nhật Ký: Sắp Xếp Theo Giờ & Bỏ Badge [✓ Xong]</h1>
+      <p class="text-xs text-slate-400 mt-1">Sắp xếp theo thứ tự thời gian từ sáng đến tối • Viền màu báo trạng thái • Giữ mốc giờ & câu thoại nhỏ</p>
+    </div>
+
+    <!-- 4 Color Legend -->
+    <div class="flex items-center gap-2 bg-slate-900 p-2 rounded-2xl border border-slate-800 text-[11px] font-bold">
+      <span class="flex items-center gap-1 text-emerald-400"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Xanh (Xong)</span>
+      <span class="text-slate-600">|</span>
+      <span class="flex items-center gap-1 text-amber-400"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Vàng (Đang làm)</span>
+      <span class="text-slate-600">|</span>
+      <span class="flex items-center gap-1 text-rose-400"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Đỏ (Quên làm)</span>
+      <span class="text-slate-600">|</span>
+      <span class="flex items-center gap-1 text-slate-400"><span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span> Xám (Khóa)</span>
+    </div>
+  </header>
+
+  <!-- MAIN STAGE -->
+  <main class="w-full max-w-5xl flex flex-col lg:flex-row items-center lg:items-start justify-center gap-8">
+
+    <!-- IPHONE MOCKUP -->
+    <div class="phone-mockup shrink-0">
+      <div class="dynamic-island">
+        <span class="w-2 h-2 rounded-full bg-slate-800"></span>
+        <span class="text-[8px] font-mono text-teal-400 font-bold">PARENT 02</span>
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+      </div>
+
+      <!-- Top bar Mẹ / Giám sát bé -->
+      <div class="bg-white px-4 pt-11 pb-2.5 border-b border-slate-200 flex items-center justify-between shrink-0 shadow-2xs z-30">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-teal-100 border border-teal-300 flex items-center justify-center text-lg">🦁</div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-black text-xs text-teal-950 uppercase">Giám Sát Bé Leo</span>
+              <span class="bg-emerald-100 text-emerald-800 text-[9px] font-bold px-1.5 py-0.2 rounded-full">Trực tuyến</span>
+            </div>
+            <p class="text-[10px] text-slate-500 font-medium">Hồ sơ Lớp 1 (ADHD nhẹ)</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-lg text-xs font-bold text-amber-700">
+          ⭐ 450
+        </div>
+      </div>
+
+      <!-- DIARY SCROLL CONTAINER -->
+      <div class="flex-1 overflow-y-auto no-scrollbar p-3.5 space-y-3 pb-20">
+        
+        <!-- Header Section -->
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-black text-slate-800 text-sm">Nhật Ký Nề Nếp & Minh Chứng</h2>
+            <p class="text-[10px] text-slate-500">Giám sát tự giác không làm phiền • Minh chứng ảnh thật</p>
+          </div>
+          <div class="bg-orange-50 border border-orange-200 px-2.5 py-1 rounded-xl text-right">
+            <div class="text-[8px] font-bold text-orange-600 uppercase">Chuỗi Tự Giác</div>
+            <div class="text-xs font-black text-orange-700">🔥 5 Ngày</div>
+          </div>
+        </div>
+
+        <!-- THẺ TIẾN ĐỘ -->
+        <div class="bg-gradient-to-r from-teal-600 to-emerald-600 rounded-3xl p-3.5 text-white shadow-md space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-teal-100 uppercase tracking-wider">Tiến Độ Theo Khung Giờ</span>
+            <span class="bg-white/20 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+              2/3 Đạt Chuẩn (67%)
+            </span>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span class="text-2xl font-black">2</span>
+            <span class="text-xs text-teal-100">/ 3 việc đã mở mốc giờ hôm nay</span>
+          </div>
+          <div class="w-full bg-teal-950/30 rounded-full h-2 overflow-hidden">
+            <div class="bg-amber-300 h-full rounded-full transition-all duration-500" style="width: 67%;"></div>
+          </div>
+        </div>
+
+        <!-- Timeline Title -->
+        <div class="flex items-center justify-between px-1 pt-0.5">
+          <span class="text-[10px] font-black text-slate-500 uppercase tracking-wider">Timeline Hoạt Động (Theo Mốc Giờ)</span>
+          <span class="text-[10px] font-bold text-slate-400">Hôm nay, 24/10</span>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- DANH SÁCH SẮP XẾP CHUẨN THỜI GIAN: 06:45 -> 07:05 -> 11:30 -> 17:30 -> 21:00 -->
+        <!-- BỎ BADGE [✓ Xong] CHÈN CHỮ, GIỮ MỐC GIỜ & CÂU THOẠI NHỎ -->
+        <!-- ============================================================ -->
+        <div class="space-y-2.5">
+          
+          <!-- MỐC 1 (06:45): QUÊN LÀM -> VIỀN ĐỎ (ĐẶT ĐẦU NGÀY ĐÚNG THỜI GIAN) -->
+          <div class="bg-white rounded-2xl p-3 border-2 border-rose-400 shadow-2xs flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+              <div class="w-10 h-10 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 flex items-center justify-center text-xl shrink-0">
+                🥛
+              </div>
+              <div class="min-w-0 flex-1">
+                <!-- Tiêu đề to rõ, không bị chèn ép -->
+                <h4 class="font-black text-xs text-slate-800 leading-snug">Uống 1 cốc nước ấm buổi sáng</h4>
+                <!-- Giữ mốc giờ & câu thoại nhỏ -->
+                <p class="text-[10px] text-rose-600 font-medium mt-0.5">
+                  06:45 • Quá giờ chưa xác nhận • Bé có thể uống bổ sung
+                </p>
+              </div>
+            </div>
+            <span class="text-xs text-rose-500 shrink-0">⚠️</span>
+          </div>
+
+          <!-- MỐC 2 (07:05): ĐÃ XONG -> VIỀN XANH (BẢO TOÀN ẢNH XẾP GÓC, BỎ BADGE ✓ XONG) -->
+          <div onclick="openPhotoDeckModal('Gấp chăn gối sau khi thức dậy')" class="bg-white rounded-2xl p-3 border-2 border-emerald-400 shadow-2xs flex items-center justify-between gap-3 cursor-pointer hover:border-emerald-500 transition active:scale-98">
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+              <!-- Thumbnail xếp chéo góc -->
+              <div class="photo-stack-thumb shrink-0">
+                <div class="photo-stack-back flex items-center justify-center bg-sky-200">
+                  <span class="text-xs">🛏️</span>
+                </div>
+                <div class="photo-stack-front bg-emerald-500 flex items-center justify-center">
+                  <span class="text-lg">🛏️</span>
+                </div>
+                <span class="absolute -bottom-1 -right-1 bg-slate-900 text-amber-300 font-black text-[8px] px-1 py-0.2 rounded-full border border-white z-10 leading-none">
+                  2📷
+                </span>
+              </div>
+
+              <!-- Tiêu đề thoáng rộng + Mốc giờ & câu thoại nhỏ -->
+              <div class="min-w-0 flex-1">
+                <h4 class="font-black text-xs text-slate-800 leading-snug">Gấp chăn gối sau khi thức dậy</h4>
+                <p class="text-[10px] text-slate-400 font-medium mt-0.5">
+                  07:05 • Tự giác không nhắc • +25 ⭐
+                </p>
+              </div>
+            </div>
+
+            <!-- Nút xem ảnh (Không còn badge ✓ Xong chèn ép) -->
+            <button class="px-2.5 py-1.5 rounded-xl bg-teal-50 text-teal-700 text-[10px] font-black border border-teal-200 hover:bg-teal-100 flex items-center gap-1 shrink-0">
+              <span>📷</span> <span>Xem 2 Ảnh</span>
+            </button>
+          </div>
+
+          <!-- MỐC 3 (11:30): ĐÃ XONG -> VIỀN XANH -->
+          <div onclick="openPhotoDeckModal('Rửa tay sạch bằng xà phòng')" class="bg-white rounded-2xl p-3 border-2 border-emerald-400 shadow-2xs flex items-center justify-between gap-3 cursor-pointer hover:border-emerald-500 transition active:scale-98">
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+              <div class="photo-stack-thumb shrink-0">
+                <div class="photo-stack-back bg-blue-200"></div>
+                <div class="photo-stack-front bg-sky-500 flex items-center justify-center">
+                  <span class="text-lg">🧼</span>
+                </div>
+                <span class="absolute -bottom-1 -right-1 bg-slate-900 text-amber-300 font-black text-[8px] px-1 py-0.2 rounded-full border border-white z-10 leading-none">
+                  1📷
+                </span>
+              </div>
+
+              <div class="min-w-0 flex-1">
+                <h4 class="font-black text-xs text-slate-800 leading-snug">Rửa tay sạch bằng xà phòng</h4>
+                <p class="text-[10px] text-slate-400 font-medium mt-0.5">
+                  11:30 • Trước giờ ăn trưa • +20 ⭐
+                </p>
+              </div>
+            </div>
+
+            <button class="px-2.5 py-1.5 rounded-xl bg-teal-50 text-teal-700 text-[10px] font-black border border-teal-200 hover:bg-teal-100 flex items-center gap-1 shrink-0">
+              <span>📷</span> <span>Xem Ảnh</span>
+            </button>
+          </div>
+
+          <!-- MỐC 4 (17:30): ĐANG LÀM -> VIỀN VÀNG (BỎ BADGE CHÈN CHỮ) -->
+          <div class="bg-white rounded-2xl p-3 border-2 border-amber-400 shadow-2xs flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+              <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-xl shrink-0">
+                🧹
+              </div>
+              <div class="min-w-0 flex-1">
+                <h4 class="font-black text-xs text-slate-800 leading-snug">Dọn bàn học sau khi tan trường</h4>
+                <p class="text-[10px] text-amber-800 font-medium mt-0.5">
+                  17:30 • Bé đang thực hiện bên Đảo Thói Quen...
+                </p>
+              </div>
+            </div>
+            <span class="text-xs text-amber-600 animate-spin shrink-0">⏳</span>
+          </div>
+
+          <!-- MỐC 5 (21:00): KHÓA THEO TIMELINE -> VIỀN XÁM -->
+          <div class="bg-slate-50/80 rounded-2xl p-3 border border-slate-300 shadow-2xs flex items-center justify-between gap-3 opacity-70">
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+              <div class="w-10 h-10 rounded-xl bg-slate-200 text-slate-500 flex items-center justify-center text-lg shrink-0">
+                🔒
+              </div>
+              <div class="min-w-0 flex-1">
+                <h4 class="font-bold text-xs text-slate-600 leading-snug">Đánh răng & soạn sách vở</h4>
+                <p class="text-[10px] text-slate-400 font-medium mt-0.5">
+                  21:00 • Khóa theo timeline • Chờ đến mốc giờ tối
+                </p>
+              </div>
+            </div>
+            <span class="text-xs text-slate-400 shrink-0">🔒</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- PHOTO DECK MODAL (BẢO TOÀN NGUYÊN VẸN) -->
+      <div id="photo-deck-modal" class="hidden absolute inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex flex-col justify-between p-4">
+        
+        <div class="flex items-center justify-between pt-8 text-white">
+          <div>
+            <h3 class="text-xs font-black uppercase text-teal-400">Minh Chứng Của Bé Leo</h3>
+            <p id="deck-task-title" class="text-sm font-black text-white">Gấp chăn gối sau khi thức dậy</p>
+          </div>
+          <button onclick="closePhotoDeckModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-300 font-black text-sm flex items-center justify-center hover:bg-slate-700">
+            ✕
+          </button>
+        </div>
+
+        <div class="relative w-full h-[360px] flex items-center justify-center my-auto">
+          <div id="deck-card-back" class="absolute w-[86%] h-[92%] rounded-3xl bg-gradient-to-tr from-sky-400 to-indigo-500 p-4 flex flex-col justify-between border-4 border-white shadow-2xl transition-all duration-300 rotate-8 translate-x-3 -translate-y-2 opacity-90 z-10">
+            <div class="flex items-center justify-between">
+              <span class="bg-black/40 text-white font-black text-[9px] px-2 py-0.5 rounded-full">ẢNH 2 / 2</span>
+              <span class="text-white text-xs font-mono">07:06</span>
+            </div>
+            <div class="w-full flex-1 flex flex-col items-center justify-center text-white">
+              <span class="text-6xl mb-2">✨</span>
+              <p class="text-xs font-black text-center">Góc nhìn toàn cảnh giường ngủ</p>
+            </div>
+            <span class="text-[9px] text-sky-100 font-bold text-center">Chụp bằng Milo AI Camera</span>
+          </div>
+
+          <div id="deck-card-front" onclick="flickTopCard()" class="absolute w-[86%] h-[92%] rounded-3xl bg-gradient-to-tr from-teal-400 to-emerald-500 p-4 flex flex-col justify-between border-4 border-white shadow-2xl transition-all duration-300 -rotate-2 cursor-pointer z-20 hover:scale-[1.02]">
+            <div class="flex items-center justify-between">
+              <span class="bg-black/40 text-white font-black text-[9px] px-2 py-0.5 rounded-full">ẢNH 1 / 2 (BẤM ĐỂ LẬT)</span>
+              <span class="text-white text-xs font-mono">07:05</span>
+            </div>
+            <div class="w-full flex-1 flex flex-col items-center justify-center text-white">
+              <span class="text-6xl mb-2">🛏️</span>
+              <p class="text-xs font-black text-center">Chăn gối đã gấp vuông vức</p>
+            </div>
+            <div class="flex items-center justify-between text-[10px] text-teal-100 font-bold">
+              <span>Chạm thẻ để xem ảnh tiếp ›</span>
+              <span>👆</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center pb-4 text-xs text-slate-400">
+          <p>Mẹ đã xem và xác thực tự giác của Leo ⭐</p>
+        </div>
+
+      </div>
+
+      <!-- Bottom Nav -->
+      <div class="bg-white border-t border-slate-200 p-2 grid grid-cols-5 gap-1 shrink-0 z-30">
+        <div class="flex flex-col items-center py-1 text-slate-400 font-bold text-[10px]">
+          <span class="text-base">📊</span>
+          <span class="mt-0.5">Giám Sát</span>
+        </div>
+        <div class="flex flex-col items-center py-1 text-slate-400 font-bold text-[10px]">
+          <span class="text-base">📝</span>
+          <span class="mt-0.5">Giao Bài</span>
+        </div>
+        <div class="flex flex-col items-center py-1 text-teal-600 font-black text-[10px]">
+          <span class="text-base">🌟</span>
+          <span class="mt-0.5">Nhật Ký</span>
+        </div>
+        <div class="flex flex-col items-center py-1 text-slate-400 font-bold text-[10px]">
+          <span class="text-base">🎟️</span>
+          <span class="mt-0.5">Vé Vàng</span>
+        </div>
+        <div class="flex flex-col items-center py-1 text-slate-400 font-bold text-[10px]">
+          <span class="text-base">👦</span>
+          <span class="mt-0.5">Hồ Sơ</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: GIẢI THÍCH CHI TIẾT SẮP XẾP CHUẨN THỜI GIAN -->
+    <div class="flex-1 max-w-xl space-y-4">
+      
+      <div class="bg-slate-900 border-2 border-teal-500/60 rounded-3xl p-5 shadow-xl space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-black text-teal-400 uppercase tracking-wider bg-teal-950 px-3 py-1 rounded-full border border-teal-800">
+            CHỈ ĐẠO CHÍNH XÁC
+          </span>
+          <span class="text-xs font-bold text-slate-400">Chronological Timeline</span>
+        </div>
+        <h2 class="text-lg font-black text-white">Sắp Xếp Chuẩn Mốc Giờ 24H & Bỏ Badge [✓ Xong]</h2>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Đúng như bạn vừa khoanh vùng trong ảnh:
+        </p>
+
+        <div class="space-y-2 pt-2 border-t border-slate-800 text-xs">
+          <div class="flex items-start gap-2">
+            <span class="text-emerald-400 font-bold">1.</span>
+            <div>
+              <strong class="text-white">Bỏ badge <code>[✓ Xong]</code> chèn ép chữ:</strong> Việc nhét cái hộp nhỏ <em>"✓ Xong"</em> nằm ngang hàng đã bóp nghẹt chiều ngang khiến tiêu đề bị cắt cụt <code>Gấp chăn gối sau khi d...</code>. Nay bỏ cái hộp đó đi, màu viền xanh đã nói lên trạng thái, giúp <strong>tiêu đề dài bao nhiêu cũng đọc được trọn vẹn</strong>!
+            </div>
+          </div>
+
+          <div class="flex items-start gap-2">
+            <span class="text-emerald-400 font-bold">2.</span>
+            <div>
+              <strong class="text-white">Sắp xếp đúng thứ tự thời gian trong ngày:</strong>
+              <div class="mt-1 space-y-1 text-slate-300 font-mono text-[11px]">
+                <div>• <span class="text-rose-400 font-bold">06:45:</span> Uống cốc nước ấm (Quên làm - Viền đỏ lên đầu)</div>
+                <div>• <span class="text-emerald-400 font-bold">07:05:</span> Gấp chăn gối (Xong - Viền xanh)</div>
+                <div>• <span class="text-emerald-400 font-bold">11:30:</span> Rửa tay sạch (Xong - Viền xanh)</div>
+                <div>• <span class="text-amber-400 font-bold">17:30:</span> Dọn bàn học (Đang làm - Viền vàng)</div>
+                <div>• <span class="text-slate-400 font-bold">21:00:</span> Đánh răng & soạn sách (Khóa - Viền xám)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-2">
+            <span class="text-emerald-400 font-bold">3.</span>
+            <div>
+              <strong class="text-white">Giữ nguyên mốc giờ & dòng thoại nhỏ:</strong> Dòng chữ nhỏ (VD: <em>07:05 • Tự giác không nhắc • +25 ⭐</em>) vẫn được giữ nguyên vẹn để mẹ nắm bắt ngữ cảnh.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-4 text-xs space-y-2">
+        <h4 class="font-black text-slate-300">Trạng thái hiện tại:</h4>
+        <p class="text-slate-400 leading-relaxed">
+          Giao diện demo trên iPhone bên trái đã cập nhật chuẩn xác 100% theo đúng ý bạn: danh sách chạy từ sáng tới tối, tiêu đề thanh thoát không bị cắt chữ, viền màu rõ rệt, và xem ảnh xếp chéo góc nguyên vẹn!
+        </p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    let isFrontActive = true;
+
+    function openPhotoDeckModal(titleText) {
+      const modal = document.getElementById('photo-deck-modal');
+      const title = document.getElementById('deck-task-title');
+      title.innerText = titleText;
+      modal.classList.remove('hidden');
+      resetDeckCards();
+    }
+
+    function closePhotoDeckModal() {
+      document.getElementById('photo-deck-modal').classList.add('hidden');
+    }
+
+    function flickTopCard() {
+      const front = document.getElementById('deck-card-front');
+      const back = document.getElementById('deck-card-back');
+
+      if (isFrontActive) {
+        front.classList.add('anim-card-flyout');
+        back.classList.remove('rotate-8', 'translate-x-3', '-translate-y-2', 'opacity-90', 'z-10');
+        back.classList.add('rotate-0', 'translate-x-0', 'translate-y-0', 'opacity-100', 'z-20', 'anim-card-promote');
+        isFrontActive = false;
+      }
+    }
+
+    function resetDeckCards() {
+      isFrontActive = true;
+      const front = document.getElementById('deck-card-front');
+      const back = document.getElementById('deck-card-back');
+      
+      front.className = "absolute w-[86%] h-[92%] rounded-3xl bg-gradient-to-tr from-teal-400 to-emerald-500 p-4 flex flex-col justify-between border-4 border-white shadow-2xl transition-all duration-300 -rotate-2 cursor-pointer z-20 hover:scale-[1.02]";
+      back.className = "absolute w-[86%] h-[92%] rounded-3xl bg-gradient-to-tr from-sky-400 to-indigo-500 p-4 flex flex-col justify-between border-4 border-white shadow-2xl transition-all duration-300 rotate-8 translate-x-3 -translate-y-2 opacity-90 z-10";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,947 @@
+{
+  "G3_MATH_11": {
+    "label": "Toán có lời văn",
+    "exercise": {
+      "id": "G3_MATH_11",
+      "grade": 3,
+      "subject": "Toán",
+      "category": "Toán lời văn",
+      "topic": "Bài toán giải bằng hai bước tính (Gấp một số lên nhiều lần & Tính tổng)",
+      "difficulty": "Vận dụng",
+      "estimated_duration_min": 8,
+      "original_text": "Cửa hàng buổi sáng bán được 24 kg gạo. Buổi chiều bán được gấp 3 lần buổi sáng. Hỏi cả hai buổi cửa hàng bán được tất cả bao nhiêu ki-lô-gam gạo?",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Tìm số ki-lô-gam gạo buổi chiều bán được bằng cách lấy số gạo buổi sáng nhân với 3.",
+          "mathematical_or_logical_goal": "Tính đại lượng gấp lên nhiều lần",
+          "intermediate_output": "24 x 3 = 72 (kg)"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Tìm tổng số gạo cả hai buổi bằng cách cộng số gạo buổi sáng và buổi chiều.",
+          "mathematical_or_logical_goal": "Tính tổng hai đại lượng",
+          "intermediate_output": "24 + 72 = 96 (kg)"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Ghi rõ đáp số kèm đơn vị kg gạo.",
+          "mathematical_or_logical_goal": "Kết luận bài toán",
+          "intermediate_output": "96 kg gạo"
+        }
+      ],
+      "final_answer": {
+        "value": 96,
+        "unit": "kg",
+        "normalized_display": "96 kg gạo",
+        "acceptable_variants": [
+          "96",
+          "96 kg",
+          "96 ki-lô-gam",
+          "96 kg gạo"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Tưởng rằng tìm ra 72 kg là đã hoàn thành bài toán và dừng lại mà không tính tổng cả hai buổi.",
+        "executive_function_scaffolding": "Nhắc nhở câu hỏi cốt lõi: 'Đề bài hỏi buổi chiều hay hỏi CẢ HAI BUỔI?'.",
+        "visual_or_concrete_aid": "Sơ đồ đoạn thẳng: Sáng 1 đoạn; Chiều 3 đoạn; ngoặc nhọn hỏi chấm tổng cả 4 đoạn."
+      }
+    },
+    "cognitive_ir": {
+      "benchmark_id": "G3_MATH_11",
+      "problem_taxonomy": {
+        "subject": "toan",
+        "grade": 3,
+        "category": "Toán lời văn 2 phép tính",
+        "difficulty_tier": "low"
+      },
+      "original_problem": {
+        "text": "Cửa hàng buổi sáng bán được 24 kg gạo. Buổi chiều bán được gấp 3 lần buổi sáng. Hỏi cả hai buổi cửa hàng bán được tất cả bao nhiêu ki-lô-gam gạo?",
+        "target_question": "Cả hai buổi cửa hàng bán được tất cả bao nhiêu ki-lô-gam gạo?"
+      },
+      "extracted_entities": {
+        "explicit_quantities": [
+          {
+            "name": "Số gạo bán buổi sáng",
+            "value": 24,
+            "unit": "kg"
+          }
+        ],
+        "relational_conditions": [
+          "Số gạo bán buổi chiều = Số gạo bán buổi sáng x 3",
+          "Tổng số gạo cả hai buổi = Số gạo buổi sáng + Số gạo buổi chiều"
+        ],
+        "implicit_constants": []
+      },
+      "sub_questions": [
+        "Tìm số ki-lô-gam gạo buổi chiều bán được.",
+        "Tìm tổng số ki-lô-gam gạo cả hai buổi bán được."
+      ],
+      "canonical_solution_dag": [
+        {
+          "step_index": 1,
+          "goal_description": "Tính số gạo bán được trong buổi chiều",
+          "operation_expression": "24 * 3 = 72",
+          "target_variable": "so_gao_chieu",
+          "intermediate_value": 72,
+          "unit": "kg",
+          "dependencies": []
+        },
+        {
+          "step_index": 2,
+          "goal_description": "Tính tổng số gạo bán được trong cả hai buổi",
+          "operation_expression": "24 + 72 = 96",
+          "target_variable": "tong_so_gao",
+          "intermediate_value": 96,
+          "unit": "kg",
+          "dependencies": [
+            1
+          ]
+        }
+      ],
+      "canonical_final_answer": {
+        "value": 96,
+        "unit": "kg",
+        "normalized_display": "96 kg",
+        "acceptable_variants": [
+          "96 kg",
+          "96kg",
+          "96 kg gạo",
+          "96"
+        ]
+      },
+      "potential_adhd_traps": [
+        {
+          "trap_type": "premature_closure",
+          "description": "Học sinh tính ra 72 kg (số gạo buổi chiều) rồi dừng lại, tưởng đó là đáp số cuối cùng của bài toán.",
+          "prevention_recommendation": "Yêu cầu học sinh đọc lại câu hỏi 'cả hai buổi' để nhận thức rõ cần thêm một bước cộng tổng."
+        },
+        {
+          "trap_type": "working_memory_overload",
+          "description": "Nhầm lẫn giữa phép tính nhân tìm số gạo buổi chiều với phép tính cộng tổng do không phân rã các bước viết nháp rõ ràng.",
+          "prevention_recommendation": "Sử dụng bảng con hoặc giấy nháp chia đôi: Phần 1 tính buổi chiều, Phần 2 tính cả hai buổi."
+        }
+      ]
+    },
+    "session_output": {
+      "session_id": "SESSION_G3_MATH_11_SCAFFOLD",
+      "task_metadata": {
+        "benchmark_id": "G3_MATH_11",
+        "original_title": "Bài toán giải bằng hai bước tính (Gấp một số lên nhiều lần &",
+        "grade": 3,
+        "subject": "toan",
+        "target_cognitive_profile": {
+          "attention_span_minutes": 10,
+          "recommended_micro_task_duration_sec": 120,
+          "working_memory_capacity": 2,
+          "rsd_sensitivity_level": "HIGH",
+          "scaffolding_level": "MODERATE"
+        },
+        "total_micro_tasks": 3,
+        "total_estimated_duration_sec": 360
+      },
+      "micro_tasks": [
+        {
+          "step_id": 1,
+          "title": "Đọc và xác định số gạo buổi sáng",
+          "action_verb": "Đọc",
+          "atomic_instruction": "Con hãy đọc lại số ki-lô-gam gạo cửa hàng bán được vào buổi sáng.",
+          "duration_sec": 90,
+          "ui_type": "single_choice",
+          "ui_payload": {
+            "prompt_text": "Đề bài cho biết buổi sáng cửa hàng bán được bao nhiêu ki-lô-gam gạo?",
+            "options": [
+              "15 kg gạo",
+              "24 kg gạo",
+              "34 kg gạo",
+              "42 kg gạo"
+            ]
+          },
+          "cognitive_scaffolding": {
+            "scaffolding_type": "visual_cue",
+            "cognitive_load_level": "low",
+            "working_memory_items": 1,
+            "explanation": "Củng cố dữ liệu đầu vào cơ bản nhất để không làm quá tải bộ nhớ làm việc."
+          },
+          "hints": [
+            "Con hãy nhìn vào câu đầu tiên của đề bài nhé.",
+            "Đề bài viết: Cửa hàng buổi sáng bán được bao nhiêu nhỉ?"
+          ],
+          "success_criteria": {
+            "evaluation_type": "exact_match",
+            "expected_answer": "24 kg gạo",
+            "feedback_on_error": "Milo thấy con rất tập trung! Con thử đọc lại câu đầu tiên cùng Milo một lần nữa nhé."
+          },
+          "immediate_reinforcer": {
+            "visual_asset": "sparkle_star_01",
+            "audio_cue": "positive_bell_c6",
+            "dopamine_points": 20
+          },
+          "is_final_step": false
+        },
+        {
+          "step_id": 2,
+          "title": "Tính số gạo bán được buổi chiều",
+          "action_verb": "Tính",
+          "atomic_instruction": "Tính số gạo buổi chiều: Lấy 24 nhân với 3.",
+          "duration_sec": 120,
+          "ui_type": "text_input",
+          "ui_payload": {
+            "prompt_text": "Buổi chiều bán gấp 3 lần buổi sáng (24 kg). Hỏi buổi chiều bán được bao nhiêu kg?",
+            "placeholder": "Điền kết quả số kg"
+          },
+          "cognitive_scaffolding": {
+            "scaffolding_type": "fill_in_the_blank",
+            "cognitive_load_level": "medium",
+            "working_memory_items": 2,
+            "explanation": "Thực hiện phép tính nhân với số lượng gạo buổi sáng đã xác định ở bước 1."
+          },
+          "hints": [
+            "Con lấy số gạo buổi sáng nhân với 3 nhé.",
+            "Ta thực hiện phép tính: 24 x 3 = ?",
+            "4 x 3 = 12 viết 2 nhớ 1, 2 x 3 = 6 thêm 1 là 7. Kết quả là 72."
+          ],
+          "success_criteria": {
+            "evaluation_type": "exact_match",
+            "expected_answer": "72",
+            "feedback_on_error": "Milo tin con làm được! Não chúng mình vừa sạc pin xong, con thử đặt tính phép nhân 24 x 3 lại xem sao nhé!"
+          },
+          "immediate_reinforcer": {
+            "visual_asset": "particle_burst_gold",
+            "audio_cue": "sparkle_ting_short",
+            "dopamine_points": 40
+          },
+          "is_final_step": false
+        },
+        {
+          "step_id": 3,
+          "title": "Tính tổng số gạo cả hai buổi",
+          "action_verb": "Tính",
+          "atomic_instruction": "Cộng số gạo buổi sáng và buổi chiều để tìm tổng số gạo.",
+          "duration_sec": 150,
+          "ui_type": "text_input",
+          "ui_payload": {
+            "prompt_text": "Lấy số gạo buổi sáng (24 kg) cộng với số gạo buổi chiều (72 kg). Tổng cộng là bao nhiêu?",
+            "placeholder": "Điền đáp số kèm đơn vị (ví dụ: 96 kg gạo)"
+          },
+          "cognitive_scaffolding": {
+            "scaffolding_type": "sub_question",
+            "cognitive_load_level": "medium",
+            "working_memory_items": 2,
+            "explanation": "Bước kết hợp cuối cùng để tìm tổng số gạo cả hai buổi."
+          },
+          "hints": [
+            "Con lấy 24 cộng với 72 nhé.",
+            "Cộng hàng đơn vị trước: 4 + 2 = 6. Cộng hàng chục sau: 2 + 7 = 9.",
+            "Kết quả phép tính là 96 kg gạo."
+          ],
+          "success_criteria": {
+            "evaluation_type": "exact_match",
+            "expected_answer": "96 kg gạo",
+            "feedback_on_error": "Không sao cả, con đã đi được rất xa rồi. Cùng Milo cộng lại 24 và 72 một cách thật thoải mái nhé!"
+          },
+          "immediate_reinforcer": {
+            "visual_asset": "confetti_cannon",
+            "audio_cue": "harp_glissando_soft",
+            "dopamine_points": 50
+          },
+          "is_final_step": true
+        }
+      ],
+      "final_summary": {
+        "final_answer_step_id": 3,
+        "extracted_final_answer": "96 kg gạo",
+        "pedagogical_wrap_up": "Tuyệt vời! Con đã hoàn thành xuất sắc các bước tính toán và vượt qua thử thách bài toán đố. Milo rất tự hào về sự kiên trì của con!"
+      }
+    },
+    "eval_report": {
+      "schema_valid": true,
+      "schema_errors": [],
+      "total_steps": 3,
+      "steps": [
+        {
+          "step_id": 1,
+          "action_verb": "Đọc",
+          "verb_valid": true,
+          "duration_sec": 90,
+          "duration_valid": true,
+          "atomic_instruction": "Con hãy đọc lại số ki-lô-gam gạo cửa hàng bán được vào buổi sáng.",
+          "word_count": 16,
+          "under_15_words": false,
+          "feedback_on_error": "milo thấy con rất tập trung! con thử đọc lại câu đầu tiên cùng milo một lần nữa nhé.",
+          "rsd_valid": true,
+          "rsd_violations": []
+        },
+        {
+          "step_id": 2,
+          "action_verb": "Tính",
+          "verb_valid": true,
+          "duration_sec": 120,
+          "duration_valid": true,
+          "atomic_instruction": "Tính số gạo buổi chiều: Lấy 24 nhân với 3.",
+          "word_count": 10,
+          "under_15_words": true,
+          "feedback_on_error": "milo tin con làm được! não chúng mình vừa sạc pin xong, con thử đặt tính phép nhân 24 x 3 lại xem sao nhé!",
+          "rsd_valid": true,
+          "rsd_violations": []
+        },
+        {
+          "step_id": 3,
+          "action_verb": "Tính",
+          "verb_valid": true,
+          "duration_sec": 150,
+          "duration_valid": true,
+          "atomic_instruction": "Cộng số gạo buổi sáng và buổi chiều để tìm tổng số gạo.",
+          "word_count": 13,
+          "under_15_words": true,
+          "feedback_on_error": "không sao cả, con đã đi được rất xa rồi. cùng milo cộng lại 24 và 72 một cách thật thoải mái nhé!",
+          "rsd_valid": true,
+          "rsd_violations": []
+        }
+      ],
+      "all_verbs_valid": true,
+      "all_durations_valid": true,
+      "all_under_15_words": false,
+      "all_rsd_valid": true
+    }
+  },
+  "G2_VIET_08": {
+    "label": "Tiếng Việt đọc hiểu",
+    "exercise": {
+      "id": "G2_VIET_08",
+      "grade": 2,
+      "subject": "Tiếng Việt",
+      "category": "Tiếng Việt / Đọc hiểu",
+      "topic": "Đọc hiểu văn bản & Nhận diện mẫu câu 'Ai làm gì?'",
+      "difficulty": "Cơ bản (Nhận biết/Thông hiểu)",
+      "estimated_duration_min": 5,
+      "original_text": "Đọc đoạn văn sau:\n'Mỗi buổi chiều sau giờ học, Nam thường giúp bà tưới những luống rau xanh mướt sau vườn. Chú cún Mực lon ton chạy quanh đôi chân Nam như muốn cùng tham gia.'\nCâu hỏi: Sau giờ học mỗi buổi chiều, Nam thường làm việc gì để giúp bà?",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Xác định từ chỉ thời gian 'sau giờ học mỗi buổi chiều' và đối tượng 'Nam'.",
+          "mathematical_or_logical_goal": "Neo định ngữ cảnh câu hỏi",
+          "intermediate_output": "Thời gian: chiều sau giờ học; Người: Nam"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Đọc câu thứ nhất để tìm cụm từ chỉ hành động Nam làm giúp bà.",
+          "mathematical_or_logical_goal": "Trích xuất cụm vị ngữ chỉ hoạt động",
+          "intermediate_output": "'tưới những luống rau xanh mướt sau vườn'"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Viết câu trả lời ngắn gọn chỉ rõ hành động tưới rau.",
+          "mathematical_or_logical_goal": "Khái quát câu trả lời",
+          "intermediate_output": "tưới những luống rau sau vườn"
+        }
+      ],
+      "final_answer": {
+        "value": "tưới những luống rau sau vườn",
+        "unit": null,
+        "normalized_display": "tưới những luống rau sau vườn",
+        "acceptable_variants": [
+          "tưới rau",
+          "tưới những luống rau sau vườn",
+          "tưới rau sau vườn",
+          "tưới những luống rau",
+          "tưới rau giúp bà"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Trẻ bị phân tâm bởi câu thứ hai tả 'chú cún Mực lon ton' nên ghi nhầm hành động chơi với cún.",
+        "executive_function_scaffolding": "Lọc theo từ khóa mục tiêu: 'Nam' + 'giúp bà'.",
+        "visual_or_concrete_aid": "Gạch chân hành động của Nam bằng nét đơn xanh, gạch chân chú cún bằng nét đứt xám."
+      }
+    },
+    "cognitive_ir": {
+      "benchmark_id": "G2_VIET_08",
+      "problem_taxonomy": {
+        "subject": "tieng_viet",
+        "grade": 2,
+        "category": "Tiếng Việt đọc hiểu tìm chi tiết",
+        "difficulty_tier": "low"
+      },
+      "original_problem": {
+        "text": "Đọc đoạn văn sau: 'Mỗi buổi chiều sau giờ học, Nam thường giúp bà tưới những luống rau xanh mướt sau vườn. Chú cún Mực lon ton chạy quanh đôi chân Nam như muốn cùng tham gia.'",
+        "target_question": "Sau giờ học mỗi buổi chiều, Nam thường làm việc gì để giúp bà?"
+      },
+      "extracted_entities": {
+        "explicit_quantities": [],
+        "relational_conditions": [
+          "Thời gian: Mỗi buổi chiều sau giờ học",
+          "Nhân vật thực hiện: Nam",
+          "Đối tượng nhận sự giúp đỡ: bà"
+        ],
+        "implicit_constants": []
+      },
+      "sub_questions": [
+        "Xác định từ chỉ thời gian và nhân vật Nam trong đoạn văn.",
+        "Tìm cụm từ chỉ hoạt động mà Nam làm để giúp bà trong câu văn.",
+        "Tổng hợp lại hành động để trả lời câu hỏi."
+      ],
+      "canonical_solution_dag": [
+        {
+          "step_index": 1,
+          "goal_description": "Xác định ngữ cảnh thời gian và nhân vật Nam",
+          "operation_expression": "Tìm mốc 'Mỗi buổi chiều sau giờ học' và chủ ngữ 'Nam'",
+          "target_variable": "ngu_canh_nhan_vat",
+          "intermediate_value": "Thời gian: chiều sau giờ học; Nhân vật: Nam",
+          "unit": "text",
+          "dependencies": []
+        },
+        {
+          "step_index": 2,
+          "goal_description": "Trích xuất hành động giúp bà của Nam",
+          "operation_expression": "Đọc cụm từ vị ngữ theo sau chủ ngữ Nam: 'giúp bà tưới những luống rau xanh mướt sau vườn'",
+          "target_variable": "hanh_dong_giup_ba",
+          "intermediate_value": "tưới những luống rau xanh mướt sau vườn",
+          "unit": "text",
+          "dependencies": [
+            1
+          ]
+        }
+      ],
+      "canonical_final_answer": {
+        "value": "tưới những luống rau sau vườn",
+        "unit": "",
+        "normalized_display": "Tưới những luống rau sau vườn",
+        "acceptable_variants": [
+          "tưới những luống rau sau vườn",
+          "tưới rau",
+          "tưới những luống rau xanh mướt sau vườn"
+        ]
+      },
+      "potential_adhd_traps": [
+        {
+          "trap_type": "distractor_attraction",
+          "description": "Trẻ chú ý nhầm sang câu thứ hai ('Chú cún Mực lon ton chạy quanh...') và trả lời nhầm về hành động của chú cún Mực.",
+          "prevention_recommendation": "Yêu cầu trẻ gạch chân từ khóa 'Nam' trong câu hỏi và chỉ tìm câu văn bắt đầu hoặc chứa từ 'Nam'."
+        }
+      ]
+    },
+    "session_output": {
+      "session_id": "SESSION_G2_VIET_08_SCAFFOLD",
+      "task_metadata": {
+        "benchmark_id": "G2_VIET_08",
+        "original_title": "Đọc hiểu văn bản & Nhận diện mẫu câu 'Ai làm gì?'",
+        "grade": 2,
+        "subject": "tieng_viet",
+        "target_cognitive_profile": {
+          "attention_span_minutes": 10,
+          "recommended_micro_task_duration_sec": 120,
+          "working_memory_capacity": 2,
+          "rsd_sensitivity_level": "HIGH",
+          "scaffolding_level": "MODERATE"
+        },
+        "total_micro_tasks": 2,
+        "total_estimated_duration_sec": 240
+      },
+      "micro_tasks": [
+        {
+          "step_id": 1,
+          "title": "Xác định câu văn chứa nhân vật Nam",
+          "action_verb": "Gạch_chân",
+          "atomic_instruction": "Con hãy tìm và gạch chân câu văn nhắc đến bạn Nam trong đoạn văn.",
+          "duration_sec": 120,
+          "ui_type": "highlight",
+          "ui_payload": {
+            "prompt_text": "Mỗi buổi chiều sau giờ học, Nam thường giúp bà tưới những luống rau xanh mướt sau vườn. Chú cún Mực lon ton chạy quanh đôi chân Nam như muốn cùng tham gia.",
+            "placeholder": "Chạm vào câu văn của Nam"
+          },
+          "cognitive_scaffolding": {
+            "scaffolding_type": "visual_cue",
+            "cognitive_load_level": "low",
+            "working_memory_items": 1,
+            "explanation": "Giúp trẻ tập trung vào câu đầu tiên để tránh bị nhầm lẫn với chú cún Mực ở câu thứ hai."
+          },
+          "hints": [
+            "Con hãy nhìn vào câu đầu tiên trong đoạn văn nhé.",
+            "Câu văn bắt đầu bằng cụm từ 'Mỗi buổi chiều sau giờ học, Nam...'"
+          ],
+          "success_criteria": {
+            "evaluation_type": "keyword_containment",
+            "expected_answer": "Nam thường giúp bà tưới những luống rau xanh mướt sau vườn",
+            "feedback_on_error": "Milo nhìn thấy con đã rất cố gắng quan sát! Chúng mình cùng đọc lại câu đầu tiên có tên bạn Nam nhé."
+          },
+          "immediate_reinforcer": {
+            "visual_asset": "sparkle_star_01",
+            "audio_cue": "positive_bell_c6",
+            "dopamine_points": 40
+          },
+          "is_final_step": false
+        },
+        {
+          "step_id": 2,
+          "title": "Xác định hành động giúp bà của Nam",
+          "action_verb": "Chọn",
+          "atomic_instruction": "Chọn đáp án đúng chỉ việc Nam làm để giúp bà.",
+          "duration_sec": 120,
+          "ui_type": "single_choice",
+          "ui_payload": {
+            "prompt_text": "Sau giờ học mỗi buổi chiều, Nam thường làm việc gì để giúp bà?",
+            "options": [
+              "tưới những luống rau sau vườn",
+              "chạy quanh đôi chân Nam",
+              "lon ton cùng chú cún Mực"
+            ],
+            "placeholder": "Chọn một đáp án chính xác nhất"
+          },
+          "cognitive_scaffolding": {
+            "scaffolding_type": "fill_in_the_blank",
+            "cognitive_load_level": "medium",
+            "working_memory_items": 2,
+            "explanation": "Đưa ra các lựa chọn rõ ràng giúp học sinh dễ dàng nhận diện ý chính mà không bị áp lực tự gõ chữ."
+          },
+          "hints": [
+            "Con hãy xem sau từ 'giúp bà' là cụm từ nào nhé.",
+            "Đó là công việc chăm sóc cho vườn rau của bà."
+          ],
+          "success_criteria": {
+            "evaluation_type": "exact_match",
+            "expected_answer": "tưới những luống rau sau vườn",
+            "feedback_on_error": "Milo tin là con sẽ làm được! Con thử đọc lại đoạn văn tìm từ 'tưới' xem sao nhé."
+          },
+          "immediate_reinforcer": {
+            "visual_asset": "confetti_cannon",
+            "audio_cue": "harp_glissando_soft",
+            "dopamine_points": 60
+          },
+          "is_final_step": true
+        }
+      ],
+      "final_summary": {
+        "final_answer_step_id": 2,
+        "extracted_final_answer": "tưới những luống rau sau vườn",
+        "pedagogical_wrap_up": "Tuyệt vời! Con đã đọc hiểu văn bản rất xuất sắc và tìm đúng việc làm ngoan ngoãn của bạn Nam. Milo rất tự hào về con!"
+      }
+    },
+    "eval_report": {
+      "schema_valid": true,
+      "schema_errors": [],
+      "total_steps": 2,
+      "steps": [
+        {
+          "step_id": 1,
+          "action_verb": "Gạch_chân",
+          "verb_valid": true,
+          "duration_sec": 120,
+          "duration_valid": true,
+          "atomic_instruction": "Con hãy tìm và gạch chân câu văn nhắc đến bạn Nam trong đoạn văn.",
+          "word_count": 15,
+          "under_15_words": false,
+          "feedback_on_error": "milo nhìn thấy con đã rất cố gắng quan sát! chúng mình cùng đọc lại câu đầu tiên có tên bạn nam nhé.",
+          "rsd_valid": true,
+          "rsd_violations": []
+        },
+        {
+          "step_id": 2,
+          "action_verb": "Chọn",
+          "verb_valid": true,
+          "duration_sec": 120,
+          "duration_valid": true,
+          "atomic_instruction": "Chọn đáp án đúng chỉ việc Nam làm để giúp bà.",
+          "word_count": 11,
+          "under_15_words": true,
+          "feedback_on_error": "milo tin là con sẽ làm được! con thử đọc lại đoạn văn tìm từ 'tưới' xem sao nhé.",
+          "rsd_valid": true,
+          "rsd_violations": []
+        }
+      ],
+      "all_verbs_valid": true,
+      "all_durations_valid": true,
+      "all_under_15_words": false,
+      "all_rsd_valid": true
+    }
+  },
+  "ROUTINE_01_CLEAN_DESK": {
+    "label": "Sinh hoạt đời thường",
+    "exercise": {
+      "id": "ROUTINE_01_CLEAN_DESK",
+      "grade": 2,
+      "subject": "Khoa học & Tự nhiên xã hội",
+      "category": "Kỹ năng sinh hoạt đời thường",
+      "topic": "Dọn dẹp góc học tập ngăn nắp",
+      "difficulty": "Cơ bản",
+      "estimated_duration_min": 6,
+      "original_text": "Sau khi học bài xong, em hãy tự giác dọn dẹp góc học tập cho ngăn nắp: cất sách vở vào đúng ngăn bàn, gom bút thước vào hộp bút, lau sạch bụi trên mặt bàn và tắt đèn học.",
+      "options": null,
+      "final_answer": {
+        "value": "Hoàn thành",
+        "unit": "nhiệm vụ",
+        "normalized_display": "Bàn học gọn gàng và ngăn nắp",
+        "acceptable_variants": [
+          "Hoàn thành",
+          "Gọn gàng",
+          "Sạch sẽ"
+        ]
+      },
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Cất sách và vở vào đúng ngăn bàn.",
+          "mathematical_or_logical_goal": "Sắp xếp tài liệu giấy tờ",
+          "intermediate_output": "Sách vở đã trong ngăn"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Gom các loại bút và thước kẻ bỏ vào hộp bút.",
+          "mathematical_or_logical_goal": "Thu gom dụng cụ viết",
+          "intermediate_output": "Bút thước trong hộp"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Dùng khăn lau sạch bụi trên mặt bàn học.",
+          "mathematical_or_logical_goal": "Vệ sinh bề mặt bàn",
+          "intermediate_output": "Mặt bàn sạch bụi"
+        },
+        {
+          "step_number": 4,
+          "instruction": "Tắt đèn bàn học và xếp ghế gọn gàng vào sát bàn.",
+          "mathematical_or_logical_goal": "Kết thúc buổi học an toàn tiết kiệm điện",
+          "intermediate_output": "Đèn tắt, ghế xếp gọn"
+        }
+      ],
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Trẻ dễ bị choáng ngợp bởi cả bàn bừa bộn và bỏ cuộc ngay từ đầu (ADHD paralysis).",
+        "executive_function_scaffolding": "Chia nhỏ thành từng nhóm vật thể đơn lẻ: chỉ dọn sách trước, rồi mới dọn bút.",
+        "visual_or_concrete_aid": "Checklist trực quan từng vật dụng."
+      }
+    },
+    "cognitive_ir": {
+      "benchmark_id": "ROUTINE_01_CLEAN_DESK",
+      "problem_taxonomy": {
+        "subject": "khoa_hoc_tu_nhien",
+        "grade": 2,
+        "category": "Kỹ năng sinh hoạt đời thường",
+        "difficulty_tier": "low"
+      },
+      "original_problem": {
+        "text": "Sau khi học bài xong, em hãy tự giác dọn dẹp góc học tập cho ngăn nắp: cất sách vở vào đúng ngăn bàn, gom bút thước vào hộp bút, lau sạch bụi trên mặt bàn và tắt đèn học.",
+        "target_question": "Em cần làm gì để dọn dẹp góc học tập cho ngăn nắp sau khi học xong?"
+      },
+      "extracted_entities": {
+        "explicit_quantities": [],
+        "relational_conditions": [
+          "Trình tự hành động dọn dẹp theo thứ tự: Sách vở -> Bút thước -> Mặt bàn -> Thiết bị điện (đèn học)"
+        ],
+        "implicit_constants": []
+      },
+      "sub_questions": [
+        "Cất sách và vở vào đúng ngăn bàn như thế nào?",
+        "Thu gom các loại bút và thước kẻ vào đâu?",
+        "Vệ sinh mặt bàn học bằng cách nào?",
+        "Kết thúc buổi học cần tắt thiết bị điện nào và sắp xếp ghế ra sao?"
+      ],
+      "canonical_solution_dag": [
+        {
+          "step_index": 1,
+          "goal_description": "Cất sách và vở vào đúng ngăn bàn",
+          "operation_expression": "Cất sách vở -> Sách vở đã trong ngăn",
+          "target_variable": "sach_vo_gon_gang",
+          "intermediate_value": "Sách vở đã trong ngăn",
+          "unit": "text",
+          "dependencies": []
+        },
+        {
+          "step_index": 2,
+          "goal_description": "Gom các loại bút và thước kẻ bỏ vào hộp bút",
+          "operation_expression": "Gom bút thước -> Bút thước trong hộp",
+          "target_variable": "dung_cu_viet_gon_gang",
+          "intermediate_value": "Bút thước trong hộp",
+          "unit": "text",
+          "dependencies": [
+            1
+          ]
+        },
+        {
+          "step_index": 3,
+          "goal_description": "Dùng khăn lau sạch bụi trên mặt bàn học",
+          "operation_expression": "Lau bụi -> Mặt bàn sạch bụi",
+          "target_variable": "mat_ban_sach_se",
+          "intermediate_value": "Mặt bàn sạch bụi",
+          "unit": "text",
+          "dependencies": [
+            2
+          ]
+        },
+        {
+          "step_index": 4,
+          "goal_description": "Tắt đèn bàn học và xếp ghế gọn gàng vào sát bàn",
+          "operation_expression": "Tắt đèn, xếp ghế -> Đèn tắt, ghế xếp gọn",
+          "target_variable": "hoan_tat_khong_gian",
+          "intermediate_value": "Đèn tắt, ghế xếp gọn",
+          "unit": "text",
+          "dependencies": [
+            3
+          ]
+        }
+      ],
+      "canonical_final_answer": {
+        "value": "Bàn học gọn gàng và ngăn nắp",
+        "unit": "",
+        "normalized_display": "Bàn học gọn gàng và ngăn nắp",
+        "acceptable_variants": [
+          "Bàn học gọn gàng và ngăn nắp",
+          "Góc học tập ngăn nắp"
+        ]
+      },
+      "potential_adhd_traps": [
+        {
+          "trap_type": "working_memory_overload",
+          "description": "Trẻ dễ bị quên một vài bước trong chuỗi hành động dài (ví dụ: cất sách vở xong nhưng quên tắt đèn hoặc quên lau bàn).",
+          "prevention_recommendation": "Sử dụng danh sách kiểm tra trực quan (checklist) từng bước để trẻ tích chọn sau khi hoàn thành mỗi hành động."
+        },
+        {
+          "trap_type": "premature_closure",
+          "description": "Trẻ chỉ thực hiện việc cất sách vở rồi rời đi vì nghĩ đã xong, bỏ qua việc dọn dụng cụ viết và vệ sinh mặt bàn.",
+          "prevention_recommendation": "Chia nhỏ nhiệm vụ thành các bước ngắn và yêu cầu hoàn thành đủ 4 bước theo đồ thị nhận thức."
+        }
+      ]
+    },
+    "session_output": {
+      "session_id": "SESSION_ROUTINE_01_CLEAN_DESK_SCAFFOLD",
+      "task_metadata": {
+        "benchmark_id": "ROUTINE_01_CLEAN_DESK",
+        "original_title": "Dọn dẹp góc học tập ngăn nắp",
+        "grade": 2,
+        "subject": "khoa_hoc_tu_nhien",
+        "target_cognitive_profile": {
+          "attention_span_minutes": 10,
+          "recommended_micro_task_duration_sec": 120,
+          "working_memory_capacity": 2,
+          "rsd_sensitivity_level": "HIGH",
+          "scaffolding_level": "MODERATE"
+        },
+        "total_micro_tasks": 4,
+        "total_estimated_duration_sec": 480
+      },
+      "micro_tasks": [
+        {
+          "step_id": 1,
+          "title": "Cất sách và vở vào ngăn bàn",
+          "action_verb": "Chọn",
+          "atomic_instruction": "Chọn đúng hành động cất sách vở vào ngăn bàn.",
+          "duration_sec": 120,
+          "ui_type": "single_choice",
+          "ui_payload": {
+            "prompt_text": "Em cần làm gì đầu tiên với sách và vở sau khi học xong?",
+            "options": [
+              "Cất sách và vở vào đúng ngăn bàn",
+              "Vứt sách vở lên giường ngủ",
+              "Để sách vở mở trên mặt ghế"
+            ],
+            "placeholder": "Chọn 1 đáp án"
+          },
+          "cognitive_scaffolding": {
+            "scaffolding_type": "sub_question",
+            "cognitive_load_level": "low",
+            "working_memory_items": 1,
+            "explanation": "Bắt đầu chuỗi dọn dẹp bằng việc cất tài liệu giấy tờ chính vào ngăn bàn."
+          },
+          "hints": [
+            "Con hãy nhớ lại vị trí cất sách vở hàng ngày của mình nhé.",
+            "Đáp án đúng là cất vào đúng ngăn bàn để góc học tập gọn gàng."
+          ],
+          "success_criteria": {
+            "evaluation_type": "exact_match",
+            "expected_answer": "Cất sách và vở vào đúng ngăn bàn",
+            "feedback_on_error": "Milo thấy con rất cố gắng! Con thử đọc lại các lựa chọn và chọn lại vị trí cất sách vở nha."
+          },
+          "immediate_reinforcer": {
+            "visual_asset": "sparkle_star_01",
+            "audio_cue": "positive_bell_c6",
+            "dopamine_points": 25
+          },
+          "is_final_step": false
+        },
+        {
+          "step_id": 2,
+          "title": "Thu gom bút thước vào hộp",
+          "action_verb": "Chọn",
+          "atomic_instruction": "Chọn đúng hành động thu gom bút và thước kẻ.",
+          "duration_sec": 120,
+          "ui_type": "single_choice",
+          "ui_payload": {
+            "prompt_text": "Sau khi cất sách vở, bút và thước kẻ cần được cho vào đâu?",
+            "options": [
+              "Bỏ vào hộp bút gọn gàng",
+              "Ném xuống dưới gầm bàn",
+              "Để lăn lóc trên sàn nhà"
+            ],
+            "placeholder": "Chọn 1 đáp án"
+          },
+          "cognitive_scaffolding": {
+            "scaffolding_type": "fill_in_the_blank",
+            "cognitive_load_level": "low",
+            "working_memory_items": 2,
+            "explanation": "Tập trung vào bước thứ hai là thu gom dụng cụ viết nhỏ gọn."
+          },
+          "hints": [
+            "Con hãy tìm chiếc hộp đựng dụng cụ viết quen thuộc của mình nhé.",
+            "Bút và thước cần được bỏ vào hộp bút."
+          ],
+          "success_criteria": {
+            "evaluation_type": "exact_match",
+            "expected_answer": "Bỏ vào hộp bút gọn gàng",
+            "feedback_on_error": "Milo tin là con làm được! Con thử nghĩ xem đồ dùng viết như bút thước thường cất ở đâu để tránh thất lạc nhỉ?"
+          },
+          "immediate_reinforcer": {
+            "visual_asset": "particle_burst_gold",
+            "audio_cue": "sparkle_ting_short",
+            "dopamine_points": 25
+          },
+          "is_final_step": false
+        },
+        {
+          "step_id": 3,
+          "title": "Vệ sinh mặt bàn học",
+          "action_verb": "Chọn",
+          "atomic_instruction": "Chọn hành động làm sạch mặt bàn.",
+          "duration_sec": 120,
+          "ui_type": "single_choice",
+          "ui_payload": {
+            "prompt_text": "Khi sách vở và bút thước đã gọn gàng, ta cần làm gì với mặt bàn học?",
+            "options": [
+              "Dùng khăn lau sạch bụi trên mặt bàn",
+              "Đổ nước lên mặt bàn",
+              "Để nguyên bụi bẩn không cần lau"
+            ],
+            "placeholder": "Chọn 1 đáp án"
+          },
+          "cognitive_scaffolding": {
+            "scaffolding_type": "visual_cue",
+            "cognitive_load_level": "medium",
+            "working_memory_items": 2,
+            "explanation": "Thực hiện bước vệ sinh bề mặt để bàn học sạch sẽ."
+          },
+          "hints": [
+            "Dùng dụng cụ gì để lau sạch bụi nhỉ con?",
+            "Đáp án là dùng khăn lau sạch bụi trên mặt bàn."
+          ],
+          "success_criteria": {
+            "evaluation_type": "exact_match",
+            "expected_answer": "Dùng khăn lau sạch bụi trên mặt bàn",
+            "feedback_on_error": "Milo rất thích sự cẩn thận của con. Để bàn học sạch bóng, con hãy dùng khăn lau bụi nhé!"
+          },
+          "immediate_reinforcer": {
+            "visual_asset": "milo_thumbs_up",
+            "audio_cue": "harp_glissando_soft",
+            "dopamine_points": 25
+          },
+          "is_final_step": false
+        },
+        {
+          "step_id": 4,
+          "title": "Tắt đèn và xếp ghế gọn gàng",
+          "action_verb": "Chọn",
+          "atomic_instruction": "Chọn hành động kết thúc buổi học an toàn và ngăn nắp.",
+          "duration_sec": 120,
+          "ui_type": "single_choice",
+          "ui_payload": {
+            "prompt_text": "Bước cuối cùng để hoàn thành việc dọn dẹp góc học tập là gì?",
+            "options": [
+              "Tắt đèn bàn học và xếp ghế gọn gàng vào sát bàn",
+              "Bật đèn sáng suốt đêm và để ghế giữa phòng",
+              "Đi ngủ ngay mà không cần quan tâm đến đèn và ghế"
+            ],
+            "placeholder": "Chọn 1 đáp án"
+          },
+          "cognitive_scaffolding": {
+            "scaffolding_type": "verification_check",
+            "cognitive_load_level": "medium",
+            "working_memory_items": 2,
+            "explanation": "Bước chốt hạ hoàn tất không gian và tiết kiệm điện."
+          },
+          "hints": [
+            "Con nhớ tắt thiết bị điện để tiết kiệm và đẩy ghế sát vào bàn nhé.",
+            "Đáp án đúng là tắt đèn bàn học và xếp ghế gọn gàng vào sát bàn."
+          ],
+          "success_criteria": {
+            "evaluation_type": "exact_match",
+            "expected_answer": "Tắt đèn bàn học và xếp ghế gọn gàng vào sát bàn",
+            "feedback_on_error": "Milo luôn ở đây cổ vũ con! Chúng mình nhớ tắt đèn và đẩy ghế vào sát bàn để kết thúc hoàn hảo nha."
+          },
+          "immediate_reinforcer": {
+            "visual_asset": "confetti_cannon",
+            "audio_cue": "gentle_pop_success",
+            "dopamine_points": 25
+          },
+          "is_final_step": true
+        }
+      ],
+      "final_summary": {
+        "final_answer_step_id": 4,
+        "extracted_final_answer": "Bàn học gọn gàng và ngăn nắp",
+        "pedagogical_wrap_up": "Tuyệt vời! Con đã hoàn thành xuất sắc tất cả các bước dọn dẹp góc học tập. Bộ não của con thật tuyệt vời khi duy trì không gian ngăn nắp và sạch sẽ!"
+      }
+    },
+    "eval_report": {
+      "schema_valid": true,
+      "schema_errors": [],
+      "total_steps": 4,
+      "steps": [
+        {
+          "step_id": 1,
+          "action_verb": "Chọn",
+          "verb_valid": true,
+          "duration_sec": 120,
+          "duration_valid": true,
+          "atomic_instruction": "Chọn đúng hành động cất sách vở vào ngăn bàn.",
+          "word_count": 10,
+          "under_15_words": true,
+          "feedback_on_error": "milo thấy con rất cố gắng! con thử đọc lại các lựa chọn và chọn lại vị trí cất sách vở nha.",
+          "rsd_valid": true,
+          "rsd_violations": []
+        },
+        {
+          "step_id": 2,
+          "action_verb": "Chọn",
+          "verb_valid": true,
+          "duration_sec": 120,
+          "duration_valid": true,
+          "atomic_instruction": "Chọn đúng hành động thu gom bút và thước kẻ.",
+          "word_count": 10,
+          "under_15_words": true,
+          "feedback_on_error": "milo tin là con làm được! con thử nghĩ xem đồ dùng viết như bút thước thường cất ở đâu để tránh thất lạc nhỉ?",
+          "rsd_valid": true,
+          "rsd_violations": []
+        },
+        {
+          "step_id": 3,
+          "action_verb": "Chọn",
+          "verb_valid": true,
+          "duration_sec": 120,
+          "duration_valid": true,
+          "atomic_instruction": "Chọn hành động làm sạch mặt bàn.",
+          "word_count": 7,
+          "under_15_words": true,
+          "feedback_on_error": "milo rất thích sự cẩn thận của con. để bàn học sạch bóng, con hãy dùng khăn lau bụi nhé!",
+          "rsd_valid": true,
+          "rsd_violations": []
+        },
+        {
+          "step_id": 4,
+          "action_verb": "Chọn",
+          "verb_valid": true,
+          "duration_sec": 120,
+          "duration_valid": true,
+          "atomic_instruction": "Chọn hành động kết thúc buổi học an toàn và ngăn nắp.",
+          "word_count": 12,
+          "under_15_words": true,
+          "feedback_on_error": "milo luôn ở đây cổ vũ con! chúng mình nhớ tắt đèn và đẩy ghế vào sát bàn để kết thúc hoàn hảo nha.",
+          "rsd_valid": true,
+          "rsd_violations": []
+        }
+      ],
+      "all_verbs_valid": true,
+      "all_durations_valid": true,
+      "all_under_15_words": true,
+      "all_rsd_valid": true
+    }
+  }
+}

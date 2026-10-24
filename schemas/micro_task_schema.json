@@ -1,0 +1,378 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ADHDMicroTaskSession",
+  "description": "Standardized JSON Schema Draft-07 for ADHD Elementary (Grade 1-5) Micro-Task Scaffolding Sessions under GDPT 2018",
+  "type": "object",
+  "required": [
+    "session_id",
+    "task_metadata",
+    "micro_tasks",
+    "final_summary"
+  ],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Unique session identifier."
+    },
+    "task_metadata": {
+      "type": "object",
+      "description": "Metadata regarding the target curriculum exercise and cognitive profile constraints.",
+      "required": [
+        "benchmark_id",
+        "original_title",
+        "grade",
+        "subject",
+        "total_micro_tasks",
+        "total_estimated_duration_sec"
+      ],
+      "properties": {
+        "benchmark_id": {
+          "type": "string",
+          "description": "Identifier matching benchmark exercise (e.g. G1_MATH_01, G3_MATH_11)."
+        },
+        "original_title": {
+          "type": "string",
+          "description": "Title or short description of the original exercise."
+        },
+        "grade": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Target elementary grade level (1 to 5)."
+        },
+        "subject": {
+          "type": "string",
+          "enum": [
+            "toan",
+            "tieng_viet",
+            "tieng_anh",
+            "khoa_hoc_tu_nhien"
+          ],
+          "description": "Elementary curriculum subject."
+        },
+        "target_cognitive_profile": {
+          "type": "object",
+          "description": "Child cognitive profile parameter vector derived from parent clinical survey.",
+          "properties": {
+            "attention_span_minutes": {
+              "type": "integer",
+              "minimum": 5,
+              "maximum": 25,
+              "description": "Maximum sustained attention span in minutes."
+            },
+            "recommended_micro_task_duration_sec": {
+              "type": "integer",
+              "minimum": 60,
+              "maximum": 300,
+              "description": "Recommended target micro-task duration in seconds (60-300s window)."
+            },
+            "working_memory_capacity": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5,
+              "description": "Maximum concurrent cognitive items the child can retain without overload."
+            },
+            "rsd_sensitivity_level": {
+              "type": "string",
+              "enum": [
+                "LOW",
+                "MEDIUM",
+                "HIGH",
+                "SEVERE"
+              ],
+              "description": "Rejection Sensitive Dysphoria sensitivity tier."
+            },
+            "scaffolding_level": {
+              "type": "string",
+              "enum": [
+                "MINIMAL",
+                "MODERATE",
+                "INTENSIVE"
+              ],
+              "description": "Pedagogical scaffolding intensity tier."
+            }
+          }
+        },
+        "total_micro_tasks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Total count of decomposed micro-tasks in this session."
+        },
+        "total_estimated_duration_sec": {
+          "type": "integer",
+          "minimum": 60,
+          "maximum": 1800,
+          "description": "Sum of all micro-task durations in seconds (max 30 minutes)."
+        }
+      }
+    },
+    "micro_tasks": {
+      "type": "array",
+      "description": "Ordered sequence of atomic scaffolding micro-tasks (1 to 10 tasks).",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": [
+          "step_id",
+          "title",
+          "action_verb",
+          "atomic_instruction",
+          "duration_sec",
+          "ui_type",
+          "ui_payload",
+          "cognitive_scaffolding",
+          "hints",
+          "success_criteria",
+          "immediate_reinforcer",
+          "is_final_step"
+        ],
+        "properties": {
+          "step_id": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Sequential step index starting from 1."
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 60,
+            "description": "Short, friendly title for visual step banner."
+          },
+          "action_verb": {
+            "type": "string",
+            "pattern": "^[a-zA-ZÀ-ỹ_]+$",
+            "description": "Exactly 1 single action verb token (e.g., Đọc, Gạch_chân, Tính, Chọn, Điền, Kéo, Sắp_xếp)."
+          },
+          "atomic_instruction": {
+            "type": "string",
+            "maxLength": 160,
+            "description": "Single-step, concrete atomic instruction (< 160 chars) without nested sub-clauses."
+          },
+          "duration_sec": {
+            "type": "integer",
+            "minimum": 60,
+            "maximum": 300,
+            "description": "Micro-task duration in seconds (strictly between 60s and 300s / 1-5 minutes)."
+          },
+          "ui_type": {
+            "type": "string",
+            "enum": [
+              "single_choice",
+              "multiple_choice",
+              "text_input",
+              "drag_drop",
+              "audio_listen",
+              "highlight",
+              "checkbox",
+              "order_sequencing"
+            ],
+            "description": "Interactive UI component type."
+          },
+          "ui_payload": {
+            "type": "object",
+            "description": "Component configuration and interactive options.",
+            "properties": {
+              "prompt_text": {
+                "type": "string",
+                "description": "Text rendered inside the interaction card."
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of choice options for single_choice or multiple_choice."
+              },
+              "placeholder": {
+                "type": "string",
+                "description": "Placeholder string for text_input."
+              },
+              "items_to_drag": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Draggable items for drag_drop or elements for order_sequencing."
+              },
+              "drop_targets": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Target bucket labels for drag_drop."
+              },
+              "audio_text": {
+                "type": "string",
+                "description": "TTS read-aloud script for audio_listen."
+              },
+              "highlight_target_segments": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Selectable segments or words for highlight interaction."
+              }
+            }
+          },
+          "cognitive_scaffolding": {
+            "type": "object",
+            "description": "Pedagogical scaffolding metadata to prevent working memory overload.",
+            "required": [
+              "scaffolding_type",
+              "cognitive_load_level",
+              "working_memory_items",
+              "explanation"
+            ],
+            "properties": {
+              "scaffolding_type": {
+                "type": "string",
+                "enum": [
+                  "worked_example",
+                  "fill_in_the_blank",
+                  "visual_cue",
+                  "sub_question",
+                  "verification_check"
+                ],
+                "description": "Scaffolding instructional technique."
+              },
+              "cognitive_load_level": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ],
+                "description": "Cognitive load tier."
+              },
+              "working_memory_items": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5,
+                "description": "Number of active information chunks retained concurrently (ADHD limit <= 3)."
+              },
+              "explanation": {
+                "type": "string",
+                "description": "Pedagogical justification for this step."
+              }
+            }
+          },
+          "hints": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "string"
+            },
+            "description": "Tiered progressive hints (Hint 1: Nudge, Hint 2: Clue, Hint 3: Walkthrough)."
+          },
+          "success_criteria": {
+            "type": "object",
+            "description": "Automated evaluation rule and RSD-safe corrective guidance.",
+            "required": [
+              "evaluation_type",
+              "expected_answer",
+              "feedback_on_error"
+            ],
+            "properties": {
+              "evaluation_type": {
+                "type": "string",
+                "enum": [
+                  "exact_match",
+                  "regex_match",
+                  "option_index",
+                  "keyword_containment",
+                  "numeric_tolerance"
+                ],
+                "description": "Verification engine evaluation strategy."
+              },
+              "expected_answer": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array"
+                ],
+                "description": "Ground truth expected value for this step."
+              },
+              "tolerance": {
+                "type": "number",
+                "description": "Allowable delta for numeric_tolerance evaluation."
+              },
+              "feedback_on_error": {
+                "type": "string",
+                "description": "Gentle, non-judgmental corrective feedback externalizing error and guiding retry."
+              }
+            }
+          },
+          "immediate_reinforcer": {
+            "type": "object",
+            "description": "FR1 schedule multi-sensory reward dispatched < 300ms upon step completion.",
+            "required": [
+              "visual_asset",
+              "audio_cue",
+              "dopamine_points"
+            ],
+            "properties": {
+              "visual_asset": {
+                "type": "string",
+                "enum": [
+                  "sparkle_star_01",
+                  "particle_burst_gold",
+                  "milo_thumbs_up",
+                  "badge_math_explorer",
+                  "confetti_cannon"
+                ],
+                "description": "Visual animation asset identifier."
+              },
+              "audio_cue": {
+                "type": "string",
+                "enum": [
+                  "positive_bell_c6",
+                  "sparkle_ting_short",
+                  "harp_glissando_soft",
+                  "gentle_pop_success"
+                ],
+                "description": "Audio chime asset identifier."
+              },
+              "dopamine_points": {
+                "type": "integer",
+                "minimum": 10,
+                "maximum": 100,
+                "description": "Gamification points earned for this micro-task (10-100 points)."
+              }
+            }
+          },
+          "is_final_step": {
+            "type": "boolean",
+            "description": "Flag indicating if this step computes or concludes the final answer of the benchmark item."
+          }
+        }
+      }
+    },
+    "final_summary": {
+      "type": "object",
+      "description": "Session conclusion extracting the final canonical answer for ground-truth verification.",
+      "required": [
+        "final_answer_step_id",
+        "extracted_final_answer",
+        "pedagogical_wrap_up"
+      ],
+      "properties": {
+        "final_answer_step_id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Step ID corresponding to the final calculated answer."
+        },
+        "extracted_final_answer": {
+          "type": "string",
+          "description": "Deterministic normalized final answer string to match against benchmark ground truth."
+        },
+        "pedagogical_wrap_up": {
+          "type": "string",
+          "description": "Positive summary message from Milo celebrating effort and consolidating the concept."
+        }
+      }
+    }
+  }
+}

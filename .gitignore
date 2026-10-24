@@ -1,0 +1,7 @@
+.env
+__pycache__/
+*.pyc
+venv/
+.venv/
+benchmark_report.json
+docs/reports/benchmark_report.json

@@ -1,0 +1,1346 @@
+{
+  "version": "1.0.0",
+  "framework": "Chương trình GDPT 2018 (Thông tư 32/2018/TT-BGDĐT)",
+  "total_exercises": 25,
+  "exercises": [
+    {
+      "id": "G1_MATH_01",
+      "grade": 1,
+      "subject": "Toán",
+      "category": "Toán lời văn",
+      "topic": "Phép cộng trong phạm vi 10 (Dạng toán thêm vào)",
+      "difficulty": "Cơ bản (Nhận biết/Thông hiểu)",
+      "estimated_duration_min": 5,
+      "original_text": "Trên cành cây có 5 con chim đang đậu. Lát sau có thêm 3 con chim nữa bay đến đậu cùng. Hỏi trên cành cây lúc này có tất cả bao nhiêu con chim?",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Đọc đề bài và tìm hai số: số chim ban đầu và số chim bay đến thêm.",
+          "mathematical_or_logical_goal": "Nhận diện dữ kiện đã cho",
+          "intermediate_output": "Ban đầu: 5 con; thêm vào: 3 con"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Chọn phép tính để tìm tổng số chim khi có thêm chim bay đến.",
+          "mathematical_or_logical_goal": "Lựa chọn toán tử đại số (phép cộng)",
+          "intermediate_output": "5 + 3"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Thực hiện phép tính 5 + 3 và viết câu trả lời.",
+          "mathematical_or_logical_goal": "Tính toán và kết luận kèm danh số",
+          "intermediate_output": "8 con chim"
+        }
+      ],
+      "final_answer": {
+        "value": 8,
+        "unit": "con chim",
+        "normalized_display": "8 con chim",
+        "acceptable_variants": [
+          "8",
+          "8 con",
+          "8 con chim"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Trẻ dễ bị xao nhãng bởi từ ngữ miêu tả 'cành cây', 'bay đến' và quên mất số lượng ban đầu.",
+        "executive_function_scaffolding": "Tách từ khóa hành động 'thêm' để kích hoạt phép cộng đơn bước.",
+        "visual_or_concrete_aid": "Biểu tượng 5 chấm tròn màu xanh + 3 chấm tròn màu đỏ trên màn hình."
+      }
+    },
+    {
+      "id": "G1_MATH_02",
+      "grade": 1,
+      "subject": "Toán",
+      "category": "Toán lời văn",
+      "topic": "Phép trừ trong phạm vi 20 không nhớ (Dạng toán bớt đi)",
+      "difficulty": "Cơ bản (Nhận biết/Thông hiểu)",
+      "estimated_duration_min": 5,
+      "original_text": "Mẹ mua về 18 quả cam. Cả nhà đã ăn hết 6 quả cam. Hỏi mẹ còn lại bao nhiêu quả cam?",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Đọc đề bài và xác định số quả cam lúc đầu mẹ có và số quả đã ăn.",
+          "mathematical_or_logical_goal": "Trích xuất dữ kiện đầu vào",
+          "intermediate_output": "Có: 18 quả; Đã ăn: 6 quả"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Lấy số cam lúc đầu trừ đi số cam đã ăn để tìm số cam còn lại.",
+          "mathematical_or_logical_goal": "Thiết lập phép trừ",
+          "intermediate_output": "18 - 6"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Tính kết quả hàng đơn vị (8 - 6 = 2), giữ nguyên hàng chục và viết đáp số.",
+          "mathematical_or_logical_goal": "Tính toán số học 2 chữ số trừ 1 chữ số",
+          "intermediate_output": "12 quả cam"
+        }
+      ],
+      "final_answer": {
+        "value": 12,
+        "unit": "quả cam",
+        "normalized_display": "12 quả cam",
+        "acceptable_variants": [
+          "12",
+          "12 quả",
+          "12 quả cam"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Hay nhầm lẫn giữa phép tính cộng và trừ khi đọc lướt qua từ 'còn lại'.",
+        "executive_function_scaffolding": "Khóa sự chú ý vào hành động 'đã ăn hết' mang ý nghĩa bớt đi.",
+        "visual_or_concrete_aid": "Bảng cấu tạo số tách 18 thành 10 và 8; gạch bỏ 6 đơn vị từ 8."
+      }
+    },
+    {
+      "id": "G1_VIET_03",
+      "grade": 1,
+      "subject": "Tiếng Việt",
+      "category": "Tiếng Việt / Đọc hiểu",
+      "topic": "Đọc hiểu văn bản ngắn & Nhận diện nhân vật và hành động",
+      "difficulty": "Cơ bản (Nhận biết/Thông hiểu)",
+      "estimated_duration_min": 5,
+      "original_text": "Đọc đoạn văn sau và trả lời câu hỏi: 'Buổi sáng sớm, chú gà trống cất tiếng gáy vang báo hiệu ngày mới. Mặt trời từ từ nhô lên đỏ rực. Bé Mai thức dậy, đánh răng, rửa mặt rồi vui vẻ cùng mẹ đi bộ đến trường tiểu học.'\nCâu hỏi: Ai là người cất tiếng gáy vang vào buổi sáng sớm?",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Đọc câu hỏi và tìm cụm từ khóa 'cất tiếng gáy vang'.",
+          "mathematical_or_logical_goal": "Định vị từ khóa mục tiêu",
+          "intermediate_output": "Cụm từ khóa: 'cất tiếng gáy vang'"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Dò tìm trong câu đầu tiên của đoạn văn để xem con vật hoặc nhân vật nào thực hiện hành động đó.",
+          "mathematical_or_logical_goal": "Đối chiếu ngữ cảnh",
+          "intermediate_output": "'chú gà trống cất tiếng gáy vang'"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Ghi lại tên nhân vật cất tiếng gáy.",
+          "mathematical_or_logical_goal": "Trích xuất câu trả lời trực tiếp",
+          "intermediate_output": "chú gà trống"
+        }
+      ],
+      "final_answer": {
+        "value": "chú gà trống",
+        "unit": null,
+        "normalized_display": "chú gà trống",
+        "acceptable_variants": [
+          "chú gà trống",
+          "gà trống",
+          "Chú gà trống",
+          "con gà trống"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Trẻ bị thu hút bởi tên nhân vật người 'Bé Mai' ở câu cuối mà vội vã chọn Mai thay vì gà trống.",
+        "executive_function_scaffolding": "Chỉ dẫn đọc dò từng dòng (Line-by-line reading mask).",
+        "visual_or_concrete_aid": "Tô đậm màu vàng cụm từ 'cất tiếng gáy vang' trong câu 1."
+      }
+    },
+    {
+      "id": "G1_MCQ_04",
+      "grade": 1,
+      "subject": "Khoa học & Tự nhiên xã hội",
+      "category": "Trắc nghiệm nhiều câu ABCD",
+      "topic": "Nhận biết hình học phẳng và số lượng trong mô hình thực tế",
+      "difficulty": "Cơ bản (Nhận biết/Thông hiểu)",
+      "estimated_duration_min": 4,
+      "original_text": "Hình vẽ một ngôi nhà gồm: một mái nhà hình tam giác, thân nhà hình chữ nhật, một cửa chính hình chữ nhật và hai cửa sổ hình tròn. Hỏi ngôi nhà đó có bao nhiêu hình tròn?\nA. 1 hình tròn\nB. 2 hình tròn\nC. 3 hình tròn\nD. 4 hình tròn",
+      "options": {
+        "A": "1 hình tròn",
+        "B": "2 hình tròn",
+        "C": "3 hình tròn",
+        "D": "4 hình tròn"
+      },
+      "distractor_analysis": {
+        "A": "Bẫy nhầm lẫn số lượng với 1 cửa chính hoặc 1 mái nhà.",
+        "B": "Đáp án ĐÚNG (đề nêu rõ 'hai cửa sổ hình tròn').",
+        "C": "Bẫy cộng gộp: 1 cửa chính + 2 cửa sổ = 3.",
+        "D": "Bẫy đếm tổng toàn bộ 4 chi tiết của ngôi nhà."
+      },
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Xác định câu hỏi yêu cầu đếm hình gì (hình tam giác, hình vuông hay hình tròn).",
+          "mathematical_or_logical_goal": "Xác định hình tiêu điểm",
+          "intermediate_output": "Hình tiêu điểm: hình tròn"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Đọc lại mô tả và tìm từ 'hình tròn' kèm số lượng tương ứng.",
+          "mathematical_or_logical_goal": "Quét văn bản tìm cặp (thuộc tính, số lượng)",
+          "intermediate_output": "'hai cửa sổ hình tròn' -> 2"
+        },
+        {
+          "step_number": 3,
+          "instruction": "So khớp với các phương án A, B, C, D để chọn phương án chứa số 2.",
+          "mathematical_or_logical_goal": "Khẳng định phương án đúng",
+          "intermediate_output": "Phương án B"
+        }
+      ],
+      "final_answer": {
+        "value": "B",
+        "unit": null,
+        "normalized_display": "B. 2 hình tròn",
+        "acceptable_variants": [
+          "B",
+          "B.",
+          "2 hình tròn",
+          "2",
+          "B. 2 hình tròn"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Xu hướng hấp tấp chọn số 1 vì nhìn thấy số 'một' xuất hiện đầu tiên trong đề bài.",
+        "executive_function_scaffolding": "Buộc trẻ xác nhận tiêu chí lọc 'hình tròn' trước khi nhìn vào các đáp án A/B/C/D.",
+        "visual_or_concrete_aid": "Hình ảnh trực quan khoanh tròn hai cửa sổ."
+      }
+    },
+    {
+      "id": "G1_ENG_05",
+      "grade": 1,
+      "subject": "Tiếng Anh",
+      "category": "Tiếng Anh tiểu học",
+      "topic": "Vocabulary: Colors & Everyday Objects",
+      "difficulty": "Cơ bản (Nhận biết/Thông hiểu)",
+      "estimated_duration_min": 4,
+      "original_text": "Choose the correct word to complete the sentence:\n'Look at my new pencil. It is ______.' (Màu đỏ)\nA. blue\nB. green\nC. red\nD. yellow",
+      "options": {
+        "A": "blue",
+        "B": "green",
+        "C": "red",
+        "D": "yellow"
+      },
+      "distractor_analysis": {
+        "A": "blue = màu xanh da trời.",
+        "B": "green = màu xanh lá cây.",
+        "C": "Đáp án ĐÚNG (red = màu đỏ).",
+        "D": "yellow = màu vàng."
+      },
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Xác định từ khóa tiếng Việt trong ngoặc đơn chỉ màu sắc cần tìm: 'Màu đỏ'.",
+          "mathematical_or_logical_goal": "Xác định nghĩa mục tiêu",
+          "intermediate_output": "Nghĩa: Màu đỏ"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Nhớ lại từ vựng tiếng Anh tương ứng với Màu đỏ.",
+          "mathematical_or_logical_goal": "Truy xuất trí nhớ từ vựng L1 -> L2",
+          "intermediate_output": "red"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Dò tìm chữ 'red' trong 4 lựa chọn A, B, C, D.",
+          "mathematical_or_logical_goal": "Chọn đáp án tương ứng",
+          "intermediate_output": "Phương án C"
+        }
+      ],
+      "final_answer": {
+        "value": "C",
+        "unit": null,
+        "normalized_display": "C. red",
+        "acceptable_variants": [
+          "C",
+          "C.",
+          "red",
+          "C. red"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Nhầm lẫn giữa các từ màu sắc bắt đầu bằng phụ âm tương tự hoặc màu quen thuộc.",
+        "executive_function_scaffolding": "Liên kết từ với thẻ màu mẫu trực quan.",
+        "visual_or_concrete_aid": "Thẻ màu đỏ kèm chữ cái gợi ý âm đầu 'r-'."
+      }
+    },
+    {
+      "id": "G2_MATH_06",
+      "grade": 2,
+      "subject": "Toán",
+      "category": "Toán lời văn",
+      "topic": "Bài toán về 'Nhiều hơn một số đơn vị' (Phép cộng có nhớ trong phạm vi 100)",
+      "difficulty": "Vận dụng",
+      "estimated_duration_min": 6,
+      "original_text": "Đội Một trồng được 35 cây xanh. Đội Hai trồng được nhiều hơn Đội Một 18 cây xanh. Hỏi Đội Hai trồng được bao nhiêu cây xanh?",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Xác định số cây Đội Một trồng được và phần Đội Hai nhiều hơn.",
+          "mathematical_or_logical_goal": "Tóm tắt dữ kiện đề bài",
+          "intermediate_output": "Đội Một: 35 cây; Đội Hai nhiều hơn: 18 cây"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Thiết lập phép tính: Muốn tìm số lớn hơn, ta lấy số đã biết cộng với phần nhiều hơn.",
+          "mathematical_or_logical_goal": "Mô hình hóa toán học sơ đồ đoạn thẳng",
+          "intermediate_output": "35 + 18"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Thực hiện phép tính có nhớ: 5 + 8 = 13 (viết 3 nhớ 1); 3 + 1 = 4, thêm 1 bằng 5.",
+          "mathematical_or_logical_goal": "Thực hiện phép cộng có nhớ trong phạm vi 100",
+          "intermediate_output": "53"
+        },
+        {
+          "step_number": 4,
+          "instruction": "Viết câu trả lời kèm đơn vị cây xanh.",
+          "mathematical_or_logical_goal": "Kết luận lời giải",
+          "intermediate_output": "53 cây xanh"
+        }
+      ],
+      "final_answer": {
+        "value": 53,
+        "unit": "cây xanh",
+        "normalized_display": "53 cây xanh",
+        "acceptable_variants": [
+          "53",
+          "53 cây",
+          "53 cây xanh"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Quên phần 'nhớ 1' sang hàng chục dẫn đến kết quả sai phổ biến là 43.",
+        "executive_function_scaffolding": "Chia phép cộng thành 2 thao tác: tính hàng đơn vị riêng và cộng hàng chục có nhớ riêng.",
+        "visual_or_concrete_aid": "Hộp ghi nhớ số 1 nhỏ đặt trên đỉnh cột hàng chục."
+      }
+    },
+    {
+      "id": "G2_MATH_07",
+      "grade": 2,
+      "subject": "Toán",
+      "category": "Toán lời văn",
+      "topic": "Bảng nhân 5 & Đơn vị đo dung tích (Lít) — Bài toán 2 bước tính",
+      "difficulty": "Vận dụng",
+      "estimated_duration_min": 7,
+      "original_text": "Có 5 can đựng dầu, mỗi can chứa 4 lít dầu. Người ta đã lấy ra 7 lít dầu để dùng. Hỏi trong 5 can đó còn lại tất cả bao nhiêu lít dầu?",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Tính tổng số lít dầu có trong 5 can ban đầu bằng phép nhân.",
+          "mathematical_or_logical_goal": "Tìm đại lượng trung gian tổng thể",
+          "intermediate_output": "4 x 5 = 20 (lít)"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Lấy tổng số lít dầu trừ đi số lít dầu đã dùng để tìm số lít còn lại.",
+          "mathematical_or_logical_goal": "Tính số lượng còn lại qua phép trừ",
+          "intermediate_output": "20 - 7 = 13 (lít)"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Viết kết luận đáp số kèm đơn vị lít dầu.",
+          "mathematical_or_logical_goal": "Kết luận cuối cùng",
+          "intermediate_output": "13 lít dầu"
+        }
+      ],
+      "final_answer": {
+        "value": 13,
+        "unit": "lít",
+        "normalized_display": "13 lít dầu",
+        "acceptable_variants": [
+          "13",
+          "13 lít",
+          "13 l",
+          "13 lít dầu"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Trẻ thường dừng lại ngay sau bước 1 (4 x 5 = 20) do thỏa mãn với một phép tính và quên bước trừ 7.",
+        "executive_function_scaffolding": "Checklist 2 hộp kiểm: [ ] Tính tổng dầu [ ] Trừ phần đã dùng.",
+        "visual_or_concrete_aid": "Vẽ 5 can dầu minh họa, sau đó hiển thị mũi tên rút bớt 7 lít ra ngoài."
+      }
+    },
+    {
+      "id": "G2_VIET_08",
+      "grade": 2,
+      "subject": "Tiếng Việt",
+      "category": "Tiếng Việt / Đọc hiểu",
+      "topic": "Đọc hiểu văn bản & Nhận diện mẫu câu 'Ai làm gì?'",
+      "difficulty": "Cơ bản (Nhận biết/Thông hiểu)",
+      "estimated_duration_min": 5,
+      "original_text": "Đọc đoạn văn sau:\n'Mỗi buổi chiều sau giờ học, Nam thường giúp bà tưới những luống rau xanh mướt sau vườn. Chú cún Mực lon ton chạy quanh đôi chân Nam như muốn cùng tham gia.'\nCâu hỏi: Sau giờ học mỗi buổi chiều, Nam thường làm việc gì để giúp bà?",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Xác định từ chỉ thời gian 'sau giờ học mỗi buổi chiều' và đối tượng 'Nam'.",
+          "mathematical_or_logical_goal": "Neo định ngữ cảnh câu hỏi",
+          "intermediate_output": "Thời gian: chiều sau giờ học; Người: Nam"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Đọc câu thứ nhất để tìm cụm từ chỉ hành động Nam làm giúp bà.",
+          "mathematical_or_logical_goal": "Trích xuất cụm vị ngữ chỉ hoạt động",
+          "intermediate_output": "'tưới những luống rau xanh mướt sau vườn'"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Viết câu trả lời ngắn gọn chỉ rõ hành động tưới rau.",
+          "mathematical_or_logical_goal": "Khái quát câu trả lời",
+          "intermediate_output": "tưới những luống rau sau vườn"
+        }
+      ],
+      "final_answer": {
+        "value": "tưới những luống rau sau vườn",
+        "unit": null,
+        "normalized_display": "tưới những luống rau sau vườn",
+        "acceptable_variants": [
+          "tưới rau",
+          "tưới những luống rau sau vườn",
+          "tưới rau sau vườn",
+          "tưới những luống rau",
+          "tưới rau giúp bà"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Trẻ bị phân tâm bởi câu thứ hai tả 'chú cún Mực lon ton' nên ghi nhầm hành động chơi với cún.",
+        "executive_function_scaffolding": "Lọc theo từ khóa mục tiêu: 'Nam' + 'giúp bà'.",
+        "visual_or_concrete_aid": "Gạch chân hành động của Nam bằng nét đơn xanh, gạch chân chú cún bằng nét đứt xám."
+      }
+    },
+    {
+      "id": "G2_MCQ_09",
+      "grade": 2,
+      "subject": "Toán",
+      "category": "Trắc nghiệm nhiều câu ABCD",
+      "topic": "Đổi đơn vị đo độ dài (m sang dm) và phép tính trừ",
+      "difficulty": "Cơ bản (Nhận biết/Thông hiểu)",
+      "estimated_duration_min": 5,
+      "original_text": "Một sợi dây dài 1 m. Bạn An cắt lấy một đoạn dài 4 dm để buộc bưu phẩm. Hỏi đoạn dây còn lại dài bao nhiêu đề-xi-mét?\nA. 5 dm\nB. 6 dm\nC. 7 dm\nD. 96 dm",
+      "options": {
+        "A": "5 dm",
+        "B": "6 dm",
+        "C": "7 dm",
+        "D": "96 dm"
+      },
+      "distractor_analysis": {
+        "A": "Lấy 1 + 4 = 5 (cộng sai phép tính và không đổi đơn vị).",
+        "B": "Đáp án ĐÚNG (1 m = 10 dm; 10 dm - 4 dm = 6 dm).",
+        "C": "Trừ nhầm 10 - 4 = 7 (lỗi tính toán hàng đơn vị).",
+        "D": "Đổi 1 m = 100 cm rồi lấy 100 - 4 = 96 dm (lẫn lộn tai hại giữa cm và dm)."
+      },
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Nhận thấy hai số đo khác đơn vị (1 m và 4 dm). Đổi 1 m ra đề-xi-mét.",
+          "mathematical_or_logical_goal": "Đồng nhất đơn vị đo lường",
+          "intermediate_output": "1 m = 10 dm"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Lấy chiều dài ban đầu trừ đi đoạn đã cắt: 10 dm - 4 dm.",
+          "mathematical_or_logical_goal": "Thực hiện phép trừ",
+          "intermediate_output": "10 - 4 = 6 dm"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Đối chiếu kết quả 6 dm với các phương án A, B, C, D để chọn.",
+          "mathematical_or_logical_goal": "Chọn phương án đúng",
+          "intermediate_output": "Phương án B"
+        }
+      ],
+      "final_answer": {
+        "value": "B",
+        "unit": null,
+        "normalized_display": "B. 6 dm",
+        "acceptable_variants": [
+          "B",
+          "B.",
+          "6 dm",
+          "6",
+          "B. 6 dm"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Bỏ qua bước đổi đơn vị và cố gắng tính 1 - 4 hoặc 1 + 4.",
+        "executive_function_scaffolding": "Quy tắc vàng: 'Trước khi cộng trừ, hãy nhìn xem đơn vị có giống nhau không?'.",
+        "visual_or_concrete_aid": "Thước đo 1 mét chia thành 10 vạch đề-xi-mét rõ ràng."
+      }
+    },
+    {
+      "id": "G2_ENG_10",
+      "grade": 2,
+      "subject": "Tiếng Anh",
+      "category": "Tiếng Anh tiểu học",
+      "topic": "Grammar: There is / There are with Plural Nouns",
+      "difficulty": "Cơ bản (Nhận biết/Thông hiểu)",
+      "estimated_duration_min": 4,
+      "original_text": "Choose the correct option:\n'How many books are there on the table?' - 'There ______ three books.'\nA. is\nB. are\nC. am\nD. be",
+      "options": {
+        "A": "is",
+        "B": "are",
+        "C": "am",
+        "D": "be"
+      },
+      "distractor_analysis": {
+        "A": "is dùng cho danh từ số ít (1 book).",
+        "B": "Đáp án ĐÚNG (three books là danh từ số nhiều).",
+        "C": "am chỉ đi kèm đại từ I.",
+        "D": "be là dạng nguyên mẫu."
+      },
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Nhìn vào cụm từ đứng sau chỗ trống: 'three books' (ba quyển sách).",
+          "mathematical_or_logical_goal": "Xác định số lượng của danh từ bổ ngữ",
+          "intermediate_output": "'three books' là số nhiều (plural)"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Áp dụng cấu trúc: 'There is' cho 1 vật, 'There are' cho từ 2 vật trở lên.",
+          "mathematical_or_logical_goal": "Quy tắc ngữ pháp thì hiện tại",
+          "intermediate_output": "Chọn động từ to be: are"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Tìm phương án chứa chữ 'are'.",
+          "mathematical_or_logical_goal": "Chọn đáp án",
+          "intermediate_output": "Phương án B"
+        }
+      ],
+      "final_answer": {
+        "value": "B",
+        "unit": null,
+        "normalized_display": "B. are",
+        "acceptable_variants": [
+          "B",
+          "B.",
+          "are",
+          "B. are"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Phản xạ điền 'is' theo thói quen cửa miệng do chưa kịp phân tích cụm từ số nhiều.",
+        "executive_function_scaffolding": "Khoanh tròn số '3' và đuôi '-s' trong 'books' trước khi chọn từ.",
+        "visual_or_concrete_aid": "Ký hiệu quả cân so sánh: 1 vật = IS; 2+ vật = ARE."
+      }
+    },
+    {
+      "id": "G3_MATH_11",
+      "grade": 3,
+      "subject": "Toán",
+      "category": "Toán lời văn",
+      "topic": "Bài toán giải bằng hai bước tính (Gấp một số lên nhiều lần & Tính tổng)",
+      "difficulty": "Vận dụng",
+      "estimated_duration_min": 8,
+      "original_text": "Cửa hàng buổi sáng bán được 24 kg gạo. Buổi chiều bán được gấp 3 lần buổi sáng. Hỏi cả hai buổi cửa hàng bán được tất cả bao nhiêu ki-lô-gam gạo?",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Tìm số ki-lô-gam gạo buổi chiều bán được bằng cách lấy số gạo buổi sáng nhân với 3.",
+          "mathematical_or_logical_goal": "Tính đại lượng gấp lên nhiều lần",
+          "intermediate_output": "24 x 3 = 72 (kg)"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Tìm tổng số gạo cả hai buổi bằng cách cộng số gạo buổi sáng và buổi chiều.",
+          "mathematical_or_logical_goal": "Tính tổng hai đại lượng",
+          "intermediate_output": "24 + 72 = 96 (kg)"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Ghi rõ đáp số kèm đơn vị kg gạo.",
+          "mathematical_or_logical_goal": "Kết luận bài toán",
+          "intermediate_output": "96 kg gạo"
+        }
+      ],
+      "final_answer": {
+        "value": 96,
+        "unit": "kg",
+        "normalized_display": "96 kg gạo",
+        "acceptable_variants": [
+          "96",
+          "96 kg",
+          "96 ki-lô-gam",
+          "96 kg gạo"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Tưởng rằng tìm ra 72 kg là đã hoàn thành bài toán và dừng lại mà không tính tổng cả hai buổi.",
+        "executive_function_scaffolding": "Nhắc nhở câu hỏi cốt lõi: 'Đề bài hỏi buổi chiều hay hỏi CẢ HAI BUỔI?'.",
+        "visual_or_concrete_aid": "Sơ đồ đoạn thẳng: Sáng 1 đoạn; Chiều 3 đoạn; ngoặc nhọn hỏi chấm tổng cả 4 đoạn."
+      }
+    },
+    {
+      "id": "G3_MATH_12",
+      "grade": 3,
+      "subject": "Toán",
+      "category": "Toán lời văn",
+      "topic": "Bài toán liên quan đến rút về đơn vị",
+      "difficulty": "Vận dụng",
+      "estimated_duration_min": 8,
+      "original_text": "Cô giáo có 35 quyển vở thưởng đều cho 7 bạn học sinh giỏi. Hỏi nếu cô muốn thưởng cho 5 bạn học sinh giỏi như thế thì cần bao nhiêu quyển vở?",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Tính số quyển vở mà mỗi bạn học sinh giỏi nhận được (rút về đơn vị) bằng phép chia: 35 : 7.",
+          "mathematical_or_logical_goal": "Bước rút về giá trị 1 đơn vị",
+          "intermediate_output": "35 : 7 = 5 (quyển vở)"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Lấy số quyển vở của một bạn nhân với 5 bạn học sinh giỏi: 5 x 5.",
+          "mathematical_or_logical_goal": "Tính giá trị nhiều đơn vị cùng loại",
+          "intermediate_output": "5 x 5 = 25 (quyển vở)"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Ghi đáp số 25 quyển vở.",
+          "mathematical_or_logical_goal": "Đáp số hoàn thiện",
+          "intermediate_output": "25 quyển vở"
+        }
+      ],
+      "final_answer": {
+        "value": 25,
+        "unit": "quyển vở",
+        "normalized_display": "25 quyển vở",
+        "acceptable_variants": [
+          "25",
+          "25 quyển",
+          "25 quyển vở"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Trẻ bối rối trước sự xuất hiện của hai số 5 (5 quyển và 5 bạn) dẫn đến nhầm lẫn khái niệm.",
+        "executive_function_scaffolding": "Phân định rõ danh từ đi kèm: '5 quyển/bạn' vs '5 bạn học sinh'.",
+        "visual_or_concrete_aid": "Minh họa 1 gói quà nhỏ đại diện cho 1 bạn chứa 5 cuốn vở."
+      }
+    },
+    {
+      "id": "G3_VIET_13",
+      "grade": 3,
+      "subject": "Tiếng Việt",
+      "category": "Tiếng Việt / Đọc hiểu",
+      "topic": "Đọc hiểu văn bản & Nhận diện biện pháp tu từ so sánh",
+      "difficulty": "Vận dụng",
+      "estimated_duration_min": 6,
+      "original_text": "Đọc đoạn văn sau:\n'Mặt hồ Ba Bể phẳng lặng và trong veo như một tấm gương khổng lồ soi bóng núi rừng hùng vĩ. Những chiếc thuyền độc mộc lướt nhẹ trên mặt nước mang lại cảm giác thanh bình, êm ả.'\nCâu hỏi: Trong đoạn văn trên, mặt hồ Ba Bể được so sánh với sự vật nào?",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Tìm từ ngữ chỉ sự so sánh trong câu đầu tiên (từ 'như').",
+          "mathematical_or_logical_goal": "Nhận diện dấu hiệu tu từ so sánh",
+          "intermediate_output": "Từ so sánh: 'như'"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Xác định vế A (sự vật được so sánh) và vế B (sự vật dùng để so sánh) nằm ngay sau từ 'như'.",
+          "mathematical_or_logical_goal": "Bóc tách cấu trúc A như B",
+          "intermediate_output": "Vế A: Mặt hồ Ba Bể; Vế B: một tấm gương khổng lồ"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Ghi lại tên sự vật dùng để so sánh.",
+          "mathematical_or_logical_goal": "Đưa ra đáp án chuẩn xác",
+          "intermediate_output": "một tấm gương khổng lồ"
+        }
+      ],
+      "final_answer": {
+        "value": "một tấm gương khổng lồ",
+        "unit": null,
+        "normalized_display": "một tấm gương khổng lồ",
+        "acceptable_variants": [
+          "tấm gương khổng lồ",
+          "một tấm gương khổng lồ",
+          "tấm gương",
+          "gương khổng lồ"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Sao nhãng vào vế vị ngữ phía sau 'soi bóng núi rừng hùng vĩ' và trả lời nhầm là 'núi rừng'.",
+        "executive_function_scaffolding": "Dùng công thức khuôn mẫu: [Sự vật A] + NHƯ + [Sự vật B].",
+        "visual_or_concrete_aid": "Khung bảng 2 cột đối chiếu: Vế A | Từ nối | Vế B."
+      }
+    },
+    {
+      "id": "G3_MCQ_14",
+      "grade": 3,
+      "subject": "Toán",
+      "category": "Trắc nghiệm nhiều câu ABCD",
+      "topic": "Chu vi hình chữ nhật & Bẫy nhầm lẫn công thức diện tích/nửa chu vi",
+      "difficulty": "Cơ bản (Nhận biết/Thông hiểu)",
+      "estimated_duration_min": 5,
+      "original_text": "Một mảnh đất hình chữ nhật có chiều dài 15 m và chiều rộng 8 m. Chu vi của mảnh đất đó là:\nA. 23 m\nB. 46 m\nC. 120 m\nD. 46 mét vuông",
+      "options": {
+        "A": "23 m",
+        "B": "46 m",
+        "C": "120 m",
+        "D": "46 mét vuông"
+      },
+      "distractor_analysis": {
+        "A": "15 + 8 = 23 m (quên nhân 2, mới chỉ tính nửa chu vi).",
+        "B": "Đáp án ĐÚNG: (15 + 8) x 2 = 46 m.",
+        "C": "15 x 8 = 120 (nhầm sang công thức diện tích).",
+        "D": "46 mét vuông (kết quả số đúng nhưng sai đơn vị đo chiều dài thành đơn vị diện tích)."
+      },
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Nhớ lại công thức tính chu vi hình chữ nhật: (Chiều dài + Chiều rộng) x 2 (cùng đơn vị đo).",
+          "mathematical_or_logical_goal": "Truy xuất công thức hình học",
+          "intermediate_output": "P = (a + b) x 2"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Thay số vào tính: (15 + 8) x 2 = 23 x 2 = 46 m.",
+          "mathematical_or_logical_goal": "Thực hiện tính toán 2 bước",
+          "intermediate_output": "46 m"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Quan sát kỹ đơn vị của đáp án: Chu vi có đơn vị là m (mét), không phải m2 (mét vuông).",
+          "mathematical_or_logical_goal": "Kiểm tra danh số & loại trừ bẫy",
+          "intermediate_output": "Chọn phương án B"
+        }
+      ],
+      "final_answer": {
+        "value": "B",
+        "unit": null,
+        "normalized_display": "B. 46 m",
+        "acceptable_variants": [
+          "B",
+          "B.",
+          "46 m",
+          "46",
+          "B. 46 m"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Nhìn thấy số 46 vội vàng chọn ngay đáp án D mà không đọc đơn vị mét vuông ở đuôi.",
+        "executive_function_scaffolding": "Buộc học sinh kiểm tra hai bước: (1) Số có đúng không? (2) Đơn vị có đúng không?",
+        "visual_or_concrete_aid": "Vẽ hình chữ nhật với 4 cạnh đánh dấu độ dài quanh viền."
+      }
+    },
+    {
+      "id": "G3_ENG_15",
+      "grade": 3,
+      "subject": "Tiếng Anh",
+      "category": "Tiếng Anh tiểu học",
+      "topic": "Sentence building & Modal verbs (Ability: can / can't)",
+      "difficulty": "Vận dụng",
+      "estimated_duration_min": 5,
+      "original_text": "Reorder the words to make a correct sentence:\n'swim / but / can / fly / can't / A duck / .'\nChoose the correct sentence:\nA. A duck can swim but can't fly.\nB. A duck can't swim but can fly.\nC. Can swim but fly a duck can't.\nD. A duck fly can but can't swim.",
+      "options": {
+        "A": "A duck can swim but can't fly.",
+        "B": "A duck can't swim but can fly.",
+        "C": "Can swim but fly a duck can't.",
+        "D": "A duck fly can but can't swim."
+      },
+      "distractor_analysis": {
+        "A": "Đáp án ĐÚNG (ngữ pháp chuẩn: S + can V1 + but can't V2; đúng thực tế sinh học loài vịt).",
+        "B": "Ngược thực tế sinh học (vịt biết bơi chứ không phải không biết bơi).",
+        "C": "Đảo lộn trật tự ngữ pháp vô nghĩa.",
+        "D": "Sai vị trí trợ động từ khiếm khuyết (fly can thay vì can fly)."
+      },
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Xác định chủ ngữ đứng đầu câu viết hoa: 'A duck' (Một con vịt).",
+          "mathematical_or_logical_goal": "Định vị thành phần chủ ngữ",
+          "intermediate_output": "Chủ ngữ: A duck"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Xác định cấu trúc chỉ khả năng khẳng định và phủ định kết hợp với liên từ 'but': can [hành động làm được] but can't [hành động không làm được].",
+          "mathematical_or_logical_goal": "Mô hình hóa cú pháp câu",
+          "intermediate_output": "can swim but can't fly"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Ghép lại và so khớp với lựa chọn A.",
+          "mathematical_or_logical_goal": "Khẳng định lựa chọn đúng",
+          "intermediate_output": "Phương án A"
+        }
+      ],
+      "final_answer": {
+        "value": "A",
+        "unit": null,
+        "normalized_display": "A. A duck can swim but can't fly.",
+        "acceptable_variants": [
+          "A",
+          "A.",
+          "A duck can swim but can't fly.",
+          "A duck can swim but can't fly"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Quá tải khi sắp xếp 6 mảnh từ xáo trộn trong đầu cùng một lúc.",
+        "executive_function_scaffolding": "Phân nhóm từ: Cụm 1 (Con gì? -> A duck), Cụm 2 (Làm được gì? -> can swim), Cụm 3 (Không làm được gì? -> can't fly).",
+        "visual_or_concrete_aid": "Các khối hình ghép puzzle 3 mảnh có khớp nối màu sắc."
+      }
+    },
+    {
+      "id": "G4_MATH_16",
+      "grade": 4,
+      "subject": "Toán",
+      "category": "Toán lời văn",
+      "topic": "Dạng toán điển hình: Tìm hai số khi biết Tổng và Hiệu của hai số đó",
+      "difficulty": "Vận dụng",
+      "estimated_duration_min": 10,
+      "original_text": "Hai lớp 4A và 4B quyên góp được tất cả 280 quyển sách cho thư viện vùng cao. Lớp 4A quyên góp được nhiều hơn lớp 4B là 40 quyển sách. Hỏi mỗi lớp quyên góp được bao nhiêu quyển sách?",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Xác định tổng số sách (280 quyển) và hiệu số sách giữa hai lớp (40 quyển), xác định số lớn là lớp 4A và số bé là lớp 4B.",
+          "mathematical_or_logical_goal": "Phân loại dạng toán Tổng - Hiệu",
+          "intermediate_output": "Tổng = 280; Hiệu = 40; Số lớn: 4A; Số bé: 4B"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Áp dụng công thức tìm số lớn: Số lớn = (Tổng + Hiệu) : 2 để tính số sách của lớp 4A.",
+          "mathematical_or_logical_goal": "Tính số lớn",
+          "intermediate_output": "(280 + 40) : 2 = 320 : 2 = 160 (quyển)"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Lấy số sách lớp 4A trừ đi hiệu số sách (hoặc lấy tổng trừ số sách 4A) để tính số sách lớp 4B.",
+          "mathematical_or_logical_goal": "Tính số bé",
+          "intermediate_output": "160 - 40 = 120 (quyển)"
+        },
+        {
+          "step_number": 4,
+          "instruction": "Kiểm tra lại (160 + 120 = 280) và ghi rõ đáp số của từng lớp.",
+          "mathematical_or_logical_goal": "Kiểm thử và kết luận",
+          "intermediate_output": "Lớp 4A: 160 quyển; Lớp 4B: 120 quyển"
+        }
+      ],
+      "final_answer": {
+        "value": "Lớp 4A: 160 quyển, Lớp 4B: 120 quyển",
+        "unit": "quyển sách",
+        "normalized_display": "Lớp 4A: 160 quyển, Lớp 4B: 120 quyển",
+        "acceptable_variants": [
+          "Lớp 4A: 160 quyển, Lớp 4B: 120 quyển",
+          "4A: 160 quyển, 4B: 120 quyển",
+          "4A: 160, 4B: 120",
+          "160 quyển và 120 quyển",
+          "160 và 120",
+          "160, 120"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Nhớ lộn công thức lấy Tổng trừ Hiệu nhưng quên chia 2 hoặc chỉ tính một lớp rồi nộp bài.",
+        "executive_function_scaffolding": "Lộ trình 3 hộp: [1] Tính 4A qua công thức; [2] Tính 4B qua phép trừ; [3] Soát lại tổng xem có bằng 280 không.",
+        "visual_or_concrete_aid": "Vẽ sơ đồ đoạn thẳng: Đoạn 4A dài hơn đoạn 4B một mẩu 40 quyển."
+      }
+    },
+    {
+      "id": "G4_MATH_17",
+      "grade": 4,
+      "subject": "Toán",
+      "category": "Toán lời văn",
+      "topic": "Phân số & Tìm phân số của một số",
+      "difficulty": "Vận dụng",
+      "estimated_duration_min": 8,
+      "original_text": "Một trang trại có 1200 con gia cầm gồm gà và vịt. Trong đó số gà chiếm 3/5 tổng số gia cầm. Hỏi trang trại đó có bao nhiêu con vịt?",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Tính số con gà của trang trại bằng cách lấy tổng số gia cầm nhân với 3/5: (1200 : 5) x 3.",
+          "mathematical_or_logical_goal": "Tìm giá trị phân số của một số",
+          "intermediate_output": "1200 x 3/5 = 720 (con gà)"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Tìm số con vịt bằng cách lấy tổng số gia cầm trừ đi số con gà: 1200 - 720.",
+          "mathematical_or_logical_goal": "Thực hiện phép trừ bù tập hợp",
+          "intermediate_output": "1200 - 720 = 480 (con vịt)"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Ghi đáp số 480 con vịt.",
+          "mathematical_or_logical_goal": "Kết luận",
+          "intermediate_output": "480 con vịt"
+        }
+      ],
+      "final_answer": {
+        "value": 480,
+        "unit": "con vịt",
+        "normalized_display": "480 con vịt",
+        "acceptable_variants": [
+          "480",
+          "480 con",
+          "480 con vịt"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Tính xong 720 con gà thì ngỡ đã xong bài và điền 720 làm đáp số, bỏ quên câu hỏi về con vịt.",
+        "executive_function_scaffolding": "Highlight câu hỏi mục tiêu: 'Hỏi trang trại có bao nhiêu CON VỊT?'.",
+        "visual_or_concrete_aid": "Thanh đồ họa chia 5 phần bằng nhau: 3 phần màu vàng là gà (720), 2 phần màu xanh là vịt (?)."
+      }
+    },
+    {
+      "id": "G4_VIET_18",
+      "grade": 4,
+      "subject": "Tiếng Việt",
+      "category": "Tiếng Việt / Đọc hiểu",
+      "topic": "Đọc hiểu văn bản & Phân tích biện pháp tu từ nhân hóa",
+      "difficulty": "Vận dụng",
+      "estimated_duration_min": 7,
+      "original_text": "Đọc đoạn văn sau:\n'Chị Gió bay qua những cánh đồng, khẽ thì thầm với các bông lúa non. Những bông lúa bẽn lẽn nghiêng đầu chào đón chị, rộn rã rì rào ca hát dưới nắng sớm.'\nCâu hỏi: Trong đoạn văn trên, chị Gió được gán cho những hành động giống như con người qua các từ ngữ nào?",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Xác định đối tượng được nhân hóa là 'chị Gió'.",
+          "mathematical_or_logical_goal": "Xác định thực thể trung tâm",
+          "intermediate_output": "Thực thể: chị Gió"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Tìm các từ ngữ chỉ hành động vốn của con người được dùng cho gió trong câu thứ nhất.",
+          "mathematical_or_logical_goal": "Phân tích phép nhân hóa qua hành động",
+          "intermediate_output": "Từ chỉ hành động: 'thì thầm' (hoặc 'khẽ thì thầm')"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Ghi lại câu trả lời rõ ràng chỉ ra từ ngữ thể hiện hành động nhân hóa.",
+          "mathematical_or_logical_goal": "Đưa ra đáp án chuẩn",
+          "intermediate_output": "thì thầm (khẽ thì thầm)"
+        }
+      ],
+      "final_answer": {
+        "value": "thì thầm",
+        "unit": null,
+        "normalized_display": "thì thầm (hoặc khẽ thì thầm)",
+        "acceptable_variants": [
+          "thì thầm",
+          "khẽ thì thầm",
+          "khẽ thì thầm với các bông lúa non"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Nhầm lẫn hành động của chị Gió với hành động của bông lúa ('bẽn lẽn nghiêng đầu', 'ca hát').",
+        "executive_function_scaffolding": "Tạo bảng phân loại: Cột 1: Hành động của chị Gió | Cột 2: Hành động của bông lúa.",
+        "visual_or_concrete_aid": "Tô màu hồng cho chủ ngữ 'chị Gió' và mũi tên chỉ đến từ 'thì thầm'."
+      }
+    },
+    {
+      "id": "G4_MCQ_19",
+      "grade": 4,
+      "subject": "Toán",
+      "category": "Trắc nghiệm nhiều câu ABCD",
+      "topic": "Diện tích hình bình hành & Bẫy nhầm lẫn giữa cạnh bên và chiều cao",
+      "difficulty": "Vận dụng",
+      "estimated_duration_min": 6,
+      "original_text": "Một mảnh đất hình bình hành có độ dài đáy là 24 m, chiều cao tương ứng là 15 m và độ dài cạnh bên là 18 m. Diện tích mảnh đất đó là:\nA. 360 m2\nB. 432 m2\nC. 78 m\nD. 180 m2",
+      "options": {
+        "A": "360 m2",
+        "B": "432 m2",
+        "C": "78 m",
+        "D": "180 m2"
+      },
+      "distractor_analysis": {
+        "A": "Đáp án ĐÚNG: S = đáy x chiều cao = 24 x 15 = 360 m2.",
+        "B": "Bẫy kinh điển: 24 x 18 = 432 (lấy đáy nhân cạnh bên thay vì chiều cao).",
+        "C": "(24 + 15) x 2 = 78 m (nhầm sang công thức chu vi).",
+        "D": "(24 x 15) : 2 = 180 m2 (nhầm sang công thức diện tích tam giác)."
+      },
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Nhớ lại công thức diện tích hình bình hành: S = a x h (đáy nhân chiều cao tương ứng).",
+          "mathematical_or_logical_goal": "Xác định công thức chuẩn",
+          "intermediate_output": "S = đáy x chiều cao"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Lọc dữ kiện cần thiết: đáy = 24 m, chiều cao = 15 m; loại bỏ dữ kiện gây nhiễu cạnh bên = 18 m.",
+          "mathematical_or_logical_goal": "Khử nhiễu dữ kiện (Inhibition control)",
+          "intermediate_output": "a = 24; h = 15 (bỏ 18)"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Thực hiện phép tính: 24 x 15 = 360 m2.",
+          "mathematical_or_logical_goal": "Thực hiện phép tính nhân số có 2 chữ số",
+          "intermediate_output": "360 m2"
+        },
+        {
+          "step_number": 4,
+          "instruction": "Đối chiếu chọn phương án A.",
+          "mathematical_or_logical_goal": "Khẳng định đáp án",
+          "intermediate_output": "Phương án A"
+        }
+      ],
+      "final_answer": {
+        "value": "A",
+        "unit": null,
+        "normalized_display": "A. 360 m2",
+        "acceptable_variants": [
+          "A",
+          "A.",
+          "360 m2",
+          "360 mét vuông",
+          "360",
+          "A. 360 m2"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Bị kích thích bởi số 18 xuất hiện trong đề bài và tiện tay nhân 24 x 18.",
+        "executive_function_scaffolding": "Luyện kỹ năng ức chế (Inhibition): gạch một đường đỏ mảnh qua cụm từ 'cạnh bên là 18 m' vì nó không nằm trong công thức.",
+        "visual_or_concrete_aid": "Hình vẽ bình hành có đường cao hạ vuông góc nét đứt màu đỏ rõ rệt."
+      }
+    },
+    {
+      "id": "G4_ENG_20",
+      "grade": 4,
+      "subject": "Tiếng Anh",
+      "category": "Tiếng Anh tiểu học",
+      "topic": "Reading comprehension & Present Continuous Tense",
+      "difficulty": "Vận dụng",
+      "estimated_duration_min": 6,
+      "original_text": "Read the passage:\n'It is Sunday morning. Peter's family is at home. His father is washing the car in the garage. His mother is making pancakes in the kitchen. Peter and his sister, Linda, are playing board games in the living room.'\nQuestion: Where is Peter's mother and what is she doing?\nA. In the garage, washing the car.\nB. In the kitchen, making pancakes.\nC. In the living room, playing board games.\nD. In the bedroom, reading a book.",
+      "options": {
+        "A": "In the garage, washing the car.",
+        "B": "In the kitchen, making pancakes.",
+        "C": "In the living room, playing board games.",
+        "D": "In the bedroom, reading a book."
+      },
+      "distractor_analysis": {
+        "A": "Hành động và địa điểm của bố Peter.",
+        "B": "Đáp án ĐÚNG ('His mother is making pancakes in the kitchen').",
+        "C": "Hành động và địa điểm của Peter và em gái Linda.",
+        "D": "Thông tin giả định không tồn tại trong bài đọc."
+      },
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Xác định đối tượng cần tìm thông tin trong câu hỏi: 'Peter's mother' (Mẹ của Peter).",
+          "mathematical_or_logical_goal": "Xác định thực thể mục tiêu",
+          "intermediate_output": "Target: Peter's mother"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Dò quét trong đoạn văn câu chứa 'His mother': 'His mother is making pancakes in the kitchen.'",
+          "mathematical_or_logical_goal": "Định vị vị trí thông tin",
+          "intermediate_output": "'making pancakes in the kitchen'"
+        },
+        {
+          "step_number": 3,
+          "instruction": "So sánh địa điểm (kitchen) và hành động (making pancakes) với 4 phương án và chọn B.",
+          "mathematical_or_logical_goal": "Khớp nối thông tin đa thành phần",
+          "intermediate_output": "Phương án B"
+        }
+      ],
+      "final_answer": {
+        "value": "B",
+        "unit": null,
+        "normalized_display": "B. In the kitchen, making pancakes.",
+        "acceptable_variants": [
+          "B",
+          "B.",
+          "In the kitchen, making pancakes.",
+          "B. In the kitchen, making pancakes."
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Quá tải khi đọc 3 nhân vật khác nhau trong cùng một đoạn văn ngắn và ghép lộn người này vào việc người kia.",
+        "executive_function_scaffolding": "Đặt bộ lọc: Bỏ qua câu về Father, bỏ qua câu về Peter/Linda, chỉ đọc câu có Mother.",
+        "visual_or_concrete_aid": "Bản đồ căn nhà cắt lớp với các phòng và biểu tượng người ở từng phòng."
+      }
+    },
+    {
+      "id": "G5_MATH_21",
+      "grade": 5,
+      "subject": "Toán",
+      "category": "Toán lời văn",
+      "topic": "Toán chuyển động đều: Hai chuyển động ngược chiều gặp nhau",
+      "difficulty": "Vận dụng cao",
+      "estimated_duration_min": 12,
+      "original_text": "Quãng đường AB dài 180 km. Cùng một lúc vào lúc 7 giờ sáng, một ô tô đi từ A về B với vận tốc 50 km/giờ và một xe máy đi từ B về A với vận tốc 40 km/giờ. Hỏi:\na) Sau bao lâu hai xe gặp nhau?\nb) Hai xe gặp nhau lúc mấy giờ?",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Tính tổng vận tốc của ô tô và xe máy đi ngược chiều sau mỗi giờ.",
+          "mathematical_or_logical_goal": "Tính tổng vận tốc hai chuyển động",
+          "intermediate_output": "50 + 40 = 90 (km/giờ)"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Tính thời gian để hai xe gặp nhau bằng cách lấy quãng đường chia cho tổng vận tốc: 180 : 90.",
+          "mathematical_or_logical_goal": "Tính thời gian gặp nhau (t = s : v_tong)",
+          "intermediate_output": "180 : 90 = 2 (giờ)"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Tính thời điểm gặp nhau bằng cách lấy thời điểm xuất phát cộng với thời gian đi: 7 giờ + 2 giờ.",
+          "mathematical_or_logical_goal": "Chuyển đổi thời lượng sang mốc thời gian",
+          "intermediate_output": "7 + 2 = 9 (giờ sáng)"
+        },
+        {
+          "step_number": 4,
+          "instruction": "Viết kết luận đáp số gồm cả hai câu hỏi a và b.",
+          "mathematical_or_logical_goal": "Kết luận toàn diện đa câu hỏi",
+          "intermediate_output": "a) 2 giờ; b) 9 giờ sáng"
+        }
+      ],
+      "final_answer": {
+        "value": "a) 2 giờ; b) 9 giờ",
+        "unit": null,
+        "normalized_display": "a) 2 giờ; b) 9 giờ sáng",
+        "acceptable_variants": [
+          "a) 2 giờ; b) 9 giờ sáng",
+          "a) 2 giờ, b) 9 giờ",
+          "2 giờ và 9 giờ",
+          "2 giờ; 9 giờ",
+          "2 giờ, 9 giờ sáng",
+          "Sau 2 giờ; Lúc 9 giờ"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Nhầm lẫn giữa 'thời gian đi' (khoảng thời gian 2 giờ) và 'thời điểm gặp' (mốc thời gian 9 giờ); nhầm vận tốc tổng với vận tốc hiệu.",
+        "executive_function_scaffolding": "Tách thành 2 chặng độc lập với câu hỏi con rõ ràng: Chặng 1: Tìm số giờ đi; Chặng 2: Cộng vào 7 giờ sáng.",
+        "visual_or_concrete_aid": "Trục thời gian và sơ đồ đoạn đường với hai mũi tên xe chạy hướng vào nhau."
+      }
+    },
+    {
+      "id": "G5_MATH_22",
+      "grade": 5,
+      "subject": "Toán",
+      "category": "Toán lời văn",
+      "topic": "Thể tích hình hộp chữ nhật & Đổi đơn vị thể tích (Lít) & Tỉ số phần trăm",
+      "difficulty": "Vận dụng cao",
+      "estimated_duration_min": 12,
+      "original_text": "Một bể nước dạng hình hộp chữ nhật có kích thước bên trong lòng bể là: chiều dài 2 m, chiều rộng 1,5 m và chiều cao 1,2 m. Hiện tại lượng nước trong bể chiếm 60% thể tích bể. Hỏi trong bể đang có bao nhiêu lít nước? (Biết 1 dm3 = 1 lít).",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Tính thể tích toàn bộ lòng bể nước bằng công thức: V = dài x rộng x cao.",
+          "mathematical_or_logical_goal": "Tính thể tích hình hộp chữ nhật",
+          "intermediate_output": "2 x 1,5 x 1,2 = 3,6 (m3)"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Đổi thể tích từ mét khối (m3) sang đề-xi-mét khối (dm3) tương ứng với lít.",
+          "mathematical_or_logical_goal": "Đổi đơn vị đo thể tích: 1 m3 = 1000 dm3",
+          "intermediate_output": "3,6 m3 = 3600 dm3 = 3600 lít"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Tính lượng nước hiện có bằng cách lấy thể tích cả bể nhân với 60%: 3600 x 60 : 100.",
+          "mathematical_or_logical_goal": "Tìm giá trị phần trăm của một số",
+          "intermediate_output": "3600 x 60 / 100 = 2160 (lít)"
+        },
+        {
+          "step_number": 4,
+          "instruction": "Ghi đáp số 2160 lít nước.",
+          "mathematical_or_logical_goal": "Kết luận bài toán",
+          "intermediate_output": "2160 lít"
+        }
+      ],
+      "final_answer": {
+        "value": 2160,
+        "unit": "lít",
+        "normalized_display": "2160 lít",
+        "acceptable_variants": [
+          "2160",
+          "2160 lít",
+          "2160 l",
+          "2160 lít nước"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Quên đổi từ m3 sang dm3 (lấy 3,6 x 60% = 2,16 lít) hoặc nhân nhầm hệ số đổi đơn vị thể tích là 100 thay vì 1000.",
+        "executive_function_scaffolding": "Mẹo neo trí nhớ: 'Mét khối sang Đề-xi-mét khối phải có 3 chữ số 0 (nhân 1000)'.",
+        "visual_or_concrete_aid": "Bể nước 3D có vạch nước dâng lên mức 60%."
+      }
+    },
+    {
+      "id": "G5_VIET_23",
+      "grade": 5,
+      "subject": "Tiếng Việt",
+      "category": "Tiếng Việt / Đọc hiểu",
+      "topic": "Đọc hiểu văn bản & Phân tích quan hệ nguyên nhân - kết quả & Bài học cuộc sống",
+      "difficulty": "Vận dụng cao",
+      "estimated_duration_min": 8,
+      "original_text": "Đọc đoạn văn sau:\n'Nhờ biết kiên trì rèn luyện từng nét chữ mỗi ngày và không nản lòng trước những trang giấy bị lem mực, cuối cùng Cao Bá Quát đã sửa được tật viết chữ xấu, trở thành người nổi tiếng khắp vùng về tài văn hay chữ tốt.'\nCâu hỏi: Nguyên nhân chính nào giúp Cao Bá Quát từ một người viết chữ rất xấu trở thành người nổi tiếng về chữ tốt? Bài học em rút ra từ câu chuyện trên là gì?",
+      "options": null,
+      "distractor_analysis": null,
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Xác định vế chỉ nguyên nhân đứng sau quan hệ từ 'Nhờ...': rèn luyện kiên trì mỗi ngày và không nản lòng khi gặp khó khăn.",
+          "mathematical_or_logical_goal": "Bóc tách mối quan hệ nhân quả",
+          "intermediate_output": "Nguyên nhân: kiên trì rèn luyện, không nản lòng"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Khái quát bài học cuộc sống: Lòng kiên nhẫn, sự kiên trì vượt khó và không bỏ cuộc là chìa khóa để rèn luyện bản thân và đạt tới thành công.",
+          "mathematical_or_logical_goal": "Đúc kết thông điệp đạo đức",
+          "intermediate_output": "Bài học: kiên trì, có ý chí vượt khó thì sẽ thành công"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Tổng hợp thành câu trả lời hoàn chỉnh.",
+          "mathematical_or_logical_goal": "Diễn đạt câu trả lời trọn vẹn",
+          "intermediate_output": "Kiên trì rèn luyện mỗi ngày, không nản lòng; bài học về ý chí và sự kiên trì"
+        }
+      ],
+      "final_answer": {
+        "value": "Kiên trì rèn luyện mỗi ngày, không nản lòng trước khó khăn",
+        "unit": null,
+        "normalized_display": "Kiên trì rèn luyện mỗi ngày, không nản lòng; bài học: có ý chí, kiên nhẫn thì sẽ vượt qua khó khăn để thành công",
+        "acceptable_variants": [
+          "kiên trì rèn luyện",
+          "lòng kiên trì rèn luyện mỗi ngày và không nản lòng",
+          "kiên trì, không nản chí",
+          "có ý chí và lòng kiên trì",
+          "kiên trì",
+          "không nản lòng"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Chỉ trả lời được một nửa câu hỏi (chỉ nêu nguyên nhân hoặc chỉ nêu bài học) do trí nhớ làm việc bị quá tải bởi câu hỏi kép.",
+        "executive_function_scaffolding": "Phân tách rành mạch thành 2 phần: [Phần 1: Nguyên nhân là gì?] và [Phần 2: Bài học rút ra là gì?].",
+        "visual_or_concrete_aid": "Biểu tượng mũi tên kép nối từ Cố Gắng -> Thành Quả."
+      }
+    },
+    {
+      "id": "G5_MCQ_24",
+      "grade": 5,
+      "subject": "Toán",
+      "category": "Trắc nghiệm nhiều câu ABCD",
+      "topic": "Tỉ số phần trăm nhiều lần & Bẫy cộng gộp tỉ lệ phần trăm liên tiếp",
+      "difficulty": "Vận dụng",
+      "estimated_duration_min": 7,
+      "original_text": "Giá một chiếc cặp sách đầu năm là 200 000 đồng. Nhân dịp khai giảng, cửa hàng giảm giá 15%. Đến tuần lễ vàng, cửa hàng lại giảm tiếp 10% trên giá đã giảm. Hỏi sau hai lần giảm giá, chiếc cặp sách đó có giá là bao nhiêu?\nA. 150 000 đồng\nB. 153 000 đồng\nC. 170 000 đồng\nD. 147 000 đồng",
+      "options": {
+        "A": "150 000 đồng",
+        "B": "153 000 đồng",
+        "C": "170 000 đồng",
+        "D": "147 000 đồng"
+      },
+      "distractor_analysis": {
+        "A": "Bẫy kinh điển: lấy 15% + 10% = 25% rồi lấy 200 000 x (1 - 0.25) = 150 000 đồng (quên rằng 10% sau là tính trên giá đã giảm, không phải giá gốc).",
+        "B": "Đáp án ĐÚNG (Lần 1: 200 000 x 85% = 170 000; Lần 2: 170 000 x 90% = 153 000).",
+        "C": "170 000 đồng (mới tính sau lần giảm thứ nhất, chưa tính lần giảm thứ hai).",
+        "D": "Tính sai phép nhân hàng nghìn: 170 000 - 23 000 = 147 000 đồng."
+      },
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Tính giá bán của chiếc cặp sau lần giảm giá thứ nhất (15%): 200 000 x (100% - 15%) = 200 000 x 0,85.",
+          "mathematical_or_logical_goal": "Tính giá trị sau lần chiết khấu 1",
+          "intermediate_output": "200 000 x 0,85 = 170 000 (đồng)"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Tính giá bán của chiếc cặp sau lần giảm giá thứ hai (10% trên giá 170 000 đồng): 170 000 x (100% - 10%) = 170 000 x 0,9.",
+          "mathematical_or_logical_goal": "Tính giá trị sau lần chiết khấu 2",
+          "intermediate_output": "170 000 x 0,9 = 153 000 (đồng)"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Đối chiếu kết quả 153 000 đồng và chọn phương án B.",
+          "mathematical_or_logical_goal": "Khẳng định đáp án",
+          "intermediate_output": "Phương án B"
+        }
+      ],
+      "final_answer": {
+        "value": "B",
+        "unit": null,
+        "normalized_display": "B. 153 000 đồng",
+        "acceptable_variants": [
+          "B",
+          "B.",
+          "153 000 đồng",
+          "153 000",
+          "153000",
+          "B. 153 000 đồng"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Bị cám dỗ bởi phép tính nhẩm nhanh 15 + 10 = 25% dẫn thẳng vào bẫy đáp án A.",
+        "executive_function_scaffolding": "Thiết lập chốt chặn quy tắc: 'Không được cộng hai tỉ số phần trăm khi gốc tính tiền thay đổi'.",
+        "visual_or_concrete_aid": "Nhãn giá hạ bậc thang: Giá 200 000 -> Giảm 15% còn 170 000 -> Giảm 10% còn 153 000."
+      }
+    },
+    {
+      "id": "G5_ENG_25",
+      "grade": 5,
+      "subject": "Tiếng Anh",
+      "category": "Tiếng Anh tiểu học",
+      "topic": "Reading Comprehension & Past Simple Tense (Holiday Travel)",
+      "difficulty": "Vận dụng",
+      "estimated_duration_min": 7,
+      "original_text": "Read the story:\n'Last summer, Nam went to Da Nang with his parents. They visited Ba Na Hills and took a cable car to the Golden Bridge. The weather was cool and sunny. Nam took lots of beautiful photos. On the last day, they bought some seafood and souvenirs before taking a plane back to Ha Noi.'\nQuestion: How did Nam and his family travel back to Ha Noi?\nA. By train\nB. By coach\nC. By plane\nD. By boat",
+      "options": {
+        "A": "By train",
+        "B": "By coach",
+        "C": "By plane",
+        "D": "By boat"
+      },
+      "distractor_analysis": {
+        "A": "By train: Các phương tiện giao thông thông dụng nhưng không được nhắc tới cho chiều về trong văn bản.",
+        "B": "By coach: Các phương tiện giao thông thông dụng nhưng không được nhắc tới cho chiều về trong văn bản.",
+        "C": "Đáp án ĐÚNG (Câu cuối nêu rõ: '...before taking a plane back to Ha Noi').",
+        "D": "By boat: Các phương tiện giao thông thông dụng nhưng không được nhắc tới cho chiều về trong văn bản."
+      },
+      "ground_truth_steps": [
+        {
+          "step_number": 1,
+          "instruction": "Xác định câu hỏi tìm phương tiện di chuyển của Nam và gia đình về Hà Nội ('travel back to Ha Noi').",
+          "mathematical_or_logical_goal": "Xác định mục tiêu tìm kiếm thông tin",
+          "intermediate_output": "Target: transport back to Ha Noi"
+        },
+        {
+          "step_number": 2,
+          "instruction": "Dò quét câu cuối cùng của đoạn văn tìm cụm từ 'back to Ha Noi': 'before taking a plane back to Ha Noi'.",
+          "mathematical_or_logical_goal": "Định vị dẫn chứng văn bản",
+          "intermediate_output": "'taking a plane'"
+        },
+        {
+          "step_number": 3,
+          "instruction": "Chuyển đổi cụm từ 'taking a plane' sang cụm giới từ chỉ phương tiện 'By plane' và chọn C.",
+          "mathematical_or_logical_goal": "Quy đổi ngữ nghĩa và chọn phương án",
+          "intermediate_output": "Phương án C"
+        }
+      ],
+      "final_answer": {
+        "value": "C",
+        "unit": null,
+        "normalized_display": "C. By plane",
+        "acceptable_variants": [
+          "C",
+          "C.",
+          "By plane",
+          "plane",
+          "C. By plane"
+        ]
+      },
+      "adhd_scaffolding_notes": {
+        "working_memory_pitfall": "Đọc lướt thấy 'cable car' ở câu 2 và vội vã suy đoán hoặc chọn sai phương tiện.",
+        "executive_function_scaffolding": "Neo từ khóa thời gian: 'On the last day' + 'back to Ha Noi'.",
+        "visual_or_concrete_aid": "Biểu tượng máy bay gắn liền với chiều mũi tên bay từ Đà Nẵng về Hà Nội."
+      }
+    }
+  ]
+}

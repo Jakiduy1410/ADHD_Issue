@@ -68,22 +68,77 @@
       }
     }
 
+    const CELEBRATION_EMOTES = [
+      {
+        svg: 'assets/svg/pompompurin_scoreboard_10.svg',
+        title: 'CẤP ĐỘ HOÀN HẢO!',
+        tagline: 'Tuyệt đỉnh phong độ! Điểm 10 tuyệt đối!',
+        speech: 'Chào bạn! Điểm 10 xuất sắc nha!'
+      },
+      {
+        svg: 'assets/svg/pompompurin_party_popper.svg',
+        title: 'BÙM PHÁO HOA!',
+        tagline: 'Bắn pháo giấy chúc mừng bé hoàn thành đảo!',
+        speech: 'Milo bắn pháo hoa chúc mừng bạn nè!'
+      },
+      {
+        svg: 'assets/svg/pompompurin_happy_jump.svg',
+        title: 'YAYYY CHIẾN THẮNG!',
+        tagline: 'Nhảy cẫng hoan hô, bạn làm giỏi quá đi!',
+        speech: 'Yayyy! Leo đỉnh quá, nhảy ăn mừng thôi!'
+      }
+    ];
+    let lastCelebIndex = -1;
+
     function showCelebration() {
       const modal = document.getElementById('child-modal-celebration');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
 
       const task = appState.activeTask;
-      document.getElementById('child-celeb-title').innerText = `${task.title} thành công! 🚀`;
-      document.getElementById('child-celeb-desc').innerHTML = `"Milo thấy Leo rất kiên trì hoàn thành xuất sắc tất cả ${task.steps.length} vi nhiệm vụ mà không bỏ cuộc giữa chừng!"`;
-      document.getElementById('child-celeb-reward-val').innerText = `+${task.reward} Sao`;
+      const rewardVal = task ? (task.reward || 140) : 140;
+
+      // Random luân phiên 3 emote Pompompurin
+      let chosenIdx = Math.floor(Math.random() * CELEBRATION_EMOTES.length);
+      if (chosenIdx === lastCelebIndex) {
+        chosenIdx = (chosenIdx + 1) % CELEBRATION_EMOTES.length;
+      }
+      lastCelebIndex = chosenIdx;
+      const chosen = CELEBRATION_EMOTES[chosenIdx];
+
+      const characterImg = document.getElementById('child-celeb-character-img');
+      if (characterImg) characterImg.src = chosen.svg;
+      const mainTitle = document.getElementById('child-celeb-main-title');
+      if (mainTitle) mainTitle.innerText = chosen.title;
+      const tagline = document.getElementById('child-celeb-tagline');
+      if (tagline) tagline.innerText = chosen.tagline;
+      const speechEl = document.getElementById('child-celeb-speech');
+      if (speechEl) speechEl.innerText = chosen.speech;
+      const starsPill = document.getElementById('child-celeb-stars-pill');
+      if (starsPill) starsPill.innerText = `+${rewardVal}`;
+
+      // Giữ tương thích ngược cho các element cũ
+      const oldTitle = document.getElementById('child-celeb-title');
+      if (oldTitle) oldTitle.innerText = `${task ? task.title : 'Đảo'} thành công! 🚀`;
+      const oldDesc = document.getElementById('child-celeb-desc');
+      if (oldDesc) oldDesc.innerHTML = `"Milo thấy Leo rất kiên trì hoàn thành xuất sắc tất cả ${task ? task.steps.length : 3} vi nhiệm vụ mà không bỏ cuộc giữa chừng!"`;
+      const oldReward = document.getElementById('child-celeb-reward-val');
+      if (oldReward) oldReward.innerText = `+${rewardVal} Sao`;
 
       // Cập nhật Telemetry bên máy Mẹ
-      document.getElementById('telemetry-status-badge').innerHTML = "🎉 Vừa hoàn thành!";
-      document.getElementById('telemetry-status-badge').className = "inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full text-[10px] font-bold";
-      document.getElementById('telemetry-progress-text').innerText = `${task.steps.length}/${task.steps.length} bước xong 🎉`;
+      const tBadge = document.getElementById('telemetry-status-badge');
+      if (tBadge) {
+        tBadge.innerHTML = "🎉 Vừa hoàn thành!";
+        tBadge.className = "inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full text-[10px] font-bold";
+      }
+      const tProgress = document.getElementById('telemetry-progress-text');
+      if (tProgress && task) {
+        tProgress.innerText = `${task.steps.length}/${task.steps.length} bước xong 🎉`;
+      }
       
-      showToast("Đồng bộ máy Mẹ", `Leo vừa hoàn thành: ${task.title}`, "🎉");
+      showToast("Đồng bộ máy Mẹ", `Leo vừa hoàn thành: ${task ? task.title : 'Đảo nhiệm vụ'}`, "🎉");
     }
 
     function proceedToNextRoadmapIsland() {
@@ -141,12 +196,92 @@
       if (window.miloBus) window.miloBus.savePersistedState(appState);
     }
 
+    function playChestSoundSequenceWebAudio() {
+      if (typeof isSoundEnabled !== 'undefined' && !isSoundEnabled) return;
+      try {
+        if (typeof initAudio === 'function') initAudio();
+        if (typeof audioCtx === 'undefined' || !audioCtx) return;
+        const now = audioCtx.currentTime;
+
+        // Nhịp bật 1
+        const osc1 = audioCtx.createOscillator();
+        const g1 = audioCtx.createGain();
+        osc1.type = 'triangle';
+        osc1.frequency.setValueAtTime(392, now + 0.15);
+        g1.gain.setValueAtTime(0.15, now + 0.15);
+        g1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc1.connect(g1);
+        g1.connect(audioCtx.destination);
+        osc1.start(now + 0.15);
+        osc1.stop(now + 0.35);
+
+        // Nhịp bật 2
+        const osc2 = audioCtx.createOscillator();
+        const g2 = audioCtx.createGain();
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(493.88, now + 0.7);
+        g2.gain.setValueAtTime(0.2, now + 0.7);
+        g2.gain.exponentialRampToValueAtTime(0.001, now + 0.95);
+        osc2.connect(g2);
+        g2.connect(audioCtx.destination);
+        osc2.start(now + 0.7);
+        osc2.stop(now + 0.95);
+
+        // Nhịp bật 3
+        const osc3 = audioCtx.createOscillator();
+        const g3 = audioCtx.createGain();
+        osc3.type = 'triangle';
+        osc3.frequency.setValueAtTime(587.33, now + 1.25);
+        g3.gain.setValueAtTime(0.25, now + 1.25);
+        g3.gain.exponentialRampToValueAtTime(0.001, now + 1.55);
+        osc3.connect(g3);
+        g3.connect(audioCtx.destination);
+        osc3.start(now + 1.25);
+        osc3.stop(now + 1.55);
+
+        // Khoảnh khắc bung nắp: Hợp âm rực rỡ
+        const victoryNotes = [523.25, 659.25, 783.99, 1046.5];
+        victoryNotes.forEach((f, i) => {
+          const oscV = audioCtx.createOscillator();
+          const gV = audioCtx.createGain();
+          oscV.type = 'sine';
+          oscV.frequency.setValueAtTime(f, now + 1.92 + i * 0.08);
+          gV.gain.setValueAtTime(0.22, now + 1.92 + i * 0.08);
+          gV.gain.exponentialRampToValueAtTime(0.001, now + 1.92 + i * 0.08 + 0.6);
+          oscV.connect(gV);
+          gV.connect(audioCtx.destination);
+          oscV.start(now + 1.92 + i * 0.08);
+          oscV.stop(now + 1.92 + i * 0.08 + 0.6);
+        });
+      } catch (e) {
+        // Fallback safely
+      }
+    }
+
+    function triggerChestAnimation() {
+      const sceneSvg = document.getElementById('scene-svg-treasure');
+      if (!sceneSvg) return;
+      sceneSvg.classList.remove('opened', 'bouncing');
+      void sceneSvg.offsetWidth;
+      sceneSvg.classList.add('bouncing');
+
+      playChestSoundSequenceWebAudio();
+
+      setTimeout(() => {
+        if (sceneSvg) {
+          sceneSvg.classList.remove('bouncing');
+          sceneSvg.classList.add('opened');
+        }
+      }, 1920);
+    }
+
     function openTreasureCeremony() {
       playSfx('success');
       const ceremony = document.getElementById('child-modal-treasure-ceremony');
       if (ceremony) {
         ceremony.classList.remove('hidden');
         ceremony.classList.add('flex');
+        triggerChestAnimation();
       }
       const newStars = appState.stars + 250;
       updateStarsEverywhere(newStars);
@@ -171,12 +306,13 @@
       playSfx('success');
       const ceremony = document.getElementById('child-modal-treasure-ceremony');
       if (ceremony) {
-        const titleEl = ceremony.querySelector('h2, .text-xl, .font-black');
-        if (titleEl) titleEl.innerText = "🏆 RƯƠNG HOÀNG KIM NỀ NẾP!";
-        const descEl = ceremony.querySelector('p');
-        if (descEl) descEl.innerText = "Leo đã tự giác hoàn thành xuất sắc tất cả các thói quen nề nếp trong ngày! Nhận thưởng +100 ⭐!";
+        const titleEl = document.getElementById('treasure-ceremony-title');
+        if (titleEl) titleEl.innerText = "CHÚC MỪNG BÉ! 🎉";
+        const descEl = document.getElementById('treasure-ceremony-desc');
+        if (descEl) descEl.innerText = "Bé đã tự giác hoàn thành xuất sắc tất cả thói quen nề nếp hôm nay! +100 ⭐";
         ceremony.classList.remove('hidden');
         ceremony.classList.add('flex');
+        triggerChestAnimation();
       }
       const newStars = appState.stars + 100;
       updateStarsEverywhere(newStars);

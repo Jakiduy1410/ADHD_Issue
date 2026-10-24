@@ -196,6 +196,19 @@
       const totalSteps = task.steps.length;
       const stepData = task.steps[stepIdx];
 
+      // Mascot Companion Logic: Talking for reading / highlight; Teacher for calculation / reasoning
+      const isReadingOrHighlight = (stepData && (stepData.ui_type === 'highlight' || (stepIdx === 0 && task && task.reading_passage)));
+      const avatarSrc = isReadingOrHighlight ? 'assets/svg/pompompurin.svg' : 'assets/svg/pompompurin_teacher.svg';
+
+      const miloAvatarEl = document.getElementById('milo-companion-avatar');
+      if (miloAvatarEl) {
+        miloAvatarEl.src = avatarSrc;
+      }
+      const cornerAvatarEl = document.getElementById('microtask-corner-companion');
+      if (cornerAvatarEl) {
+        cornerAvatarEl.src = avatarSrc;
+      }
+
       const btnNext = document.getElementById('child-btn-next-step');
       if (btnNext) {
         btnNext.disabled = true;

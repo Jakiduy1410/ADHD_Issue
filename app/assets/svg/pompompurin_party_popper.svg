@@ -1,0 +1,601 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 470" width="100%" height="100%" id="pompompurin-popper-svg">
+    <style><![CDATA[
+        /* ==========================================================
+           POMPOMPURIN CELEBRATION PARTY POPPER (BẮN PHÁO GIẤY)
+           Hoạt ảnh nổ pháo sinh động • Chỉ giữ nhân vật & pháo • Nền trong suốt
+           ========================================================== */
+        
+        #char-rig {
+            transform-origin: 250px 425px;
+            animation: blast-body 3.6s ease-in-out infinite;
+            will-change: transform;
+        }
+        #popper-arm {
+            transform-origin: 165px 330px;
+            animation: blast-popper-arm 3.6s ease-in-out infinite;
+            will-change: transform;
+        }
+        #pull-hand-rig {
+            transform-origin: 345px 310px;
+            animation: blast-pull-hand 3.6s ease-in-out infinite;
+            will-change: transform;
+        }
+        #pull-string-group {
+            transform-origin: 0px 42px;
+            animation: blast-pull-string 3.6s ease-in-out infinite;
+            will-change: transform;
+        }
+        #beret-hat {
+            transform-origin: 250px 145px;
+            animation: blast-hat 3.6s ease-in-out infinite;
+            will-change: transform;
+        }
+        #nerd-glasses {
+            transform-origin: 250px 235px;
+            animation: blast-glasses 3.6s ease-in-out infinite;
+            will-change: transform;
+        }
+        #left-ear {
+            transform-origin: 155px 205px;
+            animation: blast-ear-left 3.6s ease-in-out infinite;
+            will-change: transform;
+        }
+        #right-ear {
+            transform-origin: 345px 200px;
+            animation: blast-ear-right 3.6s ease-in-out infinite;
+            will-change: transform;
+        }
+        #ground-shadow {
+            transform-origin: 250px 440px;
+            animation: blast-shadow 3.6s ease-in-out infinite;
+            will-change: transform;
+        }
+        #muzzle-flash {
+            transform-origin: 112px 230px;
+            animation: blast-muzzle-flash 3.6s ease-in-out infinite;
+            will-change: transform, opacity;
+        }
+
+        /* Biểu cảm khuôn mặt biến chuyển sinh động:
+           Lấy đà -> BÙM! Mắt tít cười chữ V (> <) & Miệng há to ăn mừng! */
+        #eyes-open {
+            animation: blast-eyes-open 3.6s infinite;
+        }
+        #eyes-excited {
+            animation: blast-eyes-excited 3.6s infinite;
+        }
+        #eyes-blink {
+            display: none !important;
+        }
+        #mouth-closed {
+            animation: blast-mouth-closed 3.6s infinite;
+        }
+        #mouth-wide {
+            animation: blast-mouth-wide 3.6s infinite;
+        }
+        #mouth-half {
+            display: none !important;
+        }
+        #rosy-cheeks {
+            animation: blast-cheeks 3.6s infinite;
+        }
+
+        /* KEYFRAMES CHUYỂN ĐỘNG VẬT LÝ NHÂN VẬT */
+        @keyframes blast-body {
+            0% { transform: scale(1, 1) translateY(0px) rotate(0deg); }
+            12% { transform: scale(1.07, 0.92) translateY(10px) rotate(-4deg); } /* Lấy đà thu mình */
+            17% { transform: scale(0.92, 1.1) translateY(-22px) rotate(6deg); } /* BÙM! Giật nảy lùi lại */
+            24% { transform: scale(1.08, 0.93) translateY(8px) rotate(-3deg); } /* Recoil đàn hồi bánh flan */
+            32% { transform: scale(0.97, 1.03) translateY(-6px) rotate(2deg); } /* Nhún nảy nhịp 2 */
+            40% { transform: scale(1.02, 0.98) translateY(2px) rotate(-1deg); }
+            52% { transform: scale(1.015, 0.985) translateY(0px) rotate(1.5deg); } /* Lắc lư ăn mừng */
+            64% { transform: scale(0.985, 1.015) translateY(-2px) rotate(-1.5deg); }
+            76% { transform: scale(1, 1) translateY(0px) rotate(0deg); }
+            100% { transform: scale(1, 1) translateY(0px) rotate(0deg); }
+        }
+        @keyframes blast-popper-arm {
+            0% { transform: translateY(0px) rotate(0deg); }
+            12% { transform: translateY(8px) rotate(-14deg); }
+            17% { transform: translateY(-16px) rotate(24deg); }
+            24% { transform: translateY(5px) rotate(-5deg); }
+            32% { transform: translateY(-4px) rotate(6deg); }
+            40% { transform: translateY(0px) rotate(0deg); }
+            52% { transform: translateY(-3px) rotate(3deg); }
+            64% { transform: translateY(0px) rotate(-3deg); }
+            76% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        @keyframes blast-pull-hand {
+            0% { transform: translateY(0px) rotate(0deg); }
+            12% { transform: translateY(14px) rotate(-10deg); }
+            17% { transform: translateY(-8px) rotate(10deg); }
+            24% { transform: translateY(2px) rotate(-2deg); }
+            52% { transform: translateY(-2px) rotate(2deg); }
+            76% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        @keyframes blast-pull-string {
+            0% { transform: scaleY(1); }
+            12% { transform: scaleY(1.4) translateY(4px); }
+            17% { transform: scaleY(0.85); }
+            25% { transform: scaleY(1); }
+            100% { transform: scaleY(1); }
+        }
+        @keyframes blast-hat {
+            0% { transform: translateY(0px) rotate(0deg); }
+            12% { transform: translateY(3px) rotate(-4deg); }
+            17% { transform: translateY(-16px) rotate(12deg); }
+            24% { transform: translateY(4px) rotate(-4deg); }
+            32% { transform: translateY(-3px) rotate(2deg); }
+            40% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        @keyframes blast-glasses {
+            0% { transform: translateY(0px); }
+            12% { transform: translateY(2px); }
+            17% { transform: translateY(-8px); }
+            24% { transform: translateY(3px); }
+            32% { transform: translateY(-1px); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes blast-ear-left {
+            0% { transform: rotate(0deg); }
+            12% { transform: rotate(-12deg); }
+            17% { transform: rotate(24deg); }
+            24% { transform: rotate(-8deg); }
+            32% { transform: rotate(6deg); }
+            52% { transform: rotate(-3deg); }
+            64% { transform: rotate(3deg); }
+            76% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+        }
+        @keyframes blast-ear-right {
+            0% { transform: rotate(0deg); }
+            12% { transform: rotate(12deg); }
+            17% { transform: rotate(-24deg); }
+            24% { transform: rotate(8deg); }
+            32% { transform: rotate(-6deg); }
+            52% { transform: rotate(3deg); }
+            64% { transform: rotate(-3deg); }
+            76% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+        }
+        @keyframes blast-shadow {
+            0% { transform: scale(1); opacity: 0.22; }
+            12% { transform: scale(1.1); opacity: 0.28; }
+            17% { transform: scale(0.72); opacity: 0.12; }
+            24% { transform: scale(1.12); opacity: 0.3; }
+            32% { transform: scale(0.9); opacity: 0.18; }
+            52% { transform: scale(1.02); opacity: 0.23; }
+            100% { transform: scale(1); opacity: 0.22; }
+        }
+
+        @keyframes blast-muzzle-flash {
+            0%, 15% { transform: scale(0.1); opacity: 0; }
+            17% { transform: scale(1.3) rotate(15deg); opacity: 1; }
+            22% { transform: scale(0.95) rotate(35deg); opacity: 0.8; }
+            28% { transform: scale(0.3) rotate(50deg); opacity: 0; }
+            100% { transform: scale(0.1); opacity: 0; }
+        }
+
+        @keyframes blast-eyes-open {
+            0%, 15% { opacity: 1; }
+            17%, 68% { opacity: 0; }
+            72%, 100% { opacity: 1; }
+        }
+        @keyframes blast-eyes-excited {
+            0%, 15% { opacity: 0; }
+            17%, 68% { opacity: 1; }
+            72%, 100% { opacity: 0; }
+        }
+        @keyframes blast-mouth-closed {
+            0%, 15% { opacity: 1; }
+            17%, 68% { opacity: 0; }
+            72%, 100% { opacity: 1; }
+        }
+        @keyframes blast-mouth-wide {
+            0%, 15% { opacity: 0; }
+            17%, 68% { opacity: 1; }
+            72%, 100% { opacity: 0; }
+        }
+        @keyframes blast-cheeks {
+            0%, 15% { opacity: 0.35; transform: scale(0.95); }
+            17%, 68% { opacity: 0.9; transform: scale(1.15); }
+            72%, 100% { opacity: 0.45; transform: scale(1); }
+        }
+
+        .blast-shockwave {
+            transform-origin: 112px 230px;
+            animation: anim-shockwave 3.6s ease-out infinite;
+        }
+        @keyframes anim-shockwave {
+            0%, 15% { transform: scale(0.2); opacity: 0; }
+            17% { transform: scale(1.0); opacity: 1; stroke-width: 6; }
+            25% { transform: scale(3.5); opacity: 0; stroke-width: 1; }
+            100% { transform: scale(0.2); opacity: 0; }
+        }
+
+        .blast-smoke-1 { animation: anim-smoke-1 3.6s ease-out infinite; }
+        .blast-smoke-2 { animation: anim-smoke-2 3.6s ease-out infinite; }
+        .blast-smoke-3 { animation: anim-smoke-3 3.6s ease-out infinite; }
+        @keyframes anim-smoke-1 {
+            0%, 15% { transform: translate(0, 0) scale(0.2); opacity: 0; }
+            18% { transform: translate(-28px, -35px) scale(1.6); opacity: 0.85; }
+            28% { transform: translate(-45px, -60px) scale(2.2); opacity: 0.35; }
+            36% { transform: translate(-60px, -75px) scale(2.6); opacity: 0; }
+            100% { opacity: 0; }
+        }
+        @keyframes anim-smoke-2 {
+            0%, 15% { transform: translate(0, 0) scale(0.2); opacity: 0; }
+            18% { transform: translate(-16px, -52px) scale(1.8); opacity: 0.9; }
+            28% { transform: translate(-25px, -82px) scale(2.4); opacity: 0.35; }
+            36% { transform: translate(-32px, -100px) scale(2.8); opacity: 0; }
+            100% { opacity: 0; }
+        }
+        @keyframes anim-smoke-3 {
+            0%, 15% { transform: translate(0, 0) scale(0.2); opacity: 0; }
+            18% { transform: translate(18px, -38px) scale(1.5); opacity: 0.85; }
+            28% { transform: translate(28px, -62px) scale(2.1); opacity: 0.35; }
+            36% { transform: translate(38px, -78px) scale(2.5); opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        .confetti-p1 { animation: anim-p1 3.6s cubic-bezier(0.1, 0.9, 0.2, 1) infinite; }
+        .confetti-p2 { animation: anim-p2 3.6s cubic-bezier(0.1, 0.9, 0.2, 1) infinite; }
+        .confetti-p3 { animation: anim-p3 3.6s cubic-bezier(0.1, 0.9, 0.2, 1) infinite; }
+        .confetti-p4 { animation: anim-p4 3.6s cubic-bezier(0.1, 0.9, 0.2, 1) infinite; }
+        .confetti-p5 { animation: anim-p5 3.6s cubic-bezier(0.1, 0.9, 0.2, 1) infinite; }
+        .confetti-p6 { animation: anim-p6 3.6s cubic-bezier(0.1, 0.9, 0.2, 1) infinite; }
+        .confetti-p7 { animation: anim-p7 3.6s cubic-bezier(0.1, 0.9, 0.2, 1) infinite; }
+        .confetti-p8 { animation: anim-p8 3.6s cubic-bezier(0.1, 0.9, 0.2, 1) infinite; }
+        .confetti-p9 { animation: anim-p9 3.6s cubic-bezier(0.1, 0.9, 0.2, 1) infinite; }
+        .confetti-p10 { animation: anim-p10 3.6s cubic-bezier(0.1, 0.9, 0.2, 1) infinite; }
+
+        @keyframes anim-p1 {
+            0%, 15% { transform: translate(112px, 230px) scale(0) rotate(0deg); opacity: 0; }
+            18% { transform: translate(35px, 110px) scale(1.3) rotate(110deg); opacity: 1; }
+            38% { transform: translate(-15px, 150px) scale(1.1) rotate(240deg); opacity: 1; }
+            58% { transform: translate(-35px, 280px) scale(0.9) rotate(360deg); opacity: 0.8; }
+            70% { transform: translate(-45px, 390px) scale(0.7) rotate(450deg); opacity: 0; }
+            100% { transform: translate(112px, 230px) scale(0); opacity: 0; }
+        }
+        @keyframes anim-p2 {
+            0%, 15% { transform: translate(112px, 230px) scale(0) rotate(0deg); opacity: 0; }
+            18% { transform: translate(20px, 80px) scale(1.3) rotate(150deg); opacity: 1; }
+            38% { transform: translate(5px, 130px) scale(1.1) rotate(290deg); opacity: 1; }
+            58% { transform: translate(-2px, 270px) scale(0.9) rotate(420deg); opacity: 0.8; }
+            70% { transform: translate(-5px, 395px) scale(0.7) rotate(520deg); opacity: 0; }
+            100% { transform: translate(112px, 230px) scale(0); opacity: 0; }
+        }
+        @keyframes anim-p3 {
+            0%, 15% { transform: translate(112px, 230px) scale(0) rotate(0deg); opacity: 0; }
+            18% { transform: translate(80px, 60px) scale(1.3) rotate(-70deg); opacity: 1; }
+            38% { transform: translate(72px, 120px) scale(1.1) rotate(-160deg); opacity: 1; }
+            58% { transform: translate(68px, 250px) scale(0.9) rotate(-240deg); opacity: 0.8; }
+            70% { transform: translate(62px, 390px) scale(0.7) rotate(-320deg); opacity: 0; }
+            100% { transform: translate(112px, 230px) scale(0); opacity: 0; }
+        }
+        @keyframes anim-p4 {
+            0%, 15% { transform: translate(112px, 230px) scale(0) rotate(0deg); opacity: 0; }
+            18% { transform: translate(135px, 85px) scale(1.2) rotate(80deg); opacity: 1; }
+            38% { transform: translate(140px, 150px) scale(1.0) rotate(180deg); opacity: 1; }
+            58% { transform: translate(145px, 270px) scale(0.85) rotate(260deg); opacity: 0.8; }
+            70% { transform: translate(148px, 390px) scale(0.65) rotate(340deg); opacity: 0; }
+            100% { transform: translate(112px, 230px) scale(0); opacity: 0; }
+        }
+        @keyframes anim-p5 {
+            0%, 15% { transform: translate(112px, 230px) scale(0) rotate(0deg); opacity: 0; }
+            18% { transform: translate(-30px, 170px) scale(1.2); opacity: 1; }
+            40% { transform: translate(-50px, 235px) scale(1.0); opacity: 0.9; }
+            65% { transform: translate(-60px, 370px) scale(0.7); opacity: 0; }
+            100% { transform: translate(112px, 230px) scale(0); opacity: 0; }
+        }
+        @keyframes anim-p6 {
+            0%, 15% { transform: translate(112px, 230px) scale(0) rotate(0deg); opacity: 0; }
+            18% { transform: translate(45px, 45px) scale(1.3) rotate(-110deg); opacity: 1; }
+            38% { transform: translate(38px, 110px) scale(1.1) rotate(-210deg); opacity: 1; }
+            58% { transform: translate(35px, 240px) scale(0.9) rotate(-320deg); opacity: 0.8; }
+            70% { transform: translate(30px, 385px) scale(0.6) rotate(-420deg); opacity: 0; }
+            100% { transform: translate(112px, 230px) scale(0); opacity: 0; }
+        }
+        @keyframes anim-p7 {
+            0%, 15% { transform: translate(112px, 230px) scale(0) rotate(0deg); opacity: 0; }
+            18% { transform: translate(10px, 120px) scale(1.4) rotate(50deg); opacity: 1; }
+            38% { transform: translate(0px, 185px) scale(1.1) rotate(140deg); opacity: 1; }
+            58% { transform: translate(-8px, 310px) scale(0.85) rotate(240deg); opacity: 0.8; }
+            70% { transform: translate(-12px, 410px) scale(0.55) rotate(320deg); opacity: 0; }
+            100% { transform: translate(112px, 230px) scale(0); opacity: 0; }
+        }
+        @keyframes anim-p8 {
+            0%, 15% { transform: translate(112px, 230px) scale(0) rotate(0deg); opacity: 0; }
+            18% { transform: translate(165px, 120px) scale(1.2) rotate(-85deg); opacity: 1; }
+            38% { transform: translate(175px, 185px) scale(1.0) rotate(-180deg); opacity: 1; }
+            58% { transform: translate(180px, 300px) scale(0.8) rotate(-270deg); opacity: 0.8; }
+            70% { transform: translate(185px, 400px) scale(0.55) rotate(-350deg); opacity: 0; }
+            100% { transform: translate(112px, 230px) scale(0); opacity: 0; }
+        }
+        @keyframes anim-p9 {
+            0%, 15% { transform: translate(112px, 230px) scale(0) rotate(0deg); opacity: 0; }
+            18% { transform: translate(95px, 130px) scale(1.2); opacity: 1; }
+            40% { transform: translate(105px, 210px) scale(1.0); opacity: 0.9; }
+            65% { transform: translate(115px, 360px) scale(0.7); opacity: 0; }
+            100% { transform: translate(112px, 230px) scale(0); opacity: 0; }
+        }
+        @keyframes anim-p10 {
+            0%, 15% { transform: translate(112px, 230px) scale(0) rotate(0deg); opacity: 0; }
+            18% { transform: translate(-10px, 70px) scale(1.3) rotate(160deg); opacity: 1; }
+            38% { transform: translate(-20px, 130px) scale(1.1) rotate(280deg); opacity: 1; }
+            58% { transform: translate(-25px, 260px) scale(0.9) rotate(410deg); opacity: 0.8; }
+            70% { transform: translate(-28px, 385px) scale(0.65) rotate(500deg); opacity: 0; }
+            100% { transform: translate(112px, 230px) scale(0); opacity: 0; }
+        }
+    ]]></style>
+
+                    <defs>
+                        <!-- Gradient thân vàng bánh pudding -->
+                        <radialGradient id="bodyYellowGrad" gradientUnits="userSpaceOnUse" cx="250" cy="275" r="195" fx="235" fy="245">
+                            <stop offset="0%" stop-color="#fff9a6" />
+                            <stop offset="72%" stop-color="#fdf082" />
+                            <stop offset="91%" stop-color="#eee070" />
+                            <stop offset="100%" stop-color="#dec756" />
+                        </radialGradient>
+
+                        <!-- Gradient mũ nồi caramel -->
+                        <linearGradient id="beretGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#d5ad80" />
+                            <stop offset="65%" stop-color="#c69c6d" />
+                            <stop offset="100%" stop-color="#ab8052" />
+                        </linearGradient>
+
+                        <!-- Gradient bàn tay cầm pháo -->
+                        <linearGradient id="handEmojiGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#ffde59" />
+                            <stop offset="55%" stop-color="#ffc830" />
+                            <stop offset="100%" stop-color="#f59e0b" />
+                        </linearGradient>
+
+                        <!-- Gradient thân pháo giấy hồng đỏ -->
+                        <linearGradient id="popperRedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#fb7185" />
+                            <stop offset="50%" stop-color="#f43f5e" />
+                            <stop offset="100%" stop-color="#be123c" />
+                        </linearGradient>
+
+                        <!-- Gradient sọc vàng kim pháo giấy -->
+                        <linearGradient id="popperGoldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#fef08a" />
+                            <stop offset="50%" stop-color="#facc15" />
+                            <stop offset="100%" stop-color="#ca8a04" />
+                        </linearGradient>
+
+                        <!-- Tròng kính bóng -->
+                        <linearGradient id="lensShine" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.48" />
+                            <stop offset="50%" stop-color="#ffffff" stop-opacity="0.1" />
+                            <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Bóng đổ dưới đất -->
+                    <ellipse id="ground-shadow" cx="250" cy="442" rx="115" ry="16" fill="#1c1917" opacity="0.22" />
+
+                    <!-- Khung Rig toàn thân -->
+                    <g id="char-rig">
+                        
+                        <!-- Hai bàn chân nhỏ -->
+                        <g id="feet-group">
+                            <path d="M 176 404 C 170 434, 185 442, 200 432 C 206 426, 209 415, 208 408 Z" 
+                                  fill="url(#bodyYellowGrad)" stroke="#141413" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M 324 404 C 330 434, 315 442, 300 432 C 294 426, 291 415, 292 408 Z" 
+                                  fill="url(#bodyYellowGrad)" stroke="#141413" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </g>
+
+                        <!-- Mũ nồi nâu -->
+                        <g id="beret-hat">
+                            <path d="M 237 104 C 236 82, 259 80, 259 104 Z" 
+                                  fill="url(#beretGrad)" stroke="#141413" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M 168 164 C 175 112, 222 100, 252 100 C 282 100, 315 114, 326 164 Z" 
+                                  fill="url(#beretGrad)" stroke="#141413" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </g>
+
+                        <!-- Thân và đôi tai cụp -->
+                        <g id="main-body-group">
+                            <!-- Thân tròn -->
+                            <path d="M 170 164 C 205 142, 290 142, 325 164 C 375 196, 404 252, 400 315 C 396 382, 336 420, 250 420 C 164 420, 104 382, 100 315 C 96 252, 125 196, 170 164 Z" 
+                                  fill="url(#bodyYellowGrad)" stroke="#141413" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
+
+                            <!-- Tai Trái -->
+                            <g id="left-ear">
+                                <path d="M 174 163 C 120 144, 52 162, 42 205 C 33 242, 74 260, 108 242 C 126 232, 134 218, 145 216 L 182 185 Z" 
+                                      fill="url(#bodyYellowGrad)" stroke="none" />
+                                <path d="M 172 163 C 120 144, 52 162, 42 205 C 33 242, 74 260, 108 242 C 126 232, 134 218, 143 216" 
+                                      fill="none" stroke="#141413" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
+                            </g>
+
+                            <!-- Tai Phải -->
+                            <g id="right-ear">
+                                <path d="M 322 162 C 378 134, 448 148, 460 192 C 470 228, 434 248, 395 232 C 375 224, 366 208, 355 208 L 315 182 Z" 
+                                      fill="url(#bodyYellowGrad)" stroke="none" />
+                                <path d="M 323 162 C 378 134, 448 148, 460 192 C 470 228, 434 248, 395 232 C 375 224, 366 208, 356 208" 
+                                      fill="none" stroke="#141413" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
+                            </g>
+
+                            <!-- Lớp phủ che vết giao tai -->
+                            <path d="M 172 166 C 205 145, 290 145, 323 166 C 371 197, 399 252, 395 315 C 391 379, 333 416, 250 416 C 167 416, 109 379, 105 315 C 101 252, 129 197, 172 166 Z" 
+                                  fill="url(#bodyYellowGrad)" stroke="none" />
+                        </g>
+
+                        <!-- Má hồng hào hứng khi bắn pháo -->
+                        <g id=" rosy-cheeks" opacity="0.65">
+                            <ellipse cx="155" cy="268" rx="16" ry="9" fill="#fb7185" opacity="0.45" />
+                            <ellipse cx="338" cy="268" rx="16" ry="9" fill="#fb7185" opacity="0.45" />
+                        </g>
+
+                        <!-- Tay phải nhỏ (nhún theo nhịp ăn mừng) -->
+                        <g id="pull-hand-rig">
+                            <path d="M 353 296 C 336 318, 344 338, 370 314" 
+                                  fill="url(#bodyYellowGrad)" stroke="#141413" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </g>
+
+                        <!-- Nhóm Miệng -->
+                        <g id="mouth-group">
+                            <!-- Miệng 1: Khép mỉm cười W + 2 răng -->
+                            <g id="mouth-closed">
+                                <path d="M 239 266 C 239 272, 245 272, 245 266 C 245 272, 251 272, 251 266 Z" 
+                                      fill="#ffffff" stroke="#57534e" stroke-width="2" stroke-linejoin="round" />
+                                <path d="M 224 256 C 230 270, 244 268, 245 247 C 246 268, 260 270, 266 258" 
+                                      fill="none" stroke="#141413" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+                            </g>
+
+                            <!-- Miệng 2: Mở vừa -->
+                            <g id="mouth-half">
+                                <path d="M 231 264 C 231 275, 259 275, 259 264 C 253 259, 248 252, 245 250 C 242 252, 237 259, 231 264 Z" 
+                                      fill="#be123c" stroke="#141413" stroke-width="4.5" stroke-linejoin="round" />
+                                <path d="M 237 271 C 241 267, 249 267, 253 271 C 249 275, 241 275, 237 271 Z" fill="#fda4af" />
+                                <rect x="240.5" y="258" width="4.2" height="6.5" rx="1.5" fill="#ffffff" stroke="#57534e" stroke-width="1.2" />
+                                <rect x="245.3" y="258" width="4.2" height="6.5" rx="1.5" fill="#ffffff" stroke="#57534e" stroke-width="1.2" />
+                                <path d="M 224 256 C 230 270, 244 268, 245 247 C 246 268, 260 270, 266 258" 
+                                      fill="none" stroke="#141413" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+                            </g>
+
+                            <!-- Miệng 3: Mở to hào hứng khi pháo nổ BÙM -->
+                            <g id="mouth-wide">
+                                <path d="M 229 264 C 229 283, 261 283, 261 264 C 254 259, 248 251, 245 249 C 242 251, 236 259, 229 264 Z" 
+                                      fill="#9f1239" stroke="#141413" stroke-width="5" stroke-linejoin="round" />
+                                <path d="M 235 278 C 240 270, 250 270, 255 278 C 251 283, 239 283, 235 278 Z" fill="#fb7185" />
+                                <rect x="240" y="258" width="4.6" height="7.5" rx="1.5" fill="#ffffff" stroke="#57534e" stroke-width="1.2" />
+                                <rect x="245.4" y="258" width="4.6" height="7.5" rx="1.5" fill="#ffffff" stroke="#57534e" stroke-width="1.2" />
+                                <path d="M 224 256 C 230 270, 244 268, 245 247 C 246 268, 260 270, 266 258" 
+                                      fill="none" stroke="#141413" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+                            </g>
+                        </g>
+
+                        <!-- Đôi mắt kính tròn -->
+                        <g id="nerd-glasses">
+                            <path d="M 152 204 C 175 198, 215 202, 232 214 C 238 242, 224 266, 192 266 C 158 266, 146 242, 152 204 Z" fill="url(#lensShine)" />
+                            <path d="M 268 214 C 285 202, 325 198, 348 204 C 354 242, 342 266, 308 266 C 276 266, 262 242, 268 214 Z" fill="url(#lensShine)" />
+
+                            <!-- Mắt mở bình thường -->
+                            <g id="eyes-open">
+                                <circle cx="212" cy="222" r="5.2" fill="#141413" />
+                                <circle cx="288" cy="225" r="5.2" fill="#141413" />
+                            </g>
+                            <!-- Mắt nhắm chớp -->
+                            <g id="eyes-blink">
+                                <path d="M 205 222 L 219 222" stroke="#141413" stroke-width="3.8" stroke-linecap="round" />
+                                <path d="M 281 225 L 295 225" stroke="#141413" stroke-width="3.8" stroke-linecap="round" />
+                            </g>
+                            <!-- Mắt cười tít > < khi bắn BÙM -->
+                            <g id="eyes-excited">
+                                <path d="M 203 216 L 216 222 L 203 228" fill="none" stroke="#141413" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M 297 219 L 284 225 L 297 231" fill="none" stroke="#141413" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round" />
+                            </g>
+
+                            <!-- Gọng kính -->
+                            <path d="M 142 198 C 175 194, 218 197, 236 207 C 242 242, 226 269, 190 269 C 154 269, 140 242, 145 206 Z" 
+                                  fill="none" stroke="#141413" stroke-width="9.5" stroke-linejoin="round" />
+                            <path d="M 264 207 C 282 197, 325 194, 358 198 C 360 242, 346 269, 310 269 C 274 269, 258 242, 264 207 Z" 
+                                  fill="none" stroke="#141413" stroke-width="9.5" stroke-linejoin="round" />
+                            <path d="M 233 208 Q 250 202 267 208" fill="none" stroke="#141413" stroke-width="10.5" stroke-linecap="round" />
+                            <ellipse cx="148" cy="204" rx="5" ry="2.3" fill="#ffffff" />
+                            <ellipse cx="352" cy="204" rx="5" ry="2.3" fill="#ffffff" />
+                        </g>
+
+                        <!-- TAY TRÁI CẦM PHÁO GIẤY & HIỆU ỨNG NỔ BÙM -->
+                        <g id="popper-arm">
+                            <!-- Bóng đổ dưới bàn tay -->
+                            <ellipse cx="168" cy="342" rx="26" ry="26" fill="#d4b84a" opacity="0.45" />
+
+                            <!-- NHÓM ỐNG PHÁO GIẤY (Nghiêng hướng lên góc trái -35 độ) -->
+                            <g id="party-popper-cone" transform="translate(152, 298) rotate(-35)">
+                                
+                                <!-- Dây giật dưới đáy pháo (Sẽ kéo căng khi chuẩn bị nổ) -->
+                                <g id="pull-string-group">
+                                    <path id="pull-cord" d="M 0 42 Q -6 56 2 68" fill="none" stroke="#141413" stroke-width="4" stroke-linecap="round" />
+                                    <circle id="pull-ring" cx="3" cy="74" r="8" fill="#fef08a" stroke="#141413" stroke-width="4" />
+                                </g>
+
+                                <!-- Thân hình nón của pháo giấy -->
+                                <path d="M 0 44 L -38 -62 L 38 -62 Z" 
+                                      fill="url(#popperRedGrad)" stroke="#141413" stroke-width="5.5" stroke-linejoin="round" />
+
+                                <!-- Các dải sọc vàng trang trí trên thân pháo -->
+                                <path d="M -13 8 L 13 8 L 20 -12 L -20 -12 Z" 
+                                      fill="url(#popperGoldGrad)" stroke="#141413" stroke-width="3.5" stroke-linejoin="round" />
+                                <path d="M -25 -26 L 25 -26 L 32 -45 L -32 -45 Z" 
+                                      fill="#38bdf8" stroke="#141413" stroke-width="3.5" stroke-linejoin="round" />
+
+                                <!-- Miệng ống pháo (Hình elip phía trên) -->
+                                <ellipse cx="0" cy="-62" rx="38" ry="11" fill="#881337" stroke="#141413" stroke-width="5" />
+                                <ellipse cx="0" cy="-62" rx="28" ry="6.5" fill="#4c0519" />
+
+                                <!-- Nắp giấy & cuộn ruy-băng lấp ló trước khi bắn -->
+                                <g id="popper-loaded-paper">
+                                    <circle cx="-12" cy="-64" r="5" fill="#facc15" />
+                                    <circle cx="10" cy="-65" r="5.5" fill="#4ade80" />
+                                    <circle cx="0" cy="-61" r="5" fill="#38bdf8" />
+                                    <circle cx="18" cy="-61" r="4" fill="#f472b6" />
+                                </g>
+
+                                <!-- Điểm sáng bóng trên thân pháo -->
+                                <path d="M -22 -52 L -6 -2" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" opacity="0.55" />
+                            </g>
+
+                            <!-- Bàn tay Emoji nắm chặt thân pháo -->
+                            <g id="gripping-hand" transform="translate(4, 6)">
+                                <!-- Lòng bàn tay phía sau -->
+                                <path d="M 140 315 C 134 295, 165 288, 178 302 C 188 314, 184 342, 166 346 C 148 349, 142 332, 140 315 Z" 
+                                      fill="url(#handEmojiGrad)" stroke="#d97706" stroke-width="3.5" />
+                                <!-- 3 ngón tay vòng qua ôm ống pháo -->
+                                <rect x="132" y="294" width="26" height="12" rx="6" transform="rotate(-22 132 294)" fill="url(#handEmojiGrad)" stroke="#141413" stroke-width="3.5" />
+                                <rect x="136" y="306" width="28" height="12" rx="6" transform="rotate(-22 136 306)" fill="url(#handEmojiGrad)" stroke="#141413" stroke-width="3.5" />
+                                <rect x="141" y="318" width="26" height="12" rx="6" transform="rotate(-22 141 318)" fill="url(#handEmojiGrad)" stroke="#141413" stroke-width="3.5" />
+                                <!-- Ngón cái khóa chặt phía trước -->
+                                <path d="M 156 297 C 168 292, 182 298, 181 309 C 180 318, 164 319, 155 311 Z" 
+                                      fill="#ffdf5d" stroke="#141413" stroke-width="3.5" stroke-linejoin="round" />
+                            </g>
+
+                            <!-- TIA CHỚP NỔ & DẢI RUY BĂNG Bắn Ra Từ Miệng Pháo (Muzzle Flash SVG) -->
+                            <g id="muzzle-flash" opacity="0" transform="scale(0.2)">
+                                <!-- Vòng sao nổ vàng cam -->
+                                <polygon points="112,230 75,195 98,185 70,145 112,168 135,125 142,170 185,155 152,192 182,218 136,215 112,230" 
+                                         fill="#facc15" stroke="#141413" stroke-width="4" stroke-linejoin="round" />
+                                <polygon points="112,222 88,195 105,188 90,162 115,176 130,148 134,178 162,168 140,194 158,210 130,210" 
+                                         fill="#fffbeb" />
+                                <!-- Dải ruy băng xoắn bắn vọt ra -->
+                                <path d="M 110 215 Q 65 160 25 175 Q 5 182 12 150" fill="none" stroke="#f43f5e" stroke-width="5.5" stroke-linecap="round" />
+                                <path d="M 118 205 Q 95 130 55 110 Q 35 100 48 75" fill="none" stroke="#38bdf8" stroke-width="5.5" stroke-linecap="round" />
+                                <path d="M 128 210 Q 145 140 120 95" fill="none" stroke="#a855f7" stroke-width="5" stroke-linecap="round" />
+                            </g>
+                        </g>
+
+                        <!-- HUY HIỆU CHỮ "BÙM!" HOẠT HÌNH NỔ TUNG -->
+                        
+
+                    </g>
+                
+
+    <!-- Confetti Explosion & Comic FX from Nozzle (112, 230) -->
+    <g id="confetti-explosion">
+        <!-- Vòng sóng xung kích nổ vàng cam -->
+        <circle class="blast-shockwave" cx="112" cy="230" r="16" fill="none" stroke="#facc15" stroke-width="6" />
+        
+        <!-- Các cụm khói hoạt hình bung ra -->
+        <circle class="blast-smoke-1" cx="112" cy="230" r="14" fill="#fef08a" />
+        <circle class="blast-smoke-2" cx="112" cy="230" r="18" fill="#ffffff" />
+        <circle class="blast-smoke-3" cx="112" cy="230" r="13" fill="#fed7aa" />
+
+        <!-- Các dải ruy-băng & ngôi sao pháo giấy bắn vọt ra khắp không trung -->
+        <polygon class="confetti-p1" points="0,-13 3,-4 13,-4 5,2 8,12 0,6 -8,12 -5,2 -13,-4 -3,-4" fill="#ef4444" stroke="#141413" stroke-width="1.8" />
+        <rect class="confetti-p2" x="-5" y="-15" width="11" height="30" rx="3.5" fill="#facc15" stroke="#141413" stroke-width="1.8" />
+        <polygon class="confetti-p3" points="0,-12 3,-3 11,-3 4,2 7,10 0,6 -7,10 -4,2 -11,-3 -3,-3" fill="#10b981" stroke="#141413" stroke-width="1.8" />
+        <rect class="confetti-p4" x="-4.5" y="-13" width="9" height="26" rx="3" fill="#a855f7" stroke="#141413" stroke-width="1.8" />
+        <circle class="confetti-p5" cx="0" cy="0" r="9" fill="#06b6d4" stroke="#141413" stroke-width="1.8" />
+        <rect class="confetti-p6" x="-4" y="-11" width="8" height="24" rx="3" fill="#f43f5e" stroke="#141413" stroke-width="1.8" />
+        <polygon class="confetti-p7" points="0,-15 4,-5 15,-5 6,3 10,13 0,8 -10,13 -6,3 -15,-5 -4,-5" fill="#f59e0b" stroke="#141413" stroke-width="1.8" />
+        <rect class="confetti-p8" x="-4" y="-13" width="8" height="26" rx="3" fill="#3b82f6" stroke="#141413" stroke-width="1.8" />
+        <circle class="confetti-p9" cx="0" cy="0" r="10" fill="#fb7185" stroke="#141413" stroke-width="1.8" />
+        <rect class="confetti-p10" x="-4" y="-12" width="8" height="24" rx="3" fill="#84cc16" stroke="#141413" stroke-width="1.8" />
+    </g>
+
+</svg>

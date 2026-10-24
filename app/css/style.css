@@ -540,3 +540,184 @@ body.mobile-standalone-view .dynamic-island {
 #col-parent.hidden {
   display: none !important;
 }
+
+
+/* ============================================================
+   POMPOMPURIN CELEBRATION & TREASURE CHEST (PURE SVG + CSS)
+   ============================================================ */
+.bg-white-orange-milk {
+  background: radial-gradient(circle at 50% 48%, #fff5eb 0%, #fffaf5 50%, #ffffff 100%) !important;
+}
+.font-cartoon {
+  font-family: 'Baloo 2', 'Nunito', cursive, sans-serif !important;
+}
+.fullscreen-rays-container {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  transform: translate(-50%, -50%);
+  width: 250%;
+  height: 250%;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+@keyframes claimPulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 6px 20px rgba(234, 88, 12, 0.35)); }
+  50% { transform: scale(1.03); filter: drop-shadow(0 10px 28px rgba(234, 88, 12, 0.55)); }
+}
+.claim-btn {
+  animation: claimPulse 2.4s ease-in-out infinite;
+}
+
+/* Treasure Chest Keyframes & Classes (Ported from kho bau.html) */
+@keyframes spinAura {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes spinAuraReverse {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+.aura-rays {
+  transform-origin: 400px 330px;
+  animation: spinAura 18s linear infinite;
+}
+.aura-rays-reverse {
+  transform-origin: 400px 330px;
+  animation: spinAuraReverse 25s linear infinite;
+}
+@keyframes chestBounce3Times {
+  0%   { transform: translate(0, 0) scale(1, 1) rotate(0deg); }
+  6%   { transform: translate(0, 18px) scale(1.12, 0.86) rotate(0deg); }
+  15%  { transform: translate(0, -45px) scale(0.92, 1.1) rotate(-5deg); }
+  24%  { transform: translate(0, 0) scale(1.06, 0.94) rotate(0deg); }
+  31%  { transform: translate(0, 22px) scale(1.16, 0.82) rotate(0deg); }
+  41%  { transform: translate(0, -65px) scale(0.89, 1.14) rotate(6deg); }
+  50%  { transform: translate(0, 0) scale(1.08, 0.92) rotate(0deg); }
+  57%  { transform: translate(0, 26px) scale(1.20, 0.78) rotate(-2deg); }
+  68%  { transform: translate(0, -90px) scale(0.85, 1.18) rotate(-7deg); }
+  77%  { transform: translate(0, 0) scale(1.15, 0.85) rotate(2deg); }
+  82%  { transform: translate(-6px, 28px) scale(1.24, 0.74) rotate(-4deg); }
+  86%  { transform: translate(6px, 30px) scale(1.26, 0.72) rotate(4deg); }
+  90%  { transform: translate(-5px, 32px) scale(1.28, 0.70) rotate(-3deg); }
+  94%  { transform: translate(4px, 24px) scale(1.22, 0.78) rotate(3deg); }
+  100% { transform: translate(0, 0) scale(1, 1) rotate(0deg); }
+}
+@keyframes shadowBounce3Times {
+  0%   { transform: scale(1); opacity: 0.45; }
+  6%   { transform: scale(1.12); opacity: 0.55; }
+  15%  { transform: scale(0.75); opacity: 0.25; }
+  24%  { transform: scale(1.05); opacity: 0.48; }
+  31%  { transform: scale(1.16); opacity: 0.58; }
+  41%  { transform: scale(0.65); opacity: 0.2; }
+  50%  { transform: scale(1.08); opacity: 0.5; }
+  57%  { transform: scale(1.20); opacity: 0.62; }
+  68%  { transform: scale(0.55); opacity: 0.15; }
+  77%  { transform: scale(1.15); opacity: 0.52; }
+  82%, 90% { transform: scale(1.26); opacity: 0.68; }
+  100% { transform: scale(1); opacity: 0.45; }
+}
+@keyframes chestOpenRecoil {
+  0%   { transform: translate(0, 0) scale(1.18, 0.82); }
+  35%  { transform: translate(0, -18px) scale(0.95, 1.06); }
+  70%  { transform: translate(0, 4px) scale(1.03, 0.97); }
+  100% { transform: translate(0, 0) scale(1, 1); }
+}
+.chest-pivot {
+  transform-origin: 400px 445px;
+}
+.shadow-pivot {
+  transform-origin: 400px 445px;
+}
+.bouncing .chest-pivot {
+  animation: chestBounce3Times 1.95s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+.bouncing .shadow-pivot {
+  animation: shadowBounce3Times 1.95s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+.opened .chest-pivot {
+  animation: chestOpenRecoil 0.55s ease-out forwards;
+}
+#chest-lid-closed {
+  transform-origin: 400px 330px;
+  transition: transform 0.22s ease-in, opacity 0.15s ease-in;
+}
+.opened #chest-lid-closed {
+  transform: translateY(-45px) rotate(-18deg) scale(0.92);
+  opacity: 0;
+  pointer-events: none;
+}
+#chest-lid-open {
+  transform-origin: 395px 305px;
+  transform: rotate(35deg) scale(0.75);
+  opacity: 0;
+  transition: transform 0.5s cubic-bezier(0.18, 1.45, 0.38, 1), opacity 0.18s ease-out;
+}
+.opened #chest-lid-open {
+  transform: rotate(0deg) scale(1);
+  opacity: 1;
+}
+#chest-lock {
+  transform-origin: 368px 346px;
+  transition: transform 0.55s cubic-bezier(0.18, 1.35, 0.4, 1), opacity 0.4s ease-out;
+}
+.opened #chest-lock {
+  transform: translate(-15px, 95px) rotate(-25deg) scale(0.85);
+  opacity: 0;
+  pointer-events: none;
+}
+#treasure-inside {
+  transform-origin: 395px 340px;
+  transform: translateY(45px) scale(0.2);
+  opacity: 0;
+  transition: transform 0.6s cubic-bezier(0.18, 1.5, 0.4, 1) 0.06s, opacity 0.25s ease-out 0.05s;
+}
+.opened #treasure-inside {
+  transform: translateY(0px) scale(1);
+  opacity: 1;
+}
+#aura-container {
+  transform-origin: 400px 330px;
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.75s cubic-bezier(0.16, 1.35, 0.3, 1), opacity 0.4s ease-out;
+}
+.opened #aura-container {
+  transform: scale(1.15);
+  opacity: 1;
+}
+#burst-flash {
+  transform-origin: 400px 330px;
+  transform: scale(0);
+  opacity: 0;
+}
+@keyframes flashBang {
+  0%   { transform: scale(0.2); opacity: 1; }
+  40%  { transform: scale(1.6); opacity: 0.9; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.opened #burst-flash {
+  animation: flashBang 0.65s ease-out forwards;
+}
+@keyframes floatSparkle {
+  0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); opacity: 1; }
+  50% { transform: translateY(-14px) scale(1.25) rotate(15deg); opacity: 0.75; }
+}
+.sparkle-item {
+  animation: floatSparkle 2.4s ease-in-out infinite;
+}
+.flying-particle {
+  opacity: 0;
+  transform-origin: center;
+}
+.opened .flying-particle {
+  animation: particleExplode 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes particleExplode {
+  0% { transform: translate(0, 0) scale(0.2) rotate(0deg); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--rot)); opacity: 0; }
+}

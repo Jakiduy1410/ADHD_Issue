@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoạt Ảnh Mở Rương Kho Báu SVG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #4d1924;
+            font-family: 'Fredoka', sans-serif;
+            overflow: hidden;
+            user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Hiệu ứng hào quang xoay tròn */
+        @keyframes spinAura {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes spinAuraReverse {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .aura-rays {
+            transform-origin: 400px 330px;
+            animation: spinAura 18s linear infinite;
+        }
+
+        .aura-rays-reverse {
+            transform-origin: 400px 330px;
+            animation: spinAuraReverse 25s linear infinite;
+        }
+
+        /* Kịch bản bật nảy 3 lần với độ nén/giãn (Squash & Stretch) hoạt hình */
+        @keyframes chestBounce3Times {
+            0%   { transform: translate(0, 0) scale(1, 1) rotate(0deg); }
+            /* Nén và Bật lần 1 */
+            6%   { transform: translate(0, 18px) scale(1.12, 0.86) rotate(0deg); }
+            15%  { transform: translate(0, -45px) scale(0.92, 1.1) rotate(-5deg); }
+            24%  { transform: translate(0, 0) scale(1.06, 0.94) rotate(0deg); }
+            
+            /* Nén và Bật lần 2 (mạnh hơn) */
+            31%  { transform: translate(0, 22px) scale(1.16, 0.82) rotate(0deg); }
+            41%  { transform: translate(0, -65px) scale(0.89, 1.14) rotate(6deg); }
+            50%  { transform: translate(0, 0) scale(1.08, 0.92) rotate(0deg); }
+
+            /* Nén và Bật lần 3 (cao trào) */
+            57%  { transform: translate(0, 26px) scale(1.20, 0.78) rotate(-2deg); }
+            68%  { transform: translate(0, -90px) scale(0.85, 1.18) rotate(-7deg); }
+            77%  { transform: translate(0, 0) scale(1.15, 0.85) rotate(2deg); }
+
+            /* Tích tụ năng lượng (rung lắc ép xuống) trước khi nổ tung */
+            82%  { transform: translate(-6px, 28px) scale(1.24, 0.74) rotate(-4deg); }
+            86%  { transform: translate(6px, 30px) scale(1.26, 0.72) rotate(4deg); }
+            90%  { transform: translate(-5px, 32px) scale(1.28, 0.70) rotate(-3deg); }
+            94%  { transform: translate(4px, 24px) scale(1.22, 0.78) rotate(3deg); }
+            100% { transform: translate(0, 0) scale(1, 1) rotate(0deg); }
+        }
+
+        /* Bóng đổ co giãn theo nhịp nảy của rương */
+        @keyframes shadowBounce3Times {
+            0%   { transform: scale(1); opacity: 0.45; }
+            6%   { transform: scale(1.12); opacity: 0.55; }
+            15%  { transform: scale(0.75); opacity: 0.25; }
+            24%  { transform: scale(1.05); opacity: 0.48; }
+            31%  { transform: scale(1.16); opacity: 0.58; }
+            41%  { transform: scale(0.65); opacity: 0.2; }
+            50%  { transform: scale(1.08); opacity: 0.5; }
+            57%  { transform: scale(1.20); opacity: 0.62; }
+            68%  { transform: scale(0.55); opacity: 0.15; }
+            77%  { transform: scale(1.15); opacity: 0.52; }
+            82%, 90% { transform: scale(1.26); opacity: 0.68; }
+            100% { transform: scale(1); opacity: 0.45; }
+        }
+
+        /* Rương nảy nhẹ khi vừa bung nắp */
+        @keyframes chestOpenRecoil {
+            0%   { transform: translate(0, 0) scale(1.18, 0.82); }
+            35%  { transform: translate(0, -18px) scale(0.95, 1.06); }
+            70%  { transform: translate(0, 4px) scale(1.03, 0.97); }
+            100% { transform: translate(0, 0) scale(1, 1); }
+        }
+
+        .chest-pivot {
+            transform-origin: 400px 445px;
+        }
+
+        .shadow-pivot {
+            transform-origin: 400px 445px;
+        }
+
+        .bouncing .chest-pivot {
+            animation: chestBounce3Times 1.95s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+        }
+
+        .bouncing .shadow-pivot {
+            animation: shadowBounce3Times 1.95s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+        }
+
+        .opened .chest-pivot {
+            animation: chestOpenRecoil 0.55s ease-out forwards;
+        }
+
+        /* Chuyển động nắp rương đóng/mở */
+        #chest-lid-closed {
+            transform-origin: 400px 330px;
+            transition: transform 0.22s ease-in, opacity 0.15s ease-in;
+        }
+
+        .opened #chest-lid-closed {
+            transform: translateY(-45px) rotate(-18deg) scale(0.92);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #chest-lid-open {
+            transform-origin: 395px 305px;
+            transform: rotate(35deg) scale(0.75);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.18, 1.45, 0.38, 1), opacity 0.18s ease-out;
+        }
+
+        .opened #chest-lid-open {
+            transform: rotate(0deg) scale(1);
+            opacity: 1;
+        }
+
+        /* Ổ khóa văng ra khi mở bung */
+        #chest-lock {
+            transform-origin: 368px 346px;
+            transition: transform 0.55s cubic-bezier(0.18, 1.35, 0.4, 1), opacity 0.4s ease-out;
+        }
+
+        .opened #chest-lock {
+            transform: translate(-15px, 95px) rotate(-25deg) scale(0.85);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Kho báu trào lên từ lòng rương */
+        #treasure-inside {
+            transform-origin: 395px 340px;
+            transform: translateY(45px) scale(0.2);
+            opacity: 0;
+            transition: transform 0.6s cubic-bezier(0.18, 1.5, 0.4, 1) 0.06s, opacity 0.25s ease-out 0.05s;
+        }
+
+        .opened #treasure-inside {
+            transform: translateY(0px) scale(1);
+            opacity: 1;
+        }
+
+        /* Hào quang bừng sáng */
+        #aura-container {
+            transform-origin: 400px 330px;
+            transform: scale(0);
+            opacity: 0;
+            transition: transform 0.75s cubic-bezier(0.16, 1.35, 0.3, 1), opacity 0.4s ease-out;
+        }
+
+        .opened #aura-container {
+            transform: scale(1.15);
+            opacity: 1;
+        }
+
+        /* Ánh sáng lóe lên khoảnh khắc mở rương */
+        #burst-flash {
+            transform-origin: 400px 330px;
+            transform: scale(0);
+            opacity: 0;
+        }
+
+        @keyframes flashBang {
+            0%   { transform: scale(0.2); opacity: 1; }
+            40%  { transform: scale(1.6); opacity: 0.9; }
+            100% { transform: scale(2.2); opacity: 0; }
+        }
+
+        .opened #burst-flash {
+            animation: flashBang 0.65s ease-out forwards;
+        }
+
+        /* Hạt lấp lánh bay lên */
+        @keyframes floatSparkle {
+            0%, 100% { transform: translateY(0px) scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: translateY(-14px) scale(1.25) rotate(15deg); opacity: 0.75; }
+        }
+
+        .sparkle-item {
+            animation: floatSparkle 2.4s ease-in-out infinite;
+        }
+
+        /* Đồng xu và đá quý văng ra ngoài */
+        .flying-particle {
+            opacity: 0;
+            transform-origin: center;
+        }
+
+        .opened .flying-particle {
+            animation: particleExplode 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes particleExplode {
+            0% {
+                transform: translate(0, 0) scale(0.2) rotate(0deg);
+                opacity: 1;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--rot));
+                opacity: 0;
+            }
+        }
+
+        /* Nút bấm phong cách Game */
+        .game-btn {
+            background: linear-gradient(180deg, #ffe94d 0%, #f59c1a 100%);
+            border: 5px solid #120401;
+            box-shadow: 0 7px 0 #120401, inset 0 4px 0 rgba(255, 255, 255, 0.65);
+            color: #3d1403;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+            transition: all 0.12s ease;
+        }
+
+        .game-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 9px 0 #120401, inset 0 4px 0 rgba(255, 255, 255, 0.75);
+            filter: brightness(1.05);
+        }
+
+        .game-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 2px 0 #120401, inset 0 2px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        /* Con trỏ gợi ý click vào rương */
+        #chest-interactive {
+            cursor: pointer;
+        }
+        #chest-interactive:hover {
+            filter: brightness(1.04);
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col items-center justify-between py-6 px-4 select-none">
+
+    <!-- Tiêu đề và Hướng dẫn -->
+    <div class="text-center z-20 pointer-events-none mt-2">
+        <h1 class="text-3xl md:text-5xl font-bold text-[#ffea56] tracking-wider uppercase"
+            style="text-shadow: 0 5px 0 #120401, -2px -2px 0 #120401, 2px -2px 0 #120401, -2px 2px 0 #120401, 2px 2px 0 #120401;">
+            Rương Kho Báu Hoàng Gia
+        </h1>
+        <p id="status-text" class="text-[#f7c873] text-base md:text-lg mt-2 font-semibold tracking-wide opacity-90">
+            Nhấn vào chiếc rương hoặc nút bên dưới để kích hoạt!
+        </p>
+    </div>
+
+    <!-- Khu vực Hiển thị SVG Chính -->
+    <div class="relative w-full max-w-3xl flex-1 flex items-center justify-center overflow-visible">
+        <svg id="scene-svg" viewBox="0 0 800 600" class="w-full h-full max-h-[72vh] overflow-visible">
+            <defs>
+                <!-- Gradient Hào Quang Tâm -->
+                <radialGradient id="auraGlowGrad" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+                    <stop offset="22%" stop-color="#fff380" stop-opacity="0.95" />
+                    <stop offset="55%" stop-color="#ff9d00" stop-opacity="0.55" />
+                    <stop offset="100%" stop-color="#ff5100" stop-opacity="0" />
+                </radialGradient>
+
+                <!-- Gradient Tia Sáng Hào Quang -->
+                <linearGradient id="rayGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#fff89e" stop-opacity="0" />
+                    <stop offset="50%" stop-color="#ffea56" stop-opacity="0.55" />
+                    <stop offset="100%" stop-color="#ffae00" stop-opacity="0" />
+                </linearGradient>
+
+                <!-- Gradient Viền Vàng Rương -->
+                <linearGradient id="goldTrimGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#fff36b" />
+                    <stop offset="28%" stop-color="#ffd83b" />
+                    <stop offset="72%" stop-color="#f59c1a" />
+                    <stop offset="100%" stop-color="#d96b0b" />
+                </linearGradient>
+
+                <!-- Gradient Mặt Bên Vàng Đậm -->
+                <linearGradient id="goldSideGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#f29727" />
+                    <stop offset="100%" stop-color="#b8540b" />
+                </linearGradient>
+
+                <!-- Gradient Gỗ Đỏ Cam Thân Rương -->
+                <linearGradient id="redWoodGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ff9d66" />
+                    <stop offset="18%" stop-color="#e84c15" />
+                    <stop offset="75%" stop-color="#c93608" />
+                    <stop offset="100%" stop-color="#962100" />
+                </linearGradient>
+
+                <!-- Gradient Đá Quý Hồng Ngọc -->
+                <linearGradient id="rubyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ff7597" />
+                    <stop offset="45%" stop-color="#ff0a47" />
+                    <stop offset="100%" stop-color="#9e0027" />
+                </linearGradient>
+
+                <!-- Gradient Đá Quý Lam Ngọc -->
+                <linearGradient id="sapphireGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#80f5ff" />
+                    <stop offset="50%" stop-color="#008cff" />
+                    <stop offset="100%" stop-color="#003687" />
+                </linearGradient>
+
+                <!-- Gradient Đá Quý Lục Bảo -->
+                <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#9eff80" />
+                    <stop offset="50%" stop-color="#14cc33" />
+                    <stop offset="100%" stop-color="#046618" />
+                </linearGradient>
+
+                <!-- Mẫu Đồng Xu Vàng -->
+                <g id="gold-coin">
+                    <circle cx="0" cy="0" r="18" fill="#ffd83b" stroke="#120401" stroke-width="5" />
+                    <circle cx="0" cy="0" r="12" fill="#f59c1a" />
+                    <path d="M-4,-6 L4,-6 L4,6 L-4,6 Z" fill="#fff36b" />
+                </g>
+
+                <!-- Mẫu Ngôi Sao Lấp Lánh -->
+                <g id="sparkle-star">
+                    <path d="M 0,-18 Q 0,0 18,0 Q 0,0 0,18 Q 0,0 -18,0 Q 0,0 0,-18 Z" fill="#ffffff" stroke="#fff380" stroke-width="2" />
+                    <circle cx="0" cy="0" r="4" fill="#ffffff" />
+                </g>
+            </defs>
+
+            <!-- ================= LỚP 1: HÀO QUANG TỎA SÁNG PHÍA SAU ================= -->
+            <g id="aura-container">
+                <!-- Quầng sáng tròn lớn -->
+                <circle cx="400" cy="320" r="290" fill="url(#auraGlowGrad)" />
+
+                <!-- Chùm tia sáng xoay thuận chiều kim đồng hồ -->
+                <g class="aura-rays">
+                    <polygon points="400,330 355,-30 445,-30" fill="url(#rayGrad)" />
+                    <polygon points="400,330 355,690 445,690" fill="url(#rayGrad)" />
+                    <polygon points="400,330 40,285 40,375" fill="url(#rayGrad)" />
+                    <polygon points="400,330 760,285 760,375" fill="url(#rayGrad)" />
+                    <polygon points="400,330 115,95 180,40" fill="url(#rayGrad)" />
+                    <polygon points="400,330 685,565 620,620" fill="url(#rayGrad)" />
+                    <polygon points="400,330 685,95 620,40" fill="url(#rayGrad)" />
+                    <polygon points="400,330 115,565 180,620" fill="url(#rayGrad)" />
+                </g>
+
+                <!-- Chùm tia sáng phụ xoay ngược chiều kim đồng hồ -->
+                <g class="aura-rays-reverse" opacity="0.7">
+                    <polygon points="400,330 240,-10 300,-30" fill="url(#rayGrad)" />
+                    <polygon points="400,330 560,670 500,690" fill="url(#rayGrad)" />
+                    <polygon points="400,330 740,170 760,230" fill="url(#rayGrad)" />
+                    <polygon points="400,330 60,490 40,430" fill="url(#rayGrad)" />
+                    <polygon points="400,330 510,-15 570,10" fill="url(#rayGrad)" />
+                    <polygon points="400,330 290,675 230,650" fill="url(#rayGrad)" />
+                    <polygon points="400,330 65,160 95,105" fill="url(#rayGrad)" />
+                    <polygon points="400,330 735,500 705,555" fill="url(#rayGrad)" />
+                </g>
+
+                <!-- Vòng hào quang năng lượng kép -->
+                <circle cx="400" cy="320" r="195" fill="none" stroke="#fff799" stroke-width="4" stroke-dasharray="18 14" opacity="0.75" class="aura-rays" />
+                <circle cx="400" cy="320" r="235" fill="none" stroke="#ffcf40" stroke-width="3" stroke-dasharray="10 22" opacity="0.55" class="aura-rays-reverse" />
+            </g>
+
+            <!-- ================= LỚP 2: BÓNG ĐỔ DƯỚI ĐÁY RƯƠNG ================= -->
+            <ellipse class="shadow-pivot" cx="405" cy="452" rx="180" ry="26" fill="#290910" opacity="0.45" />
+
+            <!-- ================= LỚP 3: CỤM CHIẾC RƯƠNG KHO BÁU (DỰNG CHUẨN THEO ẢNH MẪU) ================= -->
+            <g id="chest-interactive" class="chest-pivot">
+
+                <!-- 3.1: NẮP RƯƠNG KHI ĐÃ MỞ BUNG (Nằm lớp sau kho báu) -->
+                <g id="chest-lid-open">
+                    <!-- Khung vòm nắp mở ngửa ra sau -->
+                    <path d="M 235,310
+                             C 215,215 245,125 320,105
+                             C 400,85 505,95 555,130
+                             C 590,155 595,235 560,315 Z"
+                          fill="url(#redWoodGrad)" stroke="#120401" stroke-width="14" stroke-linejoin="round" />
+
+                    <!-- 3 Đai vàng trên nắp khi mở -->
+                    <path d="M 235,310 C 218,220 245,135 295,112 L 340,108 C 295,135 275,220 288,310 Z"
+                          fill="url(#goldTrimGrad)" stroke="#120401" stroke-width="11" stroke-linejoin="round" />
+                    <path d="M 355,310 C 345,210 368,120 412,96 L 460,100 C 420,125 400,210 410,310 Z"
+                          fill="url(#goldTrimGrad)" stroke="#120401" stroke-width="11" stroke-linejoin="round" />
+                    <path d="M 480,310 C 475,215 495,130 535,116 C 575,135 588,225 560,315 Z"
+                          fill="url(#goldTrimGrad)" stroke="#120401" stroke-width="11" stroke-linejoin="round" />
+
+                    <!-- Lòng trong của nắp rương mở -->
+                    <ellipse cx="400" cy="245" rx="145" ry="62" fill="#4f1203" stroke="#120401" stroke-width="11" />
+                    <ellipse cx="400" cy="252" rx="125" ry="46" fill="#2e0901" />
+
+                    <!-- Gờ vành vàng của nắp mở -->
+                    <path d="M 225,295 C 320,245 480,245 575,300 L 568,324 C 480,275 320,275 232,320 Z"
+                          fill="url(#goldTrimGrad)" stroke="#120401" stroke-width="11" stroke-linejoin="round" />
+                </g>
+
+                <!-- 3.2: LÒNG RƯƠNG BÊN TRONG & KHO BÁU TRÀO LÊN -->
+                <g id="chest-interior">
+                    <!-- Hốc tối lòng rương -->
+                    <path d="M 235,332 L 565,335 L 550,395 L 250,390 Z" fill="#2b0700" />
+
+                    <!-- KHO BÁU BÊN TRONG (Vàng, Kim cương, Hồng ngọc, Vương miện) -->
+                    <g id="treasure-inside">
+                        <!-- Quầng sáng vàng từ đáy rương hắt lên -->
+                        <ellipse cx="398" cy="325" rx="158" ry="68" fill="#ffea56" opacity="0.65" filter="blur(8px)" />
+
+                        <!-- Núi tiền vàng nền sau -->
+                        <path d="M 242,348 Q 315,245 400,265 Q 485,240 555,348 Z"
+                              fill="#f59c1a" stroke="#120401" stroke-width="10" stroke-linejoin="round" />
+                        <path d="M 260,348 Q 340,265 415,280 Q 475,260 540,348 Z"
+                              fill="#ffd83b" />
+
+                        <!-- Thỏi vàng nguyên khối bên trái -->
+                        <g transform="translate(295, 295) rotate(-18)">
+                            <polygon points="-38,15 -26,-15 26,-15 38,15" fill="url(#goldTrimGrad)" stroke="#120401" stroke-width="8" stroke-linejoin="round" />
+                            <polygon points="-22,-8 22,-8 28,6 -28,6" fill="#fff799" />
+                        </g>
+
+                        <!-- Thỏi vàng nguyên khối bên phải -->
+                        <g transform="translate(495, 298) rotate(22)">
+                            <polygon points="-38,15 -26,-15 26,-15 38,15" fill="url(#goldTrimGrad)" stroke="#120401" stroke-width="8" stroke-linejoin="round" />
+                            <polygon points="-22,-8 22,-8 28,6 -28,6" fill="#fff799" />
+                        </g>
+
+                        <!-- Các đồng xu vàng xếp lớp -->
+                        <use href="#gold-coin" x="268" y="330" />
+                        <use href="#gold-coin" x="305" y="322" />
+                        <use href="#gold-coin" x="342" y="315" />
+                        <use href="#gold-coin" x="455" y="318" />
+                        <use href="#gold-coin" x="492" y="328" />
+                        <use href="#gold-coin" x="528" y="335" />
+                        <use href="#gold-coin" x="375" y="328" />
+                        <use href="#gold-coin" x="422" y="326" />
+
+                        <!-- Đá quý Lam Ngọc (Sapphire) bên trái -->
+                        <g transform="translate(328, 290) rotate(-15)">
+                            <polygon points="0,-28 24,-10 16,22 -16,22 -24,-10" fill="url(#sapphireGrad)" stroke="#120401" stroke-width="8" stroke-linejoin="round" />
+                            <polygon points="0,-16 12,-6 8,10 -8,10 -12,-6" fill="#b3faff" opacity="0.7" />
+                        </g>
+
+                        <!-- Đá quý Lục Bảo (Emerald) bên phải -->
+                        <g transform="translate(468, 288) rotate(16)">
+                            <polygon points="-16,-24 16,-24 26,0 16,24 -16,24 -26,0" fill="url(#emeraldGrad)" stroke="#120401" stroke-width="8" stroke-linejoin="round" />
+                            <polygon points="-10,-14 10,-14 16,0 10,14 -10,14 -16,0" fill="#d4ffbf" opacity="0.65" />
+                        </g>
+
+                        <!-- Vương Miện Hoàng Gia & Đại Hồng Ngọc ở chính giữa -->
+                        <g transform="translate(398, 255)">
+                            <!-- Thân vương miện -->
+                            <path d="M -52,32 L -64,-18 L -28,8 L 0,-32 L 28,8 L 64,-18 L 52,32 Z"
+                                  fill="url(#goldTrimGrad)" stroke="#120401" stroke-width="9" stroke-linejoin="round" />
+                            <!-- Đính ngọc trên đỉnh vương miện -->
+                            <circle cx="-64" cy="-22" r="8" fill="#ff0a47" stroke="#120401" stroke-width="5" />
+                            <circle cx="0" cy="-36" r="10" fill="#00e1ff" stroke="#120401" stroke-width="5" />
+                            <circle cx="64" cy="-22" r="8" fill="#ff0a47" stroke="#120401" stroke-width="5" />
+                            <!-- Viên Hồng Ngọc (Ruby) trung tâm -->
+                            <polygon points="0,-8 18,8 0,26 -18,8" fill="url(#rubyGrad)" stroke="#120401" stroke-width="6" stroke-linejoin="round" />
+                            <polygon points="-6,4 0,-2 6,4 0,10" fill="#ffb8c9" />
+                        </g>
+
+                        <!-- Chuỗi ngọc trai tràn mép rương -->
+                        <circle cx="282" cy="342" r="9" fill="#fff5f7" stroke="#120401" stroke-width="5" />
+                        <circle cx="298" cy="348" r="9" fill="#fff5f7" stroke="#120401" stroke-width="5" />
+                        <circle cx="315" cy="346" r="9" fill="#fff5f7" stroke="#120401" stroke-width="5" />
+
+                        <!-- Các ngôi sao lấp lánh trên kho báu -->
+                        <use href="#sparkle-star" x="398" y="205" class="sparkle-item" style="animation-delay: 0s;" />
+                        <use href="#sparkle-star" x="310" y="245" class="sparkle-item" style="animation-delay: 0.4s; transform: scale(0.8);" />
+                        <use href="#sparkle-star" x="488" y="240" class="sparkle-item" style="animation-delay: 0.8s; transform: scale(0.85);" />
+                        <use href="#sparkle-star" x="255" y="295" class="sparkle-item" style="animation-delay: 1.2s; transform: scale(0.7);" />
+                        <use href="#sparkle-star" x="545" y="290" class="sparkle-item" style="animation-delay: 0.6s; transform: scale(0.75);" />
+                    </g>
+                </g>
+
+                <!-- 3.3: THÂN DƯỚI CỦA RƯƠNG (Dựng chuẩn từng đường nét theo ảnh gốc) -->
+                <g id="chest-base">
+                    <!-- Viền đen tổng thể phần đế -->
+                    <path d="M 225,330 L 242,425 C 244,436 254,442 268,443 L 520,452 C 542,452 558,444 562,430 L 575,330 Z"
+                          fill="#120401" stroke="#120401" stroke-width="14" stroke-linejoin="round" />
+
+                    <!-- 2 Ô gỗ đỏ mặt trước đáy rương -->
+                    <path d="M 300,335 L 310,440 L 448,445 L 445,335 Z" fill="#b02a05" />
+                    <path d="M 305,345 L 312,428 L 442,432 L 440,345 Z" fill="#d93b0b" />
+
+                    <!-- Chân vàng bên trái -->
+                    <path d="M 228,332 L 244,424 C 246,434 254,439 266,440 L 306,442 C 314,442 318,436 318,428 L 312,332 Z"
+                          fill="url(#goldTrimGrad)" stroke="#120401" stroke-width="11" stroke-linejoin="round" />
+                    <!-- Cạnh vát bên trong chân trái -->
+                    <path d="M 296,335 L 303,440 L 318,435 L 314,335 Z" fill="#d97214" />
+                    <!-- Bóng sáng chân trái -->
+                    <path d="M 244,350 L 254,422 L 292,424 L 285,350 Z" fill="#ffbe30" />
+
+                    <!-- Chân vàng mặt trước bên phải -->
+                    <path d="M 432,335 L 430,434 C 430,444 438,448 450,449 L 512,451 C 524,451 532,445 534,433 L 542,335 Z"
+                          fill="url(#goldTrimGrad)" stroke="#120401" stroke-width="11" stroke-linejoin="round" />
+                    <!-- Bóng sáng chân phải -->
+                    <path d="M 448,350 L 446,432 L 505,434 L 512,350 Z" fill="#ffbe30" />
+
+                    <!-- Chân vàng mặt hông phải (Tạo khối 3D góc nghiêng) -->
+                    <path d="M 536,332 L 526,448 C 544,447 556,439 560,425 L 572,332 Z"
+                          fill="url(#goldSideGrad)" stroke="#120401" stroke-width="11" stroke-linejoin="round" />
+
+                    <!-- Khe tối hông phải -->
+                    <path d="M 526,355 L 520,428 L 534,425 L 538,355 Z" fill="#8c3305" />
+
+                    <!-- Đai vàng ngang phần thân giữa (Chia nửa trên/dưới khi mở) -->
+                    <path d="M 206,315 C 202,328 205,346 218,350 L 528,356 C 545,356 582,342 588,328 L 588,312 L 206,315 Z"
+                          fill="url(#goldTrimGrad)" stroke="#120401" stroke-width="12" stroke-linejoin="round" />
+                    <!-- Đổ bóng mặt dưới đai ngang -->
+                    <path d="M 218,338 L 525,344 L 578,326 L 578,336 C 568,346 540,354 525,354 L 222,348 Z"
+                          fill="#e07b16" />
+                </g>
+
+                <!-- 3.4: NẮP RƯƠNG KHI ĐANG ĐÓNG (Giống hệt 100% ảnh mẫu) -->
+                <g id="chest-lid-closed">
+                    <!-- Khung nền gỗ đỏ cam với viền đen dày -->
+                    <path d="M 214,296
+                             C 214,205 245,148 312,135
+                             C 332,126 358,125 385,127
+                             C 410,115 446,115 472,130
+                             C 492,131 515,134 532,138
+                             C 572,148 590,210 584,296 Z"
+                          fill="url(#redWoodGrad)" stroke="#120401" stroke-width="15" stroke-linejoin="round" />
+
+                    <!-- Vệt sáng bóng (Highlight) cam nhạt trên đỉnh vòm gỗ đỏ -->
+                    <path d="M 312,175 C 325,142 352,132 385,134 L 372,182 C 348,180 328,180 312,175 Z"
+                          fill="#ff9e66" />
+                    <path d="M 455,182 C 470,145 495,136 528,142 L 515,190 C 492,186 472,185 455,182 Z"
+                          fill="#ff9e66" />
+
+                    <!-- Vệt tối chiều sâu thân gỗ -->
+                    <path d="M 295,245 L 495,255 L 495,298 L 295,298 Z" fill="#b32b04" opacity="0.6" />
+
+                    <!-- ĐAI VÀNG VÒM SỐ 1 (BÊN TRÁI) -->
+                    <!-- Cạnh vát cam đậm bên phải đai 1 -->
+                    <path d="M 284,296 C 284,210 312,148 360,130 L 332,126 C 282,145 256,210 256,296 Z"
+                          fill="#e07e1b" stroke="#120401" stroke-width="10" stroke-linejoin="round" />
+                    <!-- Mặt chính vàng tươi đai 1 -->
+                    <path d="M 212,296 C 212,205 242,146 298,132 C 318,127 338,126 352,130 C 306,152 282,212 282,296 Z"
+                          fill="url(#goldTrimGrad)" stroke="#120401" stroke-width="12" stroke-linejoin="round" />
+                    <!-- Ánh sáng vàng chanh trên đỉnh đai 1 -->
+                    <path d="M 226,225 C 236,172 262,144 305,136 L 328,136 C 292,152 272,182 266,228 Z"
+                          fill="#fff566" />
+
+                    <!-- ĐAI VÀNG VÒM SỐ 2 (CHÍNH GIỮA) -->
+                    <!-- Cạnh vát cam đậm bên phải đai 2 -->
+                    <path d="M 412,296 C 414,205 440,140 480,130 L 456,120 C 415,132 390,200 388,296 Z"
+                          fill="#e07e1b" stroke="#120401" stroke-width="10" stroke-linejoin="round" />
+                    <!-- Mặt chính vàng tươi đai 2 -->
+                    <path d="M 340,296 C 342,200 370,134 416,120 C 436,115 458,118 472,126 C 432,142 410,205 408,296 Z"
+                          fill="url(#goldTrimGrad)" stroke="#120401" stroke-width="12" stroke-linejoin="round" />
+                    <!-- Ánh sáng vàng chanh trên đỉnh đai 2 -->
+                    <path d="M 356,205 C 368,155 392,128 422,124 L 452,125 C 422,138 404,165 396,208 Z"
+                          fill="#fff566" />
+
+                    <!-- ĐAI VÀNG VÒM SỐ 3 (BÊN PHẢI & MẶT HÔNG 3D) -->
+                    <!-- Mặt hông vòm cong bên phải -->
+                    <path d="M 522,298 C 524,208 542,148 564,150 C 586,152 592,218 582,296 Z"
+                          fill="#eb8a1f" stroke="#120401" stroke-width="12" stroke-linejoin="round" />
+                    <!-- Hốc lõm tối ở hông phải (chuẩn theo ảnh mẫu) -->
+                    <path d="M 544,296 C 546,232 556,192 566,195 C 575,198 574,242 566,296 Z"
+                          fill="#b84309" stroke="#912f02" stroke-width="4" stroke-linejoin="round" />
+                    <!-- Mặt trước đai vàng 3 -->
+                    <path d="M 462,298 C 464,205 490,142 528,134 C 548,134 566,142 574,156 C 546,154 528,212 526,298 Z"
+                          fill="url(#goldTrimGrad)" stroke="#120401" stroke-width="12" stroke-linejoin="round" />
+                    <!-- Ánh sáng vàng chanh trên đỉnh đai 3 -->
+                    <path d="M 476,212 C 486,164 506,142 532,140 L 558,148 C 534,154 518,176 512,216 Z"
+                          fill="#fff566" />
+
+                    <!-- ĐAI VÀNG NGANG Ở GIỮA THÂN RƯƠNG -->
+                    <path d="M 206,290
+                             C 196,292 194,344 214,348
+                             L 528,354
+                             C 548,354 584,338 590,326
+                             C 596,312 596,282 582,282
+                             L 528,296
+                             L 206,290 Z"
+                          fill="url(#goldTrimGrad)" stroke="#120401" stroke-width="13" stroke-linejoin="round" />
+                    <!-- Mặt chính cam vàng của đai ngang -->
+                    <path d="M 214,306 L 524,312 L 522,346 L 216,340 Z" fill="#f5a122" />
+                    <!-- Cạnh sáng gờ trên đai ngang -->
+                    <path d="M 208,296 L 526,302 L 582,288 L 580,298 L 526,312 L 210,306 Z" fill="#fff36b" />
+                    <!-- Mặt vát tối bên phải đai ngang -->
+                    <path d="M 526,312 L 584,296 L 582,324 L 524,346 Z" fill="#e08319" />
+                </g>
+
+                <!-- 3.5: Ổ KHÓA HÌNH THOI BO GÓC Ở TRUNG TÂM (Giống hệt ảnh mẫu) -->
+                <g id="chest-lock">
+                    <!-- Khung hình thoi bo tròn viền đen dày -->
+                    <path d="M 368,250
+                             C 386,250 456,306 456,330
+                             C 456,354 386,406 368,406
+                             C 350,406 284,354 284,330
+                             C 284,306 350,250 368,250 Z"
+                          fill="url(#goldTrimGrad)" stroke="#120401" stroke-width="14" stroke-linejoin="round" />
+
+                    <!-- Vát sáng vàng chanh nửa trên ổ khóa -->
+                    <path d="M 368,258
+                             C 382,258 444,308 444,328
+                             C 444,335 436,342 428,348
+                             C 428,325 380,280 368,280
+                             C 356,280 308,325 308,348
+                             C 300,342 292,335 292,328
+                             C 292,308 354,258 368,258 Z"
+                          fill="#fff566" />
+
+                    <!-- Vát cam đậm nửa dưới ổ khóa -->
+                    <path d="M 296,338
+                             C 312,356 354,386 368,386
+                             C 382,386 424,356 440,338
+                             C 425,362 382,398 368,398
+                             C 354,398 311,362 296,338 Z"
+                          fill="#e07b14" />
+
+                    <!-- Lỗ khóa ngôi sao 4 cánh màu nâu sẫm ở giữa -->
+                    <path d="M 368,284
+                             C 375,308 386,319 412,326
+                             C 386,333 375,344 368,370
+                             C 361,344 350,333 324,326
+                             C 350,319 361,308 368,284 Z"
+                          fill="#6e3512" stroke="#4a2006" stroke-width="5" stroke-linejoin="round" />
+                </g>
+
+                <!-- 3.6: CÁC HẠT KHO BÁU VĂNG TUNG TÓE KHI MỞ BUNG -->
+                <g id="explosion-particles" transform="translate(400, 310)">
+                    <use href="#gold-coin" class="flying-particle" style="--tx: -210px; --ty: -160px; --rot: -140deg;" />
+                    <use href="#gold-coin" class="flying-particle" style="--tx: 220px; --ty: -150px; --rot: 160deg; animation-delay: 0.04s;" />
+                    <use href="#gold-coin" class="flying-particle" style="--tx: -160px; --ty: -230px; --rot: -90deg; animation-delay: 0.08s;" />
+                    <use href="#gold-coin" class="flying-particle" style="--tx: 150px; --ty: -240px; --rot: 110deg; animation-delay: 0.02s;" />
+                    <use href="#gold-coin" class="flying-particle" style="--tx: -250px; --ty: -60px; --rot: -200deg; animation-delay: 0.06s;" />
+                    <use href="#gold-coin" class="flying-particle" style="--tx: 260px; --ty: -50px; --rot: 190deg; animation-delay: 0.05s;" />
+                    <use href="#sparkle-star" class="flying-particle" style="--tx: 0px; --ty: -260px; --rot: 90deg;" />
+                    <use href="#sparkle-star" class="flying-particle" style="--tx: -120px; --ty: -190px; --rot: -60deg; animation-delay: 0.05s;" />
+                    <use href="#sparkle-star" class="flying-particle" style="--tx: 130px; --ty: -195px; --rot: 75deg; animation-delay: 0.07s;" />
+                </g>
+            </g>
+
+            <!-- ================= LỚP 4: ÁNH CHỚP BÙNG NỔ KHI BUNG NẮP ================= -->
+            <circle id="burst-flash" cx="400" cy="310" r="180" fill="url(#auraGlowGrad)" pointer-events="none" />
+        </svg>
+    </div>
+
+    <!-- Thanh Điều Khiển Nút Bấm -->
+    <div class="flex flex-wrap items-center justify-center gap-4 z-20 mb-2">
+        <button id="btn-open" class="game-btn px-8 py-3.5 rounded-2xl text-xl md:text-2xl font-bold tracking-wide uppercase cursor-pointer">
+            ✨ Mở Rương Ngay
+        </button>
+        <button id="btn-reset" class="game-btn px-6 py-3.5 rounded-2xl text-xl md:text-2xl font-bold tracking-wide uppercase cursor-pointer hidden"
+                style="background: linear-gradient(180deg, #ff9e66 0%, #e84c15 100%); color: #fff; text-shadow: 0 2px 0 #120401;">
+            🔄 Đóng & Phát Lại
+        </button>
+    </div>
+
+    <script>
+        const sceneSvg = document.getElementById('scene-svg');
+        const chestInteractive = document.getElementById('chest-interactive');
+        const btnOpen = document.getElementById('btn-open');
+        const btnReset = document.getElementById('btn-reset');
+        const statusText = document.getElementById('status-text');
+
+        let isAnimating = false;
+        let isOpened = false;
+        let bounceTimer = null;
+        let audioInitialized = false;
+        let synth = null;
+        let metalSynth = null;
+
+        // Khởi tạo bộ tạo âm thanh bằng Tone.js (không dùng file âm thanh ngoài)
+        async function initAudio() {
+            if (audioInitialized) return;
+            try {
+                await Tone.start();
+                synth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: "triangle" },
+                    envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.6 }
+                }).toDestination();
+                synth.volume.value = -6;
+
+                metalSynth = new Tone.MembraneSynth({
+                    pitchDecay: 0.04,
+                    octaves: 3,
+                    oscillator: { type: "sine" },
+                    envelope: { attack: 0.001, decay: 0.18, sustain: 0.01, release: 0.2 }
+                }).toDestination();
+                metalSynth.volume.value = -4;
+
+                audioInitialized = true;
+            } catch (e) {
+                // Bỏ qua nếu trình duyệt chặn tự động phát âm thanh
+            }
+        }
+
+        // Phát âm thanh theo từng nhịp bật nảy và khi mở bung rương
+        function playChestSoundSequence() {
+            if (!audioInitialized || !synth || !metalSynth) return;
+            const now = Tone.now();
+
+            // Nhịp bật 1
+            metalSynth.triggerAttackRelease("G2", "16n", now + 0.12);
+            synth.triggerAttackRelease(["G4"], "16n", now + 0.18);
+
+            // Nhịp bật 2 (Cao hơn)
+            metalSynth.triggerAttackRelease("A2", "16n", now + 0.62);
+            synth.triggerAttackRelease(["B4"], "16n", now + 0.72);
+
+            // Nhịp bật 3 (Cao trào)
+            metalSynth.triggerAttackRelease("B2", "16n", now + 1.15);
+            synth.triggerAttackRelease(["D5"], "16n", now + 1.25);
+
+            // Rung tích tụ năng lượng
+            metalSynth.triggerAttackRelease("C3", "32n", now + 1.62);
+            metalSynth.triggerAttackRelease("D3", "32n", now + 1.74);
+
+            // Khoảnh khắc bung nắp & hào quang tỏa sáng (Hợp âm chiến thắng)
+            synth.triggerAttackRelease(["C5", "E5", "G5"], "8n", now + 1.92);
+            synth.triggerAttackRelease(["E5", "G5", "B5", "D6"], "4n", now + 2.06);
+            synth.triggerAttackRelease(["G5", "B5", "D6", "G6"], "2n", now + 2.22);
+        }
+
+        // Hàm kích hoạt chuỗi hoạt ảnh: Bật 3 lần -> Mở bung -> Kho báu & Hào quang
+        async function triggerOpenChest() {
+            if (isAnimating) return;
+
+            await initAudio();
+
+            // Nếu đang mở thì đóng lại trước rồi chạy lại từ đầu
+            if (isOpened) {
+                resetChestState();
+                setTimeout(startBounceAndOpen, 80);
+            } else {
+                startBounceAndOpen();
+            }
+        }
+
+        function startBounceAndOpen() {
+            isAnimating = true;
+            isOpened = false;
+
+            btnOpen.classList.add('opacity-60', 'pointer-events-none');
+            btnReset.classList.add('hidden');
+            statusText.textContent = "Chiếc rương đang rung lắc dữ dội... (1... 2... 3!)";
+
+            // Bắt đầu class bật nảy 3 lần
+            sceneSvg.classList.remove('opened');
+            void sceneSvg.offsetWidth; // Reflow để reset CSS animation
+            sceneSvg.classList.add('bouncing');
+
+            playChestSoundSequence();
+
+            // Đúng lúc kết thúc 3 nhịp bật và nén (1.92 giây), mở bung nắp rương và tỏa hào quang
+            clearTimeout(bounceTimer);
+            bounceTimer = setTimeout(() => {
+                sceneSvg.classList.remove('bouncing');
+                sceneSvg.classList.add('opened');
+
+                isAnimating = false;
+                isOpened = true;
+
+                statusText.textContent = "🎉 KHO BÁU HUYỀN THOẠI ĐÃ XUẤT HIỆN! 🎉";
+                btnOpen.classList.add('hidden');
+                btnOpen.classList.remove('opacity-60', 'pointer-events-none');
+                btnReset.classList.remove('hidden');
+            }, 1920);
+        }
+
+        // Hàm đưa rương về trạng thái đóng ban đầu
+        function resetChestState() {
+            clearTimeout(bounceTimer);
+            isAnimating = false;
+            isOpened = false;
+
+            sceneSvg.classList.remove('bouncing', 'opened');
+            statusText.textContent = "Nhấn vào chiếc rương hoặc nút bên dưới để kích hoạt!";
+            btnOpen.classList.remove('hidden', 'opacity-60', 'pointer-events-none');
+            btnReset.classList.add('hidden');
+        }
+
+        // Gắn sự kiện click
+        btnOpen.addEventListener('click', triggerOpenChest);
+        chestInteractive.addEventListener('click', triggerOpenChest);
+        btnReset.addEventListener('click', () => {
+            resetChestState();
+            setTimeout(triggerOpenChest, 150);
+        });
+
+        // Tự động chạy hoạt ảnh lần đầu sau 0.6 giây khi mở trang
+        window.onload = () => {
+            setTimeout(() => {
+                startBounceAndOpen();
+            }, 600);
+        };
+    </script>
+</body>
+</html>

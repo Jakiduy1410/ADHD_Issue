@@ -168,8 +168,8 @@
       childRoadmap: [taskDatabase['G1_MATH_01'], taskDatabase['G1_VIET_03'], taskDatabase['G1_MCQ_04']],
       currentRoadmapIndex: 0,
       
-      // Lộ trình hiển thị bên máy Mẹ cho bé đang chọn
-      parentChildRoadmap: [taskDatabase['G1_MATH_01'], taskDatabase['G1_VIET_03'], taskDatabase['G1_MCQ_04']],
+      // Lộ trình hiển thị bên máy Mẹ cho bé đang chọn (mặc định rỗng, nạp từ SQLite)
+      parentChildRoadmap: [],
       parentCurrentRoadmapIndex: 0,
 
       // Task đang giải quyết trong Focus Cockpit
@@ -252,6 +252,10 @@
             if (parentActive) {
               appState.parentSelectedKidId = parentActive.kid_id;
               appState.parentSelectedKidProfile = parentActive;
+              // Đồng bộ ngay lập tức lộ trình thực tế từ SQLite của bé này cho máy mẹ
+              if (typeof parentSelectChild === 'function') {
+                parentSelectChild(parentActive.kid_id);
+              }
             }
 
             if (typeof renderParentProfileCards === 'function') {
@@ -278,7 +282,18 @@
        ------------------------------------------------------------ */
     async function parentSelectChild(targetKidId) {
       if (!targetKidId) return;
+      // 0. Lưu selection của bé cũ trước khi đổi
+      const prevKidId = appState.parentSelectedKidId;
+      if (prevKidId && appState.selectedCatalogIds) {
+        if (!appState.childrenStates) appState.childrenStates = {};
+        if (!appState.childrenStates[prevKidId]) appState.childrenStates[prevKidId] = {};
+        appState.childrenStates[prevKidId].selectedCatalogIds = new Set(appState.selectedCatalogIds);
+      }
+
       appState.parentSelectedKidId = targetKidId;
+      // Khôi phục selection riêng biệt của bé mới (hoặc rỗng)
+      const cachedSel = appState.childrenStates && appState.childrenStates[targetKidId] && appState.childrenStates[targetKidId].selectedCatalogIds;
+      appState.selectedCatalogIds = cachedSel ? new Set(cachedSel) : new Set();
       try {
         if (typeof localStorage !== 'undefined') {
           localStorage.setItem('milo_parent_selected_kid_id', targetKidId);
@@ -334,6 +349,7 @@
       if (typeof renderParentAuditTimeline === 'function') renderParentAuditTimeline();
       if (typeof renderParentRoutinesCatalog === 'function') renderParentRoutinesCatalog();
       if (typeof renderParentCatalogList === 'function') renderParentCatalogList();
+      if (typeof updateBatchSummaryUI === 'function') updateBatchSummaryUI();
 
       if (typeof showToast === 'function') {
         showToast("Giám Sát Bé", `Đang xem tiến độ của ${child.avatar} ${child.name} (Lớp ${child.grade})`, "👩‍👧");

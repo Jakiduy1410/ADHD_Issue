@@ -453,10 +453,12 @@ class PairingSubmitRequest(BaseModel):
 class ChildStateUpdateRequest(BaseModel):
     stars: Optional[int] = None
     roadmap: Optional[List[Dict[str, Any]]] = None
+    child_roadmap: Optional[List[Dict[str, Any]]] = None
     current_roadmap_index: Optional[int] = None
     current_step_index: Optional[int] = None
     pending_ticket: Optional[Dict[str, Any]] = None
     routines: Optional[List[Dict[str, Any]]] = None
+    child_routine_roadmap: Optional[List[Dict[str, Any]]] = None
     completed_routine_ids: Optional[List[str]] = None
     photo_proofs: Optional[Dict[str, Any]] = None
 
@@ -649,18 +651,20 @@ async def update_child_state_endpoint(kid_id: str, req: ChildStateUpdateRequest)
     """Cập nhật trạng thái tiến độ bền vững vào SQLite."""
     if req.stars is not None:
         db.update_child_stars(kid_id, req.stars)
-    if req.roadmap is not None:
+    target_roadmap = req.roadmap if req.roadmap is not None else req.child_roadmap
+    if target_roadmap is not None:
         db.save_child_roadmap(
             kid_id,
-            req.roadmap,
+            target_roadmap,
             req.current_roadmap_index or 0,
             req.current_step_index or 0,
             req.pending_ticket,
         )
-    if req.routines is not None:
+    target_routines = req.routines if req.routines is not None else req.child_routine_roadmap
+    if target_routines is not None:
         db.save_child_routines(
             kid_id,
-            req.routines,
+            target_routines,
             req.completed_routine_ids,
             req.photo_proofs,
         )
@@ -1125,10 +1129,12 @@ async def websocket_sync_endpoint(
                 new_tasks = payload_dict.get("tasks", [])
                 if not new_tasks and isinstance(data.get("tasks"), list):
                     new_tasks = data.get("tasks")
-                if new_tasks and ev_kid_id == active_kid:
-                    room_state["child_roadmap"] = new_tasks
-                    room_state["current_roadmap_index"] = 0
-                    room_state["current_step_index"] = 0
+                if new_tasks:
+                    db.save_child_roadmap(ev_kid_id, new_tasks, 0, 0)
+                    if ev_kid_id == active_kid:
+                        room_state["child_roadmap"] = new_tasks
+                        room_state["current_roadmap_index"] = 0
+                        room_state["current_step_index"] = 0
             elif event_type == "KID_STEP_COMPLETED":
                 step_id = data.get("step_id")
                 points = data.get("dopamine_points", 25)
@@ -1151,6 +1157,7 @@ async def websocket_sync_endpoint(
             elif event_type == "ROADMAP_UPDATED":
                 new_roadmap = payload_dict.get("roadmap", [])
                 cur_idx = payload_dict.get("currentIdx", 0)
+                db.save_child_roadmap(ev_kid_id, new_roadmap, cur_idx, 0)
                 if ev_kid_id == active_kid:
                     room_state["child_roadmap"] = new_roadmap
                     room_state["current_roadmap_index"] = cur_idx
@@ -1158,6 +1165,7 @@ async def websocket_sync_endpoint(
                     room_state["roadmap_cleared"] = (len(new_roadmap) == 0)
             elif event_type == "ROUTINE_ASSIGN_BATCH":
                 new_routines = payload_dict.get("routines", [])
+                db.save_child_routines(ev_kid_id, new_routines, [], {})
                 if ev_kid_id == active_kid:
                     room_state["child_routine_roadmap"] = new_routines
                     room_state["routine_cleared"] = (len(new_routines) == 0)

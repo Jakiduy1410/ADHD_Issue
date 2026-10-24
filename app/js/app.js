@@ -68,9 +68,14 @@ window.addEventListener('DOMContentLoaded', () => {
       appState.totalSessionSeconds = saved.totalSessionSeconds;
     }
     if (saved.selectedCatalogIds && Array.isArray(saved.selectedCatalogIds)) {
-      const validIds = saved.selectedCatalogIds.filter(id => typeof id === 'string' && id.trim().length > 0);
-      if (validIds.length > 0) {
-        appState.selectedCatalogIds = new Set(validIds);
+      // Chỉ khôi phục nếu dữ liệu lưu đúng của bé mẹ đang chọn
+      if (!saved.kid_id || saved.kid_id === appState.parentSelectedKidId) {
+        const validIds = saved.selectedCatalogIds.filter(id => typeof id === 'string' && id.trim().length > 0);
+        if (validIds.length > 0) {
+          appState.selectedCatalogIds = new Set(validIds);
+        }
+      } else {
+        appState.selectedCatalogIds = new Set();
       }
     }
 

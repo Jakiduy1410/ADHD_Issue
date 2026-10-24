@@ -11,7 +11,7 @@ start "Milo Backend Server" cmd /k python src/api/server.py
 ping 127.0.0.1 -n 3 > nul
 
 echo [2/3] Dang khoi chay Ngrok HTTPS Tunnel cho Dien thoai...
-start "Milo Ngrok Tunnel" cmd /k "C:\Users\ADMIN\AppData\Local\ngrok\ngrok.exe" http 8000
+start "Milo Ngrok Tunnel" cmd /k "C:\Users\ADMIN\AppData\Local\ngrok\ngrok.exe" http 8000 --url https://moonshine-poem-shore.ngrok-free.dev
 
 ping 127.0.0.1 -n 3 > nul
 

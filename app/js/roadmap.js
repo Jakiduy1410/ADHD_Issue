@@ -3,7 +3,7 @@ window.UNLOCK_ALL_ROUTINES = false;
    MODULE: ISLAND QUEST ROADMAP & S-CURVE BÉZIER TRAIL
    ============================================================ */
     function renderChildIslandRoadmap() {
-      const rawRoadmap = (appState.parentChildRoadmap && appState.parentChildRoadmap.length > 0) ? appState.parentChildRoadmap : (Array.isArray(appState.childRoadmap) ? appState.childRoadmap : []);
+      const rawRoadmap = Array.isArray(appState.childRoadmap) ? appState.childRoadmap : [];
       const roadmap = rawRoadmap.filter(t => t && typeof t === 'object' && t.id && Array.isArray(t.steps) && t.steps.length > 0);
       const totalIslands = roadmap.length;
       const isAllCompleted = (totalIslands > 0 && appState.currentRoadmapIndex >= totalIslands);
@@ -306,7 +306,7 @@ window.UNLOCK_ALL_ROUTINES = false;
       appState.cleanedItems.clear();
       appState.numpadValue = "";
 
-      const rawRoadmap = (appState.parentChildRoadmap && appState.parentChildRoadmap.length > 0) ? appState.parentChildRoadmap : (Array.isArray(appState.childRoadmap) ? appState.childRoadmap : []);
+      const rawRoadmap = Array.isArray(appState.childRoadmap) ? appState.childRoadmap : [];
       const curIdx = Math.max(0, Math.min(appState.currentRoadmapIndex || 0, Math.max(0, rawRoadmap.length - 1)));
       const task = appState.activeTask || rawRoadmap[curIdx] || taskDatabase['G1_MATH_01'];
       appState.activeTask = task;
@@ -355,15 +355,11 @@ window.UNLOCK_ALL_ROUTINES = false;
         if (iconEl) iconEl.innerText = "🌟";
 
         const routinesDb = window.routineDatabase || {};
-        let routineList = (appState.parentChildRoutineRoadmap && appState.parentChildRoutineRoadmap.length > 0) ? appState.parentChildRoutineRoadmap : appState.childRoutineRoadmap;
+        let routineList = Array.isArray(appState.parentChildRoutineRoadmap)
+          ? appState.parentChildRoutineRoadmap
+          : ((appState.childrenStates && appState.childrenStates[appState.parentSelectedKidId]?.child_routine_roadmap) || []);
         if (routineList === undefined || routineList === null) {
-          routineList = [
-            routinesDb['routine_morning_bed'],
-            routinesDb['routine_afterschool_drop'],
-            routinesDb['routine_clean_desk'],
-            routinesDb['routine_night_teeth']
-          ].filter(Boolean);
-          appState.childRoutineRoadmap = routineList;
+          routineList = [];
         }
 
         const validRoutines = routineList.map(r => (typeof r === 'string' ? routinesDb[r] : r)).filter(Boolean);
@@ -438,7 +434,9 @@ window.UNLOCK_ALL_ROUTINES = false;
         if (subEl) subEl.innerText = `Các hòn đảo bài tập đang hiển thị trên Đảo Học Tập của ${currentKidName}`;
         if (iconEl) iconEl.innerText = "🏝️";
 
-        const rawRoadmap = (appState.parentChildRoadmap && appState.parentChildRoadmap.length > 0) ? appState.parentChildRoadmap : (Array.isArray(appState.childRoadmap) ? appState.childRoadmap : []);
+        const rawRoadmap = Array.isArray(appState.parentChildRoadmap)
+          ? appState.parentChildRoadmap
+          : ((appState.childrenStates && appState.childrenStates[appState.parentSelectedKidId]?.child_roadmap) || []);
         const roadmap = rawRoadmap.filter(t => t && typeof t === 'object' && t.id);
         if (badge) {
           badge.innerText = `${roadmap.length} đảo`;
@@ -498,7 +496,7 @@ window.UNLOCK_ALL_ROUTINES = false;
       const kidId = appState.parentSelectedKidId || 'kid_leo_01';
       const currentKid = appState.parentSelectedKidProfile || { name: 'Bé' };
       
-      const roadmapToEdit = Array.isArray(appState.parentChildRoadmap) ? appState.parentChildRoadmap : appState.childRoadmap;
+      const roadmapToEdit = Array.isArray(appState.parentChildRoadmap) ? appState.parentChildRoadmap : [];
       if (!Array.isArray(roadmapToEdit) || index < 0 || index >= roadmapToEdit.length) return;
       const removed = roadmapToEdit.splice(index, 1)[0];
 
@@ -508,6 +506,11 @@ window.UNLOCK_ALL_ROUTINES = false;
         appState.parentCurrentRoadmapIndex = roadmapToEdit.length - 1;
       }
       appState.parentChildRoadmap = roadmapToEdit;
+
+      if (!appState.childrenStates) appState.childrenStates = {};
+      if (!appState.childrenStates[kidId]) appState.childrenStates[kidId] = {};
+      appState.childrenStates[kidId].child_roadmap = roadmapToEdit;
+      appState.childrenStates[kidId].current_roadmap_index = appState.parentCurrentRoadmapIndex;
 
       if (appState.childDeviceKidId === kidId) {
         appState.childRoadmap = roadmapToEdit;
@@ -531,8 +534,10 @@ window.UNLOCK_ALL_ROUTINES = false;
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            roadmap: roadmapToEdit,
             child_roadmap: roadmapToEdit,
-            current_roadmap_index: appState.parentCurrentRoadmapIndex
+            current_roadmap_index: appState.parentCurrentRoadmapIndex,
+            current_step_index: 0
           })
         });
       } catch (_) {}
@@ -610,6 +615,12 @@ window.UNLOCK_ALL_ROUTINES = false;
       const currentKid = appState.parentSelectedKidProfile || { name: 'Bé' };
 
       appState.parentChildRoutineRoadmap = [];
+      if (!appState.childrenStates) appState.childrenStates = {};
+      if (!appState.childrenStates[kidId]) appState.childrenStates[kidId] = {};
+      appState.childrenStates[kidId].child_routine_roadmap = [];
+      appState.childrenStates[kidId].completed_routine_ids = [];
+      appState.childrenStates[kidId].routine_photo_proofs = {};
+
       if (appState.childDeviceKidId === kidId) {
         appState.childRoutineRoadmap = [];
         appState.routineCleared = true;
@@ -661,6 +672,7 @@ window.UNLOCK_ALL_ROUTINES = false;
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             routines: [],
+            child_routine_roadmap: [],
             completed_routine_ids: [],
             photo_proofs: {}
           })
@@ -680,7 +692,7 @@ window.UNLOCK_ALL_ROUTINES = false;
       } else {
         const kidId = appState.parentSelectedKidId || 'kid_leo_01';
         const currentKid = appState.parentSelectedKidProfile || { name: 'Bé' };
-        const currentList = Array.isArray(appState.parentChildRoadmap) ? appState.parentChildRoadmap : appState.childRoadmap;
+        const currentList = Array.isArray(appState.parentChildRoadmap) ? appState.parentChildRoadmap : [];
 
         if (!Array.isArray(currentList) || currentList.length === 0) {
           showToast("Hải Trình Trống", "Hải trình của con hiện đang trống!", "ℹ️");
@@ -693,6 +705,12 @@ window.UNLOCK_ALL_ROUTINES = false;
 
         appState.parentChildRoadmap = [];
         appState.parentCurrentRoadmapIndex = 0;
+
+        if (!appState.childrenStates) appState.childrenStates = {};
+        if (!appState.childrenStates[kidId]) appState.childrenStates[kidId] = {};
+        appState.childrenStates[kidId].child_roadmap = [];
+        appState.childrenStates[kidId].current_roadmap_index = 0;
+        appState.childrenStates[kidId].current_step_index = 0;
 
         if (appState.childDeviceKidId === kidId) {
           appState.childRoadmap = [];
@@ -720,6 +738,7 @@ window.UNLOCK_ALL_ROUTINES = false;
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+              roadmap: [],
               child_roadmap: [],
               current_roadmap_index: 0,
               current_step_index: 0

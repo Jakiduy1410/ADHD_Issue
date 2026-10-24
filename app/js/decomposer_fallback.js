@@ -581,11 +581,14 @@
 
       const kidId = appState.parentSelectedKidId || 'kid_leo_01';
       const currentKid = appState.parentSelectedKidProfile || { name: 'Bé' };
-      const currentList = Array.isArray(appState.parentChildRoadmap) ? appState.parentChildRoadmap : appState.childRoadmap;
+      const currentList = Array.isArray(appState.parentChildRoadmap) ? appState.parentChildRoadmap : [];
 
       if (mode === 'append' && Array.isArray(currentList) && currentList.length > 0) {
         const updated = [...currentList, activeGeneratedAiTask];
         appState.parentChildRoadmap = updated;
+        if (!appState.childrenStates) appState.childrenStates = {};
+        if (!appState.childrenStates[kidId]) appState.childrenStates[kidId] = {};
+        appState.childrenStates[kidId].child_roadmap = updated;
         if (appState.childDeviceKidId === kidId) {
           appState.childRoadmap = updated;
           if (typeof renderChildIslandRoadmap === 'function') renderChildIslandRoadmap();
@@ -605,6 +608,10 @@
         const updated = [activeGeneratedAiTask];
         appState.parentChildRoadmap = updated;
         appState.parentCurrentRoadmapIndex = 0;
+        if (!appState.childrenStates) appState.childrenStates = {};
+        if (!appState.childrenStates[kidId]) appState.childrenStates[kidId] = {};
+        appState.childrenStates[kidId].child_roadmap = updated;
+        appState.childrenStates[kidId].current_roadmap_index = 0;
         if (appState.childDeviceKidId === kidId) {
           appState.childRoadmap = updated;
           appState.currentRoadmapIndex = 0;
@@ -692,11 +699,14 @@
 
       const kidId = appState.parentSelectedKidId || 'kid_leo_01';
       const currentKid = appState.parentSelectedKidProfile || { name: 'Bé' };
-      const currentList = Array.isArray(appState.parentChildRoadmap) ? appState.parentChildRoadmap : appState.childRoadmap;
+      const currentList = Array.isArray(appState.parentChildRoadmap) ? appState.parentChildRoadmap : [];
 
       if (mode === 'append' && Array.isArray(currentList) && currentList.length > 0) {
         const updated = [...currentList, customTask];
         appState.parentChildRoadmap = updated;
+        if (!appState.childrenStates) appState.childrenStates = {};
+        if (!appState.childrenStates[kidId]) appState.childrenStates[kidId] = {};
+        appState.childrenStates[kidId].child_roadmap = updated;
         if (appState.childDeviceKidId === kidId) {
           appState.childRoadmap = updated;
           if (typeof renderChildIslandRoadmap === 'function') renderChildIslandRoadmap();
@@ -716,6 +726,10 @@
         const updated = [customTask];
         appState.parentChildRoadmap = updated;
         appState.parentCurrentRoadmapIndex = 0;
+        if (!appState.childrenStates) appState.childrenStates = {};
+        if (!appState.childrenStates[kidId]) appState.childrenStates[kidId] = {};
+        appState.childrenStates[kidId].child_roadmap = updated;
+        appState.childrenStates[kidId].current_roadmap_index = 0;
         if (appState.childDeviceKidId === kidId) {
           appState.childRoadmap = updated;
           appState.currentRoadmapIndex = 0;

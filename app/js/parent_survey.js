@@ -590,11 +590,24 @@
     function selectAllCatalog(selectAll) {
       playSfx('tap');
       if (selectAll) {
+        let catFilter = appState.catalogFilter || 'all';
+        let gradeFilter = appState.gradeFilter || 'current_kid';
+        const currentKid = appState.parentSelectedKidProfile || (appState.childrenList || []).find(c => c.kid_id === appState.parentSelectedKidId) || { grade: 1 };
+        let effectiveGrade = gradeFilter === 'current_kid' ? (currentKid.grade || 1) : gradeFilter;
+
         const taskMap = new Map();
         Object.values(taskDatabase).forEach(t => {
           if (t && t.id) taskMap.set(t.id, t);
         });
-        taskMap.forEach(t => appState.selectedCatalogIds.add(t.id));
+        taskMap.forEach(t => {
+          if (t.cat === 'chore' || t.cat === 'routine') return;
+          if (effectiveGrade !== 'all') {
+            if (t.grade !== effectiveGrade) return;
+            if (!['math', 'viet', 'eng'].includes(t.cat)) return;
+          }
+          if (catFilter !== 'all' && t.cat !== catFilter) return;
+          appState.selectedCatalogIds.add(t.id);
+        });
       } else {
         appState.selectedCatalogIds.clear();
       }
@@ -632,16 +645,25 @@
 
       const kidId = appState.parentSelectedKidId || 'kid_leo_01';
       const currentKid = appState.parentSelectedKidProfile || { name: 'Bé' };
+      const currentGrade = currentKid.grade || 1;
+
+      // Lọc nghiêm ngặt: nếu có bài thuộc đúng lớp của bé thì chỉ giao bài đúng lớp, loại bỏ bài rác lớp khác
+      const matchingGradeTasks = selectedTasks.filter(t => t.grade === currentGrade);
+      const tasksToDispatch = (matchingGradeTasks.length > 0) ? matchingGradeTasks : selectedTasks;
 
       // 1. Cập nhật state mẹ
-      appState.parentChildRoadmap = selectedTasks;
+      appState.parentChildRoadmap = tasksToDispatch;
       appState.parentCurrentRoadmapIndex = 0;
+      if (!appState.childrenStates) appState.childrenStates = {};
+      if (!appState.childrenStates[kidId]) appState.childrenStates[kidId] = {};
+      appState.childrenStates[kidId].child_roadmap = tasksToDispatch;
+      appState.childrenStates[kidId].current_roadmap_index = 0;
       
       // Nếu trong Dual mode mà máy con cũng đang là bé này thì cập nhật luôn máy con
       if (appState.childDeviceKidId === kidId) {
-        appState.childRoadmap = selectedTasks;
+        appState.childRoadmap = tasksToDispatch;
         appState.currentRoadmapIndex = 0;
-        appState.activeTask = selectedTasks[0];
+        appState.activeTask = tasksToDispatch[0];
         if (typeof renderChildIslandRoadmap === 'function') renderChildIslandRoadmap();
       }
 
@@ -653,7 +675,7 @@
           body: JSON.stringify({
             parent_id: 'parent_lan_01',
             kid_id: kidId,
-            task_ids: selectedTasks.map(t => t.id)
+            task_ids: tasksToDispatch.map(t => t.id)
           })
         });
       } catch (e) {
@@ -665,14 +687,25 @@
         window.miloBus.broadcast('TASK_ASSIGN_BATCH', {
           target_kid_id: kidId,
           kid_id: kidId,
-          tasks: selectedTasks,
-          islandName: `Hải Trình ${selectedTasks.length} Đảo Tri Thức`,
+          tasks: tasksToDispatch,
+          islandName: `Hải Trình ${tasksToDispatch.length} Đảo Tri Thức`,
           dispatchId: 'DISPATCH_' + Date.now()
         });
       }
 
+      // 4. DỌN DẸP SẠCH TICK SELECTION SAU KHI GIAO THÀNH CÔNG (Tránh chèn lại bài cũ)
+      appState.selectedCatalogIds.clear();
+      if (appState.childrenStates && appState.childrenStates[kidId]) {
+        appState.childrenStates[kidId].selectedCatalogIds = new Set();
+      }
+      if (window.miloBus && typeof window.miloBus.savePersistedState === 'function') {
+        window.miloBus.savePersistedState(appState);
+      }
+      renderParentCatalogList();
+      updateBatchSummaryUI();
+
       renderParentActiveRoadmapList();
-      showToast("Lộ Trình Đã Giao!", `Mẹ vừa giao lô ${selectedTasks.length} bài tập sang hải trình của ${currentKid.name}!`, "🚀");
+      showToast("Lộ Trình Đã Giao!", `Mẹ vừa giao lô ${tasksToDispatch.length} bài tập sang hải trình của ${currentKid.name}!`, "🚀");
     }
 
     // Modal chi tiết bước bên phía mẹ
@@ -733,6 +766,10 @@
         // 1. Cập nhật state mẹ
         appState.parentChildRoadmap = [task];
         appState.parentCurrentRoadmapIndex = 0;
+        if (!appState.childrenStates) appState.childrenStates = {};
+        if (!appState.childrenStates[kidId]) appState.childrenStates[kidId] = {};
+        appState.childrenStates[kidId].child_roadmap = [task];
+        appState.childrenStates[kidId].current_roadmap_index = 0;
         if (typeof renderParentActiveRoadmapList === 'function') renderParentActiveRoadmapList();
 
         // 2. Nếu trong dual mode máy con cũng là bé này thì cập nhật máy con
